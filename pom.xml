@@ -1,0 +1,200 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+    <groupId>io.stubbs.truth</groupId>
+    <artifactId>truth-generator-parent</artifactId>
+    <version>HEAD-SNAPSHOT</version>
+    <modelVersion>4.0.0</modelVersion>
+    <packaging>pom</packaging>
+
+    <name>${project.name.root}</name>
+    <description>Code generator to create Subject files with both auto generated assertions methods and the ability to
+        maintain user created assertions using the Grandfather pattern.
+    </description>
+    <url>github.com/astubbs/truth-generator</url>
+    <inceptionYear>2021</inceptionYear>
+
+    <organization>
+        <name>Stubbs.io</name>
+        <url>github.com/astubbs</url>
+    </organization>
+
+    <developers>
+        <developer>
+            <name>Antony Stubbs</name>
+            <email>antony.stubbs@gmail.com</email>
+        </developer>
+    </developers>
+
+    <issueManagement>
+        <url>https://github.com/astubbs/truth-generator/issues</url>
+        <system>GitHub</system>
+    </issueManagement>
+    <mailingLists>
+        <mailingList>
+            <archive>https://github.com/astubbs/truth-generator/discussions</archive>
+        </mailingList>
+    </mailingLists>
+
+    <scm>
+        <url>https://github.com/astubbs/truth-generator.git</url>
+    </scm>
+
+    <properties>
+        <project.name.root>Truth Subject Generator</project.name.root>
+
+        <version.roaster>2.23.0.Final</version.roaster>
+        <version.truth>1.1.3</version.truth>
+    </properties>
+
+    <modules>
+        <module>generator</module>
+        <module>generator-assertions-tests</module>
+        <module>plugin-maven</module>
+    </modules>
+
+    <dependencies>
+        <dependency>
+            <groupId>com.google.truth</groupId>
+            <artifactId>truth</artifactId>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>1.18.20</version>
+        </dependency>
+    </dependencies>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.jboss.forge.roaster</groupId>
+                <artifactId>roaster-api</artifactId>
+                <version>${version.roaster}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.jboss.forge.roaster</groupId>
+                <artifactId>roaster-jdt</artifactId>
+                <version>${version.roaster}</version>
+                <scope>compile</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.google.truth</groupId>
+                <artifactId>truth</artifactId>
+                <scope>compile</scope>
+                <version>${version.truth}</version>
+            </dependency>
+            <dependency>
+                <!-- Used to generate Java 8 chains for users that use them -->
+                <groupId>com.google.truth.extensions</groupId>
+                <artifactId>truth-java8-extension</artifactId>
+                <scope>compile</scope>
+                <version>${version.truth}</version>
+            </dependency>
+            <dependency>
+                <!-- Used to generate Java 8 chains for users that use them -->
+                <groupId>com.google.truth.extensions</groupId>
+                <artifactId>truth-java8-extension</artifactId>
+                <scope>compile</scope>
+                <version>${version.truth}</version>
+            </dependency>
+            <!--            <dependency>-->
+            <!--                <groupId>com.google.truth</groupId>-->
+            <!--                <artifactId>truth</artifactId>-->
+            <!--                <type>test-jar</type>-->
+            <!--                <version>${version.truth}</version>-->
+            <!--                <scope>test</scope>-->
+            <!--            </dependency>-->
+            <dependency>
+                <groupId>org.checkerframework</groupId>
+                <artifactId>checker-compat-qual</artifactId>
+                <version>2.5.5</version>
+            </dependency>
+            <dependency>
+                <groupId>org.atteo</groupId>
+                <artifactId>evo-inflector</artifactId>
+                <version>1.3</version>
+            </dependency>
+            <dependency>
+                <groupId>org.reflections</groupId>
+                <artifactId>reflections</artifactId>
+                <version>0.9.12</version>
+            </dependency>
+            <!-- reflections optional dependency -->
+            <dependency>
+                <groupId>org.dom4j</groupId>
+                <artifactId>dom4j</artifactId>
+                <version>2.1.1</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.commons</groupId>
+                <artifactId>commons-lang3</artifactId>
+                <version>3.12.0</version>
+            </dependency>
+            <dependency>
+                <groupId>com.google.guava</groupId>
+                <artifactId>guava</artifactId>
+                <version>30.1.1-android</version>
+            </dependency>
+            <dependency>
+                <groupId>com.google.flogger</groupId>
+                <artifactId>flogger</artifactId>
+                <version>0.6</version>
+            </dependency>
+            <dependency>
+                <groupId>com.google.flogger</groupId>
+                <artifactId>flogger-log4j2-backend</artifactId>
+                <version>0.6</version>
+            </dependency>
+            <dependency>
+                <groupId>com.google.flogger</groupId>
+                <artifactId>flogger-system-backend</artifactId>
+                <version>0.6</version>
+            </dependency>
+            <dependency>
+                <groupId>org.projectlombok</groupId>
+                <artifactId>lombok</artifactId>
+                <version>1.18.20</version>
+            </dependency>
+            <dependency>
+                <groupId>uk.co.jemos.podam</groupId>
+                <artifactId>podam</artifactId>
+                <version>7.2.7.RELEASE</version>
+                <scope>compile</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+    <build>
+        <plugins>
+            <plugin>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>1.8</source>
+                    <target>1.8</target>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>13</source>
+                    <target>13</target>
+                </configuration>
+            </plugin>
+            <plugin>
+                <artifactId>maven-jar-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>test-jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+</project>

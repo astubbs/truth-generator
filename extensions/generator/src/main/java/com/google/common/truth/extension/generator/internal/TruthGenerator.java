@@ -1,20 +1,24 @@
 package com.google.common.truth.extension.generator.internal;
 
-import com.google.common.collect.Sets.SetView;
 import com.google.common.flogger.FluentLogger;
 import com.google.common.truth.Subject;
 import com.google.common.truth.extension.generator.SourceClassSets;
-import com.google.common.truth.extension.generator.SourceClassSets.PackageAndClasses;
+import com.google.common.truth.extension.generator.SourceClassSets.TargetPackageAndClasses;
 import com.google.common.truth.extension.generator.TruthGeneratorAPI;
 import com.google.common.truth.extension.generator.internal.model.ThreeSystem;
-import org.reflections.Reflections;
-import org.reflections.scanners.SubTypesScanner;
+import lombok.Getter;
+import lombok.Setter;
 
-import java.util.*;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.stream.Collectors;
 
-import static com.google.common.collect.Sets.union;
+import static java.util.Arrays.stream;
+import static java.util.Set.of;
+import static java.util.stream.Collectors.toSet;
 
 /**
  * @author Antony Stubbs
@@ -23,23 +27,29 @@ public class TruthGenerator implements TruthGeneratorAPI {
 
   private static final FluentLogger log = FluentLogger.forEnclosingClass();
 
+  private boolean recursive = true;
+
+  @Setter
+  @Getter
+  private Optional<String> entryPoint = Optional.empty();
+
   @Override
   public void generate(String... modelPackages) {
     Utils.requireNotEmpty(modelPackages);
 
-    OverallEntryPoint overallEntryPoint = new OverallEntryPoint();
-    Set<ThreeSystem> subjectsSystems = generateSkeletonsFromPackages(modelPackages, overallEntryPoint);
+    // just take the first for now
+    // todo createEntryPointForPackages(modelPackages)
+    String[] packageNameForOverall = modelPackages;
+    OverallEntryPoint overallEntryPoint = new OverallEntryPoint(packageNameForOverall[0]);
+    Set<ThreeSystem> subjectsSystems = generateSkeletonsFromPackages(stream(modelPackages).collect(toSet()), overallEntryPoint);
 
     //
     addTests(subjectsSystems);
-
-    // just take the first for now
-    String[] packageNameForOverall = modelPackages;
-    overallEntryPoint.createOverallAccessPoints(packageNameForOverall[0]);
+    overallEntryPoint.createOverallAccessPoints();
   }
 
-  private Set<ThreeSystem> generateSkeletonsFromPackages(final String[] modelPackages, OverallEntryPoint overallEntryPoint) {
-    Set<Class<?>> allTypes = collectSourceClasses(modelPackages);
+  private Set<ThreeSystem> generateSkeletonsFromPackages(Set<String> modelPackages, OverallEntryPoint overallEntryPoint) {
+    Set<Class<?>> allTypes = ClassUtils.collectSourceClasses(modelPackages.toArray(new String[0]));
     return generateSkeletons(allTypes, Optional.empty(), overallEntryPoint);
   }
 
@@ -50,7 +60,7 @@ public class TruthGenerator implements TruthGeneratorAPI {
 
     Set<ThreeSystem> subjectsSystems = new HashSet<>();
     for (Class<?> clazz : classes) {
-      SkeletonGenerator skeletonGenerator = new SkeletonGenerator(targetPackageName);
+      SkeletonGenerator skeletonGenerator = new SkeletonGenerator(targetPackageName, overallEntryPoint);
       Optional<ThreeSystem> threeSystem = skeletonGenerator.threeLayerSystem(clazz);
       if (threeSystem.isPresent()) {
         ThreeSystem ts = threeSystem.get();
@@ -63,27 +73,9 @@ public class TruthGenerator implements TruthGeneratorAPI {
 
   private Set<Class<?>> filterSubjects(Set<Class<?>> classes, int sizeBeforeFilter) {
     // filter existing subjects from inbound set
-    classes = classes.stream().filter(x -> !Subject.class.isAssignableFrom(x)).collect(Collectors.toSet());
+    classes = classes.stream().filter(x -> !Subject.class.isAssignableFrom(x)).collect(toSet());
     log.at(Level.FINE).log("Removed %s Subjects from inbound", classes.size() - sizeBeforeFilter);
     return classes;
-  }
-
-  private Set<Class<?>> collectSourceClasses(final String[] modelPackages) {
-    // for all classes in package
-    SubTypesScanner subTypesScanner = new SubTypesScanner(false);
-
-    Reflections reflections = new Reflections(modelPackages, subTypesScanner);
-    reflections.expandSuperTypes(); // get things that extend something that extend object
-
-    // https://github.com/ronmamo/reflections/issues/126
-    Set<Class<? extends Enum>> subTypesOfEnums = reflections.getSubTypesOf(Enum.class);
-
-    Set<Class<?>> allTypes = reflections.getSubTypesOf(Object.class)
-            // remove Subject classes from previous runs
-            .stream().filter(x -> !Subject.class.isAssignableFrom(x))
-            .collect(Collectors.toSet());
-    allTypes.addAll(subTypesOfEnums);
-    return allTypes;
   }
 
   private void addTests(final Set<ThreeSystem> allTypes) {
@@ -93,39 +85,52 @@ public class TruthGenerator implements TruthGeneratorAPI {
 
   @Override
   public void generateFromPackagesOf(Class<?>... classes) {
-    generate(getPackageStrings(classes));
+    Optional<Class<?>> first = stream(classes).findFirst();
+    if (first.isEmpty()) throw new IllegalArgumentException("Must provide at least one Class");
+    SourceClassSets ss = new SourceClassSets(first.get().getPackage().getName());
+    ss.generateAllFoundInPackagesOf(classes);
+    generate(ss);
   }
 
   @Override
   public void combinedSystem(final SourceClassSets ss) {
-
-  }
-
-  private String[] getPackageStrings(final Class<?>[] classes) {
-    return Arrays.stream(classes).map(x -> x.getPackage().getName()).collect(Collectors.toList()).toArray(new String[0]);
+    throw new IllegalStateException(); // todo - remove?
   }
 
   @Override
   public Map<Class<?>, ThreeSystem> generate(SourceClassSets ss) {
-    Set<String[]> packages = ss.getSimplePackageOfClasses().stream().map(
-            this::getPackageStrings
-    ).collect(Collectors.toSet());
+    RecursiveChecker rc = new RecursiveChecker();
+    if (recursive) {
+      rc.addReferencedIncluded(ss);
+    } else {
+      Set<Class<?>> missing = rc.findReferencedNotIncluded(ss);
+      if (!missing.isEmpty()) {
+        log.at(Level.WARNING)
+                .log("Some referenced classes in the tree are not in the list of Subjects to be generated. " +
+                        "Consider using automatic recursive generation, or add the missing classes. " +
+                        "Otherwise your experience will be limited in places." +
+                        "Missing classes %s", missing);
+      }
+    }
 
-    OverallEntryPoint overallEntryPoint = new OverallEntryPoint();
+    // from packages
+    Set<String> packages = ss.getSimplePackages();
+
+    OverallEntryPoint overallEntryPoint = new OverallEntryPoint(ss.getPackageForOverall());
 
     // skeletons generation is independent and should be able to be done in parallel
     Set<ThreeSystem> skeletons = packages.parallelStream().flatMap(
-            x -> generateSkeletonsFromPackages(x, overallEntryPoint).stream()
-    ).collect(Collectors.toSet());
+            aPackage -> generateSkeletonsFromPackages(of(aPackage), overallEntryPoint).stream()
+    ).collect(toSet());
 
     // custom package destination
-    Set<PackageAndClasses> packageAndClasses = ss.getPackageAndClasses();
-    Set<ThreeSystem> setStream = packageAndClasses.stream().flatMap(
+    Set<TargetPackageAndClasses> targetPackageAndClasses = ss.getTargetPackageAndClasses();
+    Set<ThreeSystem> setStream = targetPackageAndClasses.stream().flatMap(
             x -> {
-              Set<Class<?>> collect = Arrays.stream(x.getClasses()).collect(Collectors.toSet());
+              Set<Class<?>> collect = stream(x.getClasses()).collect(toSet());
               return generateSkeletons(collect, Optional.of(x.getTargetPackageName()), overallEntryPoint).stream();
             }
-    ).collect(Collectors.toSet());
+    ).collect(toSet());
 
     // straight up classes
     Set<ThreeSystem> simpleClasses = generateSkeletons(ss.getSimpleClasses(), Optional.empty(), overallEntryPoint);
@@ -135,13 +140,13 @@ public class TruthGenerator implements TruthGeneratorAPI {
     legacyClasses.forEach(x -> x.setLegacyMode(true));
 
     // legacy classes with custom package destination
-    Set<PackageAndClasses> legacyPackageAndClasses = ss.getLegacyPackageAndClasses();
-    Set<ThreeSystem> legacyPackageSet = legacyPackageAndClasses.stream().flatMap(
+    Set<TargetPackageAndClasses> legacyTargetPackageAndClasses = ss.getLegacyTargetPackageAndClasses();
+    Set<ThreeSystem> legacyPackageSet = legacyTargetPackageAndClasses.stream().flatMap(
             x -> {
-              Set<Class<?>> collect = Arrays.stream(x.getClasses()).collect(Collectors.toSet());
+              Set<Class<?>> collect = stream(x.getClasses()).collect(toSet());
               return generateSkeletons(collect, Optional.of(x.getTargetPackageName()), overallEntryPoint).stream();
             }
-    ).collect(Collectors.toSet());
+    ).collect(toSet());
     legacyPackageSet.forEach(x -> x.setLegacyMode(true));
 
 
@@ -157,7 +162,7 @@ public class TruthGenerator implements TruthGeneratorAPI {
     addTests(union);
 
     // create overall entry point
-    overallEntryPoint.createOverallAccessPoints(ss.getPackageForOverall());
+    overallEntryPoint.createOverallAccessPoints();
 
     return union.stream().collect(Collectors.toMap(ThreeSystem::getClassUnderTest, x -> x));
   }
@@ -165,14 +170,24 @@ public class TruthGenerator implements TruthGeneratorAPI {
   @Override
   public Map<Class<?>, ThreeSystem> generate(Set<Class<?>> classes) {
     Utils.requireNotEmpty(classes);
-    SourceClassSets ss = new SourceClassSets(classes.stream().findFirst().get().getPackageName());
+    String entrypointPackage = (this.entryPoint.isPresent())
+            ? entryPoint.get()
+            : createEntrypointPackage(classes);
+    SourceClassSets ss = new SourceClassSets(entrypointPackage);
     ss.generateFrom(classes);
     return generate(ss);
   }
 
+  /**
+   * todo change this to do this by finding the highest common package of all outputs
+   */
+  private String createEntrypointPackage(final Set<Class<?>> classes) {
+    return classes.stream().findFirst().get().getPackageName();
+  }
+
   @Override
-  public void generate(Class<?>... classes) {
-    generate(Arrays.stream(classes).collect(Collectors.toSet()));
+  public Map<Class<?>, ThreeSystem> generate(Class<?>... classes) {
+    return generate(stream(classes).collect(toSet()));
   }
 
   @Override

@@ -31,16 +31,25 @@ import static java.util.Optional.of;
 public class SkeletonGenerator implements SkeletonGeneratorAPI {
 
   private static final FluentLogger logger = FluentLogger.forEnclosingClass();
+  private static final String BACKUP_PACKAGE = "com.google.common.truth.extension.generator";
 
-  private final Optional<String> targetPackageName;
+  /**
+   * For testing. Used to force generating of middle class, even if it's detected.
+   */
+  public static boolean forceMiddleGenerate;
+
+  private final OverallEntryPoint overallEntryPoint;
+
+  private Optional<String> targetPackageName;
   private MiddleClass middle;
   private ParentClass parent;
 
   @Setter
   private boolean legacyMode = false;
 
-  public SkeletonGenerator(final Optional<String> targetPackageName) {
+  public SkeletonGenerator(Optional<String> targetPackageName, OverallEntryPoint overallEntryPoint) {
     this.targetPackageName = targetPackageName;
+    this.overallEntryPoint = overallEntryPoint;
   }
 
   @Override
@@ -70,6 +79,11 @@ public class SkeletonGenerator implements SkeletonGeneratorAPI {
   public Optional<ThreeSystem> threeLayerSystem(Class<?> source) {
     if (SourceChecking.checkSource(source, targetPackageName))
       return empty();
+
+    // todo make sure this doesn';'t override explicit shading settings
+    if (SourceChecking.needsShading(source)) {
+      targetPackageName = of(this.overallEntryPoint.getPackageName() + ".autoShaded." + source.getPackage().getName());
+    }
 
     ParentClass parent = createParent(source);
     this.parent = parent;
@@ -116,6 +130,9 @@ public class SkeletonGenerator implements SkeletonGeneratorAPI {
   }
 
   private Optional<Class<?>> middleExists(JavaClassSource parent, String middleClassName, Class source) {
+    if (forceMiddleGenerate)
+      return empty();
+
     try {
       // load from annotated classes instead using Reflections?
       String fullName = parent.getPackage() + "." + middleClassName;

@@ -34,6 +34,8 @@ public class MyEmployee extends Person {
 
   private Map<String, Project> projectMap = new HashMap<>();
 
+  private int[] intArray = {0, 1, 2};
+
   public MyEmployee(@Nonnull String name, long someLongAspect, @Nonnull ZonedDateTime birthday) {
     super(name, someLongAspect, birthday);
   }

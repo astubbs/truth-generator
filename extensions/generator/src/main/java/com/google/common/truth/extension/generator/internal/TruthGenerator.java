@@ -56,7 +56,8 @@ public class TruthGenerator implements TruthGeneratorAPI {
   }
 
   private Set<ThreeSystem> generateSkeletonsFromPackages(Set<String> modelPackages, OverallEntryPoint overallEntryPoint) {
-    Set<Class<?>> allTypes = ClassUtils.collectSourceClasses(modelPackages.toArray(new String[0]));
+    ClassUtils classUtils = new ClassUtils();
+    Set<Class<?>> allTypes = classUtils.collectSourceClasses(modelPackages.toArray(new String[0]));
     return generateSkeletons(allTypes, Optional.empty(), overallEntryPoint);
   }
 
@@ -165,6 +166,9 @@ public class TruthGenerator implements TruthGeneratorAPI {
     union.addAll(simpleClasses);
     union.addAll(legacyClasses);
     union.addAll(legacyPackageSet);
+
+    if (union.isEmpty())
+      log.atWarning().log("Nothing generated. Check your settings.");
 
     //
     addTests(union);

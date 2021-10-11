@@ -10,12 +10,17 @@ import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.lang.reflect.WildcardType;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 public class ClassUtils {
 
-  public static Set<Class<?>> collectSourceClasses(String... modelPackages) {
+
+  private List<ClassLoader> loaders = new ArrayList<>();
+
+  public Set<Class<?>> collectSourceClasses(String... modelPackages) {
     // for all classes in package
     SubTypesScanner subTypesScanner = new SubTypesScanner(false);
 
@@ -23,10 +28,11 @@ public class ClassUtils {
             .forPackages(modelPackages)
             .filterInputsBy(new FilterBuilder().includePackage(modelPackages))
             .setScanners(subTypesScanner)
-            .setExpandSuperTypes(true);
+            .setExpandSuperTypes(true)
+            .addClassLoaders(this.loaders);
 
     Reflections reflections = new Reflections(build);
-    reflections.expandSuperTypes(); // get things that extend something that extend object
+//    reflections.expandSuperTypes(); // get things that extend something that extend object
 
     // https://github.com/ronmamo/reflections/issues/126
     Set<Class<? extends Enum>> subTypesOfEnums = reflections.getSubTypesOf(Enum.class);
@@ -86,4 +92,7 @@ public class ClassUtils {
     return key;
   }
 
+  public void addClassLoaders(List<ClassLoader> loaders) {
+    this.loaders.addAll(loaders);
+  }
 }

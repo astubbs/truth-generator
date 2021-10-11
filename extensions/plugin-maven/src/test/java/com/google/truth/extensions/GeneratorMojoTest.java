@@ -1,12 +1,9 @@
 package com.google.truth.extensions;
 
 
-import com.google.common.truth.Truth;
-import com.google.common.truth.Truth.*;
 import com.google.common.truth.extension.generator.internal.model.ThreeSystem;
 import com.google.common.truth.extension.generator.plugin.GeneratorMojo;
 import com.google.common.truth.extension.generator.testModel.MyEmployee;
-import com.google.truth.extensions.generator.plugin.ManagedTruth;
 import org.apache.maven.plugin.testing.MojoRule;
 import org.apache.maven.plugin.testing.WithoutMojo;
 import org.junit.Rule;
@@ -15,7 +12,7 @@ import org.junit.Test;
 import java.io.File;
 import java.util.Map;
 
-import static com.google.truth.extensions.generator.plugin.ManagedTruth.assertThat;
+import static com.google.common.truth.Truth.assertThat;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
@@ -46,7 +43,7 @@ public class GeneratorMojoTest {
     assertNotNull(generatorMojo);
 
     //
-    assertThat(generatorMojo).hasClasses().asList()
+    assertThat(generatorMojo.getClasses()).asList()
             .contains("java.io.File");
 
     // execution
@@ -54,8 +51,8 @@ public class GeneratorMojoTest {
 
     //
     Map<Class<?>, ThreeSystem> results = generatorMojo.getResult();
-    Truth.assertThat(results).containsKey(MyEmployee.class);
-    Truth.assertThat(results).containsKey(File.class);
+    assertThat(results).containsKey(MyEmployee.class);
+    assertThat(results).containsKey(File.class);
 
 //    File outputDirectory = (File) rule.getVariableValueFromObject(generatorMojo, "outputDirectory");
 //    assertThat(outputDirectory).exists();

@@ -60,7 +60,7 @@
         <dependency>
             <groupId>org.reflections</groupId>
             <artifactId>reflections</artifactId>
-            <version>0.9.12</version>
+            <version>0.9.13-SNAPSHOT</version>
         </dependency>
         <!-- reflections optional dependency -->
         <dependency>

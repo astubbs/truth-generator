@@ -128,6 +128,8 @@ public class GeneratorMojo extends AbstractMojo {
   }
 
   public void execute() throws MojoExecutionException {
+    getLog().error("Truth generator running...");
+
     this.result = runGenerator();
 
     File f = outputDirectory;
@@ -163,7 +165,10 @@ public class GeneratorMojo extends AbstractMojo {
 
     SourceClassSets ss = new SourceClassSets(getEntryPointClassPackage());
 
-    ss.generateFrom(getProjectClassLoader(), getClasses());
+    ClassLoader projectClassLoader = getProjectClassLoader();
+    ss.addClassLoader(projectClassLoader);
+
+    ss.generateFrom(projectClassLoader, getClasses());
     ss.generateAllFoundInPackages(getPackages());
 
     Map<Class<?>, ThreeSystem> generated = tg.generate(ss);

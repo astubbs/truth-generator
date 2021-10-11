@@ -6,7 +6,9 @@ import com.google.common.truth.extension.generator.internal.ClassUtils;
 import lombok.Getter;
 import lombok.Value;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -21,6 +23,9 @@ import static java.util.stream.Collectors.toSet;
 public class SourceClassSets {
 
   private final String packageForOverall;
+
+  @Getter
+  private final List<ClassLoader> loaders = new ArrayList<>();
 
   /**
    *
@@ -163,8 +168,10 @@ public class SourceClassSets {
 
     union.addAll(getLegacyTargetPackageAndClasses().stream().flatMap(x -> stream(x.classes)).collect(toSet()));
 
+    ClassUtils classUtils = new ClassUtils();
+    classUtils.addClassLoaders(this.loaders);
     union.addAll(getSimplePackages().stream().flatMap(
-            x -> ClassUtils.collectSourceClasses(x).stream()).collect(toSet()));
+            x -> classUtils.collectSourceClasses(x).stream()).collect(toSet()));
 
     // todo need more elegant solution than this
     this.classSetCache = union;
@@ -188,6 +195,10 @@ public class SourceClassSets {
   public boolean isLegacyClass(final Class<?> theClass) {
     return getLegacyBeans().contains(theClass)
             || getLegacyTargetPackageAndClasses().stream().anyMatch(x -> asList(x.classes).contains(theClass));
+  }
+
+  public void addClassLoader(ClassLoader projectClassLoader) {
+    this.loaders.add(projectClassLoader);
   }
 
   /**

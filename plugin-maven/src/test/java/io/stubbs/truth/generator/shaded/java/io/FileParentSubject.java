@@ -1,4 +1,4 @@
-package com.google.truth.extensions.shaded.java.io;
+package io.stubbs.truth.generator.shaded.java.io;
 
 import com.google.common.truth.Subject;
 import javax.annotation.processing.Generated;
@@ -8,11 +8,9 @@ import com.google.common.truth.LongSubject;
 import static com.google.common.truth.Fact.*;
 import com.google.common.truth.BooleanSubject;
 import com.google.common.truth.StringSubject;
-import static com.google.truth.extensions.shaded.java.io.FileSubject.files;
+import static io.stubbs.truth.generator.shaded.java.io.FileSubject.files;
 
 import java.io.IOException;
-
-import com.google.truth.extensions.shaded.java.io.FileSubject;
 
 /**
  * Truth Subject for the {@link File}.

@@ -1,4 +1,4 @@
-package com.google.truth.extensions;
+package io.stubbs.truth.generator;
 
 import io.stubbs.truth.generator.SourceClassSets;
 import io.stubbs.truth.generator.TruthGeneratorAPI;

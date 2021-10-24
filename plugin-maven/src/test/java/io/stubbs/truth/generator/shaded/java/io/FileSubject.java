@@ -1,4 +1,4 @@
-package com.google.truth.extensions.shaded.java.io;
+package io.stubbs.truth.generator.shaded.java.io;
 
 import com.google.common.truth.FailureMetadata;
 import java.io.File;

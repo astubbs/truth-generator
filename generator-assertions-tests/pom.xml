@@ -6,7 +6,7 @@
 
     <parent>
         <groupId>io.stubbs</groupId>
-        <artifactId>truth-generator</artifactId>
+        <artifactId>truth-generator-parent</artifactId>
         <version>HEAD-SNAPSHOT</version>
     </parent>
 
@@ -65,20 +65,19 @@
             <groupId>com.google.truth.extensions</groupId>
             <artifactId>truth-java8-extension</artifactId>
             <scope>compile</scope>
-            <version>${project.version}</version>
         </dependency>
         <dependency>
-            <groupId>com.google.truth.extensions</groupId>
-            <artifactId>truth-generator-extension</artifactId>
+            <groupId>io.stubbs</groupId>
+            <artifactId>truth-generator</artifactId>
             <type>jar</type>
             <version>${project.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>com.google.truth.extensions</groupId>
-            <artifactId>truth-generator-extension</artifactId>
-            <type>test-jar</type>
+            <groupId>io.stubbs</groupId>
+            <artifactId>truth-generator</artifactId>
             <version>${project.version}</version>
+            <type>test-jar</type>
             <scope>test</scope>
         </dependency>
         <dependency>

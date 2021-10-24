@@ -5,8 +5,8 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <groupId>com.google.truth.extensions</groupId>
-        <artifactId>truth-extensions-parent</artifactId>
+        <groupId>io.stubbs</groupId>
+        <artifactId>truth-generator-extension</artifactId>
         <version>HEAD-SNAPSHOT</version>
     </parent>
 

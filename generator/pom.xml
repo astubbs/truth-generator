@@ -3,17 +3,18 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
-        <groupId>com.google.truth.extensions</groupId>
-        <artifactId>truth-extensions-parent</artifactId>
+        <groupId>io.stubbs</groupId>
+        <artifactId>truth-generator-extension</artifactId>
         <version>HEAD-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <name>Truth Extension for generating Subjects</name>
+    <name>${project.name.root}</name>
     <artifactId>truth-generator-extension</artifactId>
 
     <properties>
         <version.roaster>2.23.0.Final</version.roaster>
+        <project.name.root>Truth Subject Generator</project.name.root>
     </properties>
 
     <dependencies>

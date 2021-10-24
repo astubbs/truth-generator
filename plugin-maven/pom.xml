@@ -3,8 +3,8 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
-        <groupId>com.google.truth.extensions</groupId>
-        <artifactId>truth-extensions-parent</artifactId>
+        <groupId>io.stubbs</groupId>
+        <artifactId>truth-generator-extension</artifactId>
         <version>HEAD-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
@@ -132,22 +132,22 @@
                     <!-- <goalPrefix>maven-archetype-plugin</goalPrefix> -->
                     <skipErrorNoDescriptorsFound>true</skipErrorNoDescriptorsFound>
                 </configuration>
-<!--                <executions>-->
-<!--                    <execution>-->
-<!--                        <id>mojo-descriptor</id>-->
-<!--                        <goals>-->
-<!--                            <goal>descriptor</goal>-->
-<!--                        </goals>-->
-<!--                        <phase>compile</phase>-->
-<!--                    </execution>-->
-<!--                    <execution>-->
-<!--                        <id>help-goal</id>-->
-<!--                        <goals>-->
-<!--                            <goal>helpmojo</goal>-->
-<!--                        </goals>-->
-<!--                        <phase>compile</phase>-->
-<!--                    </execution>-->
-<!--                </executions>-->
+                <!--                <executions>-->
+                <!--                    <execution>-->
+                <!--                        <id>mojo-descriptor</id>-->
+                <!--                        <goals>-->
+                <!--                            <goal>descriptor</goal>-->
+                <!--                        </goals>-->
+                <!--                        <phase>compile</phase>-->
+                <!--                    </execution>-->
+                <!--                    <execution>-->
+                <!--                        <id>help-goal</id>-->
+                <!--                        <goals>-->
+                <!--                            <goal>helpmojo</goal>-->
+                <!--                        </goals>-->
+                <!--                        <phase>compile</phase>-->
+                <!--                    </execution>-->
+                <!--                </executions>-->
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -163,15 +163,15 @@
     <profiles>
         <profile>
             <id>run-its</id>
-<!--            <activation>-->
-<!--                <activeByDefault>true</activeByDefault>-->
-<!--            </activation>-->
+            <!--            <activation>-->
+            <!--                <activeByDefault>true</activeByDefault>-->
+            <!--            </activation>-->
             <build>
                 <plugins>
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-invoker-plugin</artifactId>
-<!--                        todo maven version -->
+                        <!--                        todo maven version -->
                         <version>3.1.0</version>
                         <configuration>
                             <debug>true</debug>

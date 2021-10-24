@@ -4,17 +4,16 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
         <groupId>io.stubbs</groupId>
-        <artifactId>truth-generator-extension</artifactId>
+        <artifactId>truth-generator</artifactId>
         <version>HEAD-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <name>${project.name.root}</name>
+    <name>${project.name.root} Core</name>
     <artifactId>truth-generator-extension</artifactId>
 
     <properties>
         <version.roaster>2.23.0.Final</version.roaster>
-        <project.name.root>Truth Subject Generator</project.name.root>
     </properties>
 
     <dependencies>

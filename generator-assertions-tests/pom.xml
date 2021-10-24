@@ -6,10 +6,11 @@
 
     <parent>
         <groupId>io.stubbs</groupId>
-        <artifactId>truth-generator-extension</artifactId>
+        <artifactId>truth-generator</artifactId>
         <version>HEAD-SNAPSHOT</version>
     </parent>
 
+    <name>${project.name.root} Tests</name>
     <artifactId>generator-assertions-tests</artifactId>
     <version>HEAD-SNAPSHOT</version>
 

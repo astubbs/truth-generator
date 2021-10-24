@@ -4,15 +4,16 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
         <groupId>io.stubbs</groupId>
-        <artifactId>truth-generator-extension</artifactId>
+        <artifactId>truth-generator</artifactId>
         <version>HEAD-SNAPSHOT</version>
     </parent>
+
     <modelVersion>4.0.0</modelVersion>
     <packaging>maven-plugin</packaging>
 
     <!-- maven naming conventions https://maven.apache.org/guides/plugin/guide-java-plugin-development.html -->
     <artifactId>truth-generator-maven-plugin</artifactId>
-    <name>Truth Generator Maven PLugin</name>
+    <name>${project.name.root} Maven Plugin</name>
 
     <!-- as this is an executable, not a library, we can be more liberal with the tools and settings -->
     <properties>
@@ -68,13 +69,13 @@
 
         <!-- mine -->
         <dependency>
-            <groupId>com.google.truth.extensions</groupId>
-            <artifactId>truth-generator-extension</artifactId>
+            <groupId>io.stubbs</groupId>
+            <artifactId>truth-generator</artifactId>
             <version>HEAD-SNAPSHOT</version>
         </dependency>
         <dependency>
-            <groupId>com.google.truth.extensions</groupId>
-            <artifactId>truth-generator-extension</artifactId>
+            <groupId>io.stubbs</groupId>
+            <artifactId>truth-generator</artifactId>
             <version>HEAD-SNAPSHOT</version>
             <scope>test</scope>
             <type>test-jar</type>

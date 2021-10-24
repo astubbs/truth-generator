@@ -1,9 +1,9 @@
 package com.google.truth.extensions;
 
 
-import com.google.common.truth.extension.generator.internal.model.ThreeSystem;
-import com.google.common.truth.extension.generator.plugin.GeneratorMojo;
-import com.google.common.truth.extension.generator.testModel.MyEmployee;
+import io.stubbs.truth.generator.internal.model.ThreeSystem;
+import io.stubbs.truth.generator.plugin.GeneratorMojo;
+import io.stubbs.truth.generator.testModel.MyEmployee;
 import org.apache.maven.plugin.testing.MojoRule;
 import org.apache.maven.plugin.testing.WithoutMojo;
 import org.junit.Rule;

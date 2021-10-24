@@ -19,7 +19,7 @@
                     <!-- List the classes you want to generate assertions for -->
                     <classes>
                         <param>java.io.File</param>
-                        <param>com.google.common.truth.extension.generator.testModel.MyEmployee</param>
+                        <param>io.stubbs.truth.generator.testModel.MyEmployee</param>
                     </classes>
                     <entryPointClassPackage>com.google.truth.extensions.tests.projectUnderTest</entryPointClassPackage>
                     <!-- Specify the MyMojo parameter -->

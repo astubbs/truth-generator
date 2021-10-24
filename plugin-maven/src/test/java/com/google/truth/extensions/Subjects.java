@@ -1,9 +1,8 @@
 package com.google.truth.extensions;
 
-import com.google.common.truth.Truth;
-import com.google.common.truth.extension.generator.SourceClassSets;
-import com.google.common.truth.extension.generator.TruthGeneratorAPI;
-import com.google.common.truth.extension.generator.plugin.GeneratorMojo;
+import io.stubbs.truth.generator.SourceClassSets;
+import io.stubbs.truth.generator.TruthGeneratorAPI;
+import io.stubbs.truth.generator.plugin.GeneratorMojo;
 import org.junit.Test;
 
 import java.io.File;

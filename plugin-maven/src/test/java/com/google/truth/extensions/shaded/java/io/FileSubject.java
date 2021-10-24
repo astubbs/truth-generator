@@ -2,10 +2,8 @@ package com.google.truth.extensions.shaded.java.io;
 
 import com.google.common.truth.FailureMetadata;
 import java.io.File;
-import java.nio.file.Files;
 
-import com.google.common.truth.extension.generator.UserManagedTruth;
-import org.apache.commons.io.FileUtils;
+import io.stubbs.truth.generator.UserManagedTruth;
 
 import javax.annotation.processing.Generated;
 

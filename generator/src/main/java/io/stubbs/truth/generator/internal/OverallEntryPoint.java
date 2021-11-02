@@ -1,9 +1,11 @@
 package io.stubbs.truth.generator.internal;
 
 import com.google.common.flogger.FluentLogger;
+import io.stubbs.truth.generator.GeneratorException;
 import io.stubbs.truth.generator.internal.model.ThreeSystem;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.lang3.StringUtils;
 import org.jboss.forge.roaster.Roaster;
 import org.jboss.forge.roaster.model.Method;
 import org.jboss.forge.roaster.model.source.Import;
@@ -17,7 +19,9 @@ import java.util.stream.Collectors;
 
 import static io.stubbs.truth.generator.internal.Utils.writeToDisk;
 
-@RequiredArgsConstructor
+/**
+ * Creates a single convenience `ManagedTruth` class, which contains all the `assertThat` entrypoint methods.
+ */
 public class OverallEntryPoint {
 
   private static final FluentLogger logger = FluentLogger.forEnclosingClass();
@@ -27,6 +31,13 @@ public class OverallEntryPoint {
   @Getter
   private final String packageName;
 
+  public OverallEntryPoint(String packageForOverall) {
+    if (StringUtils.isBlank(packageForOverall))
+      throw new GeneratorException("Package for managed entrypoint cannot be blank");
+
+    this.packageName = packageForOverall;
+  }
+
   /**
    * Having collected together all the access points, creates one large class filled with access points to all of them.
    * <p>
@@ -35,10 +46,8 @@ public class OverallEntryPoint {
   public void createOverallAccessPoints() {
     JavaClassSource overallAccess = Roaster.create(JavaClassSource.class);
     overallAccess.setName("ManagedTruth");
-    overallAccess.getJavaDoc()
-            .setText("Single point of access for all managed Subjects.");
-    overallAccess.setPublic()
-            .setPackage(packageName);
+    overallAccess.getJavaDoc().setText("Single point of access for all managed Subjects.");
+    overallAccess.setPublic().setPackage(packageName);
 
     // brute force
     for (JavaClassSource child : children) {

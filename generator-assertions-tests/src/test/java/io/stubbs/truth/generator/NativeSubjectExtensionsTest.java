@@ -1,8 +1,9 @@
 package io.stubbs.truth.generator;
 
-import io.stubbs.truth.generator.internal.extensions.ManagedTruth;
-import io.stubbs.truth.generator.internal.extensions.MyEmployeeSubject;
+// TODO use models already in other modules
+import io.stubbs.truth.generator.testModel.ManagedTruth;
 import io.stubbs.truth.generator.testModel.MyEmployee;
+import io.stubbs.truth.generator.testModel.MyEmployeeSubject;
 import org.junit.Test;
 
 import java.util.ArrayList;
@@ -10,7 +11,7 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-public class NativeSubjectExtensions {
+public class NativeSubjectExtensionsTest {
 
   @Test
   public void my_string() {

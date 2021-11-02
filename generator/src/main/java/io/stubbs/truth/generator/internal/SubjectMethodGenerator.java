@@ -5,6 +5,7 @@ import com.google.common.truth.*;
 import io.stubbs.truth.generator.internal.model.ThreeSystem;
 import lombok.Getter;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Validate;
 import org.jboss.forge.roaster.model.source.Import;
 import org.jboss.forge.roaster.model.source.JavaClassSource;
 import org.jboss.forge.roaster.model.source.MethodSource;
@@ -33,7 +34,7 @@ import static org.reflections.ReflectionUtils.*;
 /**
  * @author Antony Stubbs
  */
-// todo needs refactoring into different strategies, interface
+// todo needs refactoring into different strategies, interface https://github.com/astubbs/truth-generator/issues/12
 public class SubjectMethodGenerator {
 
   private static final FluentLogger logger = FluentLogger.forEnclosingClass();
@@ -47,8 +48,10 @@ public class SubjectMethodGenerator {
     this.generatedSubjects = allTypes.stream().collect(Collectors.toMap(x -> x.classUnderTest.getName(), x -> x));
     this.subjectExtensions = subjectExtensions;
 
-    Reflections reflections = new Reflections("com.google.common.truth", "io.confluent");
+    Reflections reflections = new Reflections("io.stubbs.truth", "com.google.common.truth");
     Set<Class<? extends Subject>> subjectTypes = reflections.getSubTypesOf(Subject.class);
+
+    Validate.isTrue(!subjectTypes.isEmpty(), "Unexpected: Could not find any compile time Subjects to work with.");
 
     subjectTypes.forEach(x -> classPathSubjectTypes.put(x.getSimpleName(), x));
   }
@@ -163,23 +166,23 @@ public class SubjectMethodGenerator {
   private static final HashSet<Class<?>> nativeTypesTruth8 = new LinkedHashSet();
 
   static {
-    //
+    // higher priority first
     Class<?>[] classes = {
             Map.class,
             Iterable.class,
             List.class,
             Set.class,
-            Number.class,
             Throwable.class,
             BigDecimal.class,
             String.class,
-            Comparable.class,
-            Class.class, // Enum#getDeclaringClass
             Double.class,
             Long.class,
             Integer.class,
             Short.class,
-            Boolean.class
+            Number.class,
+            Boolean.class,
+            Comparable.class,
+            Class.class, // Enum#getDeclaringClass
     };
     nativeTypes.addAll(Arrays.stream(classes).collect(Collectors.toList()));
 
@@ -415,7 +418,7 @@ public class SubjectMethodGenerator {
     Optional<ClassOrGenerated> subjectForType = getSubjectForType(returnType);
 
     // no subject to chain
-    if (subjectForType.isEmpty() && !isCoveredByNonPrimitiveStandardSubjects) {
+    if (subjectForType.isEmpty()) {
       logger.at(WARNING).log("Cant find subject for " + returnType);
       return null;
     }
@@ -493,7 +496,7 @@ public class SubjectMethodGenerator {
 
   // todo cleanup
   private boolean isTypeCoveredUnderStandardSubjects(final Class<?> returnType) {
-    // todo should only do this, if we can't find a more specific subect for the returnType
+    // todo should only do this, if we can't find a more specific subject for the returnType
     // todo should check if class is assignable from the super subjects, instead of checking names
     // todo use qualified names
     // todo add support truth8 extensions - optional etc

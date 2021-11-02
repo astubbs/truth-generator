@@ -36,7 +36,7 @@ public class GeneratedAssertionTests {
 
     Truth.assertThat(hi.getBoss().getName()).contains("Tony");
     MyEmployeeChildSubject.assertTruth(hi).hasBoss().hasName().contains("Tony");
-//    assertTruth(hi).hasCard().hasEpoch().isAtLeast(20);
+    MyEmployeeChildSubject.assertTruth(hi).hasCard().hasEpoch().isAtLeast(20);
     MyEmployeeChildSubject.assertTruth(hi).hasProjectList().hasSize(5);
     MyEmployeeSubject myEmployeeSubject = MyEmployeeChildSubject.assertTruth(hi);
 

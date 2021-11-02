@@ -16,6 +16,9 @@ import static java.lang.String.format;
 
 public class Utils {
 
+  public static final String DIR_TRUTH_ASSERTIONS_MANAGED = "truth-assertions-managed";
+  public static final String DIR_TRUTH_ASSERTIONS_TEMPLATES = "truth-assertions-templates";
+
   public static String writeToDisk(JavaClassSource javaClass) {
     return writeToDisk(javaClass, Optional.empty());
   }
@@ -52,7 +55,7 @@ public class Utils {
     List<String> ids = List.of("Parent", "Child");
     boolean isChildOrParent = javaClass.getAnnotation(UserManagedTruth.class) == null;
 
-    String baseDirSuffix = (isChildOrParent) ? "truth-assertions-managed" : "truth-assertions-templates";
+    String baseDirSuffix = (isChildOrParent) ? DIR_TRUTH_ASSERTIONS_MANAGED : DIR_TRUTH_ASSERTIONS_TEMPLATES;
 
     String packageNameDir = packageName.replace(".", "/");
 

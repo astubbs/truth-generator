@@ -80,22 +80,18 @@ public class TruthGeneratorTest {
     Set<? extends Class<?>> generatedSourceClasses = generated.values().stream().map(x -> x.classUnderTest).collect(Collectors.toSet());
     assertThat(generatedSourceClasses).containsAtLeast(UUID.class, ZonedDateTime.class, MyEmployee.State.class);
 
-    String expectedMyEmployeeParent = loadFileToString("expected/MyEmployeeParentSubject.java.txt");
-    String expectedMyEmployeeChild = loadFileToString("expected/MyEmployeeChildSubject.java.txt");
-    String expectedMyEmployeeMiddle = loadFileToString("expected/MyEmployeeSubject.java.txt");
-
-
+    //
     ThreeSystem threeSystemGenerated = generated.get(MyEmployee.class);
 
     assertThat(threeSystemGenerated)
             .hasParent().hasGenerated().hasSourceText()
-            .ignoringTrailingWhiteSpace().equalTo(expectedMyEmployeeParent); // sanity full chain
+            .ignoringTrailingWhiteSpace().equalTo(loadFileToString("expected/MyEmployeeParentSubject.java.txt")); // sanity full chain
 
-    assertThat(threeSystemGenerated).hasParentSource(expectedMyEmployeeParent);
+    assertThat(threeSystemGenerated).hasParentSource(loadFileToString("expected/MyEmployeeParentSubject.java.txt"));
 
-    assertThat(threeSystemGenerated).hasMiddleSource(expectedMyEmployeeMiddle);
+    assertThat(threeSystemGenerated).hasMiddleSource(loadFileToString("expected/MyEmployeeSubject.java.txt"));
 
-    assertThat(threeSystemGenerated).hasChildSource(expectedMyEmployeeChild);
+    assertThat(threeSystemGenerated).hasChildSource(loadFileToString("expected/MyEmployeeChildSubject.java.txt"));
 
   }
 

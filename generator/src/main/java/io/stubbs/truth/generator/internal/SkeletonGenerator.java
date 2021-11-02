@@ -30,7 +30,7 @@ import static java.util.Optional.of;
 public class SkeletonGenerator implements SkeletonGeneratorAPI {
 
   private static final FluentLogger logger = FluentLogger.forEnclosingClass();
-  private static final String BACKUP_PACKAGE = "com.google.common.truth.extension.generator";
+  private static final String BACKUP_PACKAGE = "io.stubbs.common.truth.extension.generator";
 
   /**
    * For testing. Used to force generating of middle class, even if it's detected.

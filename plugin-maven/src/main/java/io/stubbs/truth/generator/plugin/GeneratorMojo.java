@@ -3,6 +3,7 @@ package io.stubbs.truth.generator.plugin;
 import io.stubbs.truth.generator.SourceClassSets;
 import io.stubbs.truth.generator.TruthGeneratorAPI;
 import io.stubbs.truth.generator.internal.TruthGenerator;
+import io.stubbs.truth.generator.internal.Utils;
 import io.stubbs.truth.generator.internal.model.ThreeSystem;
 import lombok.Getter;
 import lombok.SneakyThrows;
@@ -13,6 +14,7 @@ import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
+import org.jboss.forge.roaster._shade.org.eclipse.core.runtime.Path;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -23,9 +25,11 @@ import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import static java.lang.String.format;
 import static java.util.Optional.of;
+import static java.util.Optional.ofNullable;
 import static org.apache.maven.plugins.annotations.ResolutionScope.TEST;
 
 
@@ -99,7 +103,7 @@ public class GeneratorMojo extends AbstractMojo {
 
 
   /**
-   * An optional package name for the Assertions entry point class. If omitted, the package will be determined
+   * An optional package name for the Assertions' entry point class. If omitted, the package will be determined
    * heuristically from the generated assertions.
    */
   @Parameter(property = "truth.entryPointClassPackage")
@@ -128,40 +132,26 @@ public class GeneratorMojo extends AbstractMojo {
   }
 
   public void execute() throws MojoExecutionException {
-    getLog().error("Truth generator running...");
+    getLog().info("INFO: Truth generator running...");
 
     this.result = runGenerator();
 
-    File f = outputDirectory;
+    addOutputPathsToBuild();
+  }
 
-    if (!f.exists()) {
-      f.mkdirs();
-    }
-
-    File touch = new File(f, "touch.txt");
-
-    FileWriter w = null;
-    try {
-      w = new FileWriter(touch);
-
-      w.write("touch.txt");
-    } catch (IOException e) {
-      throw new MojoExecutionException("Error creating file " + touch, e);
-    } finally {
-      if (w != null) {
-        try {
-          w.close();
-        } catch (IOException e) {
-          // ignore
-        }
-      }
-    }
+  private void addOutputPathsToBuild() {
+    String outputDirectory = getProject().getBuild().getOutputDirectory();
+    String managedPath = outputDirectory + Path.SEPARATOR + Utils.DIR_TRUTH_ASSERTIONS_MANAGED;
+    String templatesPath = outputDirectory + Path.SEPARATOR + Utils.DIR_TRUTH_ASSERTIONS_TEMPLATES;
+    getProject().addTestCompileSourceRoot(managedPath);
+    getProject().addTestCompileSourceRoot(templatesPath);
   }
 
   @SneakyThrows
   private Map<Class<?>, ThreeSystem> runGenerator() {
     TruthGenerator tg = TruthGeneratorAPI.create();
-    tg.setEntryPoint(of(entryPointClassPackage));
+    Optional<String> entryPointClassPackage = ofNullable(this.entryPointClassPackage);
+    tg.setEntryPoint(entryPointClassPackage);
 
     SourceClassSets ss = new SourceClassSets(getEntryPointClassPackage());
 
@@ -172,11 +162,14 @@ public class GeneratorMojo extends AbstractMojo {
     ss.generateAllFoundInPackages(getPackages());
 
     Map<Class<?>, ThreeSystem> generated = tg.generate(ss);
+
+
+
     return generated;
   }
 
   private ClassLoader getProjectClassLoader() throws DependencyResolutionRequiredException, MalformedURLException {
-    List<String> classpathElements = new ArrayList<String>(project.getCompileClasspathElements());
+    List<String> classpathElements = new ArrayList<>(project.getCompileClasspathElements());
     classpathElements.addAll(project.getTestClasspathElements());
     List<URL> classpathElementUrls = new ArrayList<>(classpathElements.size());
     for (String classpathElement : classpathElements) {

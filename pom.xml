@@ -65,23 +65,31 @@
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
-            <version>1.18.20</version>
+        </dependency>
+        <dependency>
+            <groupId>org.assertj</groupId>
+            <artifactId>assertj-core</artifactId>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 
     <dependencyManagement>
         <dependencies>
+            <!-- Internal -->
             <dependency>
-                <groupId>org.jboss.forge.roaster</groupId>
-                <artifactId>roaster-api</artifactId>
-                <version>${version.roaster}</version>
+                <groupId>io.stubbs.truth</groupId>
+                <artifactId>truth-generator</artifactId>
+                <version>${project.version}</version>
             </dependency>
             <dependency>
-                <groupId>org.jboss.forge.roaster</groupId>
-                <artifactId>roaster-jdt</artifactId>
-                <version>${version.roaster}</version>
-                <scope>compile</scope>
+                <groupId>io.stubbs.truth</groupId>
+                <artifactId>truth-generator</artifactId>
+                <version>${project.version}</version>
+                <scope>test</scope>
+                <type>test-jar</type>
             </dependency>
+
+            <!-- Truth -->
             <dependency>
                 <groupId>com.google.truth</groupId>
                 <artifactId>truth</artifactId>
@@ -95,20 +103,20 @@
                 <scope>compile</scope>
                 <version>${version.truth}</version>
             </dependency>
+
+
+            <!-- External -->
             <dependency>
-                <!-- Used to generate Java 8 chains for users that use them -->
-                <groupId>com.google.truth.extensions</groupId>
-                <artifactId>truth-java8-extension</artifactId>
-                <scope>compile</scope>
-                <version>${version.truth}</version>
+                <groupId>org.jboss.forge.roaster</groupId>
+                <artifactId>roaster-api</artifactId>
+                <version>${version.roaster}</version>
             </dependency>
-<!--            <dependency>-->
-<!--                <groupId>com.google.truth</groupId>-->
-<!--                <artifactId>truth</artifactId>-->
-<!--                <type>test-jar</type>-->
-<!--                <version>${version.truth}</version>-->
-<!--                <scope>test</scope>-->
-<!--            </dependency>-->
+            <dependency>
+                <groupId>org.jboss.forge.roaster</groupId>
+                <artifactId>roaster-jdt</artifactId>
+                <version>${version.roaster}</version>
+                <scope>compile</scope>
+            </dependency>
             <dependency>
                 <groupId>org.checkerframework</groupId>
                 <artifactId>checker-compat-qual</artifactId>
@@ -122,7 +130,7 @@
             <dependency>
                 <groupId>org.reflections</groupId>
                 <artifactId>reflections</artifactId>
-                <version>0.9.12</version>
+                <version>0.10.2</version>
             </dependency>
             <!-- reflections optional dependency -->
             <dependency>
@@ -166,24 +174,25 @@
                 <version>7.2.7.RELEASE</version>
                 <scope>compile</scope>
             </dependency>
+
+            <!-- Testing -->
+            <dependency>
+                <groupId>org.assertj</groupId>
+                <artifactId>assertj-core</artifactId>
+                <version>3.18.0</version>
+                <scope>test</scope>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 
     <build>
         <plugins>
             <plugin>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <configuration>
-                    <source>1.8</source>
-                    <target>1.8</target>
-                </configuration>
-            </plugin>
-            <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <configuration>
-                    <source>13</source>
-                    <target>13</target>
+                    <source>11</source>
+                    <target>11</target>
                 </configuration>
             </plugin>
             <plugin>
@@ -205,5 +214,25 @@
                 </configuration>
             </plugin>
         </plugins>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <version>3.8.1</version>
+                </plugin>
+                <plugin>
+                    <artifactId>maven-jar-plugin</artifactId>
+                    <version>3.2.0</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-surefire-plugin</artifactId>
+                    <version>3.0.0-M5</version>
+                </plugin>
+            </plugins>
+        </pluginManagement>
     </build>
+
+
 </project>

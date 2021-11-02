@@ -1,11 +1,16 @@
 package io.stubbs.truth.generator.internal;
 
+import com.google.common.io.Resources;
 import com.google.common.truth.FailureMetadata;
 import com.google.common.truth.StringSubject;
 import io.stubbs.truth.generator.BaseSubjectExtension;
 import io.stubbs.truth.generator.SubjectFactoryMethod;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
+import lombok.SneakyThrows;
+
+import java.io.IOException;
+import java.nio.charset.Charset;
 
 /**
  * @see IgnoringWhiteSpaceComparison
@@ -58,6 +63,16 @@ public class MyStringSubject extends StringSubject {
     private String normaliseEndingsEndings(String raw) {
       return raw.replaceAll("\\r\\n?", "\n");
     }
+
+    @SneakyThrows
+    public void equalToFile(String expectedMyEmployeeParent) {
+      String fileContent = loadFileToString(expectedMyEmployeeParent);
+      equalTo(fileContent);
+    }
+  }
+
+  private String loadFileToString(String expectedFileName) throws IOException {
+    return Resources.toString(Resources.getResource(expectedFileName), Charset.defaultCharset());
   }
 
 }

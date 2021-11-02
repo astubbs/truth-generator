@@ -1,42 +1,39 @@
-package com.google.common.truth.extension.generator.testModel;
-
+package io.stubbs.truth.generator.testModel;
 import com.google.common.truth.Subject;
 import javax.annotation.processing.Generated;
 import com.google.common.truth.FailureMetadata;
 import java.time.ZonedDateTime;
-import static com.google.common.truth.extension.generator.internal.autoShaded.java.time.ZonedDateTimeSubject.zonedDateTimes;
-import static com.google.common.truth.extension.generator.internal.autoShaded.java.time.ZonedDateTimeSubject.zonedDateTimes;
+import static io.stubbs.truth.generator.internal.autoShaded.java.time.ZonedDateTimeSubject.zonedDateTimes;
+import static io.stubbs.truth.generator.internal.autoShaded.java.time.ZonedDateTimeSubject.zonedDateTimes;
 import static com.google.common.truth.Fact.*;
 import com.google.common.truth.IntegerSubject;
-import com.google.common.truth.extension.generator.internal.autoShaded.java.time.ZonedDateTimeSubject;
-import static com.google.common.truth.extension.generator.testModel.MyEmployeeSubject.myEmployees;
-import com.google.common.truth.extension.generator.testModel.MyEmployeeSubject;
-import static com.google.common.truth.extension.generator.testModel.IdCardSubject.idCards;
-import com.google.common.truth.extension.generator.testModel.IdCardSubject;
-import com.google.common.truth.extension.generator.testModel.MyEmployee.State;
-import static com.google.common.truth.extension.generator.testModel.StateSubject.states;
-import com.google.common.truth.extension.generator.testModel.StateSubject;
+import io.stubbs.truth.generator.internal.autoShaded.java.time.ZonedDateTimeSubject;
+import static io.stubbs.truth.generator.testModel.MyEmployeeSubject.myEmployees;
+import io.stubbs.truth.generator.testModel.MyEmployeeSubject;
+import static io.stubbs.truth.generator.testModel.IdCardSubject.idCards;
+import io.stubbs.truth.generator.testModel.IdCardSubject;
+import io.stubbs.truth.generator.testModel.MyEmployee.State;
+import static io.stubbs.truth.generator.testModel.StateSubject.states;
+import io.stubbs.truth.generator.testModel.StateSubject;
 import java.util.UUID;
-import static com.google.common.truth.extension.generator.internal.autoShaded.java.util.UUIDSubject.uUIDs;
-import com.google.common.truth.extension.generator.internal.autoShaded.java.util.UUIDSubject;
-import static com.google.common.truth.extension.generator.internal.MyStringSubject.strings;
-import static com.google.common.truth.extension.generator.internal.MyStringSubject.strings;
+import static io.stubbs.truth.generator.internal.autoShaded.java.util.UUIDSubject.uUIDs;
+import io.stubbs.truth.generator.internal.autoShaded.java.util.UUIDSubject;
+import com.google.common.truth.ObjectArraySubject;
+import static io.stubbs.truth.generator.internal.MyStringSubject.strings;
+import static io.stubbs.truth.generator.internal.MyStringSubject.strings;
 import java.util.List;
 import com.google.common.truth.IterableSubject;
 import java.util.Map;
-import static com.google.common.truth.extension.generator.internal.MyMapSubject.maps;
-import com.google.common.truth.extension.generator.internal.MyMapSubject;
+import static io.stubbs.truth.generator.internal.MyMapSubject.maps;
+import io.stubbs.truth.generator.internal.MyMapSubject;
 import com.google.common.truth.LongSubject;
 import java.util.Optional;
-import static com.google.common.truth.extension.generator.internal.autoShaded.java.util.OptionalSubject.optionals;
-import com.google.common.truth.extension.generator.internal.autoShaded.java.util.OptionalSubject;
-import static com.google.common.truth.extension.generator.internal.MyStringSubject.strings;
+import static io.stubbs.truth.generator.internal.autoShaded.java.util.OptionalSubject.optionals;
+import io.stubbs.truth.generator.internal.autoShaded.java.util.OptionalSubject;
+import io.stubbs.truth.generator.internal.MyStringSubject;
 import com.google.common.truth.BooleanSubject;
-import com.google.common.truth.ObjectArraySubject;
-import com.google.common.truth.extension.generator.internal.MyStringSubject;
-import static com.google.common.truth.extension.generator.testModel.PersonSubject.persons;
-import com.google.common.truth.extension.generator.testModel.PersonSubject;
-
+import static io.stubbs.truth.generator.testModel.PersonSubject.persons;
+import io.stubbs.truth.generator.testModel.PersonSubject;
 /**
  * Truth Subject for the {@link MyEmployee}.
  *
@@ -49,15 +46,12 @@ import com.google.common.truth.extension.generator.testModel.PersonSubject;
  */
 @Generated("truth-generator")
 public class MyEmployeeParentSubject extends Subject {
-
 	protected final MyEmployee actual;
-
 	protected MyEmployeeParentSubject(FailureMetadata failureMetadata,
-			com.google.common.truth.extension.generator.testModel.MyEmployee actual) {
+			io.stubbs.truth.generator.testModel.MyEmployee actual) {
 		super(failureMetadata, actual);
 		this.actual = actual;
 	}
-
 	/**
 	 * Simple check for equality for all fields.
 	 */
@@ -66,7 +60,6 @@ public class MyEmployeeParentSubject extends Subject {
 			failWithActual(fact("expected Anniversary NOT to be equal to", expected));
 		}
 	}
-
 	/**
 	 * Simple check for equality for all fields.
 	 */
@@ -75,7 +68,6 @@ public class MyEmployeeParentSubject extends Subject {
 			failWithActual(fact("expected Anniversary to be equal to", expected));
 		}
 	}
-
 	/**
 	 * Returns the Subject for the given field type, so you can chain on other
 	 * assertions.
@@ -84,7 +76,6 @@ public class MyEmployeeParentSubject extends Subject {
 		isNotNull();
 		return check("getAnniversary()").about(zonedDateTimes()).that(actual.getAnniversary());
 	}
-
 	/**
 	 * Simple check for equality for all fields.
 	 */
@@ -93,7 +84,6 @@ public class MyEmployeeParentSubject extends Subject {
 			failWithActual(fact("expected BirthYear NOT to be equal to", expected));
 		}
 	}
-
 	/**
 	 * Simple check for equality for all fields.
 	 */
@@ -102,7 +92,6 @@ public class MyEmployeeParentSubject extends Subject {
 			failWithActual(fact("expected BirthYear to be equal to", expected));
 		}
 	}
-
 	/**
 	 * Returns the Subject for the given field type, so you can chain on other
 	 * assertions.
@@ -111,7 +100,6 @@ public class MyEmployeeParentSubject extends Subject {
 		isNotNull();
 		return check("getBirthYear()").that(actual.getBirthYear());
 	}
-
 	/**
 	 * Simple check for equality for all fields.
 	 */
@@ -120,7 +108,6 @@ public class MyEmployeeParentSubject extends Subject {
 			failWithActual(fact("expected Birthday NOT to be equal to", expected));
 		}
 	}
-
 	/**
 	 * Simple check for equality for all fields.
 	 */
@@ -129,7 +116,6 @@ public class MyEmployeeParentSubject extends Subject {
 			failWithActual(fact("expected Birthday to be equal to", expected));
 		}
 	}
-
 	/**
 	 * Returns the Subject for the given field type, so you can chain on other
 	 * assertions.
@@ -138,25 +124,22 @@ public class MyEmployeeParentSubject extends Subject {
 		isNotNull();
 		return check("getBirthday()").about(zonedDateTimes()).that(actual.getBirthday());
 	}
-
 	/**
 	 * Simple check for equality for all fields.
 	 */
-	public void hasBossNotEqualTo(com.google.common.truth.extension.generator.testModel.MyEmployee expected) {
+	public void hasBossNotEqualTo(io.stubbs.truth.generator.testModel.MyEmployee expected) {
 		if (!(actual.getBoss().equals(expected))) {
 			failWithActual(fact("expected Boss NOT to be equal to", expected));
 		}
 	}
-
 	/**
 	 * Simple check for equality for all fields.
 	 */
-	public void hasBossEqualTo(com.google.common.truth.extension.generator.testModel.MyEmployee expected) {
+	public void hasBossEqualTo(io.stubbs.truth.generator.testModel.MyEmployee expected) {
 		if ((actual.getBoss().equals(expected))) {
 			failWithActual(fact("expected Boss to be equal to", expected));
 		}
 	}
-
 	/**
 	 * Returns the Subject for the given field type, so you can chain on other
 	 * assertions.
@@ -165,25 +148,22 @@ public class MyEmployeeParentSubject extends Subject {
 		isNotNull();
 		return check("getBoss()").about(myEmployees()).that(actual.getBoss());
 	}
-
 	/**
 	 * Simple check for equality for all fields.
 	 */
-	public void hasCardNotEqualTo(com.google.common.truth.extension.generator.testModel.IdCard expected) {
+	public void hasCardNotEqualTo(io.stubbs.truth.generator.testModel.IdCard expected) {
 		if (!(actual.getCard().equals(expected))) {
 			failWithActual(fact("expected Card NOT to be equal to", expected));
 		}
 	}
-
 	/**
 	 * Simple check for equality for all fields.
 	 */
-	public void hasCardEqualTo(com.google.common.truth.extension.generator.testModel.IdCard expected) {
+	public void hasCardEqualTo(io.stubbs.truth.generator.testModel.IdCard expected) {
 		if ((actual.getCard().equals(expected))) {
 			failWithActual(fact("expected Card to be equal to", expected));
 		}
 	}
-
 	/**
 	 * Returns the Subject for the given field type, so you can chain on other
 	 * assertions.
@@ -192,7 +172,6 @@ public class MyEmployeeParentSubject extends Subject {
 		isNotNull();
 		return check("getCard()").about(idCards()).that(actual.getCard());
 	}
-
 	/**
 	 * Simple check for equality for all fields.
 	 */
@@ -201,17 +180,14 @@ public class MyEmployeeParentSubject extends Subject {
 			failWithActual(fact("expected EmploymentState NOT to be equal to", expected));
 		}
 	}
-
 	/**
 	 * Simple check for equality for all fields.
 	 */
-	public void hasEmploymentStateEqualTo(
-			com.google.common.truth.extension.generator.testModel.MyEmployee.State expected) {
+	public void hasEmploymentStateEqualTo(io.stubbs.truth.generator.testModel.MyEmployee.State expected) {
 		if ((actual.getEmploymentState().equals(expected))) {
 			failWithActual(fact("expected EmploymentState to be equal to", expected));
 		}
 	}
-
 	/**
 	 * Returns the Subject for the given field type, so you can chain on other
 	 * assertions.
@@ -220,7 +196,6 @@ public class MyEmployeeParentSubject extends Subject {
 		isNotNull();
 		return check("getEmploymentState()").about(states()).that(actual.getEmploymentState());
 	}
-
 	/**
 	 * Simple check for equality for all fields.
 	 */
@@ -229,7 +204,6 @@ public class MyEmployeeParentSubject extends Subject {
 			failWithActual(fact("expected Id NOT to be equal to", expected));
 		}
 	}
-
 	/**
 	 * Simple check for equality for all fields.
 	 */
@@ -238,7 +212,6 @@ public class MyEmployeeParentSubject extends Subject {
 			failWithActual(fact("expected Id to be equal to", expected));
 		}
 	}
-
 	/**
 	 * Returns the Subject for the given field type, so you can chain on other
 	 * assertions.
@@ -247,7 +220,30 @@ public class MyEmployeeParentSubject extends Subject {
 		isNotNull();
 		return check("getId()").about(uUIDs()).that(actual.getId());
 	}
-
+	/**
+	 * Simple check for equality for all fields.
+	 */
+	public void hasIntArrayNotEqualTo(int[] expected) {
+		if (!(actual.getIntArray().equals(expected))) {
+			failWithActual(fact("expected IntArray NOT to be equal to", expected));
+		}
+	}
+	/**
+	 * Simple check for equality for all fields.
+	 */
+	public void hasIntArrayEqualTo(int[] expected) {
+		if ((actual.getIntArray().equals(expected))) {
+			failWithActual(fact("expected IntArray to be equal to", expected));
+		}
+	}
+	/**
+	 * Returns the Subject for the given field type, so you can chain on other
+	 * assertions.
+	 */
+	public ObjectArraySubject hasIntArray() {
+		isNotNull();
+		return check("getIntArray()").that(actual.getIntArray());
+	}
 	/**
 	 * Simple check for equality for all fields.
 	 */
@@ -256,7 +252,6 @@ public class MyEmployeeParentSubject extends Subject {
 			failWithActual(fact("expected Name NOT to be equal to", expected));
 		}
 	}
-
 	/**
 	 * Simple check for equality for all fields.
 	 */
@@ -265,7 +260,6 @@ public class MyEmployeeParentSubject extends Subject {
 			failWithActual(fact("expected Name to be equal to", expected));
 		}
 	}
-
 	/**
 	 * Returns the Subject for the given field type, so you can chain on other
 	 * assertions.
@@ -274,27 +268,24 @@ public class MyEmployeeParentSubject extends Subject {
 		isNotNull();
 		return check("getName()").about(strings()).that(actual.getName());
 	}
-
 	/**
 	 * Checks if a {@link Project} element is, or is not contained in the
 	 * collection.
 	 */
-	public void hasProjectListNotWithElement(com.google.common.truth.extension.generator.testModel.Project expected) {
+	public void hasProjectListNotWithElement(io.stubbs.truth.generator.testModel.Project expected) {
 		if (!actual.getProjectList().contains(expected)) {
 			failWithActual(fact("expected ProjectList NOT to have element", expected));
 		}
 	}
-
 	/**
 	 * Checks if a {@link Project} element is, or is not contained in the
 	 * collection.
 	 */
-	public void hasProjectListWithElement(com.google.common.truth.extension.generator.testModel.Project expected) {
+	public void hasProjectListWithElement(io.stubbs.truth.generator.testModel.Project expected) {
 		if (actual.getProjectList().contains(expected)) {
 			failWithActual(fact("expected ProjectList to have element", expected));
 		}
 	}
-
 	/**
 	 * Simple check for equality for all fields.
 	 */
@@ -303,7 +294,6 @@ public class MyEmployeeParentSubject extends Subject {
 			failWithActual(fact("expected ProjectList NOT to be equal to", expected));
 		}
 	}
-
 	/**
 	 * Simple check for equality for all fields.
 	 */
@@ -312,7 +302,6 @@ public class MyEmployeeParentSubject extends Subject {
 			failWithActual(fact("expected ProjectList to be equal to", expected));
 		}
 	}
-
 	/**
 	 * Returns the Subject for the given field type, so you can chain on other
 	 * assertions.
@@ -321,7 +310,6 @@ public class MyEmployeeParentSubject extends Subject {
 		isNotNull();
 		return check("getProjectList()").that(actual.getProjectList());
 	}
-
 	/**
 	 * Check Maps for containing a given {@link String} key.
 	 */
@@ -330,7 +318,6 @@ public class MyEmployeeParentSubject extends Subject {
 			failWithActual(fact("expected ProjectMap NOT to have key", expected));
 		}
 	}
-
 	/**
 	 * Check Maps for containing a given {@link String} key.
 	 */
@@ -339,7 +326,6 @@ public class MyEmployeeParentSubject extends Subject {
 			failWithActual(fact("expected ProjectMap to have key", expected));
 		}
 	}
-
 	/**
 	 * Simple check for equality for all fields.
 	 */
@@ -348,7 +334,6 @@ public class MyEmployeeParentSubject extends Subject {
 			failWithActual(fact("expected ProjectMap NOT to be equal to", expected));
 		}
 	}
-
 	/**
 	 * Simple check for equality for all fields.
 	 */
@@ -357,7 +342,6 @@ public class MyEmployeeParentSubject extends Subject {
 			failWithActual(fact("expected ProjectMap to be equal to", expected));
 		}
 	}
-
 	/**
 	 * Returns the Subject for the given field type, so you can chain on other
 	 * assertions.
@@ -366,7 +350,6 @@ public class MyEmployeeParentSubject extends Subject {
 		isNotNull();
 		return check("getProjectMap()").about(maps()).that(actual.getProjectMap());
 	}
-
 	/**
 	 * Simple check for equality for all fields.
 	 */
@@ -375,7 +358,6 @@ public class MyEmployeeParentSubject extends Subject {
 			failWithActual(fact("expected SomeLongAspect NOT to be equal to", expected));
 		}
 	}
-
 	/**
 	 * Simple check for equality for all fields.
 	 */
@@ -384,7 +366,6 @@ public class MyEmployeeParentSubject extends Subject {
 			failWithActual(fact("expected SomeLongAspect to be equal to", expected));
 		}
 	}
-
 	/**
 	 * Returns the Subject for the given field type, so you can chain on other
 	 * assertions.
@@ -393,7 +374,6 @@ public class MyEmployeeParentSubject extends Subject {
 		isNotNull();
 		return check("getSomeLongAspect()").that(actual.getSomeLongAspect());
 	}
-
 	/**
 	 * Checks Optional fields for presence.
 	 */
@@ -402,7 +382,6 @@ public class MyEmployeeParentSubject extends Subject {
 			failWithActual(simpleFact("expected Weighting NOT to be present"));
 		}
 	}
-
 	/**
 	 * Checks Optional fields for presence.
 	 */
@@ -411,7 +390,6 @@ public class MyEmployeeParentSubject extends Subject {
 			failWithActual(simpleFact("expected Weighting to be present"));
 		}
 	}
-
 	/**
 	 * Simple check for equality for all fields.
 	 */
@@ -420,7 +398,6 @@ public class MyEmployeeParentSubject extends Subject {
 			failWithActual(fact("expected Weighting NOT to be equal to", expected));
 		}
 	}
-
 	/**
 	 * Simple check for equality for all fields.
 	 */
@@ -429,7 +406,6 @@ public class MyEmployeeParentSubject extends Subject {
 			failWithActual(fact("expected Weighting to be equal to", expected));
 		}
 	}
-
 	/**
 	 * Returns the Subject for the given field type, so you can chain on other
 	 * assertions.
@@ -438,7 +414,6 @@ public class MyEmployeeParentSubject extends Subject {
 		isNotNull();
 		return check("getWeighting()").about(optionals()).that(actual.getWeighting());
 	}
-
 	/**
 	 * Simple check for equality for all fields.
 	 */
@@ -447,7 +422,6 @@ public class MyEmployeeParentSubject extends Subject {
 			failWithActual(fact("expected WorkNickName NOT to be equal to", expected));
 		}
 	}
-
 	/**
 	 * Simple check for equality for all fields.
 	 */
@@ -456,7 +430,6 @@ public class MyEmployeeParentSubject extends Subject {
 			failWithActual(fact("expected WorkNickName to be equal to", expected));
 		}
 	}
-
 	/**
 	 * Returns the Subject for the given field type, so you can chain on other
 	 * assertions.
@@ -465,7 +438,6 @@ public class MyEmployeeParentSubject extends Subject {
 		isNotNull();
 		return check("getWorkNickName()").about(strings()).that(actual.getWorkNickName());
 	}
-
 	/**
 	 * Simple is or is not expectation for boolean fields.
 	 */
@@ -474,7 +446,6 @@ public class MyEmployeeParentSubject extends Subject {
 			failWithActual(simpleFact("expected to be Employed"));
 		}
 	}
-
 	/**
 	 * Simple is or is not expectation for boolean fields.
 	 */
@@ -483,7 +454,6 @@ public class MyEmployeeParentSubject extends Subject {
 			failWithActual(simpleFact("expected NOT to be Employed"));
 		}
 	}
-
 	/**
 	 * Returns the Subject for the given field type, so you can chain on other
 	 * assertions.
@@ -492,7 +462,6 @@ public class MyEmployeeParentSubject extends Subject {
 		isNotNull();
 		return check("isEmployed()").that(actual.isEmployed());
 	}
-
 	/**
 	 * Simple is or is not expectation for boolean fields.
 	 */
@@ -501,7 +470,6 @@ public class MyEmployeeParentSubject extends Subject {
 			failWithActual(simpleFact("expected to be EmployedWrapped"));
 		}
 	}
-
 	/**
 	 * Simple is or is not expectation for boolean fields.
 	 */
@@ -510,7 +478,6 @@ public class MyEmployeeParentSubject extends Subject {
 			failWithActual(simpleFact("expected NOT to be EmployedWrapped"));
 		}
 	}
-
 	/**
 	 * Returns the Subject for the given field type, so you can chain on other
 	 * assertions.
@@ -519,7 +486,6 @@ public class MyEmployeeParentSubject extends Subject {
 		isNotNull();
 		return check("isEmployedWrapped()").that(actual.isEmployedWrapped());
 	}
-
 	/**
 	 * Returns the Subject for the given field type, so you can chain on other
 	 * assertions.
@@ -528,16 +494,6 @@ public class MyEmployeeParentSubject extends Subject {
 		isNotNull();
 		return check("toStateArray()").that(actual.toStateArray());
 	}
-
-	/**
-	 * Returns the Subject for the given field type, so you can chain on other
-	 * assertions.
-	 */
-	public MyStringSubject hasToString() {
-		isNotNull();
-		return check("toString()").about(strings()).that(actual.toString());
-	}
-
 	/**
 	 * Returns the Subject for the given field type, so you can chain on other
 	 * assertions.
@@ -546,7 +502,6 @@ public class MyEmployeeParentSubject extends Subject {
 		isNotNull();
 		return check("toProjectObjectArray()").that(actual.toProjectObjectArray());
 	}
-
 	/**
 	 * Returns the Subject for the given field type, so you can chain on other
 	 * assertions.

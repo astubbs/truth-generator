@@ -12,50 +12,53 @@
 
     <name>${project.name.root} Tests</name>
     <artifactId>generator-assertions-tests</artifactId>
-    <version>0.1-SNAPSHOT</version>
+    <description>Standalone test that exercise the installed plugin to generate code, and use it in tests.</description>
 
-    <!--    <build>-->
-    <!--        <plugins>-->
-    <!--            <plugin>-->
-    <!--                <artifactId>truth-generator-maven-plugin</artifactId>-->
-    <!--                <groupId>com.google.truth.extensions</groupId>-->
-    <!--                <configuration>-->
-    <!--                    <classes>-->
-    <!--                        <param>com.google.common.truth.extension.generator.testModel.MyEmployee</param>-->
-    <!--                    </classes>-->
-    <!--                    <entryPointClassPackage>com.google.truth.extensions.tests.projectUnderTest</entryPointClassPackage>-->
-    <!--                </configuration>-->
-    <!--            </plugin>-->
-    <!--        </plugins>-->
-    <!--    </build>-->
 
     <build>
         <plugins>
             <plugin>
-                <artifactId>maven-compiler-plugin</artifactId>
+                <!-- mvn  io.stubbs.truth:truth-generator-maven-plugin:generate -->
+                <groupId>io.stubbs.truth</groupId>
+                <artifactId>truth-generator-maven-plugin</artifactId>
+                <version>${project.version}</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                    </execution>
+                </executions>
                 <configuration>
-                    <source>1.8</source>
-                    <target>1.8</target>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <configuration>
-                    <source>13</source>
-                    <target>13</target>
+                    <classes>
+                        <!-- can this be pulled in from a test dependency? or shall we extract a common model module to share? -->
+                        <!--     classpathElements.addAll(project.getTestClasspathElements()); -->
+                        <param>io.stubbs.truth.generator.testModel.MyEmployee</param>
+                    </classes>
+                    <entryPointClassPackage>io.stubbs.truth.extensions.tests.projectUnderTest</entryPointClassPackage>
                 </configuration>
             </plugin>
         </plugins>
     </build>
 
+
     <dependencies>
-        <!--        <dependency>-->
-        <!--            <groupId>com.google.truth.extensions</groupId>-->
-        <!--            <artifactId>truth-generator-maven-plugin</artifactId>-->
-        <!--            <type>maven-plugin</type>-->
-        <!--            <version>${project.version}</version>-->
-        <!--        </dependency>-->
+        <!-- Internal -->
+        <dependency>
+            <groupId>io.stubbs.truth</groupId>
+            <artifactId>truth-generator</artifactId>
+            <type>jar</type>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>io.stubbs.truth</groupId>
+            <artifactId>truth-generator</artifactId>
+            <type>test-jar</type>
+            <scope>test</scope>
+        </dependency>
+
+
+        <!-- Truth -->
         <dependency>
             <groupId>com.google.truth</groupId>
             <artifactId>truth</artifactId>
@@ -66,35 +69,23 @@
             <artifactId>truth-java8-extension</artifactId>
             <scope>compile</scope>
         </dependency>
-        <dependency>
-            <groupId>io.stubbs</groupId>
-            <artifactId>truth-generator</artifactId>
-            <type>jar</type>
-            <version>${project.version}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>io.stubbs</groupId>
-            <artifactId>truth-generator</artifactId>
-            <version>${project.version}</version>
-            <type>test-jar</type>
-            <scope>test</scope>
-        </dependency>
+
+
+        <!-- External -->
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
-            <version>1.18.20</version>
         </dependency>
+
+        <!-- Testing -->
         <dependency>
             <groupId>uk.co.jemos.podam</groupId>
             <artifactId>podam</artifactId>
-            <version>7.2.7.RELEASE</version>
-            <scope>compile</scope>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.assertj</groupId>
             <artifactId>assertj-core</artifactId>
-            <version>3.18.0</version>
             <scope>test</scope>
         </dependency>
     </dependencies>

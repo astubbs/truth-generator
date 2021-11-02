@@ -13,17 +13,17 @@
     <build>
         <plugins>
             <plugin>
+                <groupId>io.stubbs.truth</groupId>
                 <artifactId>truth-generator-maven-plugin</artifactId>
-                <groupId>com.google.truth.extensions</groupId>
                 <configuration>
                     <!-- List the classes you want to generate assertions for -->
                     <classes>
                         <param>java.io.File</param>
                         <param>io.stubbs.truth.generator.testModel.MyEmployee</param>
                     </classes>
-                    <entryPointClassPackage>com.google.truth.extensions.tests.projectUnderTest</entryPointClassPackage>
+                    <entryPointClassPackage>io.stubbs.truth.tests.projectUnderTest</entryPointClassPackage>
                     <!-- Specify the MyMojo parameter -->
-                    <outputDirectory>target/test-harness/project-to-test</outputDirectory>
+<!--                    <outputDirectory>target/test-harness/project-to-test</outputDirectory>-->
                 </configuration>
 <!--                <executions>-->
 <!--                    <execution>-->

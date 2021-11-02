@@ -2,6 +2,7 @@ package io.stubbs.truth.generator.internal;
 
 import com.google.common.truth.Subject;
 import org.reflections.Reflections;
+import org.reflections.scanners.Scanners;
 import org.reflections.scanners.SubTypesScanner;
 import org.reflections.util.ConfigurationBuilder;
 import org.reflections.util.FilterBuilder;
@@ -12,6 +13,7 @@ import java.lang.reflect.Type;
 import java.lang.reflect.WildcardType;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Scanner;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -26,10 +28,10 @@ public class ClassUtils {
 
     ConfigurationBuilder build = new ConfigurationBuilder()
             .forPackages(modelPackages)
-            .filterInputsBy(new FilterBuilder().includePackage(modelPackages))
-            .setScanners(subTypesScanner)
-            .setExpandSuperTypes(true)
-            .addClassLoaders(this.loaders);
+            .filterInputsBy(new FilterBuilder().includePackage(modelPackages[0])) // TODO test different packages work?
+            .setScanners(Scanners.SubTypes)
+            .setExpandSuperTypes(true);
+//            .addClassLoaders(this.loaders);
 
     Reflections reflections = new Reflections(build);
 //    reflections.expandSuperTypes(); // get things that extend something that extend object

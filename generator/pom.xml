@@ -5,7 +5,7 @@
     <parent>
         <groupId>io.stubbs.truth</groupId>
         <artifactId>truth-generator-parent</artifactId>
-        <version>HEAD-SNAPSHOT</version>
+        <version>0.1-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 

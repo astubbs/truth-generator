@@ -1,16 +1,21 @@
 package io.stubbs.truth.generator;
 
-import com.google.common.truth.Truth;
-import io.stubbs.truth.extensions.tests.projectUnderTest.*;
 import io.stubbs.truth.generator.internal.TruthGeneratorTest;
 import io.stubbs.truth.generator.testModel.MyEmployee;
 
+import io.stubbs.truth.generator.testModel.MyEmployeeChildSubject;
+import io.stubbs.truth.generator.testModel.MyEmployeeSubject;
 import io.stubbs.truth.generator.testing.legacy.NonBeanLegacy;
+import io.stubbs.truth.generator.testing.legacy.NonBeanLegacyChildSubject;
+import io.stubbs.truth.generator.testing.legacy.NonBeanLegacySubject;
+import io.stubbs.truth.tests.ManagedTruth;
 import org.assertj.core.api.Assertions;
 import org.junit.Test;
 import uk.co.jemos.podam.api.PodamFactoryImpl;
 
 import java.io.File;
+
+import static com.google.common.truth.Truth.assertThat;
 
 
 /**
@@ -24,7 +29,7 @@ public class GeneratedAssertionTests {
 
   @Test
   public void filesExist() {
-    Assertions.assertThat(new File("target/generated-test-sources/truth-assertions-managed/io/stubbs/truth/extensions/tests/projectUnderTest/autoShaded/java/time/chrono/EraParentSubject.java")).exists();
+    Assertions.assertThat(new File("target/generated-test-sources/truth-assertions-managed/io/stubbs/truth/tests/autoShaded/java/time/chrono/EraParentSubject.java")).exists();
   }
 
   @Test
@@ -37,9 +42,9 @@ public class GeneratedAssertionTests {
             .build();
 
     MyEmployeeChildSubject.assertTruth(hi).hasBirthYear().isAtLeast(200);
-    Truth.assertThat(hi.getBirthYear()).isAtLeast(200);
+    assertThat(hi.getBirthYear()).isAtLeast(200);
 
-    Truth.assertThat(hi.getBoss().getName()).contains("Tony");
+    assertThat(hi.getBoss().getName()).contains("Tony");
     MyEmployeeChildSubject.assertTruth(hi).hasBoss().hasName().contains("Tony");
     MyEmployeeChildSubject.assertTruth(hi).hasCard().hasEpoch().isAtLeast(20);
     MyEmployeeChildSubject.assertTruth(hi).hasProjectList().hasSize(5);
@@ -82,6 +87,28 @@ public class GeneratedAssertionTests {
     MyEmployee emp = InstanceUtils.createInstance(MyEmployee.class).toBuilder().employmentState(MyEmployee.State.NEVER_EMPLOYED).build();
     MyEmployeeSubject es = ManagedTruth.assertThat(emp);
     es.hasEmploymentState().isEqualTo(MyEmployee.State.NEVER_EMPLOYED);
+  }
+
+  @Test
+  public void boolean_methods() {
+    MyEmployee emp = TestModelUtils.createInstance(MyEmployee.class)
+            // not sure how or why, but PODAM is always setting our FALSE test boolean to true, so... ->
+            .toBuilder().testBooleanIsFalse(false).build();
+    String santity = emp.getSantity();
+    boolean boss = emp.isBoss();
+    boolean testBoolean = emp.isTestBooleanIsFalse();
+
+    assertThat(testBoolean).isFalse();
+    MyEmployeeChildSubject.assertThat(emp).isNotTestBooleanIsFalse();
+
+    {
+      MyEmployee build = emp.toBuilder().employmentState(MyEmployee.State.EMPLOLYED).build();
+      MyEmployeeChildSubject.assertThat(build).isNotBoss();
+    }
+    {
+      MyEmployee build = emp.toBuilder().employmentState(MyEmployee.State.IS_A_BOSS).build();
+      MyEmployeeChildSubject.assertThat(build).isBoss();
+    }
   }
 
 }

@@ -36,17 +36,23 @@ public class GeneratorMojoTest {
     }
   };
 
-  File pomBaseDir = new File("target/test-classes/project-to-test/");
+  File projectToTestBaseDir = new File("target/test-classes/project-to-test/");
 
+  /**
+   * This is the entryPointClassPackage set in the pom file setting for the plugin
+   */
+  File entryPointPackage = new File ("io.stubbs.truth.tests.projectUnderTest");
 
-  // TODO rename
   @Test
-  public void testSomething() throws Exception {
-    assertNotNull(pomBaseDir);
-    assertTrue(pomBaseDir.exists());
+  public void overall() throws Exception {
+    assertNotNull(projectToTestBaseDir);
+    assertTrue(projectToTestBaseDir.exists());
+
+    Path generatorBaseDir = Paths.get(projectToTestBaseDir.toString(), "target/generated-test-sources/truth-assertions-managed/");
+
 
     // instantiation
-    GeneratorMojo generatorMojo = (GeneratorMojo) rule.lookupConfiguredMojo(pomBaseDir, "generate");
+    GeneratorMojo generatorMojo = (GeneratorMojo) rule.lookupConfiguredMojo(projectToTestBaseDir, "generate");
     assertNotNull(generatorMojo);
 
     List<Plugin> plugins = generatorMojo.getProject().getBuildPlugins();
@@ -64,9 +70,14 @@ public class GeneratorMojoTest {
     assertThat(results).containsKey(MyEmployee.class);
     assertThat(results).containsKey(File.class);
 
-    Path dir = Paths.get(pomBaseDir.toString(), "target/generated-test-sources/truth-assertions-managed/io/stubbs/truth/tests/projectUnderTest");
+    assertThat(Paths.get(generatorBaseDir.toString(), "io/stubbs/truth/generator/testModel/MyEmployeeParentSubject.java").toFile()).exists();
+    Path dir = Paths.get(generatorBaseDir.toString(), "io/stubbs/truth/generator/testModel/");
     assertThat(dir.resolve("MyEmployeeParentSubject.java").toFile()).exists();
-    assertThat(dir.resolve("ManagedTruth.java").toFile()).exists();
+
+    String entryPointDir = entryPointPackage.toString().replaceAll("\\.", String.valueOf(File.separatorChar));
+    Path baseEntryPoint = Paths.get(generatorBaseDir.toString(), entryPointDir);
+    Path resolve = baseEntryPoint.resolve("ManagedTruth.java");
+    assertThat(resolve.toFile()).exists();
   }
 
   /**
@@ -81,7 +92,7 @@ public class GeneratorMojoTest {
   @SneakyThrows
   @Test
   public void nullEntryPointClass(){
-    GeneratorMojo generatorMojo = (GeneratorMojo) rule.lookupConfiguredMojo(pomBaseDir, "generate");
+    GeneratorMojo generatorMojo = (GeneratorMojo) rule.lookupConfiguredMojo(projectToTestBaseDir, "generate");
     generatorMojo.entryPointClassPackage = null;
 
     assertThatThrownBy(() -> generatorMojo.execute())

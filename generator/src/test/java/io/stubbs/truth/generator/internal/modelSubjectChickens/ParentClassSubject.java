@@ -3,6 +3,7 @@ package io.stubbs.truth.generator.internal.modelSubjectChickens;
 import com.google.common.truth.FailureMetadata;
 import io.stubbs.truth.generator.UserManagedTruth;
 import io.stubbs.truth.generator.internal.model.ParentClass;
+import io.stubbs.truth.generator.testModel.MyEmployee;
 
 import javax.annotation.processing.Generated;
 
@@ -31,5 +32,11 @@ public class ParentClassSubject extends ParentClassParentSubject {
 	 */
 	public static Factory<ParentClassSubject, ParentClass> parentClasses() {
 		return ParentClassSubject::new;
+	}
+
+	public void withSamePackageAs(Class<MyEmployee> expected) {
+		String actualPackage = actual.getGenerated().getPackage();
+		String expected1 = expected.getPackage().getName();
+		check("getPackage()").that(actualPackage).isEqualTo(expected1);
 	}
 }

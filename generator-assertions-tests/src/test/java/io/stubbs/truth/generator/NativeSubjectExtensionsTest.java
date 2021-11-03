@@ -1,12 +1,11 @@
 package io.stubbs.truth.generator;
 
-// TODO use models already in other modules
-
 import com.google.common.truth.StringSubject;
 import com.google.common.truth.Subject;
-import io.stubbs.truth.extensions.tests.projectUnderTest.MyEmployeeSubject;
 import io.stubbs.truth.generator.internal.MyStringSubject;
 import io.stubbs.truth.generator.testModel.MyEmployee;
+import io.stubbs.truth.generator.testModel.MyEmployeeSubject;
+import io.stubbs.truth.tests.ManagedTruth;
 import org.junit.Test;
 
 import java.util.ArrayList;
@@ -27,7 +26,7 @@ public class NativeSubjectExtensionsTest {
   public void my_string() {
     String nameWithSpace = "tony  ";
     MyEmployee emp = InstanceUtils.createInstance(MyEmployee.class).toBuilder().workNickName(nameWithSpace).build();
-    MyEmployeeSubject es = io.stubbs.truth.extensions.tests.projectUnderTest.ManagedTruth.assertThat(emp);
+    MyEmployeeSubject es = ManagedTruth.assertThat(emp);
 
     // needs my strings
     es.hasWorkNickName().ignoringTrailingWhiteSpace().equalTo("tony");

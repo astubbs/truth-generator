@@ -197,6 +197,9 @@ public class SubjectMethodGenerator {
     if (methodIsStatic(method))
       return;
 
+    // takes priority over primitive or collection types
+    addChainStrategy(method, generated, returnType);
+
     if (Boolean.class.isAssignableFrom(returnType)) {
       addBooleanStrategy(method, generated, classUnderTest);
     } else {
@@ -215,8 +218,6 @@ public class SubjectMethodGenerator {
 
       addEqualityStrategy(method, generated, classUnderTest);
     }
-
-    addChainStrategy(method, generated, returnType);
 
     generated.addImport(Fact.class)
             .setStatic(true)
@@ -373,7 +374,7 @@ public class SubjectMethodGenerator {
   }
 
   private MethodSource<JavaClassSource> addBooleanGeneric(Method method, JavaClassSource generated, boolean positive) {
-    String testPrefix = positive ? "" : "!";
+    String testPrefix = positive ? "!" : "";
     String say = positive ? "" : "NOT ";
 
     String body = "" +
@@ -426,6 +427,11 @@ public class SubjectMethodGenerator {
     }
 
     ClassOrGenerated subjectClass = subjectForType.get();
+
+    // check if should skip as there are more specific versions that would clash
+    if (subjectClass.getSubjectSimpleName().equals(BooleanSubject.class.getSimpleName())) {
+      return null;
+    }
 
     String nameForChainMethod = createNameForChainMethod(method);
     MethodSource<JavaClassSource> has = generated.addMethod()

@@ -17,7 +17,6 @@ import java.util.logging.Level;
 import java.util.stream.Collectors;
 
 import static java.util.Arrays.stream;
-import static java.util.Set.of;
 import static java.util.stream.Collectors.toSet;
 
 /**
@@ -125,7 +124,7 @@ public class TruthGenerator implements TruthGeneratorAPI {
   @Override
   public void generateFromPackagesOf(Class<?>... classes) {
     Optional<Class<?>> first = stream(classes).findFirst();
-    if (first.isEmpty()) throw new IllegalArgumentException("Must provide at least one Class");
+    if (!first.isPresent()) throw new IllegalArgumentException("Must provide at least one Class");
     SourceClassSets ss = new SourceClassSets(first.get().getPackage().getName());
     ss.generateAllFoundInPackagesOf(classes);
     generate(ss);
@@ -159,7 +158,7 @@ public class TruthGenerator implements TruthGeneratorAPI {
 
     // skeletons generation is independent and should be able to be done in parallel
     Set<ThreeSystem> skeletons = packages.parallelStream().flatMap(
-            aPackage -> generateSkeletonsFromPackages(of(aPackage), overallEntryPoint).stream()
+            aPackage -> generateSkeletonsFromPackages(Set.of(aPackage), overallEntryPoint).stream()
     ).collect(toSet());
 
     // custom package destination

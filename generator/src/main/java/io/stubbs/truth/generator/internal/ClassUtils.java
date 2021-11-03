@@ -91,9 +91,9 @@ public class ClassUtils {
     return (elementType instanceof Class<?>) ? ((Class<?>) elementType).getSimpleName() : elementType.getTypeName();
   }
 
-  static Type getStrippedReturnTypeFirstGenericParam(Method method) {
+  static Class getStrippedReturnTypeFirstGenericParam(Method method) {
     Type genericReturnType = method.getGenericReturnType();
-    return getStrippedReturnTypeFirstGenericParam(genericReturnType);
+    return (Class)getStrippedReturnTypeFirstGenericParam(genericReturnType);
   }
 
   private static Type getStrippedReturnTypeFirstGenericParam(Type genericReturnType) {

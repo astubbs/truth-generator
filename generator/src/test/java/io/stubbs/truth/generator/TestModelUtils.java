@@ -7,10 +7,12 @@ import uk.co.jemos.podam.api.PodamFactoryImpl;
 
 import java.time.ZonedDateTime;
 
+import static io.stubbs.truth.generator.testModel.IdCard.SecurityType.Type.FOB;
+
 public class TestModelUtils {
+  static private final PodamFactory factory = new PodamFactoryImpl();
 
   static MyEmployee createEmployee() {
-    PodamFactory factory = new PodamFactoryImpl();
     MyEmployee.MyEmployeeBuilder<?, ?> employee = factory.manufacturePojo(MyEmployee.class).toBuilder();
     employee.anniversary(ZonedDateTime.now().withYear(1983));
     MyEmployee boss = factory.manufacturePojo(MyEmployee.class).toBuilder().name("Lilan").build();
@@ -21,7 +23,12 @@ public class TestModelUtils {
   }
 
   private static IdCard createCard() {
-    return new IdCard("special-card-x", 4);
+      IdCard idCard = factory.manufacturePojoWithFullData(IdCard.class);
+      return idCard.toBuilder()
+              .name("special-card-x")
+              .epoch(4)
+              .primarySecurityType(new IdCard.SecurityType(FOB))
+              .build();
   }
 
 }

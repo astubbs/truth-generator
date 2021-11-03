@@ -12,7 +12,7 @@ import static io.stubbs.truth.generator.testModel.IdCard.SecurityType.Type.FOB;
 public class TestModelUtils {
   static private final PodamFactory factory = new PodamFactoryImpl();
 
-  static MyEmployee createEmployee() {
+  public static MyEmployee createEmployee() {
     MyEmployee.MyEmployeeBuilder<?, ?> employee = factory.manufacturePojo(MyEmployee.class).toBuilder();
     employee.anniversary(ZonedDateTime.now().withYear(1983));
     MyEmployee boss = factory.manufacturePojo(MyEmployee.class).toBuilder().name("Lilan").build();
@@ -22,13 +22,17 @@ public class TestModelUtils {
     return employee.build();
   }
 
-  private static IdCard createCard() {
+  public static IdCard createCard() {
       IdCard idCard = factory.manufacturePojoWithFullData(IdCard.class);
       return idCard.toBuilder()
               .name("special-card-x")
               .epoch(4)
               .primarySecurityType(new IdCard.SecurityType(FOB))
               .build();
+  }
+
+  public static <T> T createInstance(Class<T> type) {
+    return factory.manufacturePojoWithFullData(type);
   }
 
 }

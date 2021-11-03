@@ -78,7 +78,7 @@ public class SkeletonGenerator implements SkeletonGeneratorAPI {
     if (SourceChecking.checkSource(source, targetPackageName))
       return empty();
 
-    // todo make sure this doesn';'t override explicit shading settings
+    // todo make sure this doesn't override explicit shading settings
     if (SourceChecking.needsShading(source)) {
       targetPackageName = of(this.overallEntryPoint.getPackageName() + ".autoShaded." + source.getPackage().getName());
     }

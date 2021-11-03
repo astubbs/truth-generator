@@ -10,6 +10,7 @@ import java.time.ZonedDateTime;
 import java.util.*;
 
 import static io.stubbs.truth.generator.testModel.MyEmployee.State.EMPLOLYED;
+import static io.stubbs.truth.generator.testModel.MyEmployee.State.IS_A_BOSS;
 
 @SuperBuilder(toBuilder = true)
 @Getter
@@ -20,7 +21,22 @@ public class MyEmployee extends Person {
 
   private ZonedDateTime anniversary = ZonedDateTime.now();
 
+  @Getter
   private MyEmployee boss = null;
+
+  /**
+   * Create collision with {@link #getBoss} derived Subject methods.
+   */
+  public boolean isBoss() {
+    return getEmploymentState() == IS_A_BOSS;
+  }
+
+  // todo delete
+  @Getter
+  String santity = "no";
+
+  @Setter(AccessLevel.PRIVATE)
+  boolean testBooleanIsFalse = false;
 
   private String workNickName;
 
@@ -41,7 +57,7 @@ public class MyEmployee extends Person {
   }
 
   public enum State {
-    EMPLOLYED, PREVIOUSLY_EMPLOYED, NEVER_EMPLOYED;
+    EMPLOLYED, PREVIOUSLY_EMPLOYED, NEVER_EMPLOYED, IS_A_BOSS;
   }
 
   public Person toPlainPerson() {

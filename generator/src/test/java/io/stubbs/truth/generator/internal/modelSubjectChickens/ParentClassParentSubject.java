@@ -36,4 +36,5 @@ public class ParentClassParentSubject extends Subject {
     isNotNull();
     return check("getGenerated").about(javaClassSources()).that(actual.getGenerated());
   }
+
 }

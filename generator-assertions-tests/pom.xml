@@ -41,27 +41,27 @@
                     <entryPointClassPackage>io.stubbs.truth.extensions.tests.projectUnderTest</entryPointClassPackage>
                 </configuration>
             </plugin>
-<!--            <plugin>-->
-<!--                &lt;!&ndash; TODO remove? Shouldn't be needed - can truth plugin perform this? &ndash;&gt;-->
-<!--                <groupId>org.codehaus.mojo</groupId>-->
-<!--                <artifactId>build-helper-maven-plugin</artifactId>-->
-<!--                <version>3.2.0</version>-->
-<!--                <executions>-->
-<!--                    <execution>-->
-<!--                        <id>add-test-source</id>-->
-<!--                        <phase>generate-test-sources</phase>-->
-<!--                        <goals>-->
-<!--                            <goal>add-test-source</goal>-->
-<!--                        </goals>-->
-<!--                        <configuration>-->
-<!--                            <sources>-->
-<!--                                <source>target/generated-test-sources/truth-assertions-managed</source>-->
-<!--                                <source>target/generated-test-sources/truth-assertions-templates</source>-->
-<!--                            </sources>-->
-<!--                        </configuration>-->
-<!--                    </execution>-->
-<!--                </executions>-->
-<!--            </plugin>-->
+            <plugin>
+                <!-- TODO remove? Shouldn't be needed - can truth plugin perform this? -->
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>build-helper-maven-plugin</artifactId>
+                <version>3.2.0</version>
+                <executions>
+                    <execution>
+                        <id>add-test-source</id>
+                        <phase>generate-test-sources</phase>
+                        <goals>
+                            <goal>add-test-source</goal>
+                        </goals>
+                        <configuration>
+                            <sources>
+                                <source>target/generated-test-sources/truth-assertions-managed</source>
+                                <source>target/generated-test-sources/truth-assertions-templates</source>
+                            </sources>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
     </build>
 

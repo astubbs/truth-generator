@@ -14,7 +14,6 @@ import org.reflections.Reflections;
 
 import java.lang.reflect.Member;
 import java.lang.reflect.Method;
-import java.lang.reflect.Type;
 import java.math.BigDecimal;
 import java.util.*;
 import java.util.function.Predicate;
@@ -235,7 +234,8 @@ public class SubjectMethodGenerator {
   }
 
   private void equalityStrategyGeneric(Method method, JavaClassSource generated, boolean positive) {
-    boolean primitive = method.getReturnType().isPrimitive();
+    Class<?> returnType = method.getReturnType();
+    boolean primitive = returnType.isPrimitive();
     String equality = primitive ? " == expected" : ".equals(expected)";
 
     String body = "" +
@@ -254,7 +254,7 @@ public class SubjectMethodGenerator {
             .setReturnTypeVoid()
             .setBody(body)
             .setPublic();
-    newMethod.addParameter(method.getReturnType(), "expected");
+    newMethod.addParameter(returnType, "expected");
 
     newMethod.getJavaDoc().setText("Simple check for equality for all fields.");
 
@@ -287,8 +287,9 @@ public class SubjectMethodGenerator {
             .setPublic();
 
     // parameter
-    Type keyType = ClassUtils.getStrippedReturnTypeFirstGenericParam(method);
-    newMethod.addParameter(keyType.getTypeName(), "expected");
+    Class keyType = ClassUtils.getStrippedReturnTypeFirstGenericParam(method);
+    String typeName = keyType.getCanonicalName();
+    newMethod.addParameter(typeName, "expected");
 
     //
     newMethod.getJavaDoc().setText(String.format("Check Maps for containing a given {@link %s} key.", ClassUtils.maybeGetSimpleName(keyType)));
@@ -354,9 +355,10 @@ public class SubjectMethodGenerator {
             .setBody(body)
             .setPublic();
 
-
-    Type elementType = ClassUtils.getStrippedReturnTypeFirstGenericParam(method);
-    newMethod.addParameter(elementType.getTypeName(), "expected");
+    // parameter
+    Class elementType = ClassUtils.getStrippedReturnTypeFirstGenericParam(method);
+    String canonicalName = elementType.getCanonicalName();
+    newMethod.addParameter(canonicalName, "expected");
 
     newMethod.getJavaDoc().setText(String.format("Checks if a {@link %s} element is, or is not contained in the collection.", ClassUtils.maybeGetSimpleName(elementType)));
 
@@ -514,6 +516,7 @@ public class SubjectMethodGenerator {
     boolean isCoveredByNonPrimitiveStandardSubjects = !assignable.isEmpty();
 
     // todo is it an array of objects?
+    // TODO delete dead code
     boolean array = returnType.isArray();
     Class<?>[] classes = returnType.getClasses();
     String typeName = returnType.getTypeName();

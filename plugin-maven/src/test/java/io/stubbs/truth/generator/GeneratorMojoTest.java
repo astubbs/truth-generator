@@ -11,6 +11,8 @@ import org.junit.Rule;
 import org.junit.Test;
 
 import java.io.File;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -62,10 +64,9 @@ public class GeneratorMojoTest {
     assertThat(results).containsKey(MyEmployee.class);
     assertThat(results).containsKey(File.class);
 
-    String dir = "target/generated-test-sources/truth-assertions-managed/io/stubbs/truth/tests/projectUnderTest";
-    assertThat(new File(dir, "MyEmployeeParentSubject.java")).exists();
-    assertThat(new File(dir, "ManagedTruth.java")).exists();
-
+    Path dir = Paths.get(pomBaseDir.toString(), "target/generated-test-sources/truth-assertions-managed/io/stubbs/truth/tests/projectUnderTest");
+    assertThat(dir.resolve("MyEmployeeParentSubject.java").toFile()).exists();
+    assertThat(dir.resolve("ManagedTruth.java").toFile()).exists();
   }
 
   /**

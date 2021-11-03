@@ -20,6 +20,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
  * <p>
  * If the mechanism isn't working, this class my appear not to compile in the marked sections "needs my" below.
  */
+// TODO rename away from "native" subject - it's not very clear what that means
 public class NativeSubjectExtensionsTest {
 
   @Test

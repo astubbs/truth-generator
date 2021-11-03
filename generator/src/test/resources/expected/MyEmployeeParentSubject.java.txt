@@ -10,15 +10,15 @@ import com.google.common.truth.IntegerSubject;
 import io.stubbs.truth.generator.internal.autoShaded.java.time.ZonedDateTimeSubject;
 import static io.stubbs.truth.generator.testModel.MyEmployeeSubject.myEmployees;
 import io.stubbs.truth.generator.testModel.MyEmployeeSubject;
-import static io.stubbs.truth.generator.testModel.IdCardSubject.idCards;
-import io.stubbs.truth.generator.testModel.IdCardSubject;
+import static io.stubbs.truth.generator.internal.IdCardSubject.idCards;
+import io.stubbs.truth.generator.internal.IdCardSubject;
 import io.stubbs.truth.generator.testModel.MyEmployee.State;
 import static io.stubbs.truth.generator.testModel.StateSubject.states;
 import io.stubbs.truth.generator.testModel.StateSubject;
 import java.util.UUID;
 import static io.stubbs.truth.generator.internal.autoShaded.java.util.UUIDSubject.uUIDs;
 import io.stubbs.truth.generator.internal.autoShaded.java.util.UUIDSubject;
-import com.google.common.truth.ObjectArraySubject;
+import com.google.common.truth.PrimitiveIntArraySubject;
 import static io.stubbs.truth.generator.internal.MyStringSubject.strings;
 import static io.stubbs.truth.generator.internal.MyStringSubject.strings;
 import java.util.List;
@@ -32,6 +32,7 @@ import static io.stubbs.truth.generator.internal.autoShaded.java.util.OptionalSu
 import io.stubbs.truth.generator.internal.autoShaded.java.util.OptionalSubject;
 import io.stubbs.truth.generator.internal.MyStringSubject;
 import com.google.common.truth.BooleanSubject;
+import com.google.common.truth.ObjectArraySubject;
 import static io.stubbs.truth.generator.testModel.PersonSubject.persons;
 import io.stubbs.truth.generator.testModel.PersonSubject;
 /**
@@ -240,7 +241,7 @@ public class MyEmployeeParentSubject extends Subject {
 	 * Returns the Subject for the given field type, so you can chain on other
 	 * assertions.
 	 */
-	public ObjectArraySubject hasIntArray() {
+	public PrimitiveIntArraySubject hasIntArray() {
 		isNotNull();
 		return check("getIntArray()").that(actual.getIntArray());
 	}

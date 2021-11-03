@@ -4,16 +4,18 @@ import com.google.common.truth.Subject;
 import io.stubbs.truth.generator.internal.TruthGenerator;
 import io.stubbs.truth.generator.internal.model.ThreeSystem;
 
+import java.nio.file.Path;
 import java.util.Map;
 import java.util.Set;
 
 /**
- *
+ * TODO docs
  */
+// TODO clean up
 public interface TruthGeneratorAPI {
 
-  static TruthGenerator create() {
-    return new TruthGenerator();
+  static TruthGenerator create(Path testOutputDirectory) {
+    return new TruthGenerator(testOutputDirectory);
   }
 
   /**

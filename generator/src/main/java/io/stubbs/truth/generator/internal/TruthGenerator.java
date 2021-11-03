@@ -1,7 +1,5 @@
 package io.stubbs.truth.generator.internal;
 
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Lists;
 import com.google.common.flogger.FluentLogger;
 import com.google.common.truth.Subject;
 import io.stubbs.truth.generator.BaseSubjectExtension;
@@ -13,7 +11,7 @@ import lombok.Getter;
 import lombok.Setter;
 import org.apache.commons.lang3.Validate;
 
-import java.lang.annotation.Annotation;
+import java.nio.file.Path;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.stream.Collectors;
@@ -28,6 +26,7 @@ import static java.util.stream.Collectors.toSet;
 public class TruthGenerator implements TruthGeneratorAPI {
 
   private static final FluentLogger log = FluentLogger.forEnclosingClass();
+  private final Path testOutputDir;
 
   /**
    * Marks whether to try to find all referenced types from the source types, to generate Subjects for all of them, and
@@ -49,7 +48,9 @@ public class TruthGenerator implements TruthGeneratorAPI {
    */
   private final Map<Class<?>, Class<? extends Subject>> subjectExtensions = new HashMap<>();
 
-  public TruthGenerator(){
+  public TruthGenerator(Path testOutputDirectory){
+    this.testOutputDir = testOutputDirectory;
+    Utils.setOutputBase(this.testOutputDir);
     autoRegisterStandardSubjectExtension();
   }
 

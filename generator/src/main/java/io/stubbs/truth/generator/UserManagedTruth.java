@@ -4,6 +4,8 @@ import com.google.common.truth.Subject;
 import io.stubbs.truth.generator.internal.SkeletonGeneratorAPI;
 
 import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
@@ -14,6 +16,7 @@ import java.lang.annotation.Target;
  * Useful for detecting with it already exists, instead of relaying on class name matching. And good for discovering the
  * class under test.
  */
+@Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.TYPE})
 public @interface UserManagedTruth {
   /**

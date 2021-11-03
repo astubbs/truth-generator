@@ -14,22 +14,21 @@ import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
-import org.jboss.forge.roaster._shade.org.eclipse.core.runtime.Path;
 
 import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
 import static java.lang.String.format;
-import static java.util.Optional.of;
 import static java.util.Optional.ofNullable;
+import static java.util.stream.Collectors.toList;
 import static org.apache.maven.plugins.annotations.ResolutionScope.TEST;
 
 
@@ -145,22 +144,25 @@ public class GeneratorMojo extends AbstractMojo {
     addOutputPathsToBuild();
 
     getLog().info("Generated " + result.keySet().size() + " Subject models.");
-    for (Class<?> aClass : result.keySet()) {
-      getLog().info(aClass.toString());
+    List<String> classes = result.keySet().stream().map(Class::getCanonicalName).sorted().collect(toList());
+    for (String aClass : classes) {
+      getLog().info(aClass);
     }
   }
 
   private void addOutputPathsToBuild() {
     String outputDirectory = getProject().getBuild().getOutputDirectory();
-    String managedPath = outputDirectory + Path.SEPARATOR + Utils.DIR_TRUTH_ASSERTIONS_MANAGED;
-    String templatesPath = outputDirectory + Path.SEPARATOR + Utils.DIR_TRUTH_ASSERTIONS_TEMPLATES;
-    getProject().addTestCompileSourceRoot(managedPath);
-    getProject().addTestCompileSourceRoot(templatesPath);
+    Path managedPath = Paths.get(outputDirectory, Utils.DIR_TRUTH_ASSERTIONS_MANAGED);
+    Path templatesPath = Paths.get(outputDirectory, Utils.DIR_TRUTH_ASSERTIONS_TEMPLATES);
+    getProject().addTestCompileSourceRoot(managedPath.toAbsolutePath().toString());
+    getProject().addTestCompileSourceRoot(templatesPath.toAbsolutePath().toString());
   }
 
   @SneakyThrows
   private Map<Class<?>, ThreeSystem> runGenerator() {
-    TruthGenerator tg = TruthGeneratorAPI.create();
+    String outputDir = getProject().getBuild().getDirectory();
+    TruthGenerator tg = TruthGeneratorAPI.create(Path.of(outputDir));
+
     Optional<String> entryPointClassPackage = ofNullable(this.entryPointClassPackage);
     tg.setEntryPoint(entryPointClassPackage);
 

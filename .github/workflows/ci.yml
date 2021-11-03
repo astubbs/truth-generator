@@ -14,7 +14,7 @@ jobs:
     name: "JDK ${{ matrix.java }}"
     strategy:
       matrix:
-        java: [ 11, 17 ]
+        java: [ 8, 11, 17 ]
     runs-on: ubuntu-latest
     steps:
       # Cancel any previous runs for the same branch that are still running.
@@ -46,7 +46,7 @@ jobs:
   publish_snapshot:
     name: 'Publish snapshot'
     needs: test
-    if: github.event_name == 'push' && github.repository == 'google/truth'
+    if: github.event_name == 'push' && github.repository == 'astubbs/truth-generator'
     runs-on: ubuntu-latest
     steps:
       - name: 'Check out repository'

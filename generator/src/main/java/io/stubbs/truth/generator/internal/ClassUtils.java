@@ -4,6 +4,7 @@ import com.google.common.truth.Subject;
 import io.stubbs.truth.generator.BaseSubjectExtension;
 import org.reflections.Reflections;
 import org.reflections.scanners.Scanners;
+import org.reflections.util.ClasspathHelper;
 import org.reflections.util.ConfigurationBuilder;
 import org.reflections.util.FilterBuilder;
 
@@ -12,6 +13,7 @@ import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.lang.reflect.WildcardType;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -33,6 +35,7 @@ public class ClassUtils {
     return reflections.getTypesAnnotatedWith(BaseSubjectExtension.class);
   }
 
+  // TODO cleanup
   public Set<Class<?>> collectSourceClasses(String... modelPackages) {
     // TODO share Reflections instance?
     // for all classes in package
@@ -49,12 +52,39 @@ public class ClassUtils {
     // https://github.com/ronmamo/reflections/issues/126
     Set<Class<? extends Enum>> subTypesOfEnums = reflections.getSubTypesOf(Enum.class);
 
+    Set<String> allTypes1 = reflections.getAllTypes();
+    Set<Class<?>> collect = allTypes1.stream().filter(x -> {
+      int i = x.lastIndexOf('.');
+      String packagee = x.substring(0, i);
+      String modelPackage = modelPackages[0];
+      return packagee.equals(modelPackage);
+    }).map(x-> {
+      try {
+        return Class.forName(x);
+      } catch (ClassNotFoundException e) {
+        e.printStackTrace();
+        return null;
+      }
+    }).collect(Collectors.toSet());
+
+    List<ClassLoader> classLoadersList = new LinkedList<ClassLoader>();
+    classLoadersList.add(ClasspathHelper.contextClassLoader());
+    classLoadersList.add(ClasspathHelper.staticClassLoader());
+    Reflections reflection2s = new Reflections(new ConfigurationBuilder()
+        .setScanners(Scanners.SubTypes)
+        .setExpandSuperTypes(true)
+        .forPackages(modelPackages)
+        .setUrls(ClasspathHelper.forClassLoader(classLoadersList.toArray(new ClassLoader[0])))
+        .filterInputsBy(new FilterBuilder().includePackage(modelPackages[0])));
+    Set<Class<?>> subTypesOf = reflection2s.getSubTypesOf(Object.class);
+
     Set<Class<?>> allTypes = reflections.getSubTypesOf(Object.class)
         // remove Subject classes from previous runs
         .stream().filter(x -> !Subject.class.isAssignableFrom(x))
         .collect(Collectors.toSet());
     allTypes.addAll(subTypesOfEnums);
-    return allTypes;
+
+    return collect;
   }
 
   public static String maybeGetSimpleName(Type elementType) {

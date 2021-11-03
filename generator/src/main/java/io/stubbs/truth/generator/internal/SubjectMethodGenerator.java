@@ -536,10 +536,11 @@ public class SubjectMethodGenerator {
     // arrays
     if (type.isArray()) {
       Class<?> componentType = type.getComponentType();
-      componentType = primitiveToWrapper(componentType);
       if (componentType.isPrimitive()) {
         // PrimitiveBooleanArraySubject
-        String subjectPrefix = "Primitive" + componentType.getSimpleName() + "Array";
+        String simpleName = componentType.getSimpleName();
+        simpleName = capitalize(simpleName);
+        String subjectPrefix = "Primitive" + simpleName + "Array";
         Class<?> compiledSubjectForTypeName = getCompiledSubjectForTypeName(subjectPrefix);
         return ClassOrGenerated.ofClass(compiledSubjectForTypeName);
       } else {

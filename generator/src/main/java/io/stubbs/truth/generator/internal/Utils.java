@@ -7,6 +7,7 @@ import org.jboss.forge.roaster.model.source.JavaClassSource;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
 import java.util.Optional;
@@ -18,6 +19,7 @@ public class Utils {
 
   public static final String DIR_TRUTH_ASSERTIONS_MANAGED = "truth-assertions-managed";
   public static final String DIR_TRUTH_ASSERTIONS_TEMPLATES = "truth-assertions-templates";
+  private static java.nio.file.Path testOutputDir;
 
   public static String writeToDisk(JavaClassSource javaClass) {
     return writeToDisk(javaClass, Optional.empty());
@@ -25,8 +27,8 @@ public class Utils {
 
   public static String writeToDisk(JavaClassSource javaClass, Optional<String> targetPackageName) {
     String classSource = javaClass.toString();
-    String fileName = getFileName(javaClass, targetPackageName);
-    try (PrintWriter out = new PrintWriter(fileName)) {
+    Path fileName = getFileName(javaClass, targetPackageName);
+    try (PrintWriter out = new PrintWriter(fileName.toFile())) {
       out.println(classSource);
     } catch (FileNotFoundException e) {
       throw new IllegalStateException(format("Cannot write to file %s", fileName));
@@ -34,17 +36,17 @@ public class Utils {
     return classSource;
   }
 
-  private static String getFileName(JavaClassSource javaClass, Optional<String> targetPackageName) {
-    String directoryName = getDirectoryName(javaClass, targetPackageName);
-    File dir = new File(directoryName);
+  private static Path getFileName(JavaClassSource javaClass, Optional<String> targetPackageName) {
+    Path directoryName = getDirectoryName(javaClass, targetPackageName);
+    File dir = new File(directoryName.toUri());
     if (!dir.exists()) {
       boolean mkdir = dir.mkdirs();
     }
-    return directoryName + javaClass.getName() + ".java";
+    return directoryName.resolve(javaClass.getName() + ".java");
   }
 
-  private static String getDirectoryName(JavaClassSource javaClass, Optional<String> targetPackageName) {
-    String parent = Paths.get("").toAbsolutePath().toString();
+  private static Path getDirectoryName(JavaClassSource javaClass, Optional<String> targetPackageName) {
+    String parent = Utils.testOutputDir.toString();
     String packageName = targetPackageName.isEmpty() ? javaClass.getPackage() : targetPackageName.get();
 
     // don't use, as won't be able to access package level access methods if we live in a different package
@@ -57,9 +59,9 @@ public class Utils {
 
     String baseDirSuffix = (isChildOrParent) ? DIR_TRUTH_ASSERTIONS_MANAGED : DIR_TRUTH_ASSERTIONS_TEMPLATES;
 
-    String packageNameDir = packageName.replace(".", "/");
+    String packageNameDir = packageName.replace('.', File.separatorChar);
 
-    return format("%s/target/generated-test-sources/%s/%s/", parent, baseDirSuffix, packageNameDir);
+    return Paths.get(parent, "generated-test-sources", baseDirSuffix, packageNameDir);
   }
 
   public static <T> String getFactoryName(Class<T> source) {
@@ -89,5 +91,9 @@ public class Utils {
     if (classes.isEmpty()) {
       throw new IllegalArgumentException("No classes to generate from");
     }
+  }
+
+  public static void setOutputBase(java.nio.file.Path testOutputDir) {
+    Utils.testOutputDir = testOutputDir;
   }
 }

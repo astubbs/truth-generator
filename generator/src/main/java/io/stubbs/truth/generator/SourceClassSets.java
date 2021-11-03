@@ -202,13 +202,17 @@ public class SourceClassSets {
   }
 
   public void generateFromNonBean(ClassLoader loader, String[] legacyClasses) {
-    Class[] as = stream(legacyClasses).map(x -> {
+    if (legacyClasses == null)
+      return;
+
+    List<? extends Class<?>> collect = stream(legacyClasses).map(x -> {
       try {
         return loader.loadClass(x);
       } catch (ClassNotFoundException e) {
         throw new GeneratorException("Cannot find class asked to generate from: " + x, e);
       }
-    }).collect(Collectors.toList()).toArray(new Class[0]);
+    }).collect(Collectors.toList());
+    Class[] as = collect.toArray(new Class[0]);
     generateFromNonBean(as);
   }
 

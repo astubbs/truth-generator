@@ -22,6 +22,8 @@ import org.junit.runners.JUnit4;
 
 import java.io.IOException;
 import java.nio.charset.Charset;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.time.DayOfWeek;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
@@ -40,6 +42,8 @@ import static java.util.stream.Collectors.toList;
 @RunWith(JUnit4.class)
 public class TruthGeneratorTest {
 
+  private Path testOutputDirectory = Paths.get("").toAbsolutePath();
+
   private String loadFileToString(String expectedFileName) throws IOException {
     return Resources.toString(Resources.getResource(expectedFileName), Charset.defaultCharset());
   }
@@ -50,7 +54,7 @@ public class TruthGeneratorTest {
   @Test
   public void generate_code() throws IOException {
     // todo need to be able to set base package for all generated classes, kind of like shade, so you cah generate test for classes in other restricted modules
-    TruthGenerator truthGenerator = TruthGeneratorAPI.create();
+    TruthGenerator truthGenerator = TruthGeneratorAPI.create(Paths.get("").toAbsolutePath());
 
     //
     truthGenerator.registerStandardSubjectExtension(String.class, MyStringSubject.class);
@@ -78,20 +82,27 @@ public class TruthGeneratorTest {
 
     assertThat(generated.size()).isAtLeast(classes.size());
     Set<? extends Class<?>> generatedSourceClasses = generated.values().stream().map(x -> x.classUnderTest).collect(Collectors.toSet());
-    assertThat(generatedSourceClasses).containsAtLeast(UUID.class, ZonedDateTime.class, MyEmployee.State.class);
+    assertThat(generatedSourceClasses).containsAtLeast(UUID.class, ZonedDateTime.class, MyEmployee.class, MyEmployee.State.class);
 
     //
     ThreeSystem threeSystemGenerated = generated.get(MyEmployee.class);
+    assertThat(threeSystemGenerated).isNotNull();
 
+    String expected = loadFileToString("expected/MyEmployeeParentSubject.java.txt");
     assertThat(threeSystemGenerated)
-            .hasParent().hasGenerated().hasSourceText()
-            .ignoringTrailingWhiteSpace().equalTo(loadFileToString("expected/MyEmployeeParentSubject.java.txt")); // sanity full chain
+            .hasParent()
+            .hasGenerated()
+            .hasSourceText()
+            .ignoringTrailingWhiteSpace()
+            .equalTo(expected); // sanity full chain
 
-    assertThat(threeSystemGenerated).hasParentSource(loadFileToString("expected/MyEmployeeParentSubject.java.txt"));
+    assertThat(threeSystemGenerated).hasParentSource(expected);
 
-    assertThat(threeSystemGenerated).hasMiddleSource(loadFileToString("expected/MyEmployeeSubject.java.txt"));
+    String expected1 = loadFileToString("expected/MyEmployeeSubject.java.txt");
+    assertThat(threeSystemGenerated).hasMiddleSource(expected1);
 
-    assertThat(threeSystemGenerated).hasChildSource(loadFileToString("expected/MyEmployeeChildSubject.java.txt"));
+    String expected2 = loadFileToString("expected/MyEmployeeChildSubject.java.txt");
+    assertThat(threeSystemGenerated).hasChildSource(expected2);
 
   }
 
@@ -100,7 +111,7 @@ public class TruthGeneratorTest {
    */
   @Test
   public void boostrapProjectSubjects() {
-    TruthGenerator tg = TruthGeneratorAPI.create();
+    TruthGenerator tg = TruthGeneratorAPI.create(testOutputDirectory);
     SourceClassSets ss = new SourceClassSets(getClass().getPackage().getName());
     ss.generateFromShaded(JavaClassSource.class, Method.class);
     ss.generateAllFoundInPackagesOf(getClass());
@@ -109,7 +120,7 @@ public class TruthGeneratorTest {
 
   @Test
   public void package_java_mix() {
-    TruthGeneratorAPI tg = TruthGeneratorAPI.create();
+    TruthGeneratorAPI tg = TruthGeneratorAPI.create(testOutputDirectory);
 
     String targetPackageName = this.getClass().getPackage().getName();
     SourceClassSets ss = new SourceClassSets(targetPackageName);
@@ -128,7 +139,7 @@ public class TruthGeneratorTest {
 
   @Test
   public void test_legacy_mode() {
-    TruthGeneratorAPI tg = TruthGeneratorAPI.create();
+    TruthGeneratorAPI tg = TruthGeneratorAPI.create(testOutputDirectory);
     SourceClassSets ss = new SourceClassSets(this.getClass().getPackage().getName() + ".legacy");
     ss.generateFromNonBean(NonBeanLegacy.class);
     Map<Class<?>, ThreeSystem> generated = tg.generate(ss);
@@ -146,7 +157,7 @@ public class TruthGeneratorTest {
    */
   @Test
   public void recursive_generation() {
-    TruthGenerator tg = TruthGeneratorAPI.create();
+    TruthGenerator tg = TruthGeneratorAPI.create(testOutputDirectory);
     Map<Class<?>, ThreeSystem> generate = tg.generate(MyEmployee.class);
 
     //
@@ -176,7 +187,7 @@ public class TruthGeneratorTest {
   public void auto_shade() {
     String basePackage = getClass().getPackage().getName();
 
-    TruthGenerator tg = TruthGeneratorAPI.create();
+    TruthGenerator tg = TruthGeneratorAPI.create(testOutputDirectory);
     tg.setEntryPoint(of(basePackage));
 
     Class<UUID> clazz = UUID.class;
@@ -196,7 +207,7 @@ public class TruthGeneratorTest {
    */
   @Test
   public void toers() {
-    TruthGenerator tg = TruthGeneratorAPI.create();
+    TruthGenerator tg = TruthGeneratorAPI.create(testOutputDirectory);
     Map<Class<?>, ThreeSystem> generate = tg.generate(MyEmployee.class);
     ThreeSystem threeSystem = generate.get(MyEmployee.class);
     assertThat(threeSystem).hasParent().hasGenerated().hasMethods().comparingElementsUsing(methodHasName)
@@ -211,7 +222,7 @@ public class TruthGeneratorTest {
   @Test
   public void toArrays() {
     // would like to use generated truth subjects here, but don't want to have to copy in too many things, until the plugin is boot-strapable
-    TruthGenerator tg = TruthGeneratorAPI.create();
+    TruthGenerator tg = TruthGeneratorAPI.create(testOutputDirectory);
     Map<Class<?>, ThreeSystem> generate = tg.generate(MyEmployee.class);
     ThreeSystem threeSystem = generate.get(MyEmployee.class);
     ThreeSystemChildSubject.assertThat(threeSystem).hasParent().hasGenerated().hasMethods().comparingElementsUsing(methodHasName)
@@ -226,7 +237,7 @@ public class TruthGeneratorTest {
    */
   @Test
   public void get_generics() {
-    TruthGenerator tg = TruthGeneratorAPI.create();
+    TruthGenerator tg = TruthGeneratorAPI.create(testOutputDirectory);
     tg.setRecursive(false); // speed
 
     Map<Class<?>, ThreeSystem> generate = tg.generate(MyEmployee.class);
@@ -261,7 +272,7 @@ public class TruthGeneratorTest {
 
   @Test
   public void standard_extensions() {
-    TruthGenerator tg = TruthGeneratorAPI.create();
+    TruthGenerator tg = TruthGeneratorAPI.create(testOutputDirectory);
     TruthGeneratorAPI tgApi = tg;
     tg.setRecursive(false); // speed
     tg.setEntryPoint(of(this.getClass().getPackage().getName() + ".extensions"));

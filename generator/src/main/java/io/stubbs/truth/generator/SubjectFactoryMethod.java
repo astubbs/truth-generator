@@ -3,6 +3,8 @@ package io.stubbs.truth.generator;
 import com.google.common.truth.Subject;
 
 import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
@@ -11,6 +13,7 @@ import java.lang.annotation.Target;
  * Useful so that we don't need to rely completely on String patterns, and so that Subject extension points can have non
  * colliding names - as the method must be static.
  */
+@Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.METHOD})
 public @interface SubjectFactoryMethod {
 }

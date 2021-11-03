@@ -1,9 +1,9 @@
 package io.stubbs.truth.generator.internal;
 
 import com.google.common.truth.Subject;
+import io.stubbs.truth.generator.BaseSubjectExtension;
 import org.reflections.Reflections;
 import org.reflections.scanners.Scanners;
-import org.reflections.scanners.SubTypesScanner;
 import org.reflections.util.ConfigurationBuilder;
 import org.reflections.util.FilterBuilder;
 
@@ -13,24 +13,34 @@ import java.lang.reflect.Type;
 import java.lang.reflect.WildcardType;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Scanner;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 public class ClassUtils {
 
-
   private List<ClassLoader> loaders = new ArrayList<>();
 
-  public Set<Class<?>> collectSourceClasses(String... modelPackages) {
-    // for all classes in package
-    SubTypesScanner subTypesScanner = new SubTypesScanner(false);
-
+  public Set<Class<?>> findNativeExtensions(String... modelPackages) {
+    // TODO share Reflections instance?
     ConfigurationBuilder build = new ConfigurationBuilder()
-            .forPackages(modelPackages)
-            .filterInputsBy(new FilterBuilder().includePackage(modelPackages[0])) // TODO test different packages work?
-            .setScanners(Scanners.SubTypes)
-            .setExpandSuperTypes(true);
+        .forPackages(modelPackages)
+        .filterInputsBy(new FilterBuilder().includePackage(modelPackages[0])) // TODO test different packages work?
+        .setParallel(true)
+        .setScanners(Scanners.TypesAnnotated, Scanners.SubTypes);
+
+    Reflections reflections = new Reflections(build);
+
+    return reflections.getTypesAnnotatedWith(BaseSubjectExtension.class);
+  }
+
+  public Set<Class<?>> collectSourceClasses(String... modelPackages) {
+    // TODO share Reflections instance?
+    // for all classes in package
+    ConfigurationBuilder build = new ConfigurationBuilder()
+        .forPackages(modelPackages)
+        .filterInputsBy(new FilterBuilder().includePackage(modelPackages[0])) // TODO test different packages work?
+        .setScanners(Scanners.SubTypes)
+        .setExpandSuperTypes(true);
 //            .addClassLoaders(this.loaders);
 
     Reflections reflections = new Reflections(build);
@@ -40,9 +50,9 @@ public class ClassUtils {
     Set<Class<? extends Enum>> subTypesOfEnums = reflections.getSubTypesOf(Enum.class);
 
     Set<Class<?>> allTypes = reflections.getSubTypesOf(Object.class)
-            // remove Subject classes from previous runs
-            .stream().filter(x -> !Subject.class.isAssignableFrom(x))
-            .collect(Collectors.toSet());
+        // remove Subject classes from previous runs
+        .stream().filter(x -> !Subject.class.isAssignableFrom(x))
+        .collect(Collectors.toSet());
     allTypes.addAll(subTypesOfEnums);
     return allTypes;
   }

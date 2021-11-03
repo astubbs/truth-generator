@@ -85,6 +85,12 @@ public class GeneratorMojo extends AbstractMojo {
   @Parameter(property = "truth.classes")
   public String[] classes;
 
+  /**
+   * List of legacy style classes to generate assertions for.
+   */
+  @Parameter(property = "truth.classes")
+  public String[] legacyClasses;
+
   // todo
 //  /**
 //   * Generated assertions are limited to classes matching one of the given regular expressions, default is to include
@@ -137,6 +143,11 @@ public class GeneratorMojo extends AbstractMojo {
     this.result = runGenerator();
 
     addOutputPathsToBuild();
+
+    getLog().info("Generated " + result.keySet().size() + " Subject models.");
+    for (Class<?> aClass : result.keySet()) {
+      getLog().info(aClass.toString());
+    }
   }
 
   private void addOutputPathsToBuild() {
@@ -159,11 +170,11 @@ public class GeneratorMojo extends AbstractMojo {
     ss.addClassLoader(projectClassLoader);
 
     ss.generateFrom(projectClassLoader, getClasses());
+    String[] legacyClasses = getLegacyClasses();
+    ss.generateFromNonBean(projectClassLoader, legacyClasses);
     ss.generateAllFoundInPackages(getPackages());
 
     Map<Class<?>, ThreeSystem> generated = tg.generate(ss);
-
-
 
     return generated;
   }

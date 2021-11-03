@@ -1,13 +1,19 @@
 package io.stubbs.truth.generator.internal;
 
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Lists;
 import com.google.common.flogger.FluentLogger;
 import com.google.common.truth.Subject;
+import io.stubbs.truth.generator.BaseSubjectExtension;
+import io.stubbs.truth.generator.GeneratorException;
 import io.stubbs.truth.generator.SourceClassSets;
 import io.stubbs.truth.generator.TruthGeneratorAPI;
 import io.stubbs.truth.generator.internal.model.ThreeSystem;
 import lombok.Getter;
 import lombok.Setter;
+import org.apache.commons.lang3.Validate;
 
+import java.lang.annotation.Annotation;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.stream.Collectors;
@@ -30,14 +36,40 @@ public class TruthGenerator implements TruthGeneratorAPI {
   @Setter
   private boolean recursive = true;
 
+  private ClassUtils classUtils = new ClassUtils();
+
   @Setter
   @Getter
   private Optional<String> entryPoint = Optional.empty();
 
   /**
    * Base Truth subject extensions to inject into Subject tree
+   *
+   * @see io.stubbs.truth.generator.BaseSubjectExtension
    */
   private final Map<Class<?>, Class<? extends Subject>> subjectExtensions = new HashMap<>();
+
+  public TruthGenerator(){
+    autoRegisterStandardSubjectExtension();
+  }
+
+  private void autoRegisterStandardSubjectExtension() {
+    Set<Class<?>> nativeExtensions = classUtils.findNativeExtensions("io.stubbs");
+    for (Class<?> nativeExtension : nativeExtensions) {
+      BaseSubjectExtension[] annotationsByType = nativeExtension.getAnnotationsByType(BaseSubjectExtension.class);
+      List<BaseSubjectExtension> list = Arrays.asList(annotationsByType);
+      Validate.isTrue(list.size() == 1, "Class must be annotated exactly once - found: %s", list);
+      BaseSubjectExtension baseSubjectExtension = list.get(0);
+      Class<?> targetClass = baseSubjectExtension.value();
+      if (Subject.class.isAssignableFrom(nativeExtension)) {
+        //noinspection unchecked - checked above as assignable from
+        Class<? extends Subject> nativeExtensionSubject = (Class<? extends Subject>) nativeExtension;
+        registerStandardSubjectExtension(targetClass, nativeExtensionSubject);
+      } else {
+        throw new GeneratorException("Class that isn't a Subject incorrectly annotation with " + BaseSubjectExtension.class);
+      }
+    }
+  }
 
   @Override
   public void generate(String... modelPackages) {
@@ -55,7 +87,6 @@ public class TruthGenerator implements TruthGeneratorAPI {
   }
 
   private Set<ThreeSystem> generateSkeletonsFromPackages(Set<String> modelPackages, OverallEntryPoint overallEntryPoint) {
-    ClassUtils classUtils = new ClassUtils();
     Set<Class<?>> allTypes = classUtils.collectSourceClasses(modelPackages.toArray(new String[0]));
     return generateSkeletons(allTypes, Optional.empty(), overallEntryPoint);
   }
@@ -202,8 +233,8 @@ public class TruthGenerator implements TruthGeneratorAPI {
   }
 
   @Override
-  public void registerStandardSubjectExtension(Class<?> targetType, Class<? extends Subject> myMapSubjectClass) {
-    this.subjectExtensions.put(targetType, myMapSubjectClass);
+  public void registerStandardSubjectExtension(Class<?> targetType, Class<? extends Subject> subjectExtensionClass) {
+    this.subjectExtensions.put(targetType, subjectExtensionClass);
   }
 
   @Override

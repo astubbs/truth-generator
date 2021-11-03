@@ -1,16 +1,16 @@
 package io.stubbs.truth.generator;
 
 import com.google.common.truth.Truth;
+import io.stubbs.truth.extensions.tests.projectUnderTest.*;
 import io.stubbs.truth.generator.internal.TruthGeneratorTest;
-import io.stubbs.truth.generator.internal.legacy.NonBeanLegacyChildSubject;
-import io.stubbs.truth.generator.internal.legacy.NonBeanLegacySubject;
-import io.stubbs.truth.generator.testModel.ManagedTruth;
 import io.stubbs.truth.generator.testModel.MyEmployee;
-import io.stubbs.truth.generator.testModel.MyEmployeeChildSubject;
-import io.stubbs.truth.generator.testModel.MyEmployeeSubject;
+
 import io.stubbs.truth.generator.testing.legacy.NonBeanLegacy;
+import org.assertj.core.api.Assertions;
 import org.junit.Test;
 import uk.co.jemos.podam.api.PodamFactoryImpl;
+
+import java.io.File;
 
 
 /**
@@ -21,6 +21,11 @@ import uk.co.jemos.podam.api.PodamFactoryImpl;
 public class GeneratedAssertionTests {
 
   public static final PodamFactoryImpl PODAM_FACTORY = new PodamFactoryImpl();
+
+  @Test
+  public void filesExist() {
+    Assertions.assertThat(new File("target/generated-test-sources/truth-assertions-managed/io/stubbs/truth/extensions/tests/projectUnderTest/autoShaded/java/time/chrono/EraParentSubject.java")).exists();
+  }
 
   @Test
   public void try_out_assertions() {

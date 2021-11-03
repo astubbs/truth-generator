@@ -1,17 +1,12 @@
 package io.stubbs.truth.generator;
 
-
-import com.google.common.truth.Truth;
 import io.stubbs.truth.generator.internal.model.ThreeSystem;
 import io.stubbs.truth.generator.plugin.GeneratorMojo;
-import io.stubbs.truth.generator.shaded.java.io.FileChildSubject;
-import io.stubbs.truth.generator.shaded.java.io.FileSubject;
 import io.stubbs.truth.generator.testModel.MyEmployee;
 import lombok.SneakyThrows;
 import org.apache.maven.model.Plugin;
 import org.apache.maven.plugin.testing.MojoRule;
 import org.apache.maven.plugin.testing.WithoutMojo;
-import org.assertj.core.api.Assertions;
 import org.junit.Rule;
 import org.junit.Test;
 
@@ -42,6 +37,7 @@ public class GeneratorMojoTest {
   File pomBaseDir = new File("target/test-classes/project-to-test/");
 
 
+  // TODO rename
   @Test
   public void testSomething() throws Exception {
     assertNotNull(pomBaseDir);
@@ -65,12 +61,6 @@ public class GeneratorMojoTest {
     Map<Class<?>, ThreeSystem> results = generatorMojo.getResult();
     assertThat(results).containsKey(MyEmployee.class);
     assertThat(results).containsKey(File.class);
-
-    File outputDirectory = (File) rule.getVariableValueFromObject(generatorMojo, "outputDirectory");
-    assertThat(outputDirectory).exists();
-
-    File touch = new File(outputDirectory, "touch.txt");
-    assertThat(touch).exists();
 
     String dir = "target/generated-test-sources/truth-assertions-managed/io/stubbs/truth/tests/projectUnderTest";
     assertThat(new File(dir, "MyEmployeeParentSubject.java")).exists();

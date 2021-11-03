@@ -201,6 +201,17 @@ public class SourceClassSets {
     this.loaders.add(projectClassLoader);
   }
 
+  public void generateFromNonBean(ClassLoader loader, String[] legacyClasses) {
+    Class[] as = stream(legacyClasses).map(x -> {
+      try {
+        return loader.loadClass(x);
+      } catch (ClassNotFoundException e) {
+        throw new GeneratorException("Cannot find class asked to generate from: " + x, e);
+      }
+    }).collect(Collectors.toList()).toArray(new Class[0]);
+    generateFromNonBean(as);
+  }
+
   /**
    * Container for classes and the target package they're to be produced into
    */

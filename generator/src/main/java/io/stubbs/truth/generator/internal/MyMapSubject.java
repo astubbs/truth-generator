@@ -7,7 +7,7 @@ import io.stubbs.truth.generator.SubjectFactoryMethod;
 
 import java.util.Map;
 
-@BaseSubjectExtension
+@BaseSubjectExtension(Map.class)
 public class MyMapSubject extends MapSubject {
 
   private Map<?, ?> actual;

@@ -1,7 +1,5 @@
 package io.stubbs.truth.generator;
 
-import io.stubbs.truth.generator.SourceClassSets;
-import io.stubbs.truth.generator.TruthGeneratorAPI;
 import io.stubbs.truth.generator.plugin.GeneratorMojo;
 import org.junit.Test;
 

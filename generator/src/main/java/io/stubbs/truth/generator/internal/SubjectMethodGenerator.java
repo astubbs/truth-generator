@@ -547,7 +547,7 @@ public class SubjectMethodGenerator {
       }
     }
 
-    // extensions take priority
+    // explicit extensions take priority
     Class<? extends Subject> extension = this.subjectExtensions.get(type);
     if (extension != null)
       return ClassOrGenerated.ofClass(extension);

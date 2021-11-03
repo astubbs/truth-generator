@@ -49,6 +49,8 @@ public class ClassUtils {
     Reflections reflections = new Reflections(build);
 //    reflections.expandSuperTypes(); // get things that extend something that extend object
 
+    // TODO clean up this mess
+
     // https://github.com/ronmamo/reflections/issues/126
     Set<Class<? extends Enum>> subTypesOfEnums = reflections.getSubTypesOf(Enum.class);
 

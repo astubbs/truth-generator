@@ -22,5 +22,5 @@ public @interface UserManagedTruth {
   /**
    * The class that this is a {@link Subject} for.
    */
-  Class<?> clazz();
+  Class<?> value();
 }

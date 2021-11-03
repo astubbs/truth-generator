@@ -17,7 +17,7 @@ import javax.annotation.processing.Generated;
  *
  * @see ThreeSystemParentSubject
  */
-@UserManagedTruth(clazz = ThreeSystem.class)
+@UserManagedTruth(value = ThreeSystem.class)
 @Generated("truth-generator")
 public class ThreeSystemSubject extends ThreeSystemParentSubject {
 

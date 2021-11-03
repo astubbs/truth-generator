@@ -1,11 +1,10 @@
 package io.stubbs.truth.generator.shaded.java.io;
 
 import com.google.common.truth.FailureMetadata;
-import java.io.File;
-
 import io.stubbs.truth.generator.UserManagedTruth;
 
 import javax.annotation.processing.Generated;
+import java.io.File;
 
 /**
  * Optionally move this class into source control, and add your custom
@@ -19,7 +18,7 @@ import javax.annotation.processing.Generated;
  * @see File
  * @see FileParentSubject
  */
-@UserManagedTruth(clazz = File.class)
+@UserManagedTruth(value = File.class)
 @Generated("truth-generator")
 public class FileSubject extends FileParentSubject {
 

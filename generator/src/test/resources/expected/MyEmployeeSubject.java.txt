@@ -16,7 +16,7 @@ import javax.annotation.processing.Generated;
  * @see MyEmployee
  * @see MyEmployeeParentSubject
  */
-@UserManagedTruth(clazz = MyEmployee.class)
+@UserManagedTruth(MyEmployee.class)
 @Generated("truth-generator")
 public class MyEmployeeSubject extends MyEmployeeParentSubject {
 	protected MyEmployeeSubject(FailureMetadata failureMetadata,

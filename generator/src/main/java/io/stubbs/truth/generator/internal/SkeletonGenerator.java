@@ -20,7 +20,6 @@ import javax.annotation.processing.Generated;
 import java.io.FileNotFoundException;
 import java.util.Optional;
 
-import static io.stubbs.truth.generator.internal.Utils.writeToDisk;
 import static java.util.Optional.empty;
 import static java.util.Optional.of;
 
@@ -118,7 +117,7 @@ public class SkeletonGenerator implements SkeletonGeneratorAPI {
 
     addConstructor(source, middle, false);
 
-    middle.addAnnotation(UserManagedTruth.class).setClassValue("clazz", source);
+    middle.addAnnotation(UserManagedTruth.class).setClassValue(source);
 
     MethodSource factory = addFactoryAccesor(source, middle, source.getSimpleName());
 

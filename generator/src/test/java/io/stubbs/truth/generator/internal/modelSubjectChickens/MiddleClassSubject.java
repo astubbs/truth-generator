@@ -1,8 +1,8 @@
 package io.stubbs.truth.generator.internal.modelSubjectChickens;
 
 import com.google.common.truth.FailureMetadata;
-import io.stubbs.truth.generator.internal.model.MiddleClass;
 import io.stubbs.truth.generator.UserManagedTruth;
+import io.stubbs.truth.generator.internal.model.MiddleClass;
 
 import javax.annotation.processing.Generated;
 
@@ -17,7 +17,7 @@ import javax.annotation.processing.Generated;
  *
  * @see MiddleClassParentSubject
  */
-@UserManagedTruth(clazz = MiddleClass.class)
+@UserManagedTruth(value = MiddleClass.class)
 @Generated("truth-generator")
 public class MiddleClassSubject extends MiddleClassParentSubject {
 

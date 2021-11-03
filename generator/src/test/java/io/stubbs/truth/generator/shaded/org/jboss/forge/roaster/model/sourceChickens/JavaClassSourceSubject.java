@@ -18,7 +18,7 @@ import javax.annotation.processing.Generated;
  *
  * @see JavaClassSourceParentSubject
  */
-@UserManagedTruth(clazz = JavaClassSource.class)
+@UserManagedTruth(value = JavaClassSource.class)
 @Generated("truth-generator")
 public class JavaClassSourceSubject extends JavaClassSourceParentSubject {
 

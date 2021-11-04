@@ -17,11 +17,33 @@
 :shieldio-base: https://img.shields.io
 :gh-shield-base: {shieldio-base}/github
 
-:Google Truth: https://truth.dev/
+:Google Truth: https://truth.dev/[Google Truth]
 :maven-shield: {shieldio-base}/maven-central/v/io.stubbs/truth-generator.png?style={badge-style}
 :maven-link: https://search.maven.org/artifact/io.stubbs/truth-generator
-:stackoverflow-shield: 
+:stackoverflow-shield:
 :stackoverflow-link: https://stackoverflow.com/questions/tagged/google-truth
+
+// watcher
+//image:{gh-shield-base}/watchers/{user-github}/{repo-github}?&style={badge-style}[]
+// stars
+//image:{gh-shield-base}/stars/{user-github}/{repo-github}?style={badge-style}[]
+// forks
+//image:{gh-shield-base}/forks/{user-github}/{repo-github}?label=Fork&style={badge-style}[]
+// Github Releases - none yet
+//image:{gh-shield-base}/v/release/{user-github}/{repo-github}?display_name=tag&style={badge-style}[]
+//
+//image:{gh-shield-base}/v/release/{user-github}/{repo-github}?display_name=tag&include_prereleases&style={badge-style}[]
+//
+//image:{gh-shield-base}/v/release/{user-github}/{repo-github}?display_name=tag&sort=semver&style={badge-style}[]
+//
+//image:{gh-shield-base}/v/release/{user-github}/{repo-github}?display_name=tag&include_prereleases&sort=semver&style={badge-style}[]
+//
+//image:{gh-shield-base}/v/release/{user-github}/{repo-github}?display_name=release&include_prereleases&sort=date&style={badge-style}[]
+// Libraries.io - nothing released yet
+//image:{shieldio-base}//librariesio/dependent-repos/:platform/:packageName?style={badge-style}[]
+//image:{shieldio-base}//librariesio/dependents/:platform/:packageName?style={badge-style}[]
+// repo1 release
+//image:{maven-shield}[link={maven-link},title=Maven Release]
 
 image:{gh-shield-base}/workflow/status/astubbs/truth-generator/CI?style={badge-style}[GitHub Workflow Status]
 image:{gh-shield-base}/commit-activity/m/{user-github}/{repo-github}?style={badge-style}[]
@@ -29,39 +51,171 @@ image:{gh-shield-base}/last-commit/{user-github}/{repo-github}?style={badge-styl
 image:{gh-shield-base}/license/astubbs/truth-generator?style={badge-style}[GitHub]
 image:{shieldio-base}/badge/stackoverflow-google‐truth-5555ff.png?style={badge-style}[link={stackoverflow-link}]
 
-= truth-generator
+= Truth Generator
+Subject generator library for {GoogleTruth}.
 
-Subject generator library for [Google Truth].
+Inspired by the https://github.com/assertj/assertj-assertions-generator-maven-plugin[code generator] for https://github.com/assertj/assertj-core[AssertJ].
+
+:github_name: parallel-consumer
+:base_url: https://github.com/confluentinc/{github_name}
+:issues_link: {base_url}/issues
+
+// dynamic include base for editing in IDEA
+:project_root: ./
+
+ifdef::env-github[]
+:tip-caption: :bulb:
+:note-caption: :information_source:
+:important-caption: :heavy_exclamation_mark:
+:caution-caption: :fire:
+:warning-caption: :warning:
+endif::[]
+
+.Reid Hoffman on https://twitter.com/reidhoffman/status/847142924240379904?s=20[Twitter]
+> If you are not embarrassed by the first version of your product, you’ve launched too late.
+
+toc::[]
+
+== Features
+
+=== Primary
+
+* Boiler plate and assertion generator system for {googletruth}
+* Template generation so that Users can easily add assertions, be added to VCS for maintenance and automatic incorporation to future Subject tree generation runs
+* Chained assertion strategies (e.g. `assertThat(person).hasAddress().hasStreet().ignoringCase().endsWith('Rd')`
+* Recursive generation of `Subject`s so you don’t have to register them yourself - including going into external and/or restricted modules (i.e. java's `UUID`, `ZonedDateTime` etc)
+** For example, you register only a single class with the plugin, and it will generate Subject's for every single referenced class in the tree.
+* Generated assertion strategies for standard field types
+* Single convenient entry point for all managed `Subject`s
+* Extendable root Subjects from the `Truth` library injected into generated code, e.g.:
+** `MyStringSubject` : Equality check ignoring white space and line endings, file content equality
+** `MyMapSubject` : key content check and others
+* Subject's for restricted packages automatically shaded (like `java.*` classes - `UUID` etc)
+Tree depth limits can potentially be added to limit the quantity of generated code.
+* Maven plugin (can make plugins for other systems if requested)
+
+
+=== Secondary
+* Dog foods - uses its own bootstrapped Subjects to test itself
+* Various ways to specify classes under test for generation in the plugin
+* Detection of existing user managed `Subject`s under version control - won't regenerate, and will be injected into the generated structure
+* Support for legacy non bean compliant objects like Kafka's https://kafka.apache.org/21/javadoc/org/apache/kafka/clients/consumer/ConsumerRecord.html[ConsumerRecord]
+* Collections, maps etc `generic` types are read and used in generated assertions
+** i.e. `assertThat(Map<MyKey, ?> map)#containsKey(MyKey key)`
+* Customisable extension points for base subjects (like list and map) which will apply to all types in generated tree (where generated entry points are used)
+
+== Overview
+The plugin will generate template code that's required by Truth to implement your own Subjects.
+This is mostly boilerplate and gets tiresome to write everytime you want to introduce a new Subject.
+
+The library will also generate a lot of typical assertion methods, based on examining the classes under test.
+
+Three Classes will be generated:
+
+- `Parent`
+- `User Managed`
+- `Child`
+
+The role of these classes is:
+
+- The `Parent` class contains the generated assertions - more will be added as the library evolves.
+- The `User Managed` class is basically empty.
+Its purpose is to, if the user desires, to be a template to be added to with user created assertion methods, and brought into the users' projects' version control system.
+- The `child` class merges the two classes, and contains the factory and entry points for users' test code to bind into.
+
+The one other class that is generated is the "Entry Pont" class, atm called `ManagedTruth`.
+This class contains a collection of all the `assertThat` entry points from all the generated classes.
+This is a convenience class so that the user can simply import `ManagedTruth.assertThat`, and will then access to all the assertion entry points for all generated classes.
+
+Two directories are creates under 'target/generated-sources':
+
+* `truth-assertions-managed` - contains files that are not to be changed, and will evolve over time as features are added.
+* `truth-assertions-templates` - contains the templates for users to add their own assertion methods to. When you do - you should move it from the `generated` sources' dir, and put it under source control. If any of these types of classes detected upon further plugin runs, they will not be generated again and will be injected into the assertions hierarchy dynamically.
 
 == Usage
-This is incomplete - see [the tests app](https://github.com/astubbs/truth-generator/blob/master/plugin-maven/src/test/resources/project-to-test/pom.xml) for more usage.
 
-    <build>
-        <plugins>
-            <plugin>
-                <!-- mvn  io.stubbs.truth:truth-generator-maven-plugin:generate -->
-                <groupId>io.stubbs.truth</groupId>
-                <artifactId>truth-generator-maven-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>generate</goal>
-                        </goals>
-                    </execution>
-                </executions>
-                <configuration>
-                    <classes>
-                        <param>io.stubbs.truth.generator.testModel.MyEmployee</param>
-                    </classes>
-                    <entryPointClassPackage>io.stubbs.truth.extensions.tests.projectUnderTest</entryPointClassPackage>
-                </configuration>
-            </plugin>
-        </plugins>
-    </build>
-== Usage
-This is incomplete - see [the tests app](https://github.com/astubbs/truth-generator/blob/master/plugin-maven/src/test/resources/project-to-test/pom.xml) for more usage.
+To see what happens when this is used, see the simple <<example>> at the bottom of the document.
 
-source[xml]
+=== Distribution
+We're not yet publishing to repo1, but we are publishing to both GitHub Packages and Package Cloud.
+This is because although GitHub is a giant and trustworthy, it does not https://stackoverflow.com/questions/58438367/how-to-access-maven-dependecy-from-github-package-registry-beta#comment111143283_58453517[allow anonymous access to it's package system].
+Once must have set up an authentication token to use, so it's a pain.
+
+https://packagecloud.io[Package Cloud] on the other hand works great, but some may not want to use it, in favour of GitHub. So for now, we publish to both.
+
+Once repo1 publishing is set up, this won't be necessary.
+
+==== Package Cloud
+
+You can see what's https://packagecloud.io/astubbs/truth-generator[inside the repo], and what https://packagecloud.io/app/astubbs/truth-generator/search?q=io.stubbs.truth%3A[package we're publishing].
+
+. Simply add this repository to your build:
+
+.Package Cloud repository
+[source,xml]
+----
+<project>
+
+...
+
+    <repositories>
+        <repository>
+            <id>astubbs-truth-generator</id>
+            <url>https://packagecloud.io/astubbs/truth-generator/maven2</url>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </repository>
+    </repositories>
+    <pluginRepositories>
+        <pluginRepository>
+            <id>astubbs-truth-generator</id>
+            <url>https://packagecloud.io/astubbs/truth-generator/maven2</url>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </pluginRepository>
+    </pluginRepositories>
+</project>
+----
+
+==== GitHub Packages
+
+. Setup your access token, with https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-apache-maven-registry[these instructions].
+. Then add the following repository:
+
+.GitHub repository
+[source,xml]
+----
+<project>
+
+...
+
+    <repositories>
+        <repository>
+            <id>astubbs-truth-generator</id>
+            <url>https://maven.pkg.github.com/astubbs/truth-generator</url>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </repository>
+    </repositories>
+    <pluginRepositories>
+        <pluginRepository>
+            <id>astubbs-truth-generator</id>
+            <url>https://maven.pkg.github.com/astubbs/truth-generator</url>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </pluginRepository>
+    </pluginRepositories>
+</project>
+----
+
+=== Setup
+
+.Maven plugin inclusion
+[source,xml]
 ----
     <build>
         <plugins>
@@ -69,6 +223,18 @@ source[xml]
                 <!-- mvn  io.stubbs.truth:truth-generator-maven-plugin:generate -->
                 <groupId>io.stubbs.truth</groupId>
                 <artifactId>truth-generator-maven-plugin</artifactId>
+                <configuration>
+                    <classes>
+                        <param>io.stubbs.truth.generator.testModel.MyEmployee</param>
+                    </classes>
+                    <legacyClasses>
+                        <param>io.stubbs.truth.generator.testing.legacy.NonBeanLegacy</param>
+                    </legacyClasses>
+                    <packages>
+                        <package>io.stubbs.truth.generator.testModel.package</package>
+                    </packages>
+                    <entryPointClassPackage>io.stubbs.truth.extensions.tests.projectUnderTest</entryPointClassPackage>
+                </configuration>
                 <executions>
                     <execution>
                         <goals>
@@ -76,13 +242,379 @@ source[xml]
                         </goals>
                     </execution>
                 </executions>
-                <configuration>
-                    <classes>
-                        <param>io.stubbs.truth.generator.testModel.MyEmployee</param>
-                    </classes>
-                    <entryPointClassPackage>io.stubbs.truth.extensions.tests.projectUnderTest</entryPointClassPackage>
-                </configuration>
             </plugin>
         </plugins>
     </build>
+----
+
+[[example]]
+== Example
+
+Given a simple class `Car` below, with very few fields or referenced classes, the following classes are generated.
+
+// TODO pull these in with ASCIIDOC templating
+.The class under test `Car`
+[source,java]
+----
+@lombok.Value
+public class Car {
+    String name;
+    Make make;
+    int colourId;
+
+    public enum Make {PLASTIC, METAL}
+}
+----
+
+.Generated Parent for `Car`
+[source,java]
+----
+/**
+ * Truth Subject for the {@link Car}.
+ * <p>
+ * Note that this class is generated / managed, and will change over time. So
+ * any changes you might make will be overwritten.
+ *
+ * @see Car
+ * @see CarSubject
+ * @see CarChildSubject
+ */
+@Generated("truth-generator")
+public class CarParentSubject extends Subject {
+
+    protected final Car actual;
+
+    protected CarParentSubject(FailureMetadata failureMetadata, io.stubbs.truth.generator.example.Car actual) {
+        super(failureMetadata, actual);
+        this.actual = actual;
+    }
+
+    /**
+     * Returns the Subject for the given field type, so you can chain on other
+     * assertions.
+     */
+    public IntegerSubject hasColourId() {
+        isNotNull();
+        return check("getColourId()").that(actual.getColourId());
+    }
+
+    /**
+     * Simple check for equality for all fields.
+     */
+    public void hasColourIdNotEqualTo(int expected) {
+        if (!(actual.getColourId() == expected)) {
+            failWithActual(fact("expected ColourId NOT to be equal to", expected));
+        }
+    }
+
+    /**
+     * Simple check for equality for all fields.
+     */
+    public void hasColourIdEqualTo(int expected) {
+        if ((actual.getColourId() == expected)) {
+            failWithActual(fact("expected ColourId to be equal to", expected));
+        }
+    }
+
+    /**
+     * Returns the Subject for the given field type, so you can chain on other
+     * assertions.
+     */
+    public MakeSubject hasMake() {
+        isNotNull();
+        return check("getMake()").about(makes()).that(actual.getMake());
+    }
+
+    /**
+     * Simple check for equality for all fields.
+     */
+    public void hasMakeNotEqualTo(Make expected) {
+        if (!(actual.getMake().equals(expected))) {
+            failWithActual(fact("expected Make NOT to be equal to", expected));
+        }
+    }
+
+    /**
+     * Simple check for equality for all fields.
+     */
+    public void hasMakeEqualTo(io.stubbs.truth.generator.example.Car.Make expected) {
+        if ((actual.getMake().equals(expected))) {
+            failWithActual(fact("expected Make to be equal to", expected));
+        }
+    }
+
+    /**
+     * Returns the Subject for the given field type, so you can chain on other
+     * assertions.
+     */
+    public MyStringSubject hasName() {
+        isNotNull();
+        return check("getName()").about(strings()).that(actual.getName());
+    }
+
+    /**
+     * Simple check for equality for all fields.
+     */
+    public void hasNameNotEqualTo(java.lang.String expected) {
+        if (!(actual.getName().equals(expected))) {
+            failWithActual(fact("expected Name NOT to be equal to", expected));
+        }
+    }
+
+    /**
+     * Simple check for equality for all fields.
+     */
+    public void hasNameEqualTo(java.lang.String expected) {
+        if ((actual.getName().equals(expected))) {
+            failWithActual(fact("expected Name to be equal to", expected));
+        }
+    }
+}
+----
+
+.Generated user template Subject for `Car` - if you wanted to add your own methods, you would move this source file into VCS, then add them as you see git. It will automatically be used in future generator runs. The same goes for the `Car.Make` `Subject`.
+[source,java]
+----
+/**
+ * Optionally move this class into source control, and add your custom
+ * assertions here.
+ *
+ * <p>
+ * If the system detects this class already exists, it won't attempt to generate
+ * a new one. Note that if the base skeleton of this class ever changes, you
+ * won't automatically get it updated.
+ *
+ * @see Car
+ * @see CarParentSubject
+ */
+@UserManagedTruth(Car.class)
+@Generated("truth-generator")
+public class CarSubject extends CarParentSubject {
+
+	protected CarSubject(FailureMetadata failureMetadata, io.stubbs.truth.generator.example.Car actual) {
+		super(failureMetadata, actual);
+	}
+
+	/**
+	 * Returns an assertion builder for a {@link Car} class.
+	 */
+	public static Factory<CarSubject, Car> cars() {
+		return CarSubject::new;
+	}
+}
+----
+
+.Generated Child `Subject` for `Car`
+[source,java]
+----
+/**
+ * Entry point for assertions for @{Car}. Import the static accessor methods
+ * from this class and use them. Combines the generated code from
+ * {@CarParentSubject}and the user code from {@CarSubject}.
+ *
+ * @see io.stubbs.truth.generator.example.Car
+ * @see CarSubject
+ * @see CarParentSubject
+ */
+@Generated("truth-generator")
+public class CarChildSubject extends CarSubject {
+
+	/**
+	 * This constructor should not be used, instead see the parent's.
+	 *
+	 * @see CarSubject
+	 */
+	private CarChildSubject(FailureMetadata failureMetadata, io.stubbs.truth.generator.example.Car actual) {
+		super(failureMetadata, actual);
+	}
+
+	/**
+	 * Entry point for {@link Car} assertions.
+	 */
+	public static CarSubject assertThat(io.stubbs.truth.generator.example.Car actual) {
+		return Truth.assertAbout(cars()).that(actual);
+	}
+
+	/**
+	 * Convenience entry point for {@link Car} assertions when being mixed with
+	 * other "assertThat" assertion libraries.
+	 *
+	 * @see #assertThat
+	 */
+	public static CarSubject assertTruth(io.stubbs.truth.generator.example.Car actual) {
+		return assertThat(actual);
+	}
+}
+----
+
+.Generated Parent for `Car.Make` enum
+[source,java]
+----
+/**
+* Truth Subject for the {@link Make}.
+*
+* Note that this class is generated / managed, and will change over time. So
+* any changes you might make will be overwritten.
+*
+* @see Make
+* @see MakeSubject
+* @see MakeChildSubject
+*/
+@Generated("truth-generator")
+public class MakeParentSubject extends Subject {
+
+	protected final Make actual;
+
+	protected MakeParentSubject(FailureMetadata failureMetadata, Make actual) {
+		super(failureMetadata, actual);
+		this.actual = actual;
+	}
+
+	/**
+	 * Returns the Subject for the given field type, so you can chain on other
+	 * assertions.
+	 */
+	public ClassSubject hasDeclaringClass() {
+		isNotNull();
+		return check("getDeclaringClass()").that(actual.getDeclaringClass());
+	}
+
+	/**
+	 * Simple check for equality for all fields.
+	 */
+	public void hasDeclaringClassNotEqualTo(java.lang.Class expected) {
+		if (!(actual.getDeclaringClass().equals(expected))) {
+			failWithActual(fact("expected DeclaringClass NOT to be equal to", expected));
+		}
+	}
+
+	/**
+	 * Simple check for equality for all fields.
+	 */
+	public void hasDeclaringClassEqualTo(java.lang.Class expected) {
+		if ((actual.getDeclaringClass().equals(expected))) {
+			failWithActual(fact("expected DeclaringClass to be equal to", expected));
+		}
+	}
+}
+----
+
+.Generated user template Subject for `Car.Make`
+[source,java]
+----
+/**
+* Optionally move this class into source control, and add your custom
+* assertions here.
+*
+* <p>
+* If the system detects this class already exists, it won't attempt to generate
+* a new one. Note that if the base skeleton of this class ever changes, you
+* won't automatically get it updated.
+*
+* @see Make
+* @see MakeParentSubject
+*/
+@UserManagedTruth(Make.class)
+@Generated("truth-generator")
+public class MakeSubject extends MakeParentSubject {
+
+	protected MakeSubject(FailureMetadata failureMetadata, Make actual) {
+		super(failureMetadata, actual);
+	}
+
+	/**
+	 * Returns an assertion builder for a {@link Make} class.
+	 */
+	public static Factory<MakeSubject, Make> makes() {
+		return MakeSubject::new;
+	}
+}
+----
+
+.Generated Child for `Car.Make`
+[source,java]
+----
+/**
+* Entry point for assertions for @{Make}. Import the static accessor methods
+* from this class and use them. Combines the generated code from
+* {@MakeParentSubject}and the user code from {@MakeSubject}.
+*
+* @see io.stubbs.truth.generator.example.Car$Make
+* @see MakeSubject
+* @see MakeParentSubject
+*/
+@Generated("truth-generator")
+public class MakeChildSubject extends MakeSubject {
+
+	/**
+	 * This constructor should not be used, instead see the parent's.
+	 *
+	 * @see MakeSubject
+	 */
+	private MakeChildSubject(FailureMetadata failureMetadata, Make actual) {
+		super(failureMetadata, actual);
+	}
+
+	/**
+	 * Entry point for {@link Make} assertions.
+	 */
+	public static MakeSubject assertThat(io.stubbs.truth.generator.example.Car.Make actual) {
+		return Truth.assertAbout(makes()).that(actual);
+	}
+
+	/**
+	 * Convenience entry point for {@link Make} assertions when being mixed with
+	 * other "assertThat" assertion libraries.
+	 *
+	 * @see #assertThat
+	 */
+	public static MakeSubject assertTruth(io.stubbs.truth.generator.example.Car.Make actual) {
+		return assertThat(actual);
+	}
+}
+----
+
+.Generated Access Point
+[source,java]
+----
+/**
+ * Single point of access for all managed Subjects.
+ */
+public class ManagedTruth {
+
+	/**
+	 * Entry point for {@link Make} assertions.
+	 */
+	public static MakeSubject assertThat(io.stubbs.truth.generator.example.Car.Make actual) {
+		return Truth.assertAbout(makes()).that(actual);
+	}
+
+	/**
+	 * Convenience entry point for {@link Make} assertions when being mixed with
+	 * other "assertThat" assertion libraries.
+	 *
+	 * @see #assertThat
+	 */
+	public static MakeSubject assertTruth(io.stubbs.truth.generator.example.Car.Make actual) {
+		return assertThat(actual);
+	}
+
+	/**
+	 * Entry point for {@link Car} assertions.
+	 */
+	public static CarSubject assertThat(io.stubbs.truth.generator.example.Car actual) {
+		return Truth.assertAbout(cars()).that(actual);
+	}
+
+	/**
+	 * Convenience entry point for {@link Car} assertions when being mixed with
+	 * other "assertThat" assertion libraries.
+	 *
+	 * @see #assertThat
+	 */
+	public static CarSubject assertTruth(io.stubbs.truth.generator.example.Car actual) {
+		return assertThat(actual);
+	}
+
+}
 ----

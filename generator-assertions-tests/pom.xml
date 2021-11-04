@@ -31,9 +31,8 @@
                 </executions>
                 <configuration>
                     <classes>
-                        <!-- can this be pulled in from a test dependency? or shall we extract a common model module to share? -->
-                        <!--     classpathElements.addAll(project.getTestClasspathElements()); -->
-                        <param>io.stubbs.truth.generator.testModel.MyEmployee</param>
+                        <class>io.stubbs.truth.generator.testModel.MyEmployee</class>
+                        <class>io.stubbs.truth.generator.example.Car</class>
                     </classes>
                     <legacyClasses>
                         <param>io.stubbs.truth.generator.testing.legacy.NonBeanLegacy</param>

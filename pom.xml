@@ -43,6 +43,48 @@
         <url>https://github.com/astubbs/truth-generator.git</url>
     </scm>
 
+    <modules>
+        <module>generator</module>
+        <module>generator-assertions-tests</module>
+        <module>plugin-maven</module>
+    </modules>
+
+    <profiles>
+        <profile>
+            <id>github-deploy</id>
+            <distributionManagement>
+                <repository>
+                    <id>github</id>
+                    <name>GitHub astubbs Truth Generator repo</name>
+                    <url>https://maven.pkg.github.com/astubbs/truth-generator</url>
+                </repository>
+                <snapshotRepository>
+                    <id>github</id>
+                    <name>GitHub astubbs repo</name>
+                    <url>https://maven.pkg.github.com/astubbs/truth-generator</url>
+                </snapshotRepository>
+            </distributionManagement>
+        </profile>
+        <profile>
+            <id>package-cloud-deploy</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <distributionManagement>
+                <repository>
+                    <id>package-cloud</id>
+                    <name>Package Cloud astubbs Truth Generator repo</name>
+                    <url>https://packagecloud.io/astubbs/truth-generator</url>
+                </repository>
+                <snapshotRepository>
+                    <id>package-cloud</id>
+                    <name>Package Cloud astubbs repo</name>
+                    <url>packagecloud+https://packagecloud.io/astubbs/truth-generator</url>
+                </snapshotRepository>
+            </distributionManagement>
+        </profile>
+    </profiles>
+
     <properties>
         <project.name.root>Truth Subject Generator</project.name.root>
 
@@ -52,12 +94,6 @@
         <maven.version>3.8.3</maven.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
-
-    <modules>
-        <module>generator</module>
-        <module>generator-assertions-tests</module>
-        <module>plugin-maven</module>
-    </modules>
 
     <dependencies>
         <dependency>
@@ -189,6 +225,13 @@
     </dependencyManagement>
 
     <build>
+        <extensions>
+            <extension>
+                <groupId>io.packagecloud.maven.wagon</groupId>
+                <artifactId>maven-packagecloud-wagon</artifactId>
+                <version>0.0.6</version>
+            </extension>
+        </extensions>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>

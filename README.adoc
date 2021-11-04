@@ -1,0 +1,88 @@
+// settings
+
+:doctype: book
+:hide-uri-scheme:
+:icons:
+:toc: macro
+:toclevels: 3
+:numbered: 1
+:sectlinks: true
+:sectanchors: true
+
+// badges
+:badge-style: plastic
+:user-github: astubbs
+:repo-github: truth-generator
+
+:shieldio-base: https://img.shields.io
+:gh-shield-base: {shieldio-base}/github
+
+:Google Truth: https://truth.dev/
+:maven-shield: {shieldio-base}/maven-central/v/io.stubbs/truth-generator.png?style={badge-style}
+:maven-link: https://search.maven.org/artifact/io.stubbs/truth-generator
+:stackoverflow-shield: 
+:stackoverflow-link: https://stackoverflow.com/questions/tagged/google-truth
+
+image:{gh-shield-base}/workflow/status/astubbs/truth-generator/CI?style={badge-style}[GitHub Workflow Status]
+image:{gh-shield-base}/commit-activity/m/{user-github}/{repo-github}?style={badge-style}[]
+image:{gh-shield-base}/last-commit/{user-github}/{repo-github}?style={badge-style}[]
+image:{gh-shield-base}/license/astubbs/truth-generator?style={badge-style}[GitHub]
+image:{shieldio-base}/badge/stackoverflow-google‐truth-5555ff.png?style={badge-style}[link={stackoverflow-link}]
+
+= truth-generator
+
+Subject generator library for [Google Truth].
+
+== Usage
+This is incomplete - see [the tests app](https://github.com/astubbs/truth-generator/blob/master/plugin-maven/src/test/resources/project-to-test/pom.xml) for more usage.
+
+    <build>
+        <plugins>
+            <plugin>
+                <!-- mvn  io.stubbs.truth:truth-generator-maven-plugin:generate -->
+                <groupId>io.stubbs.truth</groupId>
+                <artifactId>truth-generator-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <classes>
+                        <param>io.stubbs.truth.generator.testModel.MyEmployee</param>
+                    </classes>
+                    <entryPointClassPackage>io.stubbs.truth.extensions.tests.projectUnderTest</entryPointClassPackage>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+== Usage
+This is incomplete - see [the tests app](https://github.com/astubbs/truth-generator/blob/master/plugin-maven/src/test/resources/project-to-test/pom.xml) for more usage.
+
+source[xml]
+----
+    <build>
+        <plugins>
+            <plugin>
+                <!-- mvn  io.stubbs.truth:truth-generator-maven-plugin:generate -->
+                <groupId>io.stubbs.truth</groupId>
+                <artifactId>truth-generator-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <classes>
+                        <param>io.stubbs.truth.generator.testModel.MyEmployee</param>
+                    </classes>
+                    <entryPointClassPackage>io.stubbs.truth.extensions.tests.projectUnderTest</entryPointClassPackage>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+----

@@ -155,11 +155,11 @@ public class TruthGenerator implements TruthGeneratorAPI {
     // from packages
     Set<String> packages = ss.getSimplePackages();
 
-    OverallEntryPoint overallEntryPoint = new OverallEntryPoint(ss.getPackageForOverall());
+    OverallEntryPoint packageForEntryPoint = new OverallEntryPoint(ss.getPackageForEntryPoint());
 
     // skeletons generation is independent and should be able to be done in parallel
     Set<ThreeSystem> skeletons = packages.parallelStream().flatMap(
-            aPackage -> generateSkeletonsFromPackages(of(aPackage), overallEntryPoint).stream()
+            aPackage -> generateSkeletonsFromPackages(of(aPackage), packageForEntryPoint).stream()
     ).collect(toSet());
 
     // custom package destination
@@ -167,16 +167,17 @@ public class TruthGenerator implements TruthGeneratorAPI {
     Set<ThreeSystem> setStream = targetPackageAndClasses.stream().flatMap(
             x -> {
               Set<Class<?>> collect = stream(x.getClasses()).collect(toSet());
-              return generateSkeletons(collect, Optional.of(x.getTargetPackageName()), overallEntryPoint).stream();
+              return generateSkeletons(collect, Optional.of(x.getTargetPackageName()), packageForEntryPoint).stream();
             }
     ).collect(toSet());
 
     // straight up classes
-    Optional<String> packageForOverall = Optional.ofNullable(ss.getPackageForOverall());
-    Set<ThreeSystem> simpleClasses = generateSkeletons(ss.getSimpleClasses(), packageForOverall, overallEntryPoint);
+    // TODO support overriding target package
+    Optional<String> targetPackageName = Optional.empty();
+    Set<ThreeSystem> simpleClasses = generateSkeletons(ss.getSimpleClasses(), targetPackageName, packageForEntryPoint);
 
     // legacy classes
-    Set<ThreeSystem> legacyClasses = generateSkeletons(ss.getLegacyBeans(), packageForOverall, overallEntryPoint);
+    Set<ThreeSystem> legacyClasses = generateSkeletons(ss.getLegacyBeans(), targetPackageName, packageForEntryPoint);
     legacyClasses.forEach(x -> x.setLegacyMode(true));
 
     // legacy classes with custom package destination
@@ -184,7 +185,7 @@ public class TruthGenerator implements TruthGeneratorAPI {
     Set<ThreeSystem> legacyPackageSet = legacyTargetPackageAndClasses.stream().flatMap(
             x -> {
               Set<Class<?>> collect = stream(x.getClasses()).collect(toSet());
-              return generateSkeletons(collect, Optional.of(x.getTargetPackageName()), overallEntryPoint).stream();
+              return generateSkeletons(collect, Optional.of(x.getTargetPackageName()), packageForEntryPoint).stream();
             }
     ).collect(toSet());
     legacyPackageSet.forEach(x -> x.setLegacyMode(true));
@@ -205,7 +206,7 @@ public class TruthGenerator implements TruthGeneratorAPI {
     addTests(union);
 
     // create overall entry point
-    overallEntryPoint.createOverallAccessPoints();
+    packageForEntryPoint.createOverallAccessPoints();
 
     return union.stream().collect(Collectors.toMap(ThreeSystem::getClassUnderTest, x -> x));
   }

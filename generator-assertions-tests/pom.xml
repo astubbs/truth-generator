@@ -38,7 +38,7 @@
                     <legacyClasses>
                         <param>io.stubbs.truth.generator.testing.legacy.NonBeanLegacy</param>
                     </legacyClasses>
-                    <entryPointClassPackage>io.stubbs.truth.extensions.tests.projectUnderTest</entryPointClassPackage>
+                    <entryPointClassPackage>io.stubbs.truth.tests</entryPointClassPackage>
                 </configuration>
             </plugin>
             <plugin>

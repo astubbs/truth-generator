@@ -67,15 +67,15 @@ public class TruthGeneratorTest {
     classes.add(Project.class);
 
 
-    String basePackageName = getClass().getPackage().getName();
-    SourceClassSets ss = new SourceClassSets(basePackageName);
+    String packageForEntryPoint = getClass().getPackage().getName();
+    SourceClassSets ss = new SourceClassSets(packageForEntryPoint);
 
     //
     SkeletonGenerator.forceMiddleGenerate = true;
     ss.generateAllFoundInPackagesOf(MyEmployee.class);
 
     // package exists in other module error - needs package target support
-    ss.generateFrom(basePackageName, UUID.class);
+    ss.generateFrom(packageForEntryPoint, UUID.class);
     ss.generateFromShaded(ZoneId.class, ZonedDateTime.class, Chronology.class);
 
     Map<Class<?>, ThreeSystem> generated = truthGenerator.generate(ss);
@@ -87,6 +87,11 @@ public class TruthGeneratorTest {
     //
     ThreeSystem threeSystemGenerated = generated.get(MyEmployee.class);
     assertThat(threeSystemGenerated).isNotNull();
+
+    // check package of generated target is correct
+    assertThat(threeSystemGenerated).hasParent().withSamePackageAs(MyEmployee.class);
+    assertThat(threeSystemGenerated).hasMiddle().withSamePackageAs(MyEmployee.class);
+    assertThat(threeSystemGenerated).hasChild().withSamePackageAs(MyEmployee.class);
 
     String expected = loadFileToString("expected/MyEmployeeParentSubject.java.txt");
     assertThat(threeSystemGenerated)

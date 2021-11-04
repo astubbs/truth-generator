@@ -22,7 +22,7 @@ import static java.util.stream.Collectors.toSet;
 @Getter
 public class SourceClassSets {
 
-  private final String packageForOverall;
+  private final String packageForEntryPoint;
 
   @Getter
   private final List<ClassLoader> loaders = new ArrayList<>();
@@ -59,10 +59,10 @@ public class SourceClassSets {
   private Set<Class<?>> classSetCache;
 
   /**
-   * @param packageForOverall the package to put the overall access points
+   * @param packageForEntryPoint the package to put the overall access points
    */
-  public SourceClassSets(String packageForOverall) {
-    this.packageForOverall = packageForOverall;
+  public SourceClassSets(String packageForEntryPoint) {
+    this.packageForEntryPoint = packageForEntryPoint;
   }
 
   /**
@@ -130,7 +130,7 @@ public class SourceClassSets {
   }
 
   private String getTargetPackageName(Package p) {
-    return this.packageForOverall + ".shaded." + p.getName();
+    return this.packageForEntryPoint + ".shaded." + p.getName();
   }
 
   public void generateFromNonBean(Class<?>... nonBeanLegacyClass) {

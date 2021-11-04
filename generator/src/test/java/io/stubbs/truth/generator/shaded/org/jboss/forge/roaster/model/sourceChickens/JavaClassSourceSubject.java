@@ -3,6 +3,7 @@ package io.stubbs.truth.generator.shaded.org.jboss.forge.roaster.model.sourceChi
 import com.google.common.truth.FailureMetadata;
 import io.stubbs.truth.generator.UserManagedTruth;
 import io.stubbs.truth.generator.internal.MyStringSubject;
+import io.stubbs.truth.generator.testModel.MyEmployee;
 import org.jboss.forge.roaster.model.source.JavaClassSource;
 
 import javax.annotation.processing.Generated;
@@ -36,6 +37,11 @@ public class JavaClassSourceSubject extends JavaClassSourceParentSubject {
   public MyStringSubject hasSourceText() {
     isNotNull();
     return check("toString").about(MyStringSubject.strings()).that(actual.toString());
+  }
+
+  public void withSamePackageAs(Class<MyEmployee> expected) {
+    String actualPackage = actual.getPackage();
+    check("getPackage()").that(actualPackage).isEqualTo(expected.getPackage().getName());
   }
 
 }

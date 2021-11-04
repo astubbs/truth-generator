@@ -1,5 +1,4 @@
 name: CI
-#kick2
 
 on:
   push:
@@ -36,6 +35,9 @@ jobs:
         with:
           java-version: ${{ matrix.java }}
           distribution: 'zulu'
+          server-id: sonatype-nexus-snapshots
+          server-username: CI_DEPLOY_USERNAME
+          server-password: CI_DEPLOY_PASSWORD
       - name: 'Install'
         shell: bash
         run: mvn -B -P!standard-with-extra-repos install -U -DskipTests=true
@@ -43,10 +45,10 @@ jobs:
         shell: bash
         run: mvn -B -P!standard-with-extra-repos verify -U -Dmaven.javadoc.skip=true
 
-  publish_snapshot:
-    name: 'Publish snapshot'
+  publish_snapshot_package_cloud:
+    name: 'Publish snapshot to Package Cloud'
     needs: test
-    if: github.event_name == 'push' && github.repository == 'google/truth'
+    if: github.event_name == 'push' && github.repository == 'astubbs/truth-generator'
     runs-on: ubuntu-latest
     steps:
       - name: 'Check out repository'
@@ -58,24 +60,24 @@ jobs:
           key: maven-${{ hashFiles('**/pom.xml') }}
           restore-keys: |
             maven-
-      - name: 'Set up JDK 11'
+#            setup maven settings.xml
+      - name: 'Set up Maven settings.xml for Package Cloud'
         uses: actions/setup-java@v2
         with:
-          java-version: 11
+          java-version: 17
           distribution: 'zulu'
-          server-id: sonatype-nexus-snapshots
-          server-username: CI_DEPLOY_USERNAME
-          server-password: CI_DEPLOY_PASSWORD
-      - name: 'Publish'
+          server-id: package-cloud
+          server-password: PACKAGE_CLOUD_TOKEN
+      - name: Publish package
+        run: mvn --batch-mode deploy -DskipTests=true
         env:
-          CI_DEPLOY_USERNAME: ${{ secrets.CI_DEPLOY_USERNAME }}
-          CI_DEPLOY_PASSWORD: ${{ secrets.CI_DEPLOY_PASSWORD }}
-        run: mvn -B clean source:jar javadoc:jar deploy -DskipTests=true
+          PACKAGE_CLOUD_TOKEN: ${{ secrets.PACKAGE_CLOUD_TOKEN }}
 
-  generate_docs:
-    name: 'Generate latest docs'
+  # https://docs.github.com/en/actions/publishing-packages/publishing-java-packages-with-maven
+  publish_snapshot_github:
+    name: 'Publish snapshot to GitHub Packages'
     needs: test
-    if: github.event_name == 'push' && github.repository == 'google/truth'
+    if: github.event_name == 'push' && github.repository == 'astubbs/truth-generator'
     runs-on: ubuntu-latest
     steps:
       - name: 'Check out repository'
@@ -87,12 +89,42 @@ jobs:
           key: maven-${{ hashFiles('**/pom.xml') }}
           restore-keys: |
             maven-
-      - name: 'Set up JDK 11'
+#            setup maven settings.xml
+      - name: 'Set up Maven settings.xml for GitHub'
         uses: actions/setup-java@v2
         with:
-          java-version: 11
+          java-version: 17
           distribution: 'zulu'
-      - name: 'Generate latest docs'
+          server-id: github
+          server-username: GITHUB_TOKEN
+      - name: Publish package
+        run: mvn --batch-mode deploy -DskipTests=true -Pgithub-deploy -P!package-cloud-deploy
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: ./util/generate-latest-docs.sh
+#          As settings.xml gets merged by the tool, we have to include bindings to all variables present - as added above
+          PACKAGE_CLOUD_TOKEN: ${{ secrets.PACKAGE_CLOUD_TOKEN }}
+
+#  generate_docs:
+#    name: 'Generate latest docs'
+#    needs: test
+#    if: github.event_name == 'push' && github.repository == 'astubbs/truth-generator'
+#    runs-on: ubuntu-latest
+#    steps:
+#      - name: 'Check out repository'
+#        uses: actions/checkout@v2.4.0
+#      - name: 'Cache local Maven repository'
+#        uses: actions/cache@v2.1.6
+#        with:
+#          path: ~/.m2/repository
+#          key: maven-${{ hashFiles('**/pom.xml') }}
+#          restore-keys: |
+#            maven-
+#      - name: 'Set up JDK 11'
+#        uses: actions/setup-java@v2
+#        with:
+#          java-version: 11
+#          distribution: 'zulu'
+#      - name: 'Generate latest docs'
+#        env:
+#          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+#        run: ./util/generate-latest-docs.sh

@@ -13,7 +13,7 @@
     <artifactId>truth-generator</artifactId>
 
     <properties>
-        <version.roaster>2.23.0.Final</version.roaster>
+        <version.roaster>2.23.2.Final</version.roaster>
     </properties>
 
     <dependencies>

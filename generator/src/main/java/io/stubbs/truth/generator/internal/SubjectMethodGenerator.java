@@ -193,6 +193,10 @@ public class SubjectMethodGenerator {
   private void addFieldAccessors(Method method, JavaClassSource generated, Class<?> classUnderTest) {
     Class<?> returnType = getWrappedReturnType(method);
 
+    // don't check methods that don't return anything
+    if (returnType.isAssignableFrom(void.class))
+      return;
+
     // todo skip static methods for now - just need to make template a bit more advanced
     if (methodIsStatic(method))
       return;

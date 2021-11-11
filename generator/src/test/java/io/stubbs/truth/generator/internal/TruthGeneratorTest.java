@@ -155,6 +155,11 @@ public class TruthGeneratorTest {
             .hasParent().hasGenerated().hasMethods()
             .comparingElementsUsing(methodHasName)
             .containsAtLeast("hasName", "hasAge");
+
+    assertThat(actual)
+            .hasParent().hasGenerated().hasMethods();
+
+
   }
 
   /**

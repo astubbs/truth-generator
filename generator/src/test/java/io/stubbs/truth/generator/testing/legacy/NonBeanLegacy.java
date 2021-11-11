@@ -17,4 +17,8 @@ public class NonBeanLegacy {
   public String name() {
     return name;
   }
+
+  public void ensureValidAge() {
+    if (age() < 0) throw new IllegalArgumentException("Bad age");
+  }
 }

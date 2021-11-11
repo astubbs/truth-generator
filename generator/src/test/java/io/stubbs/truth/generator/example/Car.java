@@ -1,8 +1,9 @@
 package io.stubbs.truth.generator.example;
 
+import lombok.Data;
 import lombok.Value;
 
-@Value
+@Data
 public class Car {
     String name;
     Make make;

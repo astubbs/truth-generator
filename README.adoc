@@ -247,6 +247,17 @@ You can see what's https://packagecloud.io/astubbs/truth-generator[inside the re
     </build>
 ----
 
+And include the core library as a dependency:
+
+.Dependency inclusion
+[source,xml]
+----
+   <dependency>
+        <groupId>io.stubbs.truth</groupId>
+        <artifactId>truth-generator-</artifactId>
+   </dependency>
+----
+
 [[example]]
 == Example
 

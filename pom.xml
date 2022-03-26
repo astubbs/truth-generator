@@ -94,7 +94,7 @@
         <maven.version>3.8.5</maven.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
-        <flogger.version>0.6</flogger.version>
+        <flogger.version>0.7.4</flogger.version>
     </properties>
 
     <dependencies>
@@ -190,7 +190,7 @@
             <dependency>
                 <groupId>com.google.guava</groupId>
                 <artifactId>guava</artifactId>
-                <version>31.0.1-jre</version>
+                <version>31.1-jre</version>
             </dependency>
             <dependency>
                 <groupId>com.google.flogger</groupId>

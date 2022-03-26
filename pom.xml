@@ -93,9 +93,12 @@
 
         <maven.version>3.8.3</maven.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+
+        <flogger.version>0.6</flogger.version>
     </properties>
 
     <dependencies>
+        <!-- Main-->
         <dependency>
             <groupId>com.google.truth</groupId>
             <artifactId>truth</artifactId>
@@ -105,6 +108,8 @@
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
         </dependency>
+
+        <!-- Test-->
         <dependency>
             <groupId>org.assertj</groupId>
             <artifactId>assertj-core</artifactId>
@@ -190,17 +195,17 @@
             <dependency>
                 <groupId>com.google.flogger</groupId>
                 <artifactId>flogger</artifactId>
-                <version>0.6</version>
+                <version>${flogger.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.google.flogger</groupId>
-                <artifactId>flogger-log4j2-backend</artifactId>
-                <version>0.6</version>
+                <artifactId>flogger-slf4j-backend</artifactId>
+                <version>${flogger.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.google.flogger</groupId>
                 <artifactId>flogger-system-backend</artifactId>
-                <version>0.6</version>
+                <version>${flogger.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.projectlombok</groupId>

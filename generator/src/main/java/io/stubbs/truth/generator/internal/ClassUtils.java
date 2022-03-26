@@ -2,8 +2,10 @@ package io.stubbs.truth.generator.internal;
 
 import com.google.common.truth.Subject;
 import io.stubbs.truth.generator.BaseSubjectExtension;
+import io.stubbs.truth.generator.SourceClassSets;
 import org.reflections.Reflections;
 import org.reflections.scanners.Scanners;
+import org.reflections.scanners.SubTypesScanner;
 import org.reflections.util.ClasspathHelper;
 import org.reflections.util.ConfigurationBuilder;
 import org.reflections.util.FilterBuilder;
@@ -36,36 +38,62 @@ public class ClassUtils {
   }
 
   // TODO cleanup
-  public Set<Class<?>> collectSourceClasses(String... modelPackages) {
+  public Set<Class<?>> collectSourceClasses(SourceClassSets ss, String... modelPackages) {
     // TODO share Reflections instance?
     // for all classes in package
+
+    String modelPackage1 = modelPackages[0];
     ConfigurationBuilder build = new ConfigurationBuilder()
         .forPackages(modelPackages)
-        .filterInputsBy(new FilterBuilder().includePackage(modelPackages[0])) // TODO test different packages work?
-        .setScanners(Scanners.SubTypes)
+        .filterInputsBy(new FilterBuilder().includePackage(modelPackage1)) // TODO test different packages work?
+//        .setScanners(Scanners.SubTypes)
+            .setScanners(new SubTypesScanner(false))
+//            .addUrls()
         .setExpandSuperTypes(true);
+
 //            .addClassLoaders(this.loaders);
 
+    if (ss != null) {
+      List<ClassLoader> loaders = ss.getLoaders();
+
+
+      for (ClassLoader loader : loaders) {
+        build.addClassLoaders(loader);
+      }
+
+      ClassLoader[] loadersArray = loaders.toArray(new ClassLoader[0]);
+      build = build.forPackage(modelPackage1, loadersArray);
+
+    }
+
+
+
+    Reflections reflectionstest = new Reflections(modelPackage1);
+    Set<Class<?>> subTypesOf1 = reflectionstest.getSubTypesOf(Object.class);
+
     Reflections reflections = new Reflections(build);
+    Set<Class<?>> subTypesOf1123 = reflections.getSubTypesOf(Object.class);
 //    reflections.expandSuperTypes(); // get things that extend something that extend object
 
     // https://github.com/ronmamo/reflections/issues/126
     Set<Class<? extends Enum>> subTypesOfEnums = reflections.getSubTypesOf(Enum.class);
 
-    Set<String> allTypes1 = reflections.getAllTypes();
-    Set<Class<?>> collect = allTypes1.stream().filter(x -> {
-      int i = x.lastIndexOf('.');
-      String packagee = x.substring(0, i);
-      String modelPackage = modelPackages[0];
-      return packagee.equals(modelPackage);
-    }).map(x-> {
-      try {
-        return Class.forName(x);
-      } catch (ClassNotFoundException e) {
-        e.printStackTrace();
-        return null;
-      }
-    }).collect(Collectors.toSet());
+//    Set<String> allTypes1 = reflections.getAllTypes();
+//    Set<Class<?>> collect = allTypes1.stream()
+////            .filter(x -> {
+////              int i = x.lastIndexOf('.');
+////              String packagee = x.substring(0, i);
+////              String modelPackage = modelPackage1;
+////              return packagee.equals(modelPackage);
+////            })
+//            .map(x -> {
+//              try {
+//                return Class.forName(x);
+//              } catch (ClassNotFoundException e) {
+//                e.printStackTrace();
+//                return null;
+//              }
+//            }).collect(Collectors.toSet());
 
     List<ClassLoader> classLoadersList = new LinkedList<ClassLoader>();
     classLoadersList.add(ClasspathHelper.contextClassLoader());
@@ -75,7 +103,7 @@ public class ClassUtils {
         .setExpandSuperTypes(true)
         .forPackages(modelPackages)
         .setUrls(ClasspathHelper.forClassLoader(classLoadersList.toArray(new ClassLoader[0])))
-        .filterInputsBy(new FilterBuilder().includePackage(modelPackages[0])));
+        .filterInputsBy(new FilterBuilder().includePackage(modelPackage1)));
     Set<Class<?>> subTypesOf = reflection2s.getSubTypesOf(Object.class);
 
     Set<Class<?>> allTypes = reflections.getSubTypesOf(Object.class)
@@ -84,7 +112,7 @@ public class ClassUtils {
         .collect(Collectors.toSet());
     allTypes.addAll(subTypesOfEnums);
 
-    return collect;
+    return allTypes;
   }
 
   public static String maybeGetSimpleName(Type elementType) {

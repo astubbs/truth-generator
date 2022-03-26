@@ -306,7 +306,7 @@ public class SubjectMethodGenerator {
   }
 
   private MethodSource<JavaClassSource> addOptionalStrategyGeneric(Method method, JavaClassSource generated, boolean positive) {
-    String testPrefix = positive ? "" : "!";
+    String testPrefix = positive ? "!" : "";
     String body = "" +
             "  if (%sactual.%s().isPresent()) {\n" +
             "    failWithActual(simpleFact(\"expected %s %sto be present\"));\n" +

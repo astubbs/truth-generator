@@ -80,15 +80,15 @@ public class TruthGenerator implements TruthGeneratorAPI {
     // todo createEntryPointForPackages(modelPackages)
     String[] packageNameForOverall = modelPackages;
     OverallEntryPoint overallEntryPoint = new OverallEntryPoint(packageNameForOverall[0]);
-    Set<ThreeSystem> subjectsSystems = generateSkeletonsFromPackages(stream(modelPackages).collect(toSet()), overallEntryPoint);
+    Set<ThreeSystem> subjectsSystems = generateSkeletonsFromPackages(stream(modelPackages).collect(toSet()), overallEntryPoint, null);
 
     //
     addTests(subjectsSystems);
     overallEntryPoint.createOverallAccessPoints();
   }
 
-  private Set<ThreeSystem> generateSkeletonsFromPackages(Set<String> modelPackages, OverallEntryPoint overallEntryPoint) {
-    Set<Class<?>> allTypes = classUtils.collectSourceClasses(modelPackages.toArray(new String[0]));
+  private Set<ThreeSystem> generateSkeletonsFromPackages(Set<String> modelPackages, OverallEntryPoint overallEntryPoint, SourceClassSets ss) {
+    Set<Class<?>> allTypes = classUtils.collectSourceClasses(ss, modelPackages.toArray(new String[0]));
     return generateSkeletons(allTypes, Optional.empty(), overallEntryPoint);
   }
 
@@ -159,7 +159,8 @@ public class TruthGenerator implements TruthGeneratorAPI {
 
     // skeletons generation is independent and should be able to be done in parallel
     Set<ThreeSystem> skeletons = packages.parallelStream().flatMap(
-            aPackage -> generateSkeletonsFromPackages(of(aPackage), packageForEntryPoint).stream()
+            aPackage ->
+                    generateSkeletonsFromPackages(of(aPackage), packageForEntryPoint, ss).stream()
     ).collect(toSet());
 
     // custom package destination

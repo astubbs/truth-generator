@@ -209,6 +209,11 @@
             </dependency>
             <dependency>
                 <groupId>com.google.flogger</groupId>
+                <artifactId>flogger-maven-backend</artifactId>
+                <version>${flogger.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.google.flogger</groupId>
                 <artifactId>flogger-log4j2-backend</artifactId>
                 <version>${flogger.version}</version>
             </dependency>

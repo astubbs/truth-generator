@@ -171,7 +171,7 @@ public class SourceClassSets {
     ClassUtils classUtils = new ClassUtils();
     classUtils.addClassLoaders(this.loaders);
     union.addAll(getSimplePackages().stream().flatMap(
-            x -> classUtils.collectSourceClasses(x).stream()).collect(toSet()));
+            x -> classUtils.collectSourceClasses(null, x).stream()).collect(toSet()));
 
     // todo need more elegant solution than this
     this.classSetCache = union;

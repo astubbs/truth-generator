@@ -39,12 +39,12 @@
             <artifactId>truth-java8-extension</artifactId>
             <scope>compile</scope>
         </dependency>
-<!--        <dependency>-->
-<!--            <groupId>com.google.truth</groupId>-->
-<!--            <artifactId>truth</artifactId>-->
-<!--            <type>test-jar</type>-->
-<!--            <scope>test</scope>-->
-<!--        </dependency>-->
+        <!--        <dependency>-->
+        <!--            <groupId>com.google.truth</groupId>-->
+        <!--            <artifactId>truth</artifactId>-->
+        <!--            <type>test-jar</type>-->
+        <!--            <scope>test</scope>-->
+        <!--        </dependency>-->
         <dependency>
             <groupId>org.checkerframework</groupId>
             <artifactId>checker-compat-qual</artifactId>
@@ -76,10 +76,6 @@
         <dependency>
             <groupId>com.google.flogger</groupId>
             <artifactId>flogger</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.google.flogger</groupId>
-            <artifactId>flogger-log4j2-backend</artifactId>
         </dependency>
         <dependency>
             <groupId>com.google.flogger</groupId>

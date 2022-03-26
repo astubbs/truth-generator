@@ -94,7 +94,7 @@
         <maven.version>3.8.5</maven.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
-        <flogger.version>0.6</flogger.version>
+        <flogger.version>0.7.4</flogger.version>
     </properties>
 
     <dependencies>
@@ -228,7 +228,7 @@
             <dependency>
                 <groupId>org.assertj</groupId>
                 <artifactId>assertj-core</artifactId>
-                <version>3.21.0</version>
+                <version>3.22.0</version>
                 <scope>test</scope>
             </dependency>
         </dependencies>

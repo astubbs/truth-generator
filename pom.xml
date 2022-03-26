@@ -208,6 +208,11 @@
                 <version>${flogger.version}</version>
             </dependency>
             <dependency>
+                <groupId>com.google.flogger</groupId>
+                <artifactId>flogger-log4j2-backend</artifactId>
+                <version>${flogger.version}</version>
+            </dependency>
+            <dependency>
                 <groupId>org.projectlombok</groupId>
                 <artifactId>lombok</artifactId>
                 <version>1.18.22</version>

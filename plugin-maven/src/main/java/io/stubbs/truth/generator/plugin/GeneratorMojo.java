@@ -2,11 +2,13 @@ package io.stubbs.truth.generator.plugin;
 
 import io.stubbs.truth.generator.SourceClassSets;
 import io.stubbs.truth.generator.TruthGeneratorAPI;
+import io.stubbs.truth.generator.internal.Options;
 import io.stubbs.truth.generator.internal.TruthGenerator;
 import io.stubbs.truth.generator.internal.Utils;
 import io.stubbs.truth.generator.internal.model.ThreeSystem;
 import lombok.Getter;
 import lombok.SneakyThrows;
+import org.apache.commons.io.FileUtils;
 import org.apache.maven.artifact.DependencyResolutionRequiredException;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -20,11 +22,11 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 import static java.lang.String.format;
 import static java.util.Optional.ofNullable;
@@ -65,12 +67,14 @@ public class GeneratorMojo extends AbstractMojo {
   @Parameter(defaultValue = "", property = "truth.generateAssertionsInPackage")
   public String generateAssertionsInPackage;
 
-  // todo?
-//  /**
-//   * Flag specifying whether to clean the directory where assertions are generated. The default is false.
-//   */
-//  @Parameter(defaultValue = "false", property = "truth.cleanTargetDir")
-//  public boolean cleanTargetDir;
+  /**
+   * Flag specifying whether to clean the directory where assertions are generated. The default is false.
+   */
+  @Parameter(defaultValue = "false", property = "truth.cleanTargetDir")
+  public boolean cleanTargetDir;
+
+  @Parameter(defaultValue = "false", property = "truth.useHas")
+  public boolean useHas;
 
   /**
    * List of packages to generate assertions for.
@@ -89,6 +93,12 @@ public class GeneratorMojo extends AbstractMojo {
    */
   @Parameter(property = "truth.classes")
   public String[] legacyClasses;
+
+  /**
+   * When generatoring for legacy classes (classes that don't use Get prefxes), use a getter for the generated Subject methods.
+   */
+  @Parameter(property = "truth.classes", defaultValue = "true")
+  public boolean useGetterForLegacyClasses;
 
   // todo
 //  /**
@@ -114,17 +124,14 @@ public class GeneratorMojo extends AbstractMojo {
   @Parameter(property = "truth.entryPointClassPackage")
   public String entryPointClassPackage;
 
-  // todo
-//  /**
-//   * Skip generating classes, handy way to disable the plugin.
-//   */
-//  @Parameter(property = "truth.skip")
-//  public boolean skip = false;
+  /**
+  * Skip generating classes, handy way to disable the plugin.
+  */
+  @Parameter(property = "truth.skip", defaultValue = "false")
+  public boolean skip;
 
-
-  // todo
-//  @Parameter(property = "truth.recursive")
-//  public boolean recursive = true;
+  @Parameter(property = "truth.recursive", defaultValue = "true")
+  public boolean recursive;
 
   /**
    * for testing
@@ -137,7 +144,17 @@ public class GeneratorMojo extends AbstractMojo {
   }
 
   public void execute() throws MojoExecutionException {
-    getLog().info("INFO: Truth generator running...");
+    if (isSkip()) {
+      getLog().info("INFO: Skipping Truth generation...");
+      return;
+    } else {
+      getLog().info("INFO: Truth generator running...");
+    }
+
+    // todo smells bad
+    Utils.setOutputBase(getOutputPath());
+
+    deleteOldContent();
 
     this.result = runGenerator();
 
@@ -150,18 +167,25 @@ public class GeneratorMojo extends AbstractMojo {
     }
   }
 
+  private void deleteOldContent() {
+    if (isCleanTargetDir()) {
+      Stream.of(Utils.getManagedPath(), Utils.getTemplatesPath())
+              .map(Path::toFile)
+              .forEach(FileUtils::deleteQuietly);
+    }
+  }
+
   private void addOutputPathsToBuild() {
-    String outputDirectory = getProject().getBuild().getOutputDirectory();
-    Path managedPath = Paths.get(outputDirectory, Utils.DIR_TRUTH_ASSERTIONS_MANAGED);
-    Path templatesPath = Paths.get(outputDirectory, Utils.DIR_TRUTH_ASSERTIONS_TEMPLATES);
+    Path managedPath = Utils.getManagedPath();
+    Path templatesPath = Utils.getTemplatesPath();
     getProject().addTestCompileSourceRoot(managedPath.toAbsolutePath().toString());
     getProject().addTestCompileSourceRoot(templatesPath.toAbsolutePath().toString());
   }
 
   @SneakyThrows
   private Map<Class<?>, ThreeSystem> runGenerator() {
-    String outputDir = getProject().getBuild().getDirectory();
-    TruthGenerator tg = TruthGeneratorAPI.create(Path.of(outputDir));
+    Options options = buildOptions();
+    TruthGenerator tg = TruthGeneratorAPI.create(getOutputPath(), options);
 
     Optional<String> entryPointClassPackage = ofNullable(this.entryPointClassPackage);
     tg.setEntryPoint(entryPointClassPackage);
@@ -179,6 +203,18 @@ public class GeneratorMojo extends AbstractMojo {
     Map<Class<?>, ThreeSystem> generated = tg.generate(ss);
 
     return generated;
+  }
+
+  private Options buildOptions() {
+    return Options.builder()
+            .useHasInsteadOfGet(isUseHas())
+            .useGetterForLegacyClasses(isUseGetterForLegacyClasses())
+            .build();
+  }
+
+  private Path getOutputPath() {
+    String outputDir = getProject().getBuild().getDirectory();
+    return Path.of(outputDir).resolve("generated-test-sources");
   }
 
   private ClassLoader getProjectClassLoader() throws DependencyResolutionRequiredException, MalformedURLException {

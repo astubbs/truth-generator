@@ -3,6 +3,7 @@ package io.stubbs.truth.generator.testModel;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 
 import javax.annotation.Nonnull;
@@ -15,6 +16,7 @@ import static io.stubbs.truth.generator.testModel.MyEmployee.State.IS_A_BOSS;
 @SuperBuilder(toBuilder = true)
 @Getter
 @Setter(AccessLevel.PRIVATE)
+@ToString
 public class MyEmployee extends Person {
 
   private UUID id = UUID.randomUUID();
@@ -97,13 +99,20 @@ public class MyEmployee extends Person {
     return super.getName() + " ID: " + this.getId();
   }
 
-  @Override
-  public String toString() {
-    return "MyEmployee{" +
-            ", name=" + getName() +
-            ", card=" + card +
-            ", employed=" + employmentState +
-            '}';
+//  @Override
+//  public String toString() {
+//    return "MyEmployee{" +
+//            ", name=" + getName() +
+//            ", card=" + card +
+//            ", employed=" + employmentState +
+//            '}';
+//  }
+
+  /**
+   * A "getter" method that doesn't use the get prefix
+   */
+  public int legacyAccessMethod() {
+    return 1;
   }
 
 }

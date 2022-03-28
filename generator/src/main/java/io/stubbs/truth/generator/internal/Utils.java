@@ -8,7 +8,6 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -46,7 +45,6 @@ public class Utils {
   }
 
   private static Path getDirectoryName(JavaClassSource javaClass, Optional<String> targetPackageName) {
-    String parent = Utils.testOutputDir.toString();
     String packageName = targetPackageName.isEmpty() ? javaClass.getPackage() : targetPackageName.get();
 
     // don't use, as won't be able to access package level access methods if we live in a different package
@@ -55,13 +53,13 @@ public class Utils {
 
     // todo use annotations not name strings
     List<String> ids = List.of("Parent", "Child");
-    boolean isChildOrParent = javaClass.getAnnotation(UserManagedTruth.class) == null;
+    boolean isGeneratorManaged = javaClass.getAnnotation(UserManagedTruth.class) == null;
 
-    String baseDirSuffix = (isChildOrParent) ? DIR_TRUTH_ASSERTIONS_MANAGED : DIR_TRUTH_ASSERTIONS_TEMPLATES;
+    Path base = (isGeneratorManaged) ? getManagedPath() : getTemplatesPath();
 
     String packageNameDir = packageName.replace('.', File.separatorChar);
 
-    return Paths.get(parent, "generated-test-sources", baseDirSuffix, packageNameDir);
+    return base.resolve(packageNameDir);
   }
 
   public static <T> String getFactoryName(Class<T> source) {
@@ -95,5 +93,13 @@ public class Utils {
 
   public static void setOutputBase(java.nio.file.Path testOutputDir) {
     Utils.testOutputDir = testOutputDir;
+  }
+
+  public static Path getTemplatesPath() {
+    return testOutputDir.resolve(Utils.DIR_TRUTH_ASSERTIONS_TEMPLATES);
+  }
+
+  public static Path getManagedPath() {
+    return testOutputDir.resolve(Utils.DIR_TRUTH_ASSERTIONS_MANAGED);
   }
 }

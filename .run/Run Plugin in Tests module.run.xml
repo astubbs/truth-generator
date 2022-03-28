@@ -24,7 +24,7 @@
       </option>
     </MavenSettings>
     <method v="2">
-      <option name="Maven.BeforeRunTask" enabled="true" file="$PROJECT_DIR$/plugin-maven/pom.xml" goal="install -DskipTests" />
+      <option name="Maven.BeforeRunTask" enabled="true" file="$PROJECT_DIR$/pom.xml" goal="install -DskipTests -pl plugin-maven -am " />
     </method>
   </configuration>
 </component>

@@ -1,6 +1,7 @@
 package io.stubbs.truth.generator;
 
 import com.google.common.truth.Subject;
+import io.stubbs.truth.generator.internal.Options;
 import io.stubbs.truth.generator.internal.TruthGenerator;
 import io.stubbs.truth.generator.internal.model.ThreeSystem;
 
@@ -14,8 +15,12 @@ import java.util.Set;
 // TODO clean up
 public interface TruthGeneratorAPI {
 
-  static TruthGenerator create(Path testOutputDirectory) {
-    return new TruthGenerator(testOutputDirectory);
+  static TruthGenerator createDefaultOptions(Path testOutputDirectory) {
+    return new TruthGenerator(testOutputDirectory, Options.builder().build());
+  }
+
+  static TruthGenerator create(Path testOutputDirectory, Options options) {
+    return new TruthGenerator(testOutputDirectory, options);
   }
 
   /**

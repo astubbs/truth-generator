@@ -178,13 +178,14 @@ public class SourceClassSets {
     return union;
   }
 
+  // todo docs
   // todo shouldn't be public?
-  public void addIfMissing(final Set<? extends Class<?>> clazzes) {
+  public Set<Class<?>> addIfMissing(final Set<? extends Class<?>> clazzes) {
     getAllClasses(); // update class set cache
-    clazzes.forEach(x -> {
-      if (!classSetCache.contains(x))
-        generateFrom(x);
-    });
+    var missing = clazzes.stream()
+            .filter(x -> !classSetCache.contains(x)).collect(toSet());
+    missing.forEach(this::generateFrom);
+    return (Set<Class<?>>) missing;
   }
 
   // todo shouldn't be public?

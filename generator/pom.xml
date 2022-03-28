@@ -17,6 +17,7 @@
     </properties>
 
     <dependencies>
+        <!-- Main -->
         <dependency>
             <groupId>org.jboss.forge.roaster</groupId>
             <artifactId>roaster-api</artifactId>

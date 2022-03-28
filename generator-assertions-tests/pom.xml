@@ -30,6 +30,8 @@
                     </execution>
                 </executions>
                 <configuration>
+                    <cleanTargetDir>true</cleanTargetDir>
+                    <useHas>true</useHas>
                     <classes>
                         <class>io.stubbs.truth.generator.testModel.MyEmployee</class>
                         <class>io.stubbs.truth.generator.example.Car</class>

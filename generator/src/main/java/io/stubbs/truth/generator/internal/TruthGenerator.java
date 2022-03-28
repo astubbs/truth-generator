@@ -6,6 +6,7 @@ import io.stubbs.truth.generator.BaseSubjectExtension;
 import io.stubbs.truth.generator.GeneratorException;
 import io.stubbs.truth.generator.SourceClassSets;
 import io.stubbs.truth.generator.TruthGeneratorAPI;
+import io.stubbs.truth.generator.internal.model.Result;
 import io.stubbs.truth.generator.internal.model.ThreeSystem;
 import lombok.Getter;
 import lombok.Setter;
@@ -27,13 +28,7 @@ public class TruthGenerator implements TruthGeneratorAPI {
 
   private static final FluentLogger log = FluentLogger.forEnclosingClass();
   private final Path testOutputDir;
-
-  /**
-   * Marks whether to try to find all referenced types from the source types, to generate Subjects for all of them, and
-   * use them all in the Subject tree.
-   */
-  @Setter
-  private boolean recursive = true;
+  private final Options options;
 
   private ClassUtils classUtils = new ClassUtils();
 
@@ -48,7 +43,9 @@ public class TruthGenerator implements TruthGeneratorAPI {
    */
   private final Map<Class<?>, Class<? extends Subject>> subjectExtensions = new HashMap<>();
 
-  public TruthGenerator(Path testOutputDirectory){
+  public TruthGenerator(Path testOutputDirectory, Options options) {
+    Options.setInstance(options);
+    this.options = options;
     this.testOutputDir = testOutputDirectory;
     Utils.setOutputBase(this.testOutputDir);
     autoRegisterStandardSubjectExtension();
@@ -139,11 +136,17 @@ public class TruthGenerator implements TruthGeneratorAPI {
   @Override
   public Map<Class<?>, ThreeSystem> generate(SourceClassSets ss) {
     RecursiveChecker rc = new RecursiveChecker();
-    if (recursive) {
-      rc.addReferencedIncluded(ss);
+    Result.ResultBuilder results = Result.builder();
+
+    if (options.isRecursive()) {
+      Set<Class<?>> referencedBuilt = rc.addReferencedIncluded(ss);
+      log.at(Level.INFO)
+              .log("Added classes not explicitly configured: %s", referencedBuilt);
+      results.referencedBuilt(referencedBuilt);
     } else {
       Set<Class<?>> missing = rc.findReferencedNotIncluded(ss);
       if (!missing.isEmpty()) {
+        results.referencedNotBuild(missing);
         log.at(Level.WARNING)
                 .log("Some referenced classes in the tree are not in the list of Subjects to be generated. " +
                         "Consider using automatic recursive generation, or add the missing classes. " +

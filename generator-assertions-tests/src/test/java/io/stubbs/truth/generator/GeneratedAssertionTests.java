@@ -2,7 +2,6 @@ package io.stubbs.truth.generator;
 
 import io.stubbs.truth.generator.internal.TruthGeneratorTest;
 import io.stubbs.truth.generator.testModel.MyEmployee;
-
 import io.stubbs.truth.generator.testModel.MyEmployeeChildSubject;
 import io.stubbs.truth.generator.testModel.MyEmployeeSubject;
 import io.stubbs.truth.generator.testing.legacy.NonBeanLegacy;
@@ -14,6 +13,7 @@ import org.junit.Test;
 import uk.co.jemos.podam.api.PodamFactoryImpl;
 
 import java.io.File;
+import java.util.Optional;
 
 import static com.google.common.truth.Truth.assertThat;
 
@@ -109,6 +109,16 @@ public class GeneratedAssertionTests {
       MyEmployee build = emp.toBuilder().employmentState(MyEmployee.State.IS_A_BOSS).build();
       MyEmployeeChildSubject.assertThat(build).isBoss();
     }
+  }
+
+  @Test
+  public void optionalPresenceTest() {
+    MyEmployee emp = TestModelUtils.createInstance(MyEmployee.class).toBuilder()
+            .weighting(Optional.empty())
+            .build();
+    Assertions.assertThatThrownBy(
+            () -> ManagedTruth.assertThat(emp).hasWeighting().isZero()
+    ).hasMessageContaining("expected Weighting to be present");
   }
 
 }

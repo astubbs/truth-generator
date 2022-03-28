@@ -10,7 +10,7 @@ public class Subjects {
 
   @Test
   public void makeSubjects() {
-    TruthGeneratorAPI tg = TruthGeneratorAPI.create(Paths.get("").toAbsolutePath());
+    TruthGeneratorAPI tg = TruthGeneratorAPI.createDefaultOptions(Paths.get("").toAbsolutePath());
     SourceClassSets ss = new SourceClassSets(getClass());
     ss.generateFromShaded(File.class);
     ss.generateFrom(GeneratorMojo.class);

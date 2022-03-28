@@ -13,6 +13,7 @@ import org.junit.Test;
 import uk.co.jemos.podam.api.PodamFactoryImpl;
 
 import java.io.File;
+import java.time.Instant;
 import java.util.Optional;
 
 import static com.google.common.truth.Truth.assertThat;
@@ -119,6 +120,12 @@ public class GeneratedAssertionTests {
     Assertions.assertThatThrownBy(
             () -> ManagedTruth.assertThat(emp).hasWeighting().isZero()
     ).hasMessageContaining("expected Weighting to be present");
+  }
+
+  @Test
+  public void instantsAreComparableSubjectsAsWell(){
+    MyEmployee emp = TestModelUtils.createInstance(MyEmployee.class).toBuilder().build();
+    ManagedTruth.assertThat(emp).hasStartedAt().isGreaterThan(Instant.MIN);
   }
 
 }

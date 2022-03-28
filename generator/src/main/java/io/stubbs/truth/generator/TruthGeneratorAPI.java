@@ -65,15 +65,15 @@ public interface TruthGeneratorAPI {
    *
    * @see SourceClassSets
    */
-  Map<Class<?>, ThreeSystem> generate(SourceClassSets ss);
+  Map<Class<?>, ThreeSystem<?>> generate(SourceClassSets ss);
 
   /**
    * @param classes
    * @return
    */
-  Map<Class<?>, ThreeSystem> generate(Set<Class<?>> classes);
+  Map<Class<?>, ThreeSystem<?>> generate(Set<Class<?>> classes);
 
-  Map<Class<?>, ThreeSystem> generate(Class<?>... classes);
+  Map<Class<?>, ThreeSystem<?>> generate(Class<?>... classes);
 
   /**
    * Manually register extensions to base Subject types - i.e. extend StringSubject with your own features. These will

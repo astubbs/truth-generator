@@ -5,18 +5,22 @@ import lombok.Setter;
 import org.jboss.forge.roaster.model.source.JavaClassSource;
 
 @Getter
-public class ThreeSystem {
+public class ThreeSystem<T> {
 
   @Setter
   boolean legacyMode = false;
 
-  public Class<?> classUnderTest;
+  public Class<T> classUnderTest;
 
   public ParentClass parent;
   public MiddleClass middle;
   public JavaClassSource child;
 
-  public ThreeSystem(Class<?> classUnderTest, ParentClass parent, MiddleClass middle, JavaClassSource child) {
+  /**
+   * @see io.stubbs.truth.generator.internal.SkeletonGenerator#threeLayerSystem
+   */
+  // todo make protected?
+  public ThreeSystem(Class<T> classUnderTest, ParentClass parent, MiddleClass middle, JavaClassSource child) {
     this.classUnderTest = classUnderTest;
     this.parent = parent;
     this.middle = middle;
@@ -39,4 +43,5 @@ public class ThreeSystem {
     String subjectPackage = parent.getGenerated().getPackage();
     return underTestPackage.getName().contains(subjectPackage);
   }
+
 }

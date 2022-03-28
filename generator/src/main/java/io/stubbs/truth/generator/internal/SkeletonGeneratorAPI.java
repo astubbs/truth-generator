@@ -1,7 +1,7 @@
 package io.stubbs.truth.generator.internal;
 
-import io.stubbs.truth.generator.internal.model.ThreeSystem;
 import io.stubbs.truth.generator.TruthGeneratorAPI;
+import io.stubbs.truth.generator.internal.model.ThreeSystem;
 
 import java.io.FileNotFoundException;
 import java.util.Optional;
@@ -11,7 +11,7 @@ public interface SkeletonGeneratorAPI {
     /**
      * @see TruthGeneratorAPI#maintain(Class, Class)
      */
-    String maintain(Class source, Class userAndGeneratedMix);
+    String maintain(Class<?> source, Class<?> userAndGeneratedMix);
 
     /**
      * Uses an optional three layer system to manage the Subjects.
@@ -31,7 +31,7 @@ public interface SkeletonGeneratorAPI {
      * with clear separation from the code generation.
      * @return
      */
-    Optional<Object> threeLayerSystem(Class<?> source, Class<?> usersMiddleClass) throws FileNotFoundException;
+    <T> Optional<ThreeSystem<T>> threeLayerSystem(Class<T> source, Class<T> usersMiddleClass) throws FileNotFoundException;
 
     /**
      * Create the place holder middle class, for optional copying into source code
@@ -39,7 +39,7 @@ public interface SkeletonGeneratorAPI {
      * @return null if for some reason the class isn't supported
      * @see #threeLayerSystem(Class, Class)
      */
-    Optional<ThreeSystem> threeLayerSystem(Class<?> source);
+    <T> Optional<ThreeSystem<T>> threeLayerSystem(Class<T> source);
 
     /**
      * @see TruthGeneratorAPI#combinedSystem(Class)

@@ -4,6 +4,7 @@ import com.google.common.flogger.FluentLogger;
 import com.google.common.truth.Fact;
 import com.google.common.truth.Subject;
 import io.stubbs.truth.generator.internal.model.ThreeSystem;
+import lombok.Getter;
 import org.apache.commons.lang3.StringUtils;
 import org.jboss.forge.roaster.model.source.JavaClassSource;
 import org.jboss.forge.roaster.model.source.MethodSource;
@@ -31,8 +32,8 @@ public class SubjectMethodGenerator extends MethodStrategy {
 
   private static final FluentLogger logger = FluentLogger.forEnclosingClass();
 
+  // todo as strategies are refactored, this should eventually be removed
   private ThreeSystem context;
-  private final Options options = Options.get();
 
   private final Set<MethodStrategy> strategies = new HashSet<>();
   private final ChainStrategy chainStrategy;
@@ -40,12 +41,13 @@ public class SubjectMethodGenerator extends MethodStrategy {
   /**
    * @param allTypes todo naming
    */
-  public SubjectMethodGenerator(Set<ThreeSystem> allTypes, Map<Class<?>, Class<? extends Subject>> subjectExtensions) {
-    chainStrategy = new ChainStrategy(allTypes, subjectExtensions);
+  public SubjectMethodGenerator(Set<ThreeSystem<?>> allTypes, BuiltInSubjectTypeStore subjectStore) {
+    GeneratedSubjectTypeStore generatedSubjectTypeStore = new GeneratedSubjectTypeStore(allTypes, subjectStore);
+    chainStrategy = new ChainStrategy(generatedSubjectTypeStore);
     strategies.add(new OptionalStrategy());
   }
 
-  public void addTests(ThreeSystem system) {
+  public void addTests(ThreeSystem<?> system) {
     this.context = system;
 
     //
@@ -325,7 +327,7 @@ public class SubjectMethodGenerator extends MethodStrategy {
     }
   }
 
-  public void addTests(final Set<ThreeSystem> allTypes) {
+  public void addTests(final Set<ThreeSystem<?>> allTypes) {
     for (ThreeSystem system : allTypes) {
       addTests(system);
     }
@@ -353,25 +355,27 @@ public class SubjectMethodGenerator extends MethodStrategy {
     /**
      * an existing Subject class on the class path
      */
+    @Getter
     final Class<?> clazz;
 
     /**
      * a new generated Subject
      */
+    @Getter
     final ThreeSystem generated;
 
-    ClassOrGenerated(final Class<?> clazz, final ThreeSystem generated) {
+    ClassOrGenerated(final Class<? extends Subject> clazz, final ThreeSystem generated) {
       this.clazz = clazz;
       this.generated = generated;
     }
 
-    static Optional<ClassOrGenerated> ofClass(Optional<Class<?>> clazz) {
+    static Optional<ClassOrGenerated> ofClass(Optional<Class<? extends Subject>> clazz) {
       if (clazz.isPresent())
         return of(new ClassOrGenerated(clazz.get(), null));
       else return empty();
     }
 
-    static Optional<ClassOrGenerated> ofClass(Class<?> compiledSubjectForTypeName) {
+    static Optional<ClassOrGenerated> ofClass(Class<? extends Subject> compiledSubjectForTypeName) {
       return ofClass(of(compiledSubjectForTypeName));
     }
 

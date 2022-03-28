@@ -56,7 +56,7 @@ public class GeneratorMojoTest {
     assertNotNull(generatorMojo);
 
     List<Plugin> plugins = generatorMojo.getProject().getBuildPlugins();
-    assertThat(plugins.stream().map(x->x.getKey()).collect(Collectors.toList())).contains("io.stubbs.truth:truth-generator-maven-plugin");
+    assertThat(plugins.stream().map(Plugin::getKey).collect(Collectors.toList())).contains("io.stubbs.truth:truth-generator-maven-plugin");
 
     //
     assertThat(generatorMojo.getClasses()).asList()
@@ -66,7 +66,7 @@ public class GeneratorMojoTest {
     generatorMojo.execute();
 
     //
-    Map<Class<?>, ThreeSystem> results = generatorMojo.getResult();
+    Map<Class<?>, ThreeSystem<?>> results = generatorMojo.getResult();
     assertThat(results).containsKey(MyEmployee.class);
     assertThat(results).containsKey(File.class);
 

@@ -16,14 +16,25 @@ public class OptionalStrategyTest extends StrategyTest {
      * Doesn't assert anything as was aborted test for optional chaining
      */
     @Test
-    public void generatesOk() {
+    public void generatesPrimitiveWrapperOK() {
         Method theMethod = Arrays.stream(employeeClass.getMethods()).filter(x -> x.getName().contains("getWeighting")).findFirst().get();
 
         boolean added = strat.addStrategyMaybe(createThreeSystem(MyEmployee.class), theMethod, generated);
 
         assertThat(added).isTrue();
 
-        assertThat(generated.toString()).isNotEmpty();
+        assertThat(generated.toString()).contains("void hasWeightingNotPresent() {");
+    }
+
+    @Test
+    public void generatesInstantWrapperOK() {
+        Method theMethod = Arrays.stream(employeeClass.getMethods()).filter(x -> x.getName().contains("getStartedAt")).findFirst().get();
+
+        boolean added = strat.addStrategyMaybe(createThreeSystem(MyEmployee.class), theMethod, generated);
+
+        assertThat(added).isTrue();
+
+        assertThat(generated.toString()).contains("public void hasStartedAtPresent() {");
     }
 
 }

@@ -76,7 +76,7 @@ public class RecursiveChecker {
             .filter(cls -> !seen.contains(cls))
             .filter(cls -> !Void.TYPE.isAssignableFrom(cls) && !cls.isPrimitive() && !cls.equals(Object.class))
             // todo smelly access ChainStrategy.getNativeTypes()
-            .filter(type -> !ChainStrategy.getNativeTypes().contains(type) && !ss.isClassIncluded(type))
+            .filter(type -> !BuiltInSubjectTypeStore.getNativeTypes().contains(type) && !ss.isClassIncluded(type))
             .collect(Collectors.toList());
 
     if (!filtered.isEmpty()) {

@@ -18,6 +18,8 @@ public class Utils {
 
   public static final String DIR_TRUTH_ASSERTIONS_MANAGED = "truth-assertions-managed";
   public static final String DIR_TRUTH_ASSERTIONS_TEMPLATES = "truth-assertions-templates";
+
+  // todo remove static
   private static java.nio.file.Path testOutputDir;
 
   public static String writeToDisk(JavaClassSource javaClass) {

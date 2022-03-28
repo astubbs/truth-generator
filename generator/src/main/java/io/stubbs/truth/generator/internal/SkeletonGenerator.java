@@ -17,7 +17,6 @@ import org.jboss.forge.roaster.model.source.JavaDocSource;
 import org.jboss.forge.roaster.model.source.MethodSource;
 
 import javax.annotation.processing.Generated;
-import java.io.FileNotFoundException;
 import java.util.Optional;
 
 import static java.util.Optional.empty;
@@ -37,6 +36,7 @@ public class SkeletonGenerator implements SkeletonGeneratorAPI {
   public static boolean forceMiddleGenerate;
 
   private final OverallEntryPoint overallEntryPoint;
+  private final BuiltInSubjectTypeStore subjectTypeStore;
 
   private Optional<String> targetPackageName;
   private MiddleClass middle;
@@ -45,22 +45,26 @@ public class SkeletonGenerator implements SkeletonGeneratorAPI {
   @Setter
   private boolean legacyMode = false;
 
-  public SkeletonGenerator(Optional<String> targetPackageName, OverallEntryPoint overallEntryPoint) {
+  public SkeletonGenerator(Optional<String> targetPackageName, OverallEntryPoint overallEntryPoint, BuiltInSubjectTypeStore subjectTypeStore) {
     this.targetPackageName = targetPackageName;
     this.overallEntryPoint = overallEntryPoint;
+    this.subjectTypeStore = subjectTypeStore;
   }
 
   @Override
-  public String maintain(Class source, Class userAndGeneratedMix) {
+  public String maintain(Class<?> source, Class<?> userAndGeneratedMix) {
     throw new IllegalStateException("Not implemented yet");
   }
 
+  /**
+   * @return if possible, a {@link ThreeSystem} using an already existing {@link MiddleClass}
+   */
   @Override
-  public Optional<Object> threeLayerSystem(Class<?> source, Class<?> usersMiddleClass) throws FileNotFoundException {
+  public <T> Optional<ThreeSystem<T>> threeLayerSystem(Class<T> source, Class<T> usersMiddleClass) {
     if (SourceChecking.checkSource(source, empty()))
       return empty();
 
-    // make parent - boiler plate access
+    // make parent - boilerplate access
     ParentClass parent = createParent(source);
 
     String factoryMethodName = Utils.getFactoryName(source);
@@ -70,29 +74,29 @@ public class SkeletonGenerator implements SkeletonGeneratorAPI {
 
     MiddleClass middleClass = MiddleClass.of(usersMiddleClass);
 
-    return of(new ThreeSystem(source, parent, middleClass, child));
+    return of(new ThreeSystem<>(source, parent, middleClass, child));
   }
 
   @Override
-  public Optional<ThreeSystem> threeLayerSystem(Class<?> source) {
-    if (SourceChecking.checkSource(source, targetPackageName))
+  public <T> Optional<ThreeSystem<T>> threeLayerSystem(Class<T> clazzUnderTest) {
+    if (SourceChecking.checkSource(clazzUnderTest, targetPackageName))
       return empty();
 
     // todo make sure this doesn't override explicit shading settings
-    if (SourceChecking.needsShading(source)) {
-      targetPackageName = of(this.overallEntryPoint.getPackageName() + ".autoShaded." + source.getPackage().getName());
+    if (SourceChecking.needsShading(clazzUnderTest)) {
+      targetPackageName = of(this.overallEntryPoint.getPackageName() + ".autoShaded." + clazzUnderTest.getPackage().getName());
     }
 
-    ParentClass parent = createParent(source);
+    ParentClass parent = createParent(clazzUnderTest);
     this.parent = parent;
 
-    MiddleClass middle = createMiddleUserTemplate(parent.getGenerated(), source);
+    MiddleClass middle = createMiddleUserTemplate(parent.getGenerated(), clazzUnderTest);
     this.middle = middle;
 
-    String factoryName = Utils.getFactoryName(source);
-    JavaClassSource child = createChild(parent, middle.getSimpleName(), source, factoryName);
+    String factoryName = Utils.getFactoryName(clazzUnderTest);
+    JavaClassSource child = createChild(parent, middle.getSimpleName(), clazzUnderTest, factoryName);
 
-    return of(new ThreeSystem(source, parent, middle, child));
+    return of(new ThreeSystem<>(clazzUnderTest, parent, middle, child));
   }
 
   private MiddleClass createMiddleUserTemplate(JavaClassSource parent, Class source) {
@@ -141,26 +145,26 @@ public class SkeletonGenerator implements SkeletonGeneratorAPI {
     }
   }
 
-  private <T> ParentClass createParent(Class<T> source) {
+  private <T> ParentClass createParent(Class<T> clazzUnderTest) {
     JavaClassSource parent = Roaster.create(JavaClassSource.class);
-    String sourceName = source.getSimpleName();
+    String sourceName = clazzUnderTest.getSimpleName();
     String parentName = getSubjectName(sourceName + "Parent");
     parent.setName(parentName);
 
-    addPackageSuperAndAnnotation(parent, source);
+    addPackageSuperAndAnnotation(parent, clazzUnderTest);
 
     addClassJavaDoc(parent, sourceName);
 
-    addActualField(source, parent);
+    addActualField(clazzUnderTest, parent);
 
-    addConstructor(source, parent, true);
+    addConstructor(clazzUnderTest, parent, true);
 
     Utils.writeToDisk(parent, targetPackageName);
     return new ParentClass(parent);
   }
 
-  private void addPackageSuperAndAnnotation(final JavaClassSource javaClass, final Class<?> source) {
-    addPackageSuperAndAnnotation(javaClass, source.getPackage().getName(), getSubjectName(source.getSimpleName()));
+  private void addPackageSuperAndAnnotation(final JavaClassSource javaClass, final Class<?> clazzUnderTest) {
+    addPackageSuperAndAnnotation(clazzUnderTest, javaClass, clazzUnderTest.getPackage().getName());
   }
 
   private JavaClassSource createChild(ParentClass parent,
@@ -199,31 +203,31 @@ public class SkeletonGenerator implements SkeletonGeneratorAPI {
 //    }
 
   @Override
-  public <T> String combinedSystem(Class<T> source) {
+  public <T> String combinedSystem(Class<T> clazzUnderTest) {
     JavaClassSource javaClass = Roaster.create(JavaClassSource.class);
 
 //        JavaClassSource handWrittenExampleCode = Roaster.parse(JavaClassSource.class, handWritten);
 
-//        registerManagedClass(source, handWrittenExampleCode);
+//        registerManagedClass(clazzUnderTest, handWrittenExampleCode);
 
 //        javaClass = handWrittenExampleCode;
 
-    String packageName = source.getPackage().getName();
-    String sourceName = source.getSimpleName();
+    String packageName = clazzUnderTest.getPackage().getName();
+    String sourceName = clazzUnderTest.getSimpleName();
     String subjectClassName = getSubjectName(sourceName);
 
 
-    addPackageSuperAndAnnotation(javaClass, packageName, subjectClassName);
+    addPackageSuperAndAnnotation(clazzUnderTest, javaClass, packageName);
 
     addClassJavaDoc(javaClass, sourceName);
 
-    addActualField(source, javaClass);
+    addActualField(clazzUnderTest, javaClass);
 
-    addConstructor(source, javaClass, true);
+    addConstructor(clazzUnderTest, javaClass, true);
 
-    MethodSource<JavaClassSource> factory = addFactoryAccesor(source, javaClass, sourceName);
+    MethodSource<JavaClassSource> factory = addFactoryAccesor(clazzUnderTest, javaClass, sourceName);
 
-    addAccessPoints(source, javaClass, factory.getName(), javaClass.getQualifiedName());
+    addAccessPoints(clazzUnderTest, javaClass, factory.getName(), javaClass.getQualifiedName());
 
     // todo add static import for Truth.assertAbout somehow?
 //        Import anImport = javaClass.addImport(Truth.class);
@@ -247,15 +251,29 @@ public class SkeletonGenerator implements SkeletonGeneratorAPI {
     addAssertTruth(source, javaClass, assertThat);
   }
 
-  private void addPackageSuperAndAnnotation(JavaClassSource javaClass, String packageName, String subjectClassName) {
+  private void addPackageSuperAndAnnotation(final Class<?> clazzUnderTest, JavaClassSource javaClass, String packageName) {
     String packageNameToUse = targetPackageName.isPresent() ? targetPackageName.get() : packageName;
     javaClass.setPackage(packageNameToUse);
 
-    // extend
-    javaClass.extendSuperType(Subject.class);
+    addClassExtension(clazzUnderTest, javaClass);
 
     //
     addGeneratedMarker(javaClass);
+  }
+
+  private void addClassExtension(final Class<?> clazzUnderTest, JavaClassSource javaClass) {
+    Class<?> bestSubject = findBestSubjectToExtend(clazzUnderTest);
+    javaClass.extendSuperType(bestSubject);
+  }
+
+  private Class<?> findBestSubjectToExtend(Class<?> clazzUnderTest) {
+    // does the class extend classes that we have built in Subjects for?
+    var subjectForType = subjectTypeStore.getSubjectForNotNativeType(clazzUnderTest.getSimpleName(), clazzUnderTest);
+    if (subjectForType.isPresent()) {
+      return subjectForType.get();
+    } else {
+      return Subject.class;
+    }
   }
 
   private void addGeneratedMarker(final JavaClassSource javaClass) {

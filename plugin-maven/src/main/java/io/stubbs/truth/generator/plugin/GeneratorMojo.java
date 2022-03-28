@@ -136,7 +136,7 @@ public class GeneratorMojo extends AbstractMojo {
   /**
    * for testing
    */
-  private Map<Class<?>, ThreeSystem> result;
+  private Map<Class<?>, ThreeSystem<?>> result;
 
   static String shouldHaveNonEmptyPackagesOrClasses() {
     return format(
@@ -183,7 +183,7 @@ public class GeneratorMojo extends AbstractMojo {
   }
 
   @SneakyThrows
-  private Map<Class<?>, ThreeSystem> runGenerator() {
+  private Map<Class<?>, ThreeSystem<?>> runGenerator() {
     Options options = buildOptions();
     TruthGenerator tg = TruthGeneratorAPI.create(getOutputPath(), options);
 
@@ -200,7 +200,7 @@ public class GeneratorMojo extends AbstractMojo {
     ss.generateFromNonBean(projectClassLoader, legacyClasses);
     ss.generateAllFoundInPackages(getPackages());
 
-    Map<Class<?>, ThreeSystem> generated = tg.generate(ss);
+    Map<Class<?>, ThreeSystem<?>> generated = tg.generate(ss);
 
     return generated;
   }

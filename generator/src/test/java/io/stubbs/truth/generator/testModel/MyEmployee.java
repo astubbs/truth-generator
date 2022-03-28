@@ -7,6 +7,7 @@ import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 
 import javax.annotation.Nonnull;
+import java.time.Instant;
 import java.time.ZonedDateTime;
 import java.util.*;
 
@@ -49,6 +50,8 @@ public class MyEmployee extends Person {
   private State employmentState = State.NEVER_EMPLOYED;
 
   private Optional<Double> weighting = Optional.empty();
+
+  private Optional<Instant> startedAt = Optional.empty();
 
   private Map<String, Project> projectMap = new HashMap<>();
 

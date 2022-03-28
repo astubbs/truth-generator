@@ -10,8 +10,10 @@ import com.google.common.truth.IntegerSubject;
 import io.stubbs.truth.generator.internal.autoShaded.java.time.ZonedDateTimeSubject;
 import static io.stubbs.truth.generator.testModel.MyEmployeeSubject.myEmployees;
 import io.stubbs.truth.generator.testModel.MyEmployeeSubject;
+import io.stubbs.truth.generator.testModel.MyEmployee;
 import static io.stubbs.truth.generator.testModel.IdCardSubject.idCards;
 import io.stubbs.truth.generator.testModel.IdCardSubject;
+import io.stubbs.truth.generator.testModel.IdCard;
 import static io.stubbs.truth.generator.testModel.StateSubject.states;
 import io.stubbs.truth.generator.testModel.StateSubject;
 import io.stubbs.truth.generator.testModel.MyEmployee.State;
@@ -28,13 +30,16 @@ import io.stubbs.truth.generator.internal.MyMapSubject;
 import java.util.Map;
 import static io.stubbs.truth.generator.internal.MyStringSubject.strings;
 import com.google.common.truth.LongSubject;
-import static io.stubbs.truth.generator.internal.autoShaded.java.util.OptionalSubject.optionals;
-import io.stubbs.truth.generator.internal.autoShaded.java.util.OptionalSubject;
+import static io.stubbs.truth.generator.internal.autoShaded.java.time.InstantSubject.instants;
+import io.stubbs.truth.generator.internal.autoShaded.java.time.InstantSubject;
+import java.time.Instant;
 import java.util.Optional;
+import com.google.common.truth.DoubleSubject;
 import io.stubbs.truth.generator.internal.MyStringSubject;
 import com.google.common.truth.ObjectArraySubject;
 import static io.stubbs.truth.generator.testModel.PersonSubject.persons;
 import io.stubbs.truth.generator.testModel.PersonSubject;
+import io.stubbs.truth.generator.testModel.Person;
 /**
  * Truth Subject for the {@link MyEmployee}.
  *
@@ -64,7 +69,7 @@ public class MyEmployeeParentSubject extends Subject {
 	/**
 	 * Simple check for equality for all fields.
 	 */
-	public void hasAnniversaryNotEqualTo(ZonedDateTime expected) {
+	public void hasAnniversaryNotEqualTo(java.time.ZonedDateTime expected) {
 		if (!(actual.getAnniversary().equals(expected))) {
 			failWithActual(fact("expected Anniversary NOT to be equal to", expected));
 		}
@@ -184,7 +189,7 @@ public class MyEmployeeParentSubject extends Subject {
 	/**
 	 * Simple check for equality for all fields.
 	 */
-	public void hasEmploymentStateNotEqualTo(State expected) {
+	public void hasEmploymentStateNotEqualTo(io.stubbs.truth.generator.testModel.MyEmployee.State expected) {
 		if (!(actual.getEmploymentState().equals(expected))) {
 			failWithActual(fact("expected EmploymentState NOT to be equal to", expected));
 		}
@@ -208,7 +213,7 @@ public class MyEmployeeParentSubject extends Subject {
 	/**
 	 * Simple check for equality for all fields.
 	 */
-	public void hasIdNotEqualTo(UUID expected) {
+	public void hasIdNotEqualTo(java.util.UUID expected) {
 		if (!(actual.getId().equals(expected))) {
 			failWithActual(fact("expected Id NOT to be equal to", expected));
 		}
@@ -298,7 +303,7 @@ public class MyEmployeeParentSubject extends Subject {
 	/**
 	 * Simple check for equality for all fields.
 	 */
-	public void hasProjectListNotEqualTo(List expected) {
+	public void hasProjectListNotEqualTo(java.util.List expected) {
 		if (!(actual.getProjectList().equals(expected))) {
 			failWithActual(fact("expected ProjectList NOT to be equal to", expected));
 		}
@@ -338,7 +343,7 @@ public class MyEmployeeParentSubject extends Subject {
 	/**
 	 * Simple check for equality for all fields.
 	 */
-	public void hasProjectMapNotEqualTo(Map expected) {
+	public void hasProjectMapNotEqualTo(java.util.Map expected) {
 		if (!(actual.getProjectMap().equals(expected))) {
 			failWithActual(fact("expected ProjectMap NOT to be equal to", expected));
 		}
@@ -403,15 +408,57 @@ public class MyEmployeeParentSubject extends Subject {
 	 * Returns the Subject for the given field type, so you can chain on other
 	 * assertions.
 	 */
-	public OptionalSubject hasWeighting() {
+	public InstantSubject hasStartedAt() {
 		isNotNull();
-		return check("getWeighting()").about(optionals()).that(actual.getWeighting());
+		hasStartedAtPresent();
+		return check("getStartedAt().get()").about(instants()).that((Instant) actual.getStartedAt().get());
+	}
+	/**
+	 * Checks Optional fields for presence.
+	 */
+	public void hasStartedAtNotPresent() {
+		if (actual.getStartedAt().isPresent()) {
+			failWithActual(simpleFact("expected StartedAt NOT to be present"));
+		}
+	}
+	/**
+	 * Checks Optional fields for presence.
+	 */
+	public void hasStartedAtPresent() {
+		if (!actual.getStartedAt().isPresent()) {
+			failWithActual(simpleFact("expected StartedAt to be present"));
+		}
+	}
+	/**
+	 * Simple check for equality for all fields.
+	 */
+	public void hasStartedAtNotEqualTo(Optional expected) {
+		if (!(actual.getStartedAt().equals(expected))) {
+			failWithActual(fact("expected StartedAt NOT to be equal to", expected));
+		}
+	}
+	/**
+	 * Simple check for equality for all fields.
+	 */
+	public void hasStartedAtEqualTo(java.util.Optional expected) {
+		if ((actual.getStartedAt().equals(expected))) {
+			failWithActual(fact("expected StartedAt to be equal to", expected));
+		}
+	}
+	/**
+	 * Returns the Subject for the given field type, so you can chain on other
+	 * assertions.
+	 */
+	public DoubleSubject hasWeighting() {
+		isNotNull();
+		hasWeightingPresent();
+		return check("getWeighting().get()").that((Double) actual.getWeighting().get());
 	}
 	/**
 	 * Checks Optional fields for presence.
 	 */
 	public void hasWeightingNotPresent() {
-		if (!actual.getWeighting().isPresent()) {
+		if (actual.getWeighting().isPresent()) {
 			failWithActual(simpleFact("expected Weighting NOT to be present"));
 		}
 	}
@@ -419,14 +466,14 @@ public class MyEmployeeParentSubject extends Subject {
 	 * Checks Optional fields for presence.
 	 */
 	public void hasWeightingPresent() {
-		if (actual.getWeighting().isPresent()) {
+		if (!actual.getWeighting().isPresent()) {
 			failWithActual(simpleFact("expected Weighting to be present"));
 		}
 	}
 	/**
 	 * Simple check for equality for all fields.
 	 */
-	public void hasWeightingNotEqualTo(Optional expected) {
+	public void hasWeightingNotEqualTo(java.util.Optional expected) {
 		if (!(actual.getWeighting().equals(expected))) {
 			failWithActual(fact("expected Weighting NOT to be equal to", expected));
 		}

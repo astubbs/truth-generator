@@ -24,7 +24,7 @@ public class SourceChecking {
     if (isTestClass(source))
       return true;
 
-    if (ChainStrategy.getNativeTypes().contains(source))
+    if (BuiltInSubjectTypeStore.getNativeTypes().contains(source))
       return true;
 
     return false;

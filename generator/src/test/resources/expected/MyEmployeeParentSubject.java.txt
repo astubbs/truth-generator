@@ -50,7 +50,7 @@ import io.stubbs.truth.generator.testModel.Person;
  * @see MyEmployeeSubject
  * @see MyEmployeeChildSubject
  */
-@Generated("truth-generator")
+@Generated(value = "io.stubbs.truth.generator.internal.TruthGenerator", date = "1970-01-01T00:00:00Z")
 public class MyEmployeeParentSubject extends Subject {
 	protected final MyEmployee actual;
 	protected MyEmployeeParentSubject(FailureMetadata failureMetadata,

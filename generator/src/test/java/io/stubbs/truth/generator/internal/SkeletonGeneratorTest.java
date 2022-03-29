@@ -11,6 +11,9 @@ import java.time.Instant;
 import static io.stubbs.truth.generator.internal.TruthGeneratorTest.testOutputDirectory;
 import static io.stubbs.truth.generator.internal.modelSubjectChickens.ThreeSystemChildSubject.assertThat;
 
+/**
+ * @see SkeletonGenerator
+ */
 public class SkeletonGeneratorTest {
 
     @Test
@@ -19,7 +22,7 @@ public class SkeletonGeneratorTest {
         SourceClassSets ss = new SourceClassSets(getClass().getPackage().getName());
         ss.generateFrom(Instant.class);
         var generate = tg.generate(ss);
-        ThreeSystem threeSystem = generate.get(Instant.class);
+        ThreeSystem<?> threeSystem = generate.get(Instant.class);
         assertThat(threeSystem).hasParent().hasGenerated().hasSourceText().contains("InstantParentSubject extends ComparableSubject");
     }
 

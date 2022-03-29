@@ -17,7 +17,7 @@ import javax.annotation.processing.Generated;
  * @see MyEmployeeParentSubject
  */
 @UserManagedTruth(MyEmployee.class)
-@Generated("truth-generator")
+@Generated(value = "io.stubbs.truth.generator.internal.TruthGenerator", date = "1970-01-01T00:00:00Z")
 public class MyEmployeeSubject extends MyEmployeeParentSubject {
 	protected MyEmployeeSubject(FailureMetadata failureMetadata,
 			io.stubbs.truth.generator.testModel.MyEmployee actual) {

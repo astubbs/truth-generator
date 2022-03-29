@@ -9,13 +9,15 @@ import io.stubbs.truth.generator.internal.model.ThreeSystem;
 import lombok.Getter;
 import lombok.SneakyThrows;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.maven.artifact.DependencyResolutionRequiredException;
+import org.apache.maven.model.Plugin;
 import org.apache.maven.plugin.AbstractMojo;
-import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
+import org.codehaus.plexus.util.xml.Xpp3Dom;
 
 import java.io.File;
 import java.net.MalformedURLException;
@@ -95,7 +97,7 @@ public class GeneratorMojo extends AbstractMojo {
   public String[] legacyClasses;
 
   /**
-   * When generatoring for legacy classes (classes that don't use Get prefxes), use a getter for the generated Subject methods.
+   * When generating for legacy classes (classes that don't use Get prefixes), use a getter for the generated Subject methods.
    */
   @Parameter(property = "truth.classes", defaultValue = "true")
   public boolean useGetterForLegacyClasses;
@@ -116,7 +118,6 @@ public class GeneratorMojo extends AbstractMojo {
 //  @Parameter(property = "truth.excludes")
 //  public String[] excludes = new String[0];
 
-
   /**
    * An optional package name for the Assertions' entry point class. If omitted, the package will be determined
    * heuristically from the generated assertions.
@@ -134,6 +135,12 @@ public class GeneratorMojo extends AbstractMojo {
   public boolean recursive;
 
   /**
+   * Advanced setting - override class source for class reflection. Useful for when runtime env is different than plugin execution environment - e.g. when building on a newer jdk than running on.
+   */
+  @Parameter(property = "truth.jdkClassSourceOverride")
+  public String jdkClassSourceOverride;
+
+  /**
    * for testing
    */
   private Map<Class<?>, ThreeSystem<?>> result;
@@ -143,7 +150,7 @@ public class GeneratorMojo extends AbstractMojo {
             "Parameter 'packages' or 'classes' must be set to generate assertions.%n[Help] https://github.com/joel-costigliola/assertj-assertions-generator-maven-plugin");
   }
 
-  public void execute() throws MojoExecutionException {
+  public void execute() {
     if (isSkip()) {
       getLog().info("INFO: Skipping Truth generation...");
       return;
@@ -165,6 +172,42 @@ public class GeneratorMojo extends AbstractMojo {
     for (String aClass : classes) {
       getLog().info(aClass);
     }
+  }
+
+  /**
+   * @return defaults to false if can't find a target
+   */
+  private boolean isCompilationTargetBelowJavaNine() {
+    Plugin compiler = getProject().getPlugin("org.apache.maven.plugins:maven-compiler-plugin");
+
+    boolean booool = false;
+
+    // spec version
+    try {
+      String property = System.getProperty("java.specification.version");
+      int javaSpecVersion = Integer.parseInt(property);
+      if (javaSpecVersion < 9)
+        booool = true;
+    } catch (NumberFormatException e) {
+      getLog().warn("Can't parse java spec version");
+    }
+
+    // compilation target - overrides if present
+    Xpp3Dom configuration = (Xpp3Dom) compiler.getConfiguration();
+    if (configuration != null) {
+      Xpp3Dom target = configuration.getChild("target");
+      if (target != null) {
+        String rawTarget = target.getValue();
+        try {
+          int compilationTarget = Integer.parseInt(rawTarget);
+          booool = compilationTarget < 9;
+        } catch (NumberFormatException e) {
+          getLog().warn("Cannot parse compilation target: " + rawTarget);
+        }
+      }
+    }
+
+    return booool;
   }
 
   private void deleteOldContent() {
@@ -206,10 +249,17 @@ public class GeneratorMojo extends AbstractMojo {
   }
 
   private Options buildOptions() {
-    return Options.builder()
+    Options.OptionsBuilder optionsBuilder = Options.builder()
             .useHasInsteadOfGet(isUseHas())
             .useGetterForLegacyClasses(isUseGetterForLegacyClasses())
-            .build();
+            .compilationTargetLowerThanNine(isCompilationTargetBelowJavaNine());
+
+    String jdkClassSourceOverride = getJdkClassSourceOverride();
+    if (StringUtils.isNotBlank(jdkClassSourceOverride)) {
+      optionsBuilder.runtimeJavaClassSourceOverride(Optional.of(new File(jdkClassSourceOverride)));
+    }
+
+    return optionsBuilder.build();
   }
 
   private Path getOutputPath() {

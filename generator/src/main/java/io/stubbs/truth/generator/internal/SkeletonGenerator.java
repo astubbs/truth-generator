@@ -16,7 +16,7 @@ import org.jboss.forge.roaster.model.source.JavaClassSource;
 import org.jboss.forge.roaster.model.source.JavaDocSource;
 import org.jboss.forge.roaster.model.source.MethodSource;
 
-import java.time.Instant;
+import java.time.Clock;
 import java.util.Optional;
 
 import static java.util.Optional.empty;
@@ -44,6 +44,9 @@ public class SkeletonGenerator implements SkeletonGeneratorAPI {
 
   @Setter
   private boolean legacyMode = false;
+
+  @Setter
+  private static Clock clock = Clock.systemUTC();
 
   public SkeletonGenerator(Optional<String> targetPackageName, OverallEntryPoint overallEntryPoint, BuiltInSubjectTypeStore subjectTypeStore) {
     this.targetPackageName = targetPackageName;
@@ -290,7 +293,7 @@ public class SkeletonGenerator implements SkeletonGeneratorAPI {
     }
 
     generated.setStringValue("value", TruthGenerator.class.getCanonicalName());
-    generated.setStringValue("date", Instant.now().toString());
+    generated.setStringValue("date", clock.instant().toString());
 
     //generated.setStringValue("comments", "?")
   }

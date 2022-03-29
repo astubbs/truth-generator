@@ -14,6 +14,7 @@ import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.Optional;
 
+import static io.stubbs.truth.generator.internal.Utils.msg;
 import static java.lang.String.format;
 import static java.util.logging.Level.WARNING;
 import static org.apache.commons.lang3.StringUtils.capitalize;
@@ -122,14 +123,16 @@ public class ChainStrategy extends MethodStrategy {
         /* Also add cast for return type for older JVMs that don't seem to be able to correctly check for the
          * generic return type from Optional.get, otherwise we seem to get a compilation error on older JVMs.
          */
+        String maybeCast = optionalUnwrap ? msg("({})",returnType.getSimpleName()) : "";
+
         if (methodIsStatic(method)) {
-            body.append(format(".that((%s)%s.%s()",
-                    returnType.getSimpleName(),
+            body.append(format(".that(%s%s.%s()",
+                    maybeCast,
                     method.getDeclaringClass().getSimpleName(),
                     method.getName()));
         } else {
-            body.append(format(".that((%s)actual.%s()",
-                    returnType.getSimpleName(),
+            body.append(format(".that(%sactual.%s()",
+                    maybeCast,
                     method.getName()));
         }
 

@@ -93,25 +93,42 @@
                     <skipErrorNoDescriptorsFound>true</skipErrorNoDescriptorsFound>
                     <goalPrefix>truth</goalPrefix>
                 </configuration>
-                <!--                <executions>-->
-                <!--                    <execution>-->
-                <!--                        <id>mojo-descriptor</id>-->
-                <!--                        <goals>-->
-                <!--                            <goal>descriptor</goal>-->
-                <!--                        </goals>-->
-                <!--                        <phase>compile</phase>-->
-                <!--                    </execution>-->
-                <!--                    <execution>-->
-                <!--                        <id>help-goal</id>-->
-                <!--                        <goals>-->
-                <!--                            <goal>helpmojo</goal>-->
-                <!--                        </goals>-->
-                <!--                        <phase>compile</phase>-->
-                <!--                    </execution>-->
-                <!--                </executions>-->
+                <executions>
+                    <execution>
+                        <id>mojo-descriptor</id>
+                        <goals>
+                            <goal>descriptor</goal>
+                        </goals>
+                        <phase>compile</phase>
+                    </execution>
+                    <execution>
+                        <id>help-goal</id>
+                        <goals>
+                            <goal>helpmojo</goal>
+                        </goals>
+                        <phase>compile</phase>
+                    </execution>
+                </executions>
+
             </plugin>
         </plugins>
     </build>
+
+    <reporting>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-plugin-plugin</artifactId>
+                <reportSets>
+                    <reportSet>
+                        <reports>
+                            <report>report</report>
+                        </reports>
+                    </reportSet>
+                </reportSets>
+            </plugin>
+        </plugins>
+    </reporting>
 
     <profiles>
         <profile>

@@ -19,6 +19,7 @@ import org.jboss.forge.roaster.model.source.ParameterSource;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
+import org.threeten.extra.MutableClock;
 
 import java.io.IOException;
 import java.nio.charset.Charset;
@@ -56,6 +57,8 @@ public class TruthGeneratorTest {
     // todo need to be able to set base package for all generated classes, kind of like shade, so you cah generate test for classes in other restricted modules
     // todo replace with @TempDir
     TruthGenerator truthGenerator = TruthGeneratorAPI.create(testOutputDirectory, Options.builder().useHasInsteadOfGet(true).build());
+
+    SkeletonGenerator.setClock(MutableClock.epochUTC());
 
     //
     truthGenerator.registerStandardSubjectExtension(String.class, MyStringSubject.class);

@@ -25,6 +25,9 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
+/**
+ * @see GeneratorMojo
+ */
 public class GeneratorMojoTest {
 
   @Rule

@@ -16,7 +16,7 @@ import org.jboss.forge.roaster.model.source.JavaClassSource;
 import org.jboss.forge.roaster.model.source.JavaDocSource;
 import org.jboss.forge.roaster.model.source.MethodSource;
 
-import javax.annotation.processing.Generated;
+import java.time.Clock;
 import java.util.Optional;
 
 import static java.util.Optional.empty;
@@ -44,6 +44,9 @@ public class SkeletonGenerator implements SkeletonGeneratorAPI {
 
   @Setter
   private boolean legacyMode = false;
+
+  @Setter
+  private static Clock clock = Clock.systemUTC();
 
   public SkeletonGenerator(Optional<String> targetPackageName, OverallEntryPoint overallEntryPoint, BuiltInSubjectTypeStore subjectTypeStore) {
     this.targetPackageName = targetPackageName;
@@ -277,14 +280,22 @@ public class SkeletonGenerator implements SkeletonGeneratorAPI {
   }
 
   private void addGeneratedMarker(final JavaClassSource javaClass) {
-    // requires java 9
-    // annotate generated
-    // @javax.annotation.Generated(value="")
-    // only in @since 1.9, so can't add it programmatically
-    AnnotationSource<JavaClassSource> generated = javaClass.addAnnotation(Generated.class);
-    generated.setStringValue("truth-generator");
-    // Can't add it without the value param, see https://github.com/forge/roaster/issues/201
-    // AnnotationSource<JavaClassSource> generated = javaClass.addAnnotation("javax.annotation.processing.Generated");
+    AnnotationSource<JavaClassSource> generated;
+    if (Options.get().isCompilationTargetLowerThanNine()) {
+      generated = javaClass.addAnnotation(javax.annotation.Generated.class);
+    } else {
+      // requires java 9
+      // annotate generated
+      // @javax.annotation.Generated(value="")
+      // only in @since 1.9, so can't add it programmatically
+      generated = javaClass.addAnnotation(javax.annotation.processing.Generated.class);
+      // Can't add it without the value param, see https://github.com/forge/roaster/issues/201
+    }
+
+    generated.setStringValue("value", TruthGenerator.class.getCanonicalName());
+    generated.setStringValue("date", clock.instant().toString());
+
+    //generated.setStringValue("comments", "?")
   }
 
   private void addClassJavaDoc(JavaClassSource javaClass, String sourceName) {

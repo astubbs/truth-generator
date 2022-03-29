@@ -5,6 +5,10 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
+import java.io.File;
+import java.util.Optional;
+
+@SuppressWarnings("OptionalUsedAsFieldOrParameterType")
 @Getter
 @Builder(toBuilder = true)
 @ToString
@@ -24,6 +28,12 @@ public class Options {
 
     @Builder.Default
     boolean useGetterForLegacyClasses = false;
+
+    @Builder.Default
+    boolean compilationTargetLowerThanNine = false;
+
+    @Builder.Default
+    Optional<File> runtimeJavaClassSourceOverride = Optional.empty();
 
     public static Options get() {
         return instance;

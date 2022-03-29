@@ -13,7 +13,7 @@ import javax.annotation.processing.Generated;
  * @see MyEmployeeSubject
  * @see MyEmployeeParentSubject
  */
-@Generated("truth-generator")
+@Generated(value = "io.stubbs.truth.generator.internal.TruthGenerator", date = "1970-01-01T00:00:00Z")
 public class MyEmployeeChildSubject extends MyEmployeeSubject {
 	/**
 	 * This constructor should not be used, instead see the parent's.

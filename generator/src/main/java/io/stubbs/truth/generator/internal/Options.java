@@ -25,6 +25,9 @@ public class Options {
     @Builder.Default
     boolean useGetterForLegacyClasses = false;
 
+    @Builder.Default
+    boolean compilationTargetLowerThanNine = false;
+
     public static Options get() {
         return instance;
     }

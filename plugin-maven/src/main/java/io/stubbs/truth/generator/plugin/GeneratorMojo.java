@@ -10,12 +10,14 @@ import lombok.Getter;
 import lombok.SneakyThrows;
 import org.apache.commons.io.FileUtils;
 import org.apache.maven.artifact.DependencyResolutionRequiredException;
+import org.apache.maven.model.Plugin;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
+import org.codehaus.plexus.util.xml.Xpp3Dom;
 
 import java.io.File;
 import java.net.MalformedURLException;
@@ -167,6 +169,19 @@ public class GeneratorMojo extends AbstractMojo {
     }
   }
 
+  private boolean isCompilationTargetBelowJavaNine() {
+    Plugin compiler = getProject().getPlugin("org.apache.maven.plugins:maven-compiler-plugin");
+    Xpp3Dom configuration = (Xpp3Dom) compiler.getConfiguration();
+    String rawTarget = configuration.getChild("target").getValue();
+    try {
+      int compilationTarget = Integer.parseInt(rawTarget);
+      return compilationTarget < 9;
+    } catch (NumberFormatException e) {
+      getLog().warn("Cannot parse compilation target: " + rawTarget);
+      return false;
+    }
+  }
+
   private void deleteOldContent() {
     if (isCleanTargetDir()) {
       Stream.of(Utils.getManagedPath(), Utils.getTemplatesPath())
@@ -209,6 +224,7 @@ public class GeneratorMojo extends AbstractMojo {
     return Options.builder()
             .useHasInsteadOfGet(isUseHas())
             .useGetterForLegacyClasses(isUseGetterForLegacyClasses())
+            .compilationTargetLowerThanNine(isCompilationTargetBelowJavaNine())
             .build();
   }
 

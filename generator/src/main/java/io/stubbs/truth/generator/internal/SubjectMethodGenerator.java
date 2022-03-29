@@ -34,10 +34,13 @@ public class SubjectMethodGenerator extends MethodStrategy {
   private final BooleanStrategy booleanStrategy;
 
   // todo as strategies are refactored, this should eventually be removed
-  private ThreeSystem context;
+  private ThreeSystem<?> context;
 
   private final Set<MethodStrategy> strategies = new HashSet<>();
+
   private final ChainStrategy chainStrategy;
+
+  private final JDKOverrideAnalyser bs = new JDKOverrideAnalyser();
 
   /**
    * @param allTypes todo naming
@@ -82,31 +85,63 @@ public class SubjectMethodGenerator extends MethodStrategy {
     }
   }
 
+//  private Class<?> resolveClassUnderTest(ThreeSystem<?> system) {
+//    Class<?> classUnderTest = system.getClassUnderTest();
+//    if(classUnderTest.getPackageName().startsWith("java.")){
+//      return loadClassFromTargetJvm();
+//    }
+//    return classUnderTest;
+//  }
+//
+//  @SneakyThrows
+//  private Class<?> loadClassFromTargetJvm() {
+//    File file = new File("C:\\Users\\anton\\.jdks\\adopt-openjdk-1.8.0_292\\jre\\lib\\rt.jar");
+//    URL e1 = file.toURI().toURL();
+//    URLClassLoader urlClassLoader = new URLClassLoader(List.of(e1).toArray(new URL[0]));
+//
+//    Class<?> aClass = urlClassLoader.loadClass(Duration.class.getCanonicalName());
+//    List<Method> collect = Arrays.stream(aClass.getMethods()).collect(Collectors.toList());
+//    return aClass;
+//  }
+
   private <T extends Member> Predicate<T> withSuffix(String suffix) {
     return input -> input != null && input.getName().startsWith(suffix);
   }
 
-  private Collection<Method> getMethods(ThreeSystem system) {
+  private Collection<Method> getMethods(ThreeSystem<?> system) {
     Class<?> classUnderTest = system.getClassUnderTest();
     boolean legacyMode = system.isLegacyMode();
 
     Set<Method> union = new HashSet<>();
-    Set<Method> getters = getMethods(classUnderTest, withPrefix("get"));
-    Set<Method> issers = getMethods(classUnderTest, withPrefix("is"));
+    var getters = getMethods(classUnderTest, withPrefix("get"));
+    var issers = getMethods(classUnderTest, withPrefix("is"));
 
     // also get all other methods, regardless of their prefix
     Predicate<Method> exceptSetters = not(withPrefix("set"));
     Predicate<Method> exceptToers = not(withPrefix("to"));
-    Set<Method> legacy = (legacyMode) ? getMethods(classUnderTest, exceptSetters, exceptToers) : Set.of();
+    var legacy = (legacyMode) ? getMethods(classUnderTest, exceptSetters, exceptToers) : Set.<Method>of();
 
     union.addAll(getters);
     union.addAll(issers);
     union.addAll(legacy);
 
-    return removeOverridden(union);
+    return removeForJdkTarget(system.classUnderTest, removeOverridden(union));
+//    return removeOverridden(union);
   }
 
-  private Set<Method> getMethods(Class<?> classUnderTest, Predicate<Method>... prefix) {
+  private Collection<Method> removeForJdkTarget(Class<?> clazz, Collection<Method> methods) {
+    if (clazz.getPackageName().startsWith("java.")) {
+      return methods.stream()
+              .filter(method ->
+                      bs.doesOverrideClassContainMethod(clazz, method)
+              )
+              .collect(Collectors.toSet());
+    } else {
+      return methods;
+    }
+  }
+
+  private Collection<Method> getMethods(Class<?> classUnderTest, Predicate<Method>... prefix) {
     // if shaded, can't access package private methods
     boolean isShaded = context.isShaded();
     Predicate<Method> skip = (ignore) -> true;
@@ -119,7 +154,8 @@ public class SubjectMethodGenerator extends MethodStrategy {
     predicatesCollect.add(withParametersCount(0));
 
     Predicate<? super Method>[] predicates = predicatesCollect.toArray(new Predicate[0]);
-    return ReflectionUtils.getAllMethods(classUnderTest, predicates);
+    return removeForJdkTarget(classUnderTest, ReflectionUtils.getAllMethods(classUnderTest, predicates));
+//    return ReflectionUtils.getAllMethods(classUnderTest, predicates);
   }
 
   private Collection<Method> removeOverridden(final Collection<Method> getters) {

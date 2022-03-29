@@ -4,9 +4,11 @@ import io.stubbs.truth.generator.internal.model.ThreeSystem;
 import io.stubbs.truth.generator.plugin.GeneratorMojo;
 import io.stubbs.truth.generator.testModel.MyEmployee;
 import lombok.SneakyThrows;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.maven.model.Plugin;
 import org.apache.maven.plugin.testing.MojoRule;
-import org.apache.maven.plugin.testing.WithoutMojo;
+import org.apache.maven.project.MavenProject;
+import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 
@@ -26,15 +28,7 @@ import static org.junit.Assert.assertTrue;
 public class GeneratorMojoTest {
 
   @Rule
-  public MojoRule rule = new MojoRule() {
-    @Override
-    protected void before() throws Throwable {
-    }
-
-    @Override
-    protected void after() {
-    }
-  };
+  public MojoRule rule = new MojoRule();
 
   File projectToTestBaseDir = new File("target/test-classes/project-to-test/");
 
@@ -43,13 +37,21 @@ public class GeneratorMojoTest {
    */
   File entryPointPackage = new File ("io.stubbs.truth.tests.projectUnderTest");
 
+  GeneratorMojo generatorMojo;
+
+  @SneakyThrows
+  @Before
+  public void setup() {
+    MavenProject mavenProject = rule.readMavenProject(projectToTestBaseDir);
+    generatorMojo = (GeneratorMojo) rule.lookupConfiguredMojo(mavenProject, "generate");
+  }
+
   @Test
   public void overall() throws Exception {
     assertNotNull(projectToTestBaseDir);
     assertTrue(projectToTestBaseDir.exists());
 
-    Path generatorBaseDir = Paths.get(projectToTestBaseDir.toString(), "target/generated-test-sources/truth-assertions-managed/");
-
+    Path generatorBaseDir = projectToTestBaseDir.toPath().resolve("target/generated-test-sources/truth-assertions-managed/");
 
     // instantiation
     GeneratorMojo generatorMojo = (GeneratorMojo) rule.lookupConfiguredMojo(projectToTestBaseDir, "generate");
@@ -74,30 +76,19 @@ public class GeneratorMojoTest {
     Path dir = Paths.get(generatorBaseDir.toString(), "io/stubbs/truth/generator/testModel/");
     assertThat(dir.resolve("MyEmployeeParentSubject.java").toFile()).exists();
 
-    String entryPointDir = entryPointPackage.toString().replaceAll("\\.", String.valueOf(File.separatorChar));
+    String entryPointDir = StringUtils.replaceChars(entryPointPackage.toString(), '.', File.separatorChar);
     Path baseEntryPoint = Paths.get(generatorBaseDir.toString(), entryPointDir);
     Path resolve = baseEntryPoint.resolve("ManagedTruth.java");
     assertThat(resolve.toFile()).exists();
   }
 
-  /**
-   * Do not need the MojoRule.
-   */
-  @WithoutMojo
   @Test
-  public void testSomethingWhichDoesNotNeedTheMojoAndProbablyShouldBeExtractedIntoANewClassOfItsOwn() {
-    assertTrue(true);
-  }
-
-  @SneakyThrows
-  @Test
-  public void nullEntryPointClass(){
-    GeneratorMojo generatorMojo = (GeneratorMojo) rule.lookupConfiguredMojo(projectToTestBaseDir, "generate");
+  public void nullEntryPointClass() {
     generatorMojo.entryPointClassPackage = null;
 
-    assertThatThrownBy(() -> generatorMojo.execute())
-        .isExactlyInstanceOf(GeneratorException.class)
-        .hasMessageContainingAll("managed", "entrypoint", "blank");
+    assertThatThrownBy(generatorMojo::execute)
+            .isExactlyInstanceOf(GeneratorException.class)
+            .hasMessageContainingAll("managed", "entrypoint", "blank");
   }
 
 }

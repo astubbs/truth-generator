@@ -5,7 +5,6 @@ import com.google.common.truth.Fact;
 import com.google.common.truth.Subject;
 import io.stubbs.truth.generator.internal.model.ThreeSystem;
 import lombok.Getter;
-import org.apache.commons.lang3.StringUtils;
 import org.jboss.forge.roaster.model.source.JavaClassSource;
 import org.jboss.forge.roaster.model.source.MethodSource;
 import org.reflections.ReflectionUtils;
@@ -32,6 +31,8 @@ public class SubjectMethodGenerator extends MethodStrategy {
 
   private static final FluentLogger logger = FluentLogger.forEnclosingClass();
 
+  private final BooleanStrategy booleanStrategy;
+
   // todo as strategies are refactored, this should eventually be removed
   private ThreeSystem context;
 
@@ -44,6 +45,7 @@ public class SubjectMethodGenerator extends MethodStrategy {
   public SubjectMethodGenerator(Set<ThreeSystem<?>> allTypes, BuiltInSubjectTypeStore subjectStore) {
     GeneratedSubjectTypeStore generatedSubjectTypeStore = new GeneratedSubjectTypeStore(allTypes, subjectStore);
     chainStrategy = new ChainStrategy(generatedSubjectTypeStore);
+    this.booleanStrategy = new BooleanStrategy();
     strategies.add(new OptionalStrategy());
   }
 
@@ -160,7 +162,7 @@ public class SubjectMethodGenerator extends MethodStrategy {
     this.strategies.forEach(x->x.addStrategyMaybe(context, method, generated));
 
     if (Boolean.class.isAssignableFrom(returnType)) {
-      addBooleanStrategy(method, generated, classUnderTest);
+      booleanStrategy.addStrategyMaybe(context, method, generated);
     } else {
 
       if (Collection.class.isAssignableFrom(returnType)) {
@@ -285,46 +287,6 @@ public class SubjectMethodGenerator extends MethodStrategy {
     copyThrownExceptions(method, newMethod);
 
     return newMethod;
-  }
-
-  private void addBooleanStrategy(Method method, JavaClassSource generated, Class<?> classUnderTest) {
-    addBooleanGeneric(method, generated, true);
-    addBooleanGeneric(method, generated, false);
-  }
-
-  private MethodSource<JavaClassSource> addBooleanGeneric(Method method, JavaClassSource generated, boolean positive) {
-    String testPrefix = positive ? "!" : "";
-    String say = positive ? "" : "NOT ";
-
-    String body = "" +
-            "  if (%sactual.%s()) {\n" +
-            "    failWithActual(simpleFact(\"expected %sto be %s\"));\n" +
-            "  }\n";
-
-    String noun = StringUtils.remove(method.getName(), "is");
-
-    body = format(body, testPrefix, method.getName(), say, noun);
-
-    String methodName = removeStart(method.getName(), "is");
-    methodName = "is" + capitalize(say.toLowerCase()).trim() + methodName;
-
-    if (generated.getMethod(methodName) == null) {
-      MethodSource<JavaClassSource> booleanMethod = generated.addMethod();
-      booleanMethod
-              .setName(methodName)
-              .setReturnTypeVoid()
-              .setBody(body)
-              .setPublic();
-
-      copyThrownExceptions(method, booleanMethod);
-
-      booleanMethod.getJavaDoc().setText("Simple is or is not expectation for boolean fields.");
-
-      return booleanMethod;
-    } else {
-      logger.atWarning().log("Method name collision, skipping adding boolean generic for %s", methodName);
-      return null;
-    }
   }
 
   public void addTests(final Set<ThreeSystem<?>> allTypes) {

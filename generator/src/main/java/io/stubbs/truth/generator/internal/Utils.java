@@ -3,6 +3,7 @@ package io.stubbs.truth.generator.internal;
 import io.stubbs.truth.generator.UserManagedTruth;
 import org.atteo.evo.inflector.English;
 import org.jboss.forge.roaster.model.source.JavaClassSource;
+import org.slf4j.helpers.MessageFormatter;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -104,4 +105,9 @@ public class Utils {
   public static Path getManagedPath() {
     return testOutputDir.resolve(Utils.DIR_TRUTH_ASSERTIONS_MANAGED);
   }
+
+  public static String msg(String s, Object... args) {
+    return MessageFormatter.arrayFormat(s, args).getMessage();
+  }
+
 }

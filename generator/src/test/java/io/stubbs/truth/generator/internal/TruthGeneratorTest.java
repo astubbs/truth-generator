@@ -16,7 +16,9 @@ import org.jboss.forge.roaster.model.Type;
 import org.jboss.forge.roaster.model.source.JavaClassSource;
 import org.jboss.forge.roaster.model.source.MethodSource;
 import org.jboss.forge.roaster.model.source.ParameterSource;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.TemporaryFolder;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
@@ -42,6 +44,9 @@ import static java.util.stream.Collectors.toList;
 @RunWith(JUnit4.class)
 public class TruthGeneratorTest {
 
+  @Rule
+  public TemporaryFolder tmpFolder = new TemporaryFolder();
+
   public static final Path testOutputDirectory = Paths.get("").resolve("target").toAbsolutePath();
 
   private String loadFileToString(String expectedFileName) throws IOException {
@@ -55,7 +60,7 @@ public class TruthGeneratorTest {
   public void generate_code() throws IOException {
     // todo need to be able to set base package for all generated classes, kind of like shade, so you cah generate test for classes in other restricted modules
     // todo replace with @TempDir
-    TruthGenerator truthGenerator = TruthGeneratorAPI.create(testOutputDirectory, Options.builder().useHasInsteadOfGet(true).build());
+    TruthGenerator truthGenerator = TruthGeneratorAPI.create(tmpFolder.newFolder().toPath(), Options.builder().useHasInsteadOfGet(true).build());
 
     //
     truthGenerator.registerStandardSubjectExtension(String.class, MyStringSubject.class);

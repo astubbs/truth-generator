@@ -123,7 +123,7 @@ public class GeneratedAssertionTests {
   }
 
   @Test
-  public void instantsAreComparableSubjectsAsWell(){
+  public void instantsAreComparableSubjectsAsWell() {
     MyEmployee emp = TestModelUtils.createInstance(MyEmployee.class).toBuilder().build();
     ManagedTruth.assertThat(emp).hasStartedAt().isGreaterThan(Instant.MIN);
   }

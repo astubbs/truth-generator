@@ -10,12 +10,12 @@ import java.time.ZonedDateTime;
 @SuperBuilder(toBuilder = true)
 @RequiredArgsConstructor
 public class Person {
-  protected final String name;
-  protected final long someLongAspect;
-  protected final ZonedDateTime birthday;
+    protected final String name;
+    protected final long someLongAspect;
+    protected final ZonedDateTime birthday;
 
-  public int getBirthYear(){
-    return birthday.getYear();
-  }
+    public int getBirthYear() {
+        return birthday.getYear();
+    }
 
 }

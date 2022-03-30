@@ -173,7 +173,7 @@ public class ChainStrategyTest extends StrategyTest {
             ThreeSystemChildSubject.assertThat(generated).hasClassUnderTest().isAssignableTo(Instant.class);
         }
 
-        strat =  new ChainStrategy(subjects);
+        strat = new ChainStrategy(subjects);
 
         var threeSystem = createThreeSystem(MyEmployee.class);
         Method method = getMethod(employeeClass, "getStartedAt");

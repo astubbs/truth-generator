@@ -60,7 +60,7 @@ jobs:
           key: maven-${{ hashFiles('**/pom.xml') }}
           restore-keys: |
             maven-
-#            setup maven settings.xml
+      #            setup maven settings.xml
       - name: 'Set up Maven settings.xml for Package Cloud'
         uses: actions/setup-java@v2
         with:
@@ -89,7 +89,7 @@ jobs:
           key: maven-${{ hashFiles('**/pom.xml') }}
           restore-keys: |
             maven-
-#            setup maven settings.xml
+      #            setup maven settings.xml
       - name: 'Set up Maven settings.xml for GitHub'
         uses: actions/setup-java@v2
         with:
@@ -101,7 +101,7 @@ jobs:
         run: mvn --batch-mode deploy -DskipTests=true -Pgithub-deploy -P!package-cloud-deploy
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-#          As settings.xml gets merged by the tool, we have to include bindings to all variables present - as added above
+          #          As settings.xml gets merged by the tool, we have to include bindings to all variables present - as added above
           PACKAGE_CLOUD_TOKEN: ${{ secrets.PACKAGE_CLOUD_TOKEN }}
 
 #  generate_docs:

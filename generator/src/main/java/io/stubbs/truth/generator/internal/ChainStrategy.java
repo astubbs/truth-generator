@@ -128,7 +128,7 @@ public class ChainStrategy extends AssertionMethodStrategy {
         /* Also add cast for return type for older JVMs that don't seem to be able to correctly check for the
          * generic return type from Optional.get, otherwise we seem to get a compilation error on older JVMs.
          */
-        String maybeCast = optionalUnwrap ? msg("({})",returnType.getSimpleName()) : "";
+        String maybeCast = optionalUnwrap ? msg("({})", returnType.getSimpleName()) : "";
 
         if (methodIsStatic(method)) {
             body.append(format(".that(%s%s.%s()",

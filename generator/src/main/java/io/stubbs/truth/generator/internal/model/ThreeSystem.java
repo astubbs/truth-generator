@@ -7,41 +7,41 @@ import org.jboss.forge.roaster.model.source.JavaClassSource;
 @Getter
 public class ThreeSystem<T> {
 
-  @Setter
-  boolean legacyMode = false;
+    @Setter
+    boolean legacyMode = false;
 
-  public Class<T> classUnderTest;
+    public Class<T> classUnderTest;
 
-  public ParentClass parent;
-  public MiddleClass middle;
-  public JavaClassSource child;
+    public ParentClass parent;
+    public MiddleClass middle;
+    public JavaClassSource child;
 
-  /**
-   * @see io.stubbs.truth.generator.internal.SkeletonGenerator#threeLayerSystem
-   */
-  // todo make protected?
-  public ThreeSystem(Class<T> classUnderTest, ParentClass parent, MiddleClass middle, JavaClassSource child) {
-    this.classUnderTest = classUnderTest;
-    this.parent = parent;
-    this.middle = middle;
-    this.child = child;
-  }
+    /**
+     * @see io.stubbs.truth.generator.internal.SkeletonGenerator#threeLayerSystem
+     */
+    // todo make protected?
+    public ThreeSystem(Class<T> classUnderTest, ParentClass parent, MiddleClass middle, JavaClassSource child) {
+        this.classUnderTest = classUnderTest;
+        this.parent = parent;
+        this.middle = middle;
+        this.child = child;
+    }
 
-  @Override
-  public String toString() {
-    return "ThreeSystem{" +
-            "classUnderTest=" + classUnderTest + '}';
-  }
+    @Override
+    public String toString() {
+        return "ThreeSystem{" +
+                "classUnderTest=" + classUnderTest + '}';
+    }
 
-  public boolean isShaded() {
-    return !packagesAreContained();
-  }
+    public boolean isShaded() {
+        return !packagesAreContained();
+    }
 
-  // todo rename
-  private boolean packagesAreContained() {
-    Package underTestPackage = classUnderTest.getPackage();
-    String subjectPackage = parent.getGenerated().getPackage();
-    return underTestPackage.getName().contains(subjectPackage);
-  }
+    // todo rename
+    private boolean packagesAreContained() {
+        Package underTestPackage = classUnderTest.getPackage();
+        String subjectPackage = parent.getGenerated().getPackage();
+        return underTestPackage.getName().contains(subjectPackage);
+    }
 
 }

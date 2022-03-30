@@ -12,15 +12,15 @@ import java.nio.file.Paths;
  */
 public class SubjectTests {
 
-  public static final Path testOutputDirectory = Paths.get("").resolve("target").resolve("generated-test-sources").toAbsolutePath();
+    public static final Path testOutputDirectory = Paths.get("").resolve("target").resolve("generated-test-sources").toAbsolutePath();
 
-  @Test
-  public void makeSubjects() {
-    TruthGeneratorAPI tg = TruthGeneratorAPI.createDefaultOptions(testOutputDirectory);
-    SourceClassSets ss = new SourceClassSets(getClass());
-    ss.generateFromShaded(File.class);
-    ss.generateFrom(GeneratorMojo.class);
-    tg.generate(ss);
-  }
+    @Test
+    public void makeSubjects() {
+        TruthGeneratorAPI tg = TruthGeneratorAPI.createDefaultOptions(testOutputDirectory);
+        SourceClassSets ss = new SourceClassSets(getClass());
+        ss.generateFromShaded(File.class);
+        ss.generateFrom(GeneratorMojo.class);
+        tg.generate(ss);
+    }
 
 }

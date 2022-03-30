@@ -24,31 +24,31 @@ import javax.annotation.processing.Generated;
 @Generated("truth-generator")
 public class MiddleClassParentSubject extends Subject {
 
-  protected final MiddleClass actual;
+    protected final MiddleClass actual;
 
-  protected MiddleClassParentSubject(FailureMetadata failureMetadata,
-                                     MiddleClass actual) {
-    super(failureMetadata, actual);
-    this.actual = actual;
-  }
+    protected MiddleClassParentSubject(FailureMetadata failureMetadata,
+                                       MiddleClass actual) {
+        super(failureMetadata, actual);
+        this.actual = actual;
+    }
 
-  public StringSubject hasCanonicalName() {
-    isNotNull();
-    return check("getCanonicalName").that(actual.getCanonicalName());
-  }
+    public StringSubject hasCanonicalName() {
+        isNotNull();
+        return check("getCanonicalName").that(actual.getCanonicalName());
+    }
 
-  public ClassSubject hasUsersMiddleClass() {
-    isNotNull();
-    return check("getUsersMiddleClass").that(actual.getUsersMiddleClass());
-  }
+    public ClassSubject hasUsersMiddleClass() {
+        isNotNull();
+        return check("getUsersMiddleClass").that(actual.getUsersMiddleClass());
+    }
 
-  public JavaClassSourceSubject hasGenerated() {
-    isNotNull();
-    return check("getGenerated").about(JavaClassSourceSubject.javaClassSources()).that(actual.getGenerated());
-  }
+    public JavaClassSourceSubject hasGenerated() {
+        isNotNull();
+        return check("getGenerated").about(JavaClassSourceSubject.javaClassSources()).that(actual.getGenerated());
+    }
 
-  public StringSubject hasSimpleName() {
-    isNotNull();
-    return check("getSimpleName").that(actual.getSimpleName());
-  }
+    public StringSubject hasSimpleName() {
+        isNotNull();
+        return check("getSimpleName").that(actual.getSimpleName());
+    }
 }

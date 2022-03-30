@@ -29,6 +29,7 @@ public interface SkeletonGeneratorAPI {
      * This way there's no complexity with mixing generated and user written code, but at the cost of 2 extra classes
      * per source. While still allowing the user to leverage the full code generation system but maintaining their own extensions
      * with clear separation from the code generation.
+     *
      * @return
      */
     <T> Optional<ThreeSystem<T>> threeLayerSystem(Class<T> source, Class<T> usersMiddleClass) throws FileNotFoundException;

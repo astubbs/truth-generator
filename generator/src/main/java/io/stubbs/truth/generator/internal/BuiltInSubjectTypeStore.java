@@ -22,11 +22,11 @@ import static org.apache.commons.lang3.ClassUtils.primitiveToWrapper;
 
 /**
  * Management class for built-in or explicitly registered Subject lookup based on classes.
- *
+ * <p>
  * Built in, as opposed to generate. Maybe rename to static (vs dynamic / generated) instead.
  *
- * @see GeneratedSubjectTypeStore
  * @author Antony Stubbs
+ * @see GeneratedSubjectTypeStore
  */
 public class BuiltInSubjectTypeStore {
 

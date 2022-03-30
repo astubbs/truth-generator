@@ -17,8 +17,8 @@ public class Options {
     private static Options instance;
 
     /**
-     * Marks whether to try to find all referenced types from the source types, to generate Subjects for all of them, and
-     * use them all in the Subject tree.
+     * Marks whether to try to find all referenced types from the source types, to generate Subjects for all of them,
+     * and use them all in the Subject tree.
      */
     @Builder.Default
     private boolean recursive = true;

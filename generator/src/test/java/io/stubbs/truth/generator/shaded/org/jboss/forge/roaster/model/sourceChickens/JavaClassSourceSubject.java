@@ -23,25 +23,25 @@ import javax.annotation.processing.Generated;
 @Generated("truth-generator")
 public class JavaClassSourceSubject extends JavaClassSourceParentSubject {
 
-  protected JavaClassSourceSubject(FailureMetadata failureMetadata, JavaClassSource actual) {
-    super(failureMetadata, actual);
-  }
+    protected JavaClassSourceSubject(FailureMetadata failureMetadata, JavaClassSource actual) {
+        super(failureMetadata, actual);
+    }
 
-  /**
-   * Returns an assertion builder for a {@link JavaClassSource} class.
-   */
-  public static Factory<JavaClassSourceSubject, JavaClassSource> javaClassSources() {
-    return JavaClassSourceSubject::new;
-  }
+    /**
+     * Returns an assertion builder for a {@link JavaClassSource} class.
+     */
+    public static Factory<JavaClassSourceSubject, JavaClassSource> javaClassSources() {
+        return JavaClassSourceSubject::new;
+    }
 
-  public MyStringSubject hasSourceText() {
-    isNotNull();
-    return check("toString").about(MyStringSubject.strings()).that(actual.toString());
-  }
+    public MyStringSubject hasSourceText() {
+        isNotNull();
+        return check("toString").about(MyStringSubject.strings()).that(actual.toString());
+    }
 
-  public void withSamePackageAs(Class<MyEmployee> expected) {
-    String actualPackage = actual.getPackage();
-    check("getPackage()").that(actualPackage).isEqualTo(expected.getPackage().getName());
-  }
+    public void withSamePackageAs(Class<MyEmployee> expected) {
+        String actualPackage = actual.getPackage();
+        check("getPackage()").that(actualPackage).isEqualTo(expected.getPackage().getName());
+    }
 
 }

@@ -24,17 +24,17 @@ import static io.stubbs.truth.generator.shaded.org.jboss.forge.roaster.model.sou
 @Generated("truth-generator")
 public class ParentClassParentSubject extends Subject {
 
-  protected final ParentClass actual;
+    protected final ParentClass actual;
 
-  protected ParentClassParentSubject(FailureMetadata failureMetadata,
-                                     ParentClass actual) {
-    super(failureMetadata, actual);
-    this.actual = actual;
-  }
+    protected ParentClassParentSubject(FailureMetadata failureMetadata,
+                                       ParentClass actual) {
+        super(failureMetadata, actual);
+        this.actual = actual;
+    }
 
-  public JavaClassSourceSubject hasGenerated() {
-    isNotNull();
-    return check("getGenerated").about(javaClassSources()).that(actual.getGenerated());
-  }
+    public JavaClassSourceSubject hasGenerated() {
+        isNotNull();
+        return check("getGenerated").about(javaClassSources()).that(actual.getGenerated());
+    }
 
 }

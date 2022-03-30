@@ -23,8 +23,8 @@ import static java.util.Optional.*;
  * Used to test if a provided class contains a given method, when the class byte data is loaded from a configured jar,
  * instead of the runtime JDK.
  *
- * @see Options#getRuntimeJavaClassSourceOverride()
  * @author Antony Stubbs
+ * @see Options#getRuntimeJavaClassSourceOverride()
  */
 @Slf4j
 @RequiredArgsConstructor

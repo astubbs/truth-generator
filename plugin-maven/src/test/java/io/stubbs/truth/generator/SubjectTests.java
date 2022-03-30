@@ -7,6 +7,9 @@ import java.io.File;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
+/**
+ * @author Antony Stubbs
+ */
 public class SubjectTests {
 
   public static final Path testOutputDirectory = Paths.get("").resolve("target").resolve("generated-test-sources").toAbsolutePath();

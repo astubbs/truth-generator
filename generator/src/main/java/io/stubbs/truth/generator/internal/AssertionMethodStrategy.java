@@ -1,5 +1,6 @@
 package io.stubbs.truth.generator.internal;
 
+import com.google.common.truth.Subject;
 import io.stubbs.truth.generator.internal.model.ThreeSystem;
 import org.jboss.forge.roaster.model.source.JavaClassSource;
 import org.jboss.forge.roaster.model.source.MethodSource;
@@ -14,7 +15,12 @@ import static java.lang.reflect.Modifier.STATIC;
 import static org.apache.commons.lang3.ClassUtils.primitiveToWrapper;
 import static org.reflections.util.ReflectionUtilsPredicates.withModifier;
 
-public abstract class MethodStrategy {
+/**
+ * Approaches for adding assertion methods to a generated {@link Subject}.
+ *
+ * @author Antony Stubbs
+ */
+public abstract class AssertionMethodStrategy {
 
     protected abstract boolean addStrategyMaybe(ThreeSystem<?> threeSystem, Method method, JavaClassSource generated);
 
@@ -26,8 +32,7 @@ public abstract class MethodStrategy {
     }
 
     protected Class<?> getWrappedReturnType(Method method) {
-        Class<?> wrapped = primitiveToWrapper(method.getReturnType());
-        return wrapped;
+        return primitiveToWrapper(method.getReturnType());
     }
 
     protected boolean methodIsStatic(Method method) {

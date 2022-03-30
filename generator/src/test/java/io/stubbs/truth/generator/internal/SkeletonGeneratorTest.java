@@ -12,6 +12,7 @@ import static io.stubbs.truth.generator.internal.TruthGeneratorTest.testOutputDi
 import static io.stubbs.truth.generator.internal.modelSubjectChickens.ThreeSystemChildSubject.assertThat;
 
 /**
+ * @author Antony Stubbs
  * @see SkeletonGenerator
  */
 public class SkeletonGeneratorTest {

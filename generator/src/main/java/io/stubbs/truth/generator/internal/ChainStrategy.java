@@ -20,9 +20,13 @@ import static java.util.logging.Level.WARNING;
 import static org.apache.commons.lang3.StringUtils.capitalize;
 import static org.apache.commons.lang3.StringUtils.removeStart;
 
+
+/**
+ * @author Antony Stubbs
+ */
 @RequiredArgsConstructor
 @Slf4j
-public class ChainStrategy extends MethodStrategy {
+public class ChainStrategy extends AssertionMethodStrategy {
 
     private static final FluentLogger logger = FluentLogger.forEnclosingClass();
 
@@ -38,9 +42,10 @@ public class ChainStrategy extends MethodStrategy {
 
     protected MethodSource<JavaClassSource> addChainStrategy(ThreeSystem threeSystem, Method method, JavaClassSource generated) {
         Class<?> returnType = getWrappedReturnType(method);
-        Optional<SubjectMethodGenerator.ClassOrGenerated> subjectForType;
         boolean optionalUnwrap = false;
 
+        // todo refactor this chunk out?
+        Optional<SubjectMethodGenerator.ClassOrGenerated> subjectForType;
         if (returnType.isAssignableFrom(Optional.class) && returnType != Object.class) {
             // unwrap
             Type genericReturnTypeRaw = method.getGenericReturnType();

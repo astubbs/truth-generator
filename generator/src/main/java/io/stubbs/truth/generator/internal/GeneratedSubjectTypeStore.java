@@ -18,6 +18,9 @@ import static org.apache.commons.lang3.ClassUtils.primitiveToWrapper;
 import static org.apache.commons.lang3.StringUtils.capitalize;
 
 /**
+ * Management class for generated as well as standard Subject lookup based on classes.
+ *
+ * @author Antony Stubbs
  * @see BuiltInSubjectTypeStore
  */
 public class GeneratedSubjectTypeStore {
@@ -98,7 +101,7 @@ public class GeneratedSubjectTypeStore {
     /**
      * @param nameOfType todo redundant? and smelly
      */
-    protected Optional<SubjectMethodGenerator.ClassOrGenerated> getSubjectForNotNativeType(String nameOfType, Class<?> type){
+    protected Optional<SubjectMethodGenerator.ClassOrGenerated> getSubjectForNotNativeType(String nameOfType, Class<?> type) {
         // explicit extensions take priority
         Class<? extends Subject> extension = this.builtInSubjectTypeStore.getSubjectExtensions(type);
         if (extension != null)

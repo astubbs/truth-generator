@@ -40,6 +40,9 @@ import static io.stubbs.truth.generator.internal.modelSubjectChickens.ThreeSyste
 import static java.util.Optional.of;
 import static java.util.stream.Collectors.toList;
 
+/**
+ * @author Antony Stubbs
+ */
 @RunWith(JUnit4.class)
 public class TruthGeneratorTest {
 

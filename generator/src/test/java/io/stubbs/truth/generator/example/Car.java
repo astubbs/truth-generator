@@ -2,6 +2,9 @@ package io.stubbs.truth.generator.example;
 
 import lombok.Value;
 
+/**
+ * @author Antony Stubbs
+ */
 @Value
 public class Car {
     String name;

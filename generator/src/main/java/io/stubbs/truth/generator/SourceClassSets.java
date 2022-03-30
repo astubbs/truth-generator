@@ -18,6 +18,8 @@ import static java.util.stream.Collectors.toSet;
 
 /**
  * Use this class to prepare the set of source classes to generate for, and settings for different types of sources.
+ *
+ * @author Antony Stubbs
  */
 @Getter
 public class SourceClassSets {

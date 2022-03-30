@@ -2,6 +2,9 @@ package io.stubbs.truth.generator;
 
 import org.junit.Test;
 
+/**
+ * @author Antony Stubbs
+ */
 public class TypeTests {
 
     /**

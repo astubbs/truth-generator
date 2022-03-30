@@ -11,6 +11,8 @@ import java.util.Set;
 
 /**
  * TODO docs
+ *
+ * @author Antony Stubbs
  */
 // TODO clean up
 public interface TruthGeneratorAPI {

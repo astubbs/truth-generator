@@ -8,6 +8,9 @@ import lombok.ToString;
 import java.io.File;
 import java.util.Optional;
 
+/**
+ * @author Antony Stubbs
+ */
 @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
 @Getter
 @Builder(toBuilder = true)

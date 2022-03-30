@@ -6,6 +6,9 @@ import lombok.experimental.SuperBuilder;
 import org.jboss.forge.roaster.model.source.JavaClassSource;
 import org.jboss.forge.roaster.model.source.MethodSource;
 
+/**
+ * @author Antony Stubbs
+ */
 @EqualsAndHashCode(callSuper = true)
 @Value
 @SuperBuilder

@@ -6,6 +6,9 @@ import lombok.experimental.SuperBuilder;
 
 import java.time.ZonedDateTime;
 
+/**
+ * @author Antony Stubbs
+ */
 @Getter
 @SuperBuilder(toBuilder = true)
 @RequiredArgsConstructor

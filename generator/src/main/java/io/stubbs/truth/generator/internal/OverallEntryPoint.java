@@ -18,6 +18,8 @@ import java.util.stream.Collectors;
 
 /**
  * Creates a single convenience `ManagedTruth` class, which contains all the `assertThat` entrypoint methods.
+ *
+ * @author Antony Stubbs
  */
 public class OverallEntryPoint {
 

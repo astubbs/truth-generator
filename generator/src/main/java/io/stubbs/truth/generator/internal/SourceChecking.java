@@ -10,6 +10,9 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.logging.Level;
 
+/**
+ * @author Antony Stubbs
+ */
 public class SourceChecking {
 
     private static final FluentLogger logger = FluentLogger.forEnclosingClass();

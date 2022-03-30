@@ -14,6 +14,9 @@ import java.util.*;
 import static io.stubbs.truth.generator.testModel.MyEmployee.State.EMPLOLYED;
 import static io.stubbs.truth.generator.testModel.MyEmployee.State.IS_A_BOSS;
 
+/**
+ * @author Antony Stubbs
+ */
 @SuperBuilder(toBuilder = true)
 @Getter
 @Setter(AccessLevel.PRIVATE)

@@ -6,6 +6,9 @@ import lombok.Value;
 import java.util.List;
 import java.util.UUID;
 
+/**
+ * @author Antony Stubbs
+ */
 @Builder(toBuilder = true)
 @Value
 public class IdCard {

@@ -4,6 +4,9 @@ package io.stubbs.truth.generator.testing.legacy;
 import lombok.Builder;
 import lombok.RequiredArgsConstructor;
 
+/**
+ * @author Antony Stubbs
+ */
 @Builder(toBuilder = true)
 @RequiredArgsConstructor
 public class NonBeanLegacy {

@@ -15,6 +15,8 @@ import java.lang.annotation.Target;
  * <p>
  * Useful for detecting with it already exists, instead of relaying on class name matching. And good for discovering the
  * class under test.
+ *
+ * @author Antony Stubbs
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.TYPE})

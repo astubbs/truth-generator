@@ -4,6 +4,9 @@ import lombok.Getter;
 import lombok.Setter;
 import org.jboss.forge.roaster.model.source.JavaClassSource;
 
+/**
+ * @author Antony Stubbs
+ */
 @Getter
 public class ThreeSystem<T> {
 

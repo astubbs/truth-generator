@@ -6,6 +6,9 @@ import io.stubbs.truth.generator.internal.model.ThreeSystem;
 import java.io.FileNotFoundException;
 import java.util.Optional;
 
+/**
+ * @author Antony Stubbs
+ */
 public interface SkeletonGeneratorAPI {
 
     /**

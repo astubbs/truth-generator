@@ -9,6 +9,9 @@ import java.time.ZonedDateTime;
 
 import static io.stubbs.truth.generator.testModel.IdCard.SecurityType.Type.FOB;
 
+/**
+ * @author Antony Stubbs
+ */
 public class TestModelUtils {
     static private final PodamFactory factory = new PodamFactoryImpl();
 

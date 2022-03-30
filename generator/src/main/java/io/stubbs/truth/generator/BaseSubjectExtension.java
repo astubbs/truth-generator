@@ -10,6 +10,8 @@ import java.lang.annotation.Target;
 
 /**
  * Marks for the machines, extensions to base Truth {@link Subject}s - for example, {@link MyStringSubject}.
+ *
+ * @author Antony Stubbs
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.TYPE})

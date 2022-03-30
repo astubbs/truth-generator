@@ -5,6 +5,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.experimental.SuperBuilder;
 import org.jboss.forge.roaster.model.source.JavaClassSource;
 
+/**
+ * @author Antony Stubbs
+ */
 @Getter
 @RequiredArgsConstructor
 @SuperBuilder

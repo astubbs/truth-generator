@@ -14,6 +14,7 @@ import java.nio.charset.Charset;
 
 /**
  * @see IgnoringWhiteSpaceComparison
+ * @author Antony Stubbs
  */
 @BaseSubjectExtension(String.class)
 public class MyStringSubject extends StringSubject {

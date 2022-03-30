@@ -71,7 +71,7 @@
         <!-- Internal -->
         <dependency>
             <groupId>io.stubbs.truth</groupId>
-            <artifactId>truth-generator</artifactId>
+            <artifactId>truth-generator-api</artifactId>
             <type>jar</type>
             <scope>test</scope>
         </dependency>
@@ -81,20 +81,6 @@
             <type>test-jar</type>
             <scope>test</scope>
         </dependency>
-
-
-        <!-- Truth -->
-        <dependency>
-            <groupId>com.google.truth</groupId>
-            <artifactId>truth</artifactId>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.google.truth.extensions</groupId>
-            <artifactId>truth-java8-extension</artifactId>
-            <scope>compile</scope>
-        </dependency>
-
 
         <!-- External -->
         <dependency>

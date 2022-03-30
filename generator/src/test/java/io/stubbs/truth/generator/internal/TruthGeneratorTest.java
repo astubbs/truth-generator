@@ -7,6 +7,8 @@ import io.stubbs.truth.generator.SourceClassSets;
 import io.stubbs.truth.generator.TruthGeneratorAPI;
 import io.stubbs.truth.generator.internal.model.ThreeSystem;
 import io.stubbs.truth.generator.internal.modelSubjectChickens.ThreeSystemChildSubject;
+import io.stubbs.truth.generator.subjects.MyMapSubject;
+import io.stubbs.truth.generator.subjects.MyStringSubject;
 import io.stubbs.truth.generator.testModel.IdCard;
 import io.stubbs.truth.generator.testModel.MyEmployee;
 import io.stubbs.truth.generator.testModel.Project;

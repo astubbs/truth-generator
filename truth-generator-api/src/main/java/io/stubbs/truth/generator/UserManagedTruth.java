@@ -1,7 +1,6 @@
 package io.stubbs.truth.generator;
 
 import com.google.common.truth.Subject;
-import io.stubbs.truth.generator.internal.SkeletonGeneratorAPI;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

@@ -138,6 +138,8 @@ If any of these types of classes detected upon further plugin runs, they will no
 
 To see what happens when this is used, see the simple <<example>> at the bottom of the document.
 
+To see how this is being used in a real world problem, take a look https://github.com/confluentinc/parallel-consumer/pull/249[at how it's used in the Confluent Parallel Consumer] library.
+
 === Distribution
 
 We're not yet publishing to repo1, but we are publishing to both GitHub Packages and Package Cloud.
@@ -221,6 +223,19 @@ You can see what's https://packagecloud.io/astubbs/truth-generator[inside the re
 .Maven plugin inclusion
 [source,xml]
 ----
+
+    <dependencies>
+        <dependency>
+            <groupId>io.stubbs.truth</groupId>
+            <artifactId>truth-generator-api</artifactId>
+            <scope>test</scope>
+        </dependency>
+        ... snip ...
+    </dependencies>
+
+
+... snip ...
+
     <build>
         <plugins>
             <plugin>
@@ -247,6 +262,7 @@ You can see what's https://packagecloud.io/astubbs/truth-generator[inside the re
                     </execution>
                 </executions>
             </plugin>
+            ... snip ...
         </plugins>
     </build>
 ----

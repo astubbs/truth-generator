@@ -1,4 +1,4 @@
-package io.stubbs.truth.generator.internal;
+package io.stubbs.truth.generator.subjects;
 
 import com.google.common.truth.FailureMetadata;
 import com.google.common.truth.MapSubject;
@@ -13,10 +13,10 @@ import java.util.Map;
 @BaseSubjectExtension(Map.class)
 public class MyMapSubject extends MapSubject {
 
-    private Map<?, ?> actual;
+    private final Map<?, ?> actual;
 
     @SubjectFactoryMethod
-    public static Factory<MyMapSubject, Map> maps() {
+    public static Factory<MyMapSubject, Map<?, ?>> maps() {
         return MyMapSubject::new;
     }
 

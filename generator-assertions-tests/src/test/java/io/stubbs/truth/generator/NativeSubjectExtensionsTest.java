@@ -2,7 +2,7 @@ package io.stubbs.truth.generator;
 
 import com.google.common.truth.StringSubject;
 import com.google.common.truth.Subject;
-import io.stubbs.truth.generator.internal.MyStringSubject;
+import io.stubbs.truth.generator.subjects.MyStringSubject;
 import io.stubbs.truth.generator.testModel.MyEmployee;
 import io.stubbs.truth.generator.testModel.MyEmployeeSubject;
 import io.stubbs.truth.tests.ManagedTruth;

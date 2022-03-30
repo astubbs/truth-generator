@@ -1,9 +1,7 @@
 package io.stubbs.truth.generator.internal.model;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import lombok.Value;
 import lombok.experimental.SuperBuilder;
 import org.jboss.forge.roaster.model.source.JavaClassSource;
 
@@ -11,5 +9,5 @@ import org.jboss.forge.roaster.model.source.JavaClassSource;
 @RequiredArgsConstructor
 @SuperBuilder
 public class AClass {
-   protected final JavaClassSource generated;
+    protected final JavaClassSource generated;
 }

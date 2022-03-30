@@ -26,74 +26,74 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 /**
- * @see GeneratorMojo
  * @author Antony Stubbs
+ * @see GeneratorMojo
  */
 public class GeneratorMojoTest {
 
-  @Rule
-  public MojoRule rule = new MojoRule();
+    @Rule
+    public MojoRule rule = new MojoRule();
 
-  File projectToTestBaseDir = new File("target/test-classes/project-to-test/");
+    File projectToTestBaseDir = new File("target/test-classes/project-to-test/");
 
-  /**
-   * This is the entryPointClassPackage set in the pom file setting for the plugin
-   */
-  File entryPointPackage = new File ("io.stubbs.truth.tests.projectUnderTest");
+    /**
+     * This is the entryPointClassPackage set in the pom file setting for the plugin
+     */
+    File entryPointPackage = new File("io.stubbs.truth.tests.projectUnderTest");
 
-  GeneratorMojo generatorMojo;
+    GeneratorMojo generatorMojo;
 
-  @SneakyThrows
-  @Before
-  public void setup() {
-    MavenProject mavenProject = rule.readMavenProject(projectToTestBaseDir);
-    generatorMojo = (GeneratorMojo) rule.lookupConfiguredMojo(mavenProject, "generate");
-  }
+    @SneakyThrows
+    @Before
+    public void setup() {
+        MavenProject mavenProject = rule.readMavenProject(projectToTestBaseDir);
+        generatorMojo = (GeneratorMojo) rule.lookupConfiguredMojo(mavenProject, "generate");
+    }
 
-  @Test
-  public void overall() throws Exception {
-    assertNotNull(projectToTestBaseDir);
-    assertTrue(projectToTestBaseDir.exists());
+    @Test
+    public void overall() throws Exception {
+        assertNotNull(projectToTestBaseDir);
+        assertTrue(projectToTestBaseDir.exists());
 
-    Path generatorBaseDir = projectToTestBaseDir.toPath().resolve("target/generated-test-sources/truth-assertions-managed/");
+        Path generatorBaseDir = projectToTestBaseDir.toPath().resolve("target/generated-test-sources/truth-assertions-managed/");
 
-    // instantiation
-    GeneratorMojo generatorMojo = (GeneratorMojo) rule.lookupConfiguredMojo(projectToTestBaseDir, "generate");
-    assertNotNull(generatorMojo);
+        // instantiation
+        GeneratorMojo generatorMojo = (GeneratorMojo) rule.lookupConfiguredMojo(projectToTestBaseDir, "generate");
+        assertNotNull(generatorMojo);
 
-    List<Plugin> plugins = generatorMojo.getProject().getBuildPlugins();
-    assertThat(plugins.stream().map(Plugin::getKey).collect(Collectors.toList())).contains("io.stubbs.truth:truth-generator-maven-plugin");
+        List<Plugin> plugins = generatorMojo.getProject().getBuildPlugins();
+        assertThat(plugins.stream().map(Plugin::getKey).collect(Collectors.toList())).contains("io.stubbs.truth:truth-generator-maven-plugin");
 
-    //
-    assertThat(generatorMojo.getClasses()).asList()
-            .contains("java.io.File");
+        //
+        assertThat(generatorMojo.getClasses()).asList()
+                .contains("java.io.File");
 
-    // execution
-    generatorMojo.execute();
+        // execution
+        generatorMojo.execute();
 
-    //
-    Map<Class<?>, ThreeSystem<?>> results = generatorMojo.getResult();
-    assertThat(results).containsKey(MyEmployee.class);
-    assertThat(results).containsKey(File.class);
+        //
+        Map<Class<?>, ThreeSystem<?>> results = generatorMojo.getResult();
+        assertThat(results).containsKey(MyEmployee.class);
+        assertThat(results).containsKey(File.class);
 
-    assertThat(Paths.get(generatorBaseDir.toString(), "io/stubbs/truth/generator/testModel/MyEmployeeParentSubject.java").toFile()).exists();
-    Path dir = Paths.get(generatorBaseDir.toString(), "io/stubbs/truth/generator/testModel/");
-    assertThat(dir.resolve("MyEmployeeParentSubject.java").toFile()).exists();
+        assertThat(Paths.get(generatorBaseDir.toString(), "io/stubbs/truth/generator/testModel/MyEmployeeParentSubject.java").toFile()).exists();
+        Path dir = Paths.get(generatorBaseDir.toString(), "io/stubbs/truth/generator/testModel/");
+        assertThat(dir.resolve("MyEmployeeParentSubject.java").toFile()).exists();
 
-    String entryPointDir = StringUtils.replaceChars(entryPointPackage.toString(), '.', File.separatorChar);
-    Path baseEntryPoint = Paths.get(generatorBaseDir.toString(), entryPointDir);
-    Path resolve = baseEntryPoint.resolve("ManagedTruth.java");
-    assertThat(resolve.toFile()).exists();
-  }
+        String entryPointDir = StringUtils.replaceChars(entryPointPackage.toString(), '.', File.separatorChar);
+        Path baseEntryPoint = Paths.get(generatorBaseDir.toString(), entryPointDir);
+        Path resolve = baseEntryPoint.resolve("ManagedTruth.java");
+        assertThat(resolve.toFile()).exists();
+    }
 
-  @Test
-  public void nullEntryPointClass() {
-    generatorMojo.entryPointClassPackage = null;
+    @Test
+    public void nullEntryPointClass() {
+        generatorMojo.entryPointClassPackage = null;
 
-    assertThatThrownBy(generatorMojo::execute)
-            .isExactlyInstanceOf(GeneratorException.class)
-            .hasMessageContainingAll("managed", "entrypoint", "blank");
-  }
+        assertThatThrownBy(generatorMojo::execute)
+                .isExactlyInstanceOf(GeneratorException.class)
+                .hasMessageContainingAll("managed", "entrypoint", "blank");
+    }
 
 }
 

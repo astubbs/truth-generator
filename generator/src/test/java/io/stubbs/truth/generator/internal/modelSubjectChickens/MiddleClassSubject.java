@@ -1,7 +1,6 @@
 package io.stubbs.truth.generator.internal.modelSubjectChickens;
 
 import com.google.common.truth.FailureMetadata;
-import com.google.common.truth.StandardSubjectBuilder;
 import io.stubbs.truth.generator.UserManagedTruth;
 import io.stubbs.truth.generator.internal.model.MiddleClass;
 import io.stubbs.truth.generator.testModel.MyEmployee;
@@ -23,21 +22,21 @@ import javax.annotation.processing.Generated;
 @Generated("truth-generator")
 public class MiddleClassSubject extends MiddleClassParentSubject {
 
-  protected MiddleClassSubject(FailureMetadata failureMetadata,
-                               MiddleClass actual) {
-    super(failureMetadata, actual);
-  }
+    protected MiddleClassSubject(FailureMetadata failureMetadata,
+                                 MiddleClass actual) {
+        super(failureMetadata, actual);
+    }
 
-  /**
-   * Returns an assertion builder for a {@link MiddleClass} class.
-   */
-  public static Factory<MiddleClassSubject, MiddleClass> middleClasses() {
-    return MiddleClassSubject::new;
-  }
+    /**
+     * Returns an assertion builder for a {@link MiddleClass} class.
+     */
+    public static Factory<MiddleClassSubject, MiddleClass> middleClasses() {
+        return MiddleClassSubject::new;
+    }
 
-  public void withSamePackageAs(Class<MyEmployee> expected) {
-    String actualPackage = actual.getGenerated().getPackage();
-    check("getPackage()").that(actualPackage).isEqualTo(expected.getPackage().getName());
-  }
+    public void withSamePackageAs(Class<MyEmployee> expected) {
+        String actualPackage = actual.getGenerated().getPackage();
+        check("getPackage()").that(actualPackage).isEqualTo(expected.getPackage().getName());
+    }
 
 }

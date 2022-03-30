@@ -21,27 +21,27 @@ import javax.annotation.processing.Generated;
 @Generated("truth-generator")
 public class ThreeSystemSubject extends ThreeSystemParentSubject {
 
-  protected ThreeSystemSubject(FailureMetadata failureMetadata,
-                               ThreeSystem actual) {
-    super(failureMetadata, actual);
-  }
+    protected ThreeSystemSubject(FailureMetadata failureMetadata,
+                                 ThreeSystem actual) {
+        super(failureMetadata, actual);
+    }
 
-  /**
-   * Returns an assertion builder for a {@link ThreeSystem} class.
-   */
-  public static Factory<ThreeSystemSubject, ThreeSystem> threeSystems() {
-    return ThreeSystemSubject::new;
-  }
+    /**
+     * Returns an assertion builder for a {@link ThreeSystem} class.
+     */
+    public static Factory<ThreeSystemSubject, ThreeSystem> threeSystems() {
+        return ThreeSystemSubject::new;
+    }
 
-  public void hasParentSource(String expected) {
-    hasParent().hasGenerated().hasSourceText().ignoringTrailingWhiteSpace().equalTo(expected);
-  }
+    public void hasParentSource(String expected) {
+        hasParent().hasGenerated().hasSourceText().ignoringTrailingWhiteSpace().equalTo(expected);
+    }
 
-  public void hasMiddleSource(String expected) {
-    hasMiddle().hasGenerated().hasSourceText().ignoringTrailingWhiteSpace().equalTo(expected);
-  }
+    public void hasMiddleSource(String expected) {
+        hasMiddle().hasGenerated().hasSourceText().ignoringTrailingWhiteSpace().equalTo(expected);
+    }
 
-  public void hasChildSource(String expected) {
-    hasChild().hasSourceText().ignoringTrailingWhiteSpace().equalTo(expected);
-  }
+    public void hasChildSource(String expected) {
+        hasChild().hasSourceText().ignoringTrailingWhiteSpace().equalTo(expected);
+    }
 }

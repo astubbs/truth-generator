@@ -10,20 +10,20 @@ import java.util.Map;
 @BaseSubjectExtension(Map.class)
 public class MyMapSubject extends MapSubject {
 
-  private Map<?, ?> actual;
+    private Map<?, ?> actual;
 
-  protected MyMapSubject(FailureMetadata failureMetadata, Map<?, ?> actual) {
-    super(failureMetadata, actual);
-    this.actual = actual;
-  }
+    protected MyMapSubject(FailureMetadata failureMetadata, Map<?, ?> actual) {
+        super(failureMetadata, actual);
+        this.actual = actual;
+    }
 
-  @SubjectFactoryMethod
-  public static Factory<MyMapSubject, Map> maps() {
-    return MyMapSubject::new;
-  }
+    @SubjectFactoryMethod
+    public static Factory<MyMapSubject, Map> maps() {
+        return MyMapSubject::new;
+    }
 
-  public void containsKeys(Object... keys) {
-    isNotNull();
-    check("keySet()").that(actual.keySet()).containsAtLeastElementsIn(keys);
-  }
+    public void containsKeys(Object... keys) {
+        isNotNull();
+        check("keySet()").that(actual.keySet()).containsAtLeastElementsIn(keys);
+    }
 }

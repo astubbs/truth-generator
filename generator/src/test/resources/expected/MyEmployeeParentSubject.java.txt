@@ -34,6 +34,8 @@ import static io.stubbs.truth.generator.internal.autoShaded.java.time.InstantSub
 import io.stubbs.truth.generator.internal.autoShaded.java.time.InstantSubject;
 import java.time.Instant;
 import java.util.Optional;
+import static io.stubbs.truth.generator.subjects.MyStringSubject.strings;
+import static io.stubbs.truth.generator.subjects.MyStringSubject.strings;
 import com.google.common.truth.DoubleSubject;
 import io.stubbs.truth.generator.subjects.MyStringSubject;
 import com.google.common.truth.ObjectArraySubject;
@@ -360,24 +362,24 @@ public class MyEmployeeParentSubject extends Subject {
 	 * Returns the Subject for the given field type, so you can chain on other
 	 * assertions.
 	 */
-	public MyStringSubject hasSantity() {
+	public MyStringSubject hasSanity() {
 		isNotNull();
-		return check("getSantity()").about(strings()).that(actual.getSantity());
+		return check("getSanity()").about(strings()).that(actual.getSanity());
 	}
 	/**
 	 * Simple check for equality for all fields.
 	 */
-	public void hasSantityNotEqualTo(java.lang.String expected) {
-		if (!(actual.getSantity().equals(expected))) {
-			failWithActual(fact("expected Santity NOT to be equal to", expected));
+	public void hasSanityNotEqualTo(java.lang.String expected) {
+		if (!(actual.getSanity().equals(expected))) {
+			failWithActual(fact("expected Sanity NOT to be equal to", expected));
 		}
 	}
 	/**
 	 * Simple check for equality for all fields.
 	 */
-	public void hasSantityEqualTo(java.lang.String expected) {
-		if ((actual.getSantity().equals(expected))) {
-			failWithActual(fact("expected Santity to be equal to", expected));
+	public void hasSanityEqualTo(java.lang.String expected) {
+		if ((actual.getSanity().equals(expected))) {
+			failWithActual(fact("expected Sanity to be equal to", expected));
 		}
 	}
 	/**
@@ -443,6 +445,72 @@ public class MyEmployeeParentSubject extends Subject {
 	public void hasStartedAtEqualTo(java.util.Optional expected) {
 		if ((actual.getStartedAt().equals(expected))) {
 			failWithActual(fact("expected StartedAt to be equal to", expected));
+		}
+	}
+	/**
+	 * Returns the Subject for the given field type, so you can chain on other
+	 * assertions.
+	 */
+	public MyStringSubject hasTypeParamTest() {
+		isNotNull();
+		return check("getTypeParamTest()").about(strings()).that(actual.getTypeParamTest());
+	}
+	/**
+	 * Simple check for equality for all fields.
+	 */
+	public void hasTypeParamTestNotEqualTo(java.lang.Object expected) {
+		if (!(actual.getTypeParamTest().equals(expected))) {
+			failWithActual(fact("expected TypeParamTest NOT to be equal to", expected));
+		}
+	}
+	/**
+	 * Simple check for equality for all fields.
+	 */
+	public void hasTypeParamTestEqualTo(java.lang.Object expected) {
+		if ((actual.getTypeParamTest().equals(expected))) {
+			failWithActual(fact("expected TypeParamTest to be equal to", expected));
+		}
+	}
+	/**
+	 * Returns the Subject for the given field type, so you can chain on other
+	 * assertions.
+	 */
+	public MyStringSubject hasTypeParamTestOptional() {
+		isNotNull();
+		hasTypeParamTestOptionalPresent();
+		return check("getTypeParamTestOptional().get()").about(strings())
+				.that((String) actual.getTypeParamTestOptional().get());
+	}
+	/**
+	 * Checks Optional fields for presence.
+	 */
+	public void hasTypeParamTestOptionalNotPresent() {
+		if (actual.getTypeParamTestOptional().isPresent()) {
+			failWithActual(simpleFact("expected TypeParamTestOptional NOT to be present"));
+		}
+	}
+	/**
+	 * Checks Optional fields for presence.
+	 */
+	public void hasTypeParamTestOptionalPresent() {
+		if (!actual.getTypeParamTestOptional().isPresent()) {
+			failWithActual(simpleFact("expected TypeParamTestOptional to be present"));
+		}
+	}
+	/**
+	 * Simple check for equality for all fields.
+	 */
+	public void hasTypeParamTestOptionalNotEqualTo(java.util.Optional expected) {
+		if (!(actual.getTypeParamTestOptional().equals(expected))) {
+			failWithActual(fact("expected TypeParamTestOptional NOT to be equal to", expected));
+		}
+	}
+	/**
+	 * Simple check for equality for all fields.
+	 */
+	public void hasTypeParamTestOptionalEqualTo(java.util.Optional expected) {
+		if ((actual.getTypeParamTestOptional().equals(expected))) {
+			failWithActual(fact("expected TypeParamTestOptional to be equal to", expected));
 		}
 	}
 	/**

@@ -1,6 +1,5 @@
 package io.stubbs.truth.generator.internal;
 
-import com.google.common.flogger.FluentLogger;
 import com.google.common.truth.Fact;
 import com.google.common.truth.Subject;
 import io.stubbs.truth.generator.internal.model.ThreeSystem;
@@ -31,12 +30,11 @@ import static org.reflections.ReflectionUtils.*;
 // todo needs refactoring into different strategies, interface https://github.com/astubbs/truth-generator/issues/12
 public class SubjectMethodGenerator extends AssertionMethodStrategy {
 
-    private static final FluentLogger logger = FluentLogger.forEnclosingClass();
-
     private final BooleanStrategy booleanStrategy;
     private final Set<AssertionMethodStrategy> strategies = new HashSet<>();
     private final ChainStrategy chainStrategy;
     private final JDKOverrideAnalyser bs = new JDKOverrideAnalyser(Options.get());
+    private final GeneratedSubjectTypeStore generatedSubjectTypeStore;
     // todo as strategies are refactored, this should eventually be removed
     private ThreeSystem<?> context;
 
@@ -45,6 +43,7 @@ public class SubjectMethodGenerator extends AssertionMethodStrategy {
      */
     public SubjectMethodGenerator(Set<ThreeSystem<?>> allTypes, BuiltInSubjectTypeStore subjectStore) {
         GeneratedSubjectTypeStore generatedSubjectTypeStore = new GeneratedSubjectTypeStore(allTypes, subjectStore);
+        this.generatedSubjectTypeStore = generatedSubjectTypeStore;
         chainStrategy = new ChainStrategy(generatedSubjectTypeStore);
         this.booleanStrategy = new BooleanStrategy();
         strategies.add(new OptionalStrategy());
@@ -82,25 +81,6 @@ public class SubjectMethodGenerator extends AssertionMethodStrategy {
             }
         }
     }
-
-//  private Class<?> resolveClassUnderTest(ThreeSystem<?> system) {
-//    Class<?> classUnderTest = system.getClassUnderTest();
-//    if(classUnderTest.getPackageName().startsWith("java.")){
-//      return loadClassFromTargetJvm();
-//    }
-//    return classUnderTest;
-//  }
-//
-//  @SneakyThrows
-//  private Class<?> loadClassFromTargetJvm() {
-//    File file = new File("C:\\Users\\anton\\.jdks\\adopt-openjdk-1.8.0_292\\jre\\lib\\rt.jar");
-//    URL e1 = file.toURI().toURL();
-//    URLClassLoader urlClassLoader = new URLClassLoader(List.of(e1).toArray(new URL[0]));
-//
-//    Class<?> aClass = urlClassLoader.loadClass(Duration.class.getCanonicalName());
-//    List<Method> collect = Arrays.stream(aClass.getMethods()).collect(Collectors.toList());
-//    return aClass;
-//  }
 
     private <T extends Member> Predicate<T> withSuffix(String suffix) {
         return input -> input != null && input.getName().startsWith(suffix);
@@ -187,7 +167,7 @@ public class SubjectMethodGenerator extends AssertionMethodStrategy {
     }
 
     private void addFieldAccessors(Method method, JavaClassSource generated, Class<?> classUnderTest) {
-        Class<?> returnType = getWrappedReturnType(method);
+        Class<?> returnType = generatedSubjectTypeStore.getWrappedReturnType(method);
 
         // todo skip static methods for now - just need to make template a bit more advanced
         if (methodIsStatic(method))
@@ -343,7 +323,7 @@ public class SubjectMethodGenerator extends AssertionMethodStrategy {
      * AssertionMethodStrategy}
      */
     @Override
-    protected boolean addStrategyMaybe(ThreeSystem threeSystem, Method method, JavaClassSource generated) {
+    public boolean addStrategyMaybe(ThreeSystem threeSystem, Method method, JavaClassSource generated) {
         throw new IllegalStateException("no-op - transitional implementation");
     }
 

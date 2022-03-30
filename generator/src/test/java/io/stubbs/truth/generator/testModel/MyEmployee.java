@@ -21,11 +21,10 @@ import static io.stubbs.truth.generator.testModel.MyEmployee.State.IS_A_BOSS;
 @Getter
 @Setter(AccessLevel.PRIVATE)
 @ToString
-public class MyEmployee extends Person {
+public class MyEmployee extends Person<String> {
 
-    // todo delete
     @Getter
-    String santity = "no";
+    String sanity = "no";
     @Setter(AccessLevel.PRIVATE)
     boolean testBooleanIsFalse = false;
     private UUID id = UUID.randomUUID();
@@ -42,7 +41,7 @@ public class MyEmployee extends Person {
     private int[] intArray = {0, 1, 2};
 
     public MyEmployee(@Nonnull String name, long someLongAspect, @Nonnull ZonedDateTime birthday) {
-        super(name, someLongAspect, birthday);
+        super(name, someLongAspect, birthday, Optional.of("an optional string"), "another string");
     }
 
     /**
@@ -106,7 +105,7 @@ public class MyEmployee extends Person {
 //  }
 
     public enum State {
-        EMPLOLYED, PREVIOUSLY_EMPLOYED, NEVER_EMPLOYED, IS_A_BOSS;
+        EMPLOLYED, PREVIOUSLY_EMPLOYED, NEVER_EMPLOYED, IS_A_BOSS
     }
 
 }

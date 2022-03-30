@@ -2,6 +2,7 @@ package io.stubbs.truth.generator.internal;
 
 import io.stubbs.truth.generator.internal.model.ThreeSystem;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.ClassUtils;
 import org.jboss.forge.roaster.model.source.JavaClassSource;
 import org.jboss.forge.roaster.model.source.MethodSource;
 
@@ -19,8 +20,8 @@ import static org.apache.commons.lang3.StringUtils.removeStart;
 public class OptionalStrategy extends AssertionMethodStrategy {
 
     @Override
-    protected boolean addStrategyMaybe(ThreeSystem threeSystem, Method method, JavaClassSource generated) {
-        if (Optional.class.isAssignableFrom(getWrappedReturnType(method))) {
+    public boolean addStrategyMaybe(ThreeSystem threeSystem, Method method, JavaClassSource generated) {
+        if (Optional.class.isAssignableFrom(ClassUtils.primitiveToWrapper(method.getReturnType()))) {
             addOptionalStrategy(method, generated);
             return true;
         }

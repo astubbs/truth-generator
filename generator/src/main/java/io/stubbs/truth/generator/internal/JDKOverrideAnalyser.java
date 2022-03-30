@@ -72,15 +72,15 @@ public class JDKOverrideAnalyser {
 
         try {
             String name = clazz.getCanonicalName();
-            //noinspection OptionalGetWithoutIsPresent
+            //noinspection OptionalGetWithoutIsPresent - checked in isOverrideConfigured
             var locate = ClassFileLocator.ForJarFile
-                    .of(options.getRuntimeJavaClassSourceOverride().get())
+                    .of(options.getRuntimeJavaClassSourceOverride().get()) // NOSONAR
                     .locate(name);
             byte[] resolve = locate.resolve();
             ClassFile classRepresentation = new ClassFile(new DataInputStream(new ByteArrayInputStream(resolve)));
             return of(classRepresentation);
         } catch (IOException e) {
-            log.error("Can't load class override for {} from {}", clazz, options.getRuntimeJavaClassSourceOverride().get());
+            log.error("Can't load class override for {} from {}", clazz, options.getRuntimeJavaClassSourceOverride().get()); // NOSONAR
             return empty();
         }
     }

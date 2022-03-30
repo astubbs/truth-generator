@@ -19,11 +19,11 @@ public class IdCard {
     @Value
     public static class SecurityType {
 
+        Type type;
+
         public Type getType() {
             return this.type;
         }
-
-        Type type;
 
         public enum Type {
             FOB, MAGNETIC

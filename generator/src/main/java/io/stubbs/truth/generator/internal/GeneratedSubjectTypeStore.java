@@ -32,11 +32,6 @@ public class GeneratedSubjectTypeStore {
     @Delegate
     private final BuiltInSubjectTypeStore builtInSubjectTypeStore;
 
-    public GeneratedSubjectTypeStore(Set<? extends ThreeSystem<?>> allTypes, BuiltInSubjectTypeStore builtInSubjectTypeStore) {
-        this.generatedSubjects = allTypes.stream().collect(Collectors.toMap(x -> x.classUnderTest.getName(), x -> x));
-        this.builtInSubjectTypeStore = builtInSubjectTypeStore;
-    }
-
     /**
      * Useful for testing - a store with no generated skeleton types
      */
@@ -44,30 +39,10 @@ public class GeneratedSubjectTypeStore {
         this(Set.of(), new BuiltInSubjectTypeStore());
     }
 
-    private Optional<SubjectMethodGenerator.ClassOrGenerated> getGeneratedOrCompiledSubjectFromString(
-            final String name) {
-        boolean isObjectArray = name.endsWith("[]");
-        if (isObjectArray)
-            return of(new SubjectMethodGenerator.ClassOrGenerated(ObjectArraySubject.class, null));
-
-        Optional<ThreeSystem<?>> subjectFromGenerated = getSubjectFromGenerated(name);// takes precedence
-        if (subjectFromGenerated.isPresent()) {
-            return of(new SubjectMethodGenerator.ClassOrGenerated(null, subjectFromGenerated.get()));
-        }
-
-        // any matching compiled subject
-        var aClass = builtInSubjectTypeStore.getCompiledSubjectForTypeName(name);
-        if (aClass != null)
-            return of(new SubjectMethodGenerator.ClassOrGenerated(aClass, null));
-
-        return empty();
+    public GeneratedSubjectTypeStore(Set<? extends ThreeSystem<?>> allTypes, BuiltInSubjectTypeStore builtInSubjectTypeStore) {
+        this.generatedSubjects = allTypes.stream().collect(Collectors.toMap(x -> x.classUnderTest.getName(), x -> x));
+        this.builtInSubjectTypeStore = builtInSubjectTypeStore;
     }
-
-
-    private Optional<ThreeSystem<?>> getSubjectFromGenerated(final String name) {
-        return Optional.ofNullable(this.generatedSubjects.get(name));
-    }
-
 
     protected Optional<SubjectMethodGenerator.ClassOrGenerated> getSubjectForType(final Class<?> type) {
         String name;
@@ -118,6 +93,29 @@ public class GeneratedSubjectTypeStore {
         }
 
         return subject;
+    }
+
+    private Optional<SubjectMethodGenerator.ClassOrGenerated> getGeneratedOrCompiledSubjectFromString(
+            final String name) {
+        boolean isObjectArray = name.endsWith("[]");
+        if (isObjectArray)
+            return of(new SubjectMethodGenerator.ClassOrGenerated(ObjectArraySubject.class, null));
+
+        Optional<ThreeSystem<?>> subjectFromGenerated = getSubjectFromGenerated(name);// takes precedence
+        if (subjectFromGenerated.isPresent()) {
+            return of(new SubjectMethodGenerator.ClassOrGenerated(null, subjectFromGenerated.get()));
+        }
+
+        // any matching compiled subject
+        var aClass = builtInSubjectTypeStore.getCompiledSubjectForTypeName(name);
+        if (aClass != null)
+            return of(new SubjectMethodGenerator.ClassOrGenerated(aClass, null));
+
+        return empty();
+    }
+
+    private Optional<ThreeSystem<?>> getSubjectFromGenerated(final String name) {
+        return Optional.ofNullable(this.generatedSubjects.get(name));
     }
 
     public boolean isAnExtendedSubject(Class<?> clazz) {

@@ -27,13 +27,6 @@ public class FileChildSubject extends FileSubject {
     }
 
     /**
-     * Entry point for {@link File} assertions.
-     */
-    public static FileSubject assertThat(java.io.File actual) {
-        return Truth.assertAbout(files()).that(actual);
-    }
-
-    /**
      * Convenience entry point for {@link File} assertions when being mixed with other "assertThat" assertion
      * libraries.
      *
@@ -41,5 +34,12 @@ public class FileChildSubject extends FileSubject {
      */
     public static FileSubject assertTruth(java.io.File actual) {
         return assertThat(actual);
+    }
+
+    /**
+     * Entry point for {@link File} assertions.
+     */
+    public static FileSubject assertThat(java.io.File actual) {
+        return Truth.assertAbout(files()).that(actual);
     }
 }

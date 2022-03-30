@@ -47,10 +47,7 @@ import static java.util.stream.Collectors.toList;
 public class TruthGeneratorTest {
 
     public static final Path testOutputDirectory = Paths.get("").resolve("target").toAbsolutePath();
-
-    private String loadFileToString(String expectedFileName) throws IOException {
-        return Resources.toString(Resources.getResource(expectedFileName), Charset.defaultCharset());
-    }
+    Correspondence<MethodSource, String> methodHasName = transforming(MethodSource::getName, "has name of");
 
     /**
      * Base test that compares with expected generated code for test model
@@ -118,6 +115,10 @@ public class TruthGeneratorTest {
 
     }
 
+    private String loadFileToString(String expectedFileName) throws IOException {
+        return Resources.toString(Resources.getResource(expectedFileName), Charset.defaultCharset());
+    }
+
     /**
      * Chicken, or the egg? Create Subjects that we are currently saving and using in tests
      */
@@ -146,8 +147,6 @@ public class TruthGeneratorTest {
         var generated = tg.generate(ss);
         assertThat(generated.size()).isAtLeast(ss.getTargetPackageAndClasses().size());
     }
-
-    Correspondence<MethodSource, String> methodHasName = transforming(MethodSource::getName, "has name of");
 
     @Test
     public void test_legacy_mode() {

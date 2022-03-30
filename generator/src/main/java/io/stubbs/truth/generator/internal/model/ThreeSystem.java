@@ -7,14 +7,12 @@ import org.jboss.forge.roaster.model.source.JavaClassSource;
 @Getter
 public class ThreeSystem<T> {
 
-    @Setter
-    boolean legacyMode = false;
-
     public Class<T> classUnderTest;
-
     public ParentClass parent;
     public MiddleClass middle;
     public JavaClassSource child;
+    @Setter
+    boolean legacyMode = false;
 
     /**
      * @see io.stubbs.truth.generator.internal.SkeletonGenerator#threeLayerSystem

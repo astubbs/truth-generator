@@ -20,15 +20,15 @@ import java.io.File;
 @Generated("truth-generator")
 public class FileSubject extends FileParentSubject {
 
-    protected FileSubject(FailureMetadata failureMetadata, File actual) {
-        super(failureMetadata, actual);
-    }
-
     /**
      * Returns an assertion builder for a {@link File} class.
      */
     public static Factory<FileSubject, File> files() {
         return FileSubject::new;
+    }
+
+    protected FileSubject(FailureMetadata failureMetadata, File actual) {
+        super(failureMetadata, actual);
     }
 
     public void exists() {

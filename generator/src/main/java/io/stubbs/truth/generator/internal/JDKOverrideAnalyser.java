@@ -34,10 +34,6 @@ public class JDKOverrideAnalyser {
 
     private final Map<Class<?>, ClassFile> cache = new HashMap<>();
 
-    public boolean isOverrideConfigured() {
-        return options.getRuntimeJavaClassSourceOverride().isPresent();
-    }
-
     public boolean doesOverrideClassContainMethod(Class<?> clazz, Method method) {
         Optional<ClassFile> classModel = getCachedClass(clazz);
 
@@ -56,6 +52,17 @@ public class JDKOverrideAnalyser {
             aClass.ifPresent(classFile -> cache.put(clazz, classFile));
             return aClass;
         }
+    }
+
+    private boolean doesContainsMethod(ClassFile model, Method method) {
+        String needle = method.getName();
+        List<MethodInfo> methods = model.getMethods();
+        Optional<MethodInfo> matchingMethod = StreamEx.of(methods)
+                .filter(x ->
+                        x.getName().equals(needle)
+                )
+                .findFirst();
+        return matchingMethod.isPresent() && AccessFlag.isPublic(matchingMethod.get().getAccessFlags());
     }
 
     private Optional<ClassFile> getClass(Class<?> clazz) {
@@ -78,15 +85,8 @@ public class JDKOverrideAnalyser {
         }
     }
 
-    private boolean doesContainsMethod(ClassFile model, Method method) {
-        String needle = method.getName();
-        List<MethodInfo> methods = model.getMethods();
-        Optional<MethodInfo> matchingMethod = StreamEx.of(methods)
-                .filter(x ->
-                        x.getName().equals(needle)
-                )
-                .findFirst();
-        return matchingMethod.isPresent() && AccessFlag.isPublic(matchingMethod.get().getAccessFlags());
+    public boolean isOverrideConfigured() {
+        return options.getRuntimeJavaClassSourceOverride().isPresent();
     }
 
 }

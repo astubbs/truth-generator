@@ -34,15 +34,11 @@ public class SubjectMethodGenerator extends AssertionMethodStrategy {
     private static final FluentLogger logger = FluentLogger.forEnclosingClass();
 
     private final BooleanStrategy booleanStrategy;
-
+    private final Set<AssertionMethodStrategy> strategies = new HashSet<>();
+    private final ChainStrategy chainStrategy;
+    private final JDKOverrideAnalyser bs = new JDKOverrideAnalyser(Options.get());
     // todo as strategies are refactored, this should eventually be removed
     private ThreeSystem<?> context;
-
-    private final Set<AssertionMethodStrategy> strategies = new HashSet<>();
-
-    private final ChainStrategy chainStrategy;
-
-    private final JDKOverrideAnalyser bs = new JDKOverrideAnalyser(Options.get());
 
     /**
      * @param allTypes todo naming
@@ -374,14 +370,14 @@ public class SubjectMethodGenerator extends AssertionMethodStrategy {
             this.generated = generated;
         }
 
+        static Optional<ClassOrGenerated> ofClass(Class<? extends Subject> compiledSubjectForTypeName) {
+            return ofClass(of(compiledSubjectForTypeName));
+        }
+
         static Optional<ClassOrGenerated> ofClass(Optional<Class<? extends Subject>> clazz) {
             if (clazz.isPresent())
                 return of(new ClassOrGenerated(clazz.get(), null));
             else return empty();
-        }
-
-        static Optional<ClassOrGenerated> ofClass(Class<? extends Subject> compiledSubjectForTypeName) {
-            return ofClass(of(compiledSubjectForTypeName));
         }
 
         String getSubjectSimpleName() {
@@ -406,12 +402,12 @@ public class SubjectMethodGenerator extends AssertionMethodStrategy {
                     '}';
         }
 
-        public boolean isGenerated() {
-            return generated != null;
-        }
-
         public String getFactoryContainerName() {
             return (isGenerated()) ? generated.middle.getCanonicalName() : clazz.getCanonicalName();
+        }
+
+        public boolean isGenerated() {
+            return generated != null;
         }
     }
 }

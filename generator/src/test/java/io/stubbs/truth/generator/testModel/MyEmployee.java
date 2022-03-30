@@ -20,49 +20,33 @@ import static io.stubbs.truth.generator.testModel.MyEmployee.State.IS_A_BOSS;
 @ToString
 public class MyEmployee extends Person {
 
-    private UUID id = UUID.randomUUID();
-
-    private ZonedDateTime anniversary = ZonedDateTime.now();
-
-    @Getter
-    private MyEmployee boss = null;
-
-    /**
-     * Create collision with {@link #getBoss} derived Subject methods.
-     */
-    public boolean isBoss() {
-        return getEmploymentState() == IS_A_BOSS;
-    }
-
     // todo delete
     @Getter
     String santity = "no";
-
     @Setter(AccessLevel.PRIVATE)
     boolean testBooleanIsFalse = false;
-
+    private UUID id = UUID.randomUUID();
+    private ZonedDateTime anniversary = ZonedDateTime.now();
+    @Getter
+    private MyEmployee boss = null;
     private String workNickName;
-
     private IdCard card = null;
-
     private List<Project> projectList = new ArrayList<>();
-
     private State employmentState = State.NEVER_EMPLOYED;
-
     private Optional<Double> weighting = Optional.empty();
-
     private Optional<Instant> startedAt = Optional.empty();
-
     private Map<String, Project> projectMap = new HashMap<>();
-
     private int[] intArray = {0, 1, 2};
 
     public MyEmployee(@Nonnull String name, long someLongAspect, @Nonnull ZonedDateTime birthday) {
         super(name, someLongAspect, birthday);
     }
 
-    public enum State {
-        EMPLOLYED, PREVIOUSLY_EMPLOYED, NEVER_EMPLOYED, IS_A_BOSS;
+    /**
+     * Create collision with {@link #getBoss} derived Subject methods.
+     */
+    public boolean isBoss() {
+        return getEmploymentState() == IS_A_BOSS;
     }
 
     public Person toPlainPerson() {
@@ -102,6 +86,13 @@ public class MyEmployee extends Person {
         return super.getName() + " ID: " + this.getId();
     }
 
+    /**
+     * A "getter" method that doesn't use the get prefix
+     */
+    public int legacyAccessMethod() {
+        return 1;
+    }
+
 //  @Override
 //  public String toString() {
 //    return "MyEmployee{" +
@@ -111,11 +102,8 @@ public class MyEmployee extends Person {
 //            '}';
 //  }
 
-    /**
-     * A "getter" method that doesn't use the get prefix
-     */
-    public int legacyAccessMethod() {
-        return 1;
+    public enum State {
+        EMPLOLYED, PREVIOUSLY_EMPLOYED, NEVER_EMPLOYED, IS_A_BOSS;
     }
 
 }

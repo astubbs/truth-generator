@@ -22,15 +22,12 @@ import java.util.Set;
 import static com.google.common.truth.Truth.assertThat;
 
 /**
+ * @see ChainStrategy
  * @author Antony Stubbs
  */
 public class ChainStrategyTest extends StrategyTest {
 
     ChainStrategy strat = createNewChainStrategy();
-
-    private ChainStrategy createNewChainStrategy() {
-        return new ChainStrategy(new GeneratedSubjectTypeStore());
-    }
 
     @Test
     public void chain() {
@@ -56,6 +53,10 @@ public class ChainStrategyTest extends StrategyTest {
         assertThat(added.toString()).contains("getWeighting().get()");
     }
 
+    private ChainStrategy createNewChainStrategy() {
+        return new ChainStrategy(new GeneratedSubjectTypeStore());
+    }
+
     private Method getMethod(Class<?> employeeClass, String contains) {
         return Arrays.stream(employeeClass.getMethods()).filter(x -> x.getName().contains(contains)).findFirst().get();
     }
@@ -70,13 +71,6 @@ public class ChainStrategyTest extends StrategyTest {
                 .forEach(method ->
                         strat.addStrategyMaybe(createThreeSystem(Optional.class), method, generated)
                 );
-    }
-
-    @Data
-    static
-    class BadGenerics {
-        @SuppressWarnings("rawtypes")
-        Optional genericsMissing;
     }
 
     @Test
@@ -182,6 +176,13 @@ public class ChainStrategyTest extends StrategyTest {
 
         assertThat(source.toString()).contains(needleExpected);
         assertThat(source.toString()).contains("that((Instant)actual.getStartedAt().get()");
+    }
+
+    @Data
+    static
+    class BadGenerics {
+        @SuppressWarnings("rawtypes")
+        Optional genericsMissing;
     }
 
 }

@@ -30,6 +30,39 @@ public class SourceChecking {
         return false;
     }
 
+    private static boolean isAnonymous(Class<?> source) {
+        if (source.isAnonymousClass()) {
+            logger.at(Level.FINE).log("Skipping anonymous class %s", source);
+            return true;
+        }
+        return false;
+    }
+
+    private static boolean isBuilder(Class<?> source) {
+        String simpleName = source.getSimpleName();
+        if (simpleName.contains("Builder")) {
+            logger.at(Level.FINE).log("Skipping builder class %s", source);
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * If any method is annotated with something with Test in it, then assume it's a test class
+     */
+    private static boolean isTestClass(Class<?> source) {
+        boolean hasTestAnnotatedMethod = !ReflectionUtils.getMethods(source,
+                x -> Arrays.stream(x.getAnnotations())
+                        .anyMatch(y -> y.annotationType()
+                                .getSimpleName().contains("Test"))).isEmpty();
+        boolean nameEndsInTest = source.getSimpleName().endsWith("Test");
+        boolean isIndeed = hasTestAnnotatedMethod || nameEndsInTest;
+        if (isIndeed) {
+            logger.at(Level.FINE).log("Skipping a test class %s", source);
+        }
+        return isIndeed;
+    }
+
     public static boolean needsShading(Class<?> source) {
         // todo needs to be more sophisticated and compare modules
 
@@ -53,39 +86,6 @@ public class SourceChecking {
         if (source.getPackage().getName().startsWith("java.") && isBlank)
             throw new IllegalArgumentException("Cannot construct Subject's for external modules without changing their " +
                     "destination package. See SourceClassSets#generateFrom(String, Class<?>...)");
-        return false;
-    }
-
-    /**
-     * If any method is annotated with something with Test in it, then assume it's a test class
-     */
-    private static boolean isTestClass(Class<?> source) {
-        boolean hasTestAnnotatedMethod = !ReflectionUtils.getMethods(source,
-                x -> Arrays.stream(x.getAnnotations())
-                        .anyMatch(y -> y.annotationType()
-                                .getSimpleName().contains("Test"))).isEmpty();
-        boolean nameEndsInTest = source.getSimpleName().endsWith("Test");
-        boolean isIndeed = hasTestAnnotatedMethod || nameEndsInTest;
-        if (isIndeed) {
-            logger.at(Level.FINE).log("Skipping a test class %s", source);
-        }
-        return isIndeed;
-    }
-
-    private static boolean isBuilder(Class<?> source) {
-        String simpleName = source.getSimpleName();
-        if (simpleName.contains("Builder")) {
-            logger.at(Level.FINE).log("Skipping builder class %s", source);
-            return true;
-        }
-        return false;
-    }
-
-    private static boolean isAnonymous(Class<?> source) {
-        if (source.isAnonymousClass()) {
-            logger.at(Level.FINE).log("Skipping anonymous class %s", source);
-            return true;
-        }
         return false;
     }
 }

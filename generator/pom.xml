@@ -17,6 +17,13 @@
     </properties>
 
     <dependencies>
+        <!-- Internal -->
+        <dependency>
+            <groupId>io.stubbs.truth</groupId>
+            <artifactId>truth-generator-api</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
         <!-- Main -->
         <dependency>
             <groupId>org.jboss.forge.roaster</groupId>
@@ -40,6 +47,10 @@
             <groupId>com.google.truth.extensions</groupId>
             <artifactId>truth-java8-extension</artifactId>
             <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>commons-io</groupId>
+            <artifactId>commons-io</artifactId>
         </dependency>
         <dependency>
             <groupId>org.checkerframework</groupId>

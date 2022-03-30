@@ -1,7 +1,7 @@
 package io.stubbs.truth.generator;
 
 import com.google.common.truth.Subject;
-import io.stubbs.truth.generator.internal.MyStringSubject;
+import io.stubbs.truth.generator.subjects.MyStringSubject;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

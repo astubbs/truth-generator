@@ -2,7 +2,7 @@ package io.stubbs.truth.generator.shaded.org.jboss.forge.roaster.model.sourceChi
 
 import com.google.common.truth.FailureMetadata;
 import io.stubbs.truth.generator.UserManagedTruth;
-import io.stubbs.truth.generator.internal.MyStringSubject;
+import io.stubbs.truth.generator.subjects.MyStringSubject;
 import io.stubbs.truth.generator.testModel.MyEmployee;
 import org.jboss.forge.roaster.model.source.JavaClassSource;
 

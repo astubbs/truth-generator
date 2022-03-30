@@ -1,4 +1,4 @@
-package io.stubbs.truth.generator.internal;
+package io.stubbs.truth.generator.subjects;
 
 import com.google.common.io.Resources;
 import com.google.common.truth.FailureMetadata;

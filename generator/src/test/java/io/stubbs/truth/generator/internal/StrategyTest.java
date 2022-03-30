@@ -8,6 +8,9 @@ import org.jboss.forge.roaster.model.source.JavaClassSource;
 
 import java.util.Optional;
 
+/**
+ * @author Antony Stubbs
+ */
 public abstract class StrategyTest {
 
     JavaClassSource generated = Roaster.create(JavaClassSource.class);

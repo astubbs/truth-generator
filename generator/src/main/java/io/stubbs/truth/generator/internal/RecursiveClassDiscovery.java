@@ -1,6 +1,7 @@
 package io.stubbs.truth.generator.internal;
 
 import com.google.common.flogger.FluentLogger;
+import com.google.common.truth.Subject;
 import io.stubbs.truth.generator.SourceClassSets;
 import org.apache.commons.lang3.ClassUtils;
 
@@ -13,7 +14,15 @@ import java.util.stream.Collectors;
 
 import static org.apache.commons.lang3.StringUtils.startsWithAny;
 
-public class RecursiveChecker {
+/**
+ * Recursively inspects all provided classes for classes used in method signatures, not provided in the initial set.
+ * <p>
+ * Enables the system to make sure that a {@link Subject} is generated for every class referenced in a domain model,
+ * including Java JDK classes (which get automatically shaded - as you can't compile classes in the java.* namespace).
+ *
+ * @author Antony Stubbs
+ */
+public class RecursiveClassDiscovery {
 
   private static final FluentLogger log = FluentLogger.forEnclosingClass();
 

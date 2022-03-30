@@ -12,8 +12,11 @@ import static java.lang.String.format;
 import static org.apache.commons.lang3.StringUtils.capitalize;
 import static org.apache.commons.lang3.StringUtils.removeStart;
 
+/**
+ * @author Antony Stubbs
+ */
 @Slf4j
-public class OptionalStrategy extends MethodStrategy {
+public class OptionalStrategy extends AssertionMethodStrategy {
 
     @Override
     protected boolean addStrategyMaybe(ThreeSystem threeSystem, Method method, JavaClassSource generated) {

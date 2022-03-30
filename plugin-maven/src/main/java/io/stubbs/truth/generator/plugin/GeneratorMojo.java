@@ -37,7 +37,10 @@ import static org.apache.maven.plugins.annotations.ResolutionScope.TEST;
 
 
 /**
- * Goal which touches a timestamp file.
+ * Maven plugin for {@link TruthGenerator}.
+ *
+ * @author Antony Stubbs
+ * @see TruthGenerator
  */
 @Getter
 @Mojo(name = "generate", defaultPhase = LifecyclePhase.GENERATE_TEST_SOURCES, requiresDependencyResolution = TEST, requiresProject = true)
@@ -75,6 +78,9 @@ public class GeneratorMojo extends AbstractMojo {
   @Parameter(defaultValue = "false", property = "truth.cleanTargetDir")
   public boolean cleanTargetDir;
 
+  /**
+   * Use 'has' in generated assertion chain methods instead of 'get'.
+   */
   @Parameter(defaultValue = "false", property = "truth.useHas")
   public boolean useHas;
 
@@ -131,11 +137,15 @@ public class GeneratorMojo extends AbstractMojo {
   @Parameter(property = "truth.skip", defaultValue = "false")
   public boolean skip;
 
+  /**
+   * Recursively scan for referenced classes in explicitly set classes, in order to generate a complete, chainable Subject graph.
+   */
   @Parameter(property = "truth.recursive", defaultValue = "true")
   public boolean recursive;
 
   /**
-   * Advanced setting - override class source for class reflection. Useful for when runtime env is different than plugin execution environment - e.g. when building on a newer jdk than running on.
+   * Advanced setting - override class source for class reflection. Useful for when runtime env is different than
+   * plugin execution environment - e.g. when building on a newer jdk than running on.
    */
   @Parameter(property = "truth.jdkClassSourceOverride")
   public String jdkClassSourceOverride;
@@ -180,14 +190,14 @@ public class GeneratorMojo extends AbstractMojo {
   private boolean isCompilationTargetBelowJavaNine() {
     Plugin compiler = getProject().getPlugin("org.apache.maven.plugins:maven-compiler-plugin");
 
-    boolean booool = false;
+    boolean belowJavaNine = false;
 
     // spec version
     try {
       String property = System.getProperty("java.specification.version");
       int javaSpecVersion = Integer.parseInt(property);
       if (javaSpecVersion < 9)
-        booool = true;
+        belowJavaNine = true;
     } catch (NumberFormatException e) {
       getLog().warn("Can't parse java spec version");
     }
@@ -200,14 +210,14 @@ public class GeneratorMojo extends AbstractMojo {
         String rawTarget = target.getValue();
         try {
           int compilationTarget = Integer.parseInt(rawTarget);
-          booool = compilationTarget < 9;
+          belowJavaNine = compilationTarget < 9;
         } catch (NumberFormatException e) {
           getLog().warn("Cannot parse compilation target: " + rawTarget);
         }
       }
     }
 
-    return booool;
+    return belowJavaNine;
   }
 
   private void deleteOldContent() {

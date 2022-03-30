@@ -21,6 +21,9 @@ import java.util.Set;
 
 import static com.google.common.truth.Truth.assertThat;
 
+/**
+ * @author Antony Stubbs
+ */
 public class ChainStrategyTest extends StrategyTest {
 
     ChainStrategy strat = createNewChainStrategy();

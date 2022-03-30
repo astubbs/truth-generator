@@ -111,7 +111,7 @@ public class TruthGenerator implements TruthGeneratorAPI {
 
   @Override
   public Map<Class<?>, ThreeSystem<?>> generate(SourceClassSets ss) {
-    RecursiveChecker rc = new RecursiveChecker();
+    RecursiveClassDiscovery rc = new RecursiveClassDiscovery();
     Result.ResultBuilder results = Result.builder();
 
     if (options.isRecursive()) {

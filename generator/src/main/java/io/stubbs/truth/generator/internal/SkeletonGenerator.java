@@ -23,7 +23,11 @@ import static java.util.Optional.empty;
 import static java.util.Optional.of;
 
 /**
+ * Generates skeleton source class files so that a reference graph can be correctly created, before adding assertion
+ * methods (see {@link SubjectMethodGenerator}
+ *
  * @author Antony Stubbs
+ * @see SubjectMethodGenerator
  */
 public class SkeletonGenerator implements SkeletonGeneratorAPI {
 

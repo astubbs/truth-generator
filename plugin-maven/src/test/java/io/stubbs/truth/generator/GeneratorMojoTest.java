@@ -27,6 +27,7 @@ import static org.junit.Assert.assertTrue;
 
 /**
  * @see GeneratorMojo
+ * @author Antony Stubbs
  */
 public class GeneratorMojoTest {
 

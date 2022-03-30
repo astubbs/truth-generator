@@ -24,10 +24,12 @@ import static org.apache.commons.lang3.StringUtils.*;
 import static org.reflections.ReflectionUtils.*;
 
 /**
+ * Generates assertion methods for adding to skeleton classes with various {@link AssertionMethodStrategy}(s).
+ *
  * @author Antony Stubbs
  */
 // todo needs refactoring into different strategies, interface https://github.com/astubbs/truth-generator/issues/12
-public class SubjectMethodGenerator extends MethodStrategy {
+public class SubjectMethodGenerator extends AssertionMethodStrategy {
 
   private static final FluentLogger logger = FluentLogger.forEnclosingClass();
 
@@ -36,7 +38,7 @@ public class SubjectMethodGenerator extends MethodStrategy {
   // todo as strategies are refactored, this should eventually be removed
   private ThreeSystem<?> context;
 
-  private final Set<MethodStrategy> strategies = new HashSet<>();
+  private final Set<AssertionMethodStrategy> strategies = new HashSet<>();
 
   private final ChainStrategy chainStrategy;
 
@@ -341,7 +343,7 @@ public class SubjectMethodGenerator extends MethodStrategy {
   }
 
   /**
-   * Once all strategies have moved to dedicated classes, this class won't need to extend {@link MethodStrategy}
+   * Once all strategies have moved to dedicated classes, this class won't need to extend {@link AssertionMethodStrategy}
    */
   @Override
   protected boolean addStrategyMaybe(ThreeSystem threeSystem, Method method, JavaClassSource generated) {

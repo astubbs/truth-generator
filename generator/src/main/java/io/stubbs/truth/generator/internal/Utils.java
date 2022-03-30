@@ -15,6 +15,9 @@ import java.util.Set;
 
 import static java.lang.String.format;
 
+/**
+ * @author Antony Stubbs
+ */
 public class Utils {
 
   public static final String DIR_TRUTH_ASSERTIONS_MANAGED = "truth-assertions-managed";

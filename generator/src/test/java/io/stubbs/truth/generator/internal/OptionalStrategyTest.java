@@ -8,6 +8,9 @@ import java.util.Arrays;
 
 import static com.google.common.truth.Truth.assertThat;
 
+/**
+ * @author Antony Stubbs
+ */
 public class OptionalStrategyTest extends StrategyTest {
 
     OptionalStrategy strat = new OptionalStrategy();

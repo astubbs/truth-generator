@@ -13,15 +13,15 @@ import java.util.Optional;
  */
 public abstract class StrategyTest {
 
-    JavaClassSource generated = Roaster.create(JavaClassSource.class);
-    MyEmployee employee = TestModelUtils.createEmployee();
-    Class<? extends MyEmployee> employeeClass = employee.getClass();
-    BuiltInSubjectTypeStore builtInSubjectTypeStore = new BuiltInSubjectTypeStore();
-
     static {
         Options.setDefaultInstance();
         Utils.setOutputBase(TruthGeneratorTest.testOutputDirectory);
     }
+
+    JavaClassSource generated = Roaster.create(JavaClassSource.class);
+    MyEmployee employee = TestModelUtils.createEmployee();
+    Class<? extends MyEmployee> employeeClass = employee.getClass();
+    BuiltInSubjectTypeStore builtInSubjectTypeStore = new BuiltInSubjectTypeStore();
 
     protected <T> ThreeSystem<T> createThreeSystem(Class<T> clazzUnderTest) {
         SkeletonGenerator skeletonGenerator = new SkeletonGenerator(Optional.empty(), new OverallEntryPoint(getClass().getPackageName()), builtInSubjectTypeStore);

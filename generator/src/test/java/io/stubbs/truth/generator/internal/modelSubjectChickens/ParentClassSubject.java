@@ -20,16 +20,16 @@ import javax.annotation.processing.Generated;
 @Generated("truth-generator")
 public class ParentClassSubject extends ParentClassParentSubject {
 
-    protected ParentClassSubject(FailureMetadata failureMetadata,
-                                 ParentClass actual) {
-        super(failureMetadata, actual);
-    }
-
     /**
      * Returns an assertion builder for a {@link ParentClass} class.
      */
     public static Factory<ParentClassSubject, ParentClass> parentClasses() {
         return ParentClassSubject::new;
+    }
+
+    protected ParentClassSubject(FailureMetadata failureMetadata,
+                                 ParentClass actual) {
+        super(failureMetadata, actual);
     }
 
     public void withSamePackageAs(Class<MyEmployee> expected) {

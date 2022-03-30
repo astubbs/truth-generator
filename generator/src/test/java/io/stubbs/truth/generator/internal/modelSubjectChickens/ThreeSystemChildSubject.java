@@ -28,14 +28,6 @@ public class ThreeSystemChildSubject extends ThreeSystemSubject {
     }
 
     /**
-     * Entry point for {@link ThreeSystem} assertions.
-     */
-    public static ThreeSystemSubject assertThat(
-            ThreeSystem actual) {
-        return Truth.assertAbout(threeSystems()).that(actual);
-    }
-
-    /**
      * Convenience entry point for {@link ThreeSystem} assertions when being mixed with other "assertThat" assertion
      * libraries.
      *
@@ -44,5 +36,13 @@ public class ThreeSystemChildSubject extends ThreeSystemSubject {
     public static ThreeSystemSubject assertTruth(
             ThreeSystem actual) {
         return assertThat(actual);
+    }
+
+    /**
+     * Entry point for {@link ThreeSystem} assertions.
+     */
+    public static ThreeSystemSubject assertThat(
+            ThreeSystem actual) {
+        return Truth.assertAbout(threeSystems()).that(actual);
     }
 }

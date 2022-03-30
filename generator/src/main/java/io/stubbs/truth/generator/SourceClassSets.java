@@ -59,17 +59,17 @@ public class SourceClassSets {
     private Set<Class<?>> classSetCache;
 
     /**
-     * @param packageForEntryPoint the package to put the overall access points
-     */
-    public SourceClassSets(String packageForEntryPoint) {
-        this.packageForEntryPoint = packageForEntryPoint;
-    }
-
-    /**
      * Use the package of the parameter as the base package;
      */
     public SourceClassSets(Object packageFromObject) {
         this(packageFromObject.getClass().getPackage().getName());
+    }
+
+    /**
+     * @param packageForEntryPoint the package to put the overall access points
+     */
+    public SourceClassSets(String packageForEntryPoint) {
+        this.packageForEntryPoint = packageForEntryPoint;
     }
 
     /**
@@ -102,10 +102,6 @@ public class SourceClassSets {
         targetPackageAndClasses.add(new TargetPackageAndClasses(targetPackageName, classes));
     }
 
-    public void generateFrom(Class<?>... classes) {
-        this.simpleClasses.addAll(stream(classes).collect(toSet()));
-    }
-
     public void generateFrom(Set<Class<?>> classes) {
         this.simpleClasses.addAll(classes);
     }
@@ -133,12 +129,6 @@ public class SourceClassSets {
         return this.packageForEntryPoint + ".shaded." + p.getName();
     }
 
-    public void generateFromNonBean(Class<?>... nonBeanLegacyClass) {
-        for (Class<?> beanLegacyClass : nonBeanLegacyClass) {
-            legacyBeans.add(beanLegacyClass);
-        }
-    }
-
     public void generateFromShadedNonBean(Class<?>... clazzes) {
         Set<TargetPackageAndClasses> targetPackageAndClassesStream = mapToPackageSets(clazzes);
         this.legacyTargetPackageAndClasses.addAll(targetPackageAndClassesStream);
@@ -153,6 +143,20 @@ public class SourceClassSets {
             }
         }).collect(Collectors.toList()).toArray(new Class[0]);
         generateFrom(as);
+    }
+
+    public void generateFrom(Class<?>... classes) {
+        this.simpleClasses.addAll(stream(classes).collect(toSet()));
+    }
+
+    // todo docs
+    // todo shouldn't be public?
+    public Set<Class<?>> addIfMissing(final Set<? extends Class<?>> clazzes) {
+        getAllClasses(); // update class set cache
+        var missing = clazzes.stream()
+                .filter(x -> !classSetCache.contains(x)).collect(toSet());
+        missing.forEach(this::generateFrom);
+        return (Set<Class<?>>) missing;
     }
 
     // todo shouldn't be public?
@@ -176,16 +180,6 @@ public class SourceClassSets {
         // todo need more elegant solution than this
         this.classSetCache = union;
         return union;
-    }
-
-    // todo docs
-    // todo shouldn't be public?
-    public Set<Class<?>> addIfMissing(final Set<? extends Class<?>> clazzes) {
-        getAllClasses(); // update class set cache
-        var missing = clazzes.stream()
-                .filter(x -> !classSetCache.contains(x)).collect(toSet());
-        missing.forEach(this::generateFrom);
-        return (Set<Class<?>>) missing;
     }
 
     // todo shouldn't be public?
@@ -215,6 +209,12 @@ public class SourceClassSets {
         }).collect(Collectors.toList());
         Class[] as = collect.toArray(new Class[0]);
         generateFromNonBean(as);
+    }
+
+    public void generateFromNonBean(Class<?>... nonBeanLegacyClass) {
+        for (Class<?> beanLegacyClass : nonBeanLegacyClass) {
+            legacyBeans.add(beanLegacyClass);
+        }
     }
 
     /**

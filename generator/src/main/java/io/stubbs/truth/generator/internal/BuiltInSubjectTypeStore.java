@@ -73,14 +73,6 @@ public class BuiltInSubjectTypeStore {
         initSubjectTypes();
     }
 
-
-    private static void initSubjectTypes() {
-        Reflections reflections = new Reflections("io.stubbs.truth", "com.google.common.truth");
-        Set<Class<? extends Subject>> subjectTypes = reflections.getSubTypesOf(Subject.class);
-        Validate.isTrue(!subjectTypes.isEmpty(), "Unexpected: Could not find any compile time Subjects to work with.");
-        subjectTypes.forEach(x -> classPathSubjectTypes.put(x.getSimpleName(), x));
-    }
-
     /**
      * Base Truth subject extensions to inject into Subject tree
      *
@@ -88,7 +80,6 @@ public class BuiltInSubjectTypeStore {
      */
     @Getter(AccessLevel.PRIVATE)
     private final Map<Class<?>, Class<? extends Subject>> subjectExtensions = new HashMap<>();
-
     private ClassUtils classUtils = new ClassUtils();
 
     public BuiltInSubjectTypeStore() {
@@ -111,6 +102,17 @@ public class BuiltInSubjectTypeStore {
                 throw new GeneratorException("Class that isn't a Subject incorrectly annotation with " + BaseSubjectExtension.class);
             }
         }
+    }
+
+    public void registerStandardSubjectExtension(Class<?> targetType, Class<? extends Subject> subjectExtensionClass) {
+        subjectExtensions.put(targetType, subjectExtensionClass);
+    }
+
+    private static void initSubjectTypes() {
+        Reflections reflections = new Reflections("io.stubbs.truth", "com.google.common.truth");
+        Set<Class<? extends Subject>> subjectTypes = reflections.getSubTypesOf(Subject.class);
+        Validate.isTrue(!subjectTypes.isEmpty(), "Unexpected: Could not find any compile time Subjects to work with.");
+        subjectTypes.forEach(x -> classPathSubjectTypes.put(x.getSimpleName(), x));
     }
 
     // todo cleanup
@@ -142,11 +144,6 @@ public class BuiltInSubjectTypeStore {
         return isCoveredByNonPrimitiveStandardSubjects || array;
     }
 
-
-    public void registerStandardSubjectExtension(Class<?> targetType, Class<? extends Subject> subjectExtensionClass) {
-        subjectExtensions.put(targetType, subjectExtensionClass);
-    }
-
     public Optional<Class<? extends Subject>> getSubjectForNotNativeType(String simpleName, Class<?> clazzUnderTest) {
         return getClosestTruthNativeSubjectForType(clazzUnderTest);
     }
@@ -162,6 +159,11 @@ public class BuiltInSubjectTypeStore {
         return empty();
     }
 
+    public Optional<Class<?>> findHighestPriorityNativeType(Class<?> type) {
+        Class<?> normalised = primitiveToWrapper(type);
+        return getNativeTypes().stream().filter(x -> x.isAssignableFrom(normalised)).findFirst();
+    }
+
     protected Class<? extends Subject> getCompiledSubjectForTypeName(String name) {
         // remove package if exists
         if (name.contains("."))
@@ -171,20 +173,15 @@ public class BuiltInSubjectTypeStore {
         return getClassPathSubjectTypes(compoundName);
     }
 
+    public Class<? extends Subject> getClassPathSubjectTypes(String compoundName) {
+        return getClassPathSubjectTypes().get(compoundName);
+    }
+
     public boolean isAnExtendedSubject(Class<?> subjectClass) {
         return getSubjectExtensions().containsValue(subjectClass);
     }
 
     public Class<? extends Subject> getSubjectExtensions(Class<?> type) {
         return getSubjectExtensions().get(type);
-    }
-
-    public Class<? extends Subject> getClassPathSubjectTypes(String compoundName) {
-        return getClassPathSubjectTypes().get(compoundName);
-    }
-
-    public Optional<Class<?>> findHighestPriorityNativeType(Class<?> type) {
-        Class<?> normalised = primitiveToWrapper(type);
-        return getNativeTypes().stream().filter(x -> x.isAssignableFrom(normalised)).findFirst();
     }
 }

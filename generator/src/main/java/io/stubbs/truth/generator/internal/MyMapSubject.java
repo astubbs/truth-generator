@@ -12,14 +12,14 @@ public class MyMapSubject extends MapSubject {
 
     private Map<?, ?> actual;
 
-    protected MyMapSubject(FailureMetadata failureMetadata, Map<?, ?> actual) {
-        super(failureMetadata, actual);
-        this.actual = actual;
-    }
-
     @SubjectFactoryMethod
     public static Factory<MyMapSubject, Map> maps() {
         return MyMapSubject::new;
+    }
+
+    protected MyMapSubject(FailureMetadata failureMetadata, Map<?, ?> actual) {
+        super(failureMetadata, actual);
+        this.actual = actual;
     }
 
     public void containsKeys(Object... keys) {

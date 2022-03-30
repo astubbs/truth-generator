@@ -22,16 +22,16 @@ import javax.annotation.processing.Generated;
 @Generated("truth-generator")
 public class MiddleClassSubject extends MiddleClassParentSubject {
 
-    protected MiddleClassSubject(FailureMetadata failureMetadata,
-                                 MiddleClass actual) {
-        super(failureMetadata, actual);
-    }
-
     /**
      * Returns an assertion builder for a {@link MiddleClass} class.
      */
     public static Factory<MiddleClassSubject, MiddleClass> middleClasses() {
         return MiddleClassSubject::new;
+    }
+
+    protected MiddleClassSubject(FailureMetadata failureMetadata,
+                                 MiddleClass actual) {
+        super(failureMetadata, actual);
     }
 
     public void withSamePackageAs(Class<MyEmployee> expected) {

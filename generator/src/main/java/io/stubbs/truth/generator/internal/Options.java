@@ -15,25 +15,20 @@ import java.util.Optional;
 public class Options {
     @Setter
     private static Options instance;
-
+    @Builder.Default
+    boolean useHasInsteadOfGet = false;
+    @Builder.Default
+    boolean useGetterForLegacyClasses = false;
+    @Builder.Default
+    boolean compilationTargetLowerThanNine = false;
+    @Builder.Default
+    Optional<File> runtimeJavaClassSourceOverride = Optional.empty();
     /**
      * Marks whether to try to find all referenced types from the source types, to generate Subjects for all of them,
      * and use them all in the Subject tree.
      */
     @Builder.Default
     private boolean recursive = true;
-
-    @Builder.Default
-    boolean useHasInsteadOfGet = false;
-
-    @Builder.Default
-    boolean useGetterForLegacyClasses = false;
-
-    @Builder.Default
-    boolean compilationTargetLowerThanNine = false;
-
-    @Builder.Default
-    Optional<File> runtimeJavaClassSourceOverride = Optional.empty();
 
     public static Options get() {
         return instance;

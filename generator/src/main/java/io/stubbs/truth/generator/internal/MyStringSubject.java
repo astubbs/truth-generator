@@ -20,22 +20,32 @@ public class MyStringSubject extends StringSubject {
 
     String actual;
 
-    protected MyStringSubject(FailureMetadata failureMetadata, String actual) {
-        super(failureMetadata, actual);
-        this.actual = actual;
-    }
-
     @SubjectFactoryMethod
     public static Factory<MyStringSubject, String> strings() {
         return MyStringSubject::new;
+    }
+
+    protected MyStringSubject(FailureMetadata failureMetadata, String actual) {
+        super(failureMetadata, actual);
+        this.actual = actual;
     }
 
     public IgnoringWhiteSpaceComparison ignoringTrailingWhiteSpace() {
         return new IgnoringWhiteSpaceComparison();
     }
 
+    private String loadFileToString(String expectedFileName) throws IOException {
+        return Resources.toString(Resources.getResource(expectedFileName), Charset.defaultCharset());
+    }
+
     @NoArgsConstructor(access = AccessLevel.PRIVATE)
     public class IgnoringWhiteSpaceComparison {
+
+        @SneakyThrows
+        public void equalToFile(String expectedMyEmployeeParent) {
+            String fileContent = loadFileToString(expectedMyEmployeeParent);
+            equalTo(fileContent);
+        }
 
         public void equalTo(String expected) {
             String expectedNormal = normalise(expected);
@@ -51,28 +61,18 @@ public class MyStringSubject extends StringSubject {
         }
 
         /**
-         * lazy remove trailing whitespace on lines
-         */
-        private String normaliseWhiteSpaceAtEndings(String raw) {
-            return raw.replaceAll("(?m)\\s+$", "");
-        }
-
-        /**
          * make line endings consistent
          */
         private String normaliseEndingsEndings(String raw) {
             return raw.replaceAll("\\r\\n?", "\n");
         }
 
-        @SneakyThrows
-        public void equalToFile(String expectedMyEmployeeParent) {
-            String fileContent = loadFileToString(expectedMyEmployeeParent);
-            equalTo(fileContent);
+        /**
+         * lazy remove trailing whitespace on lines
+         */
+        private String normaliseWhiteSpaceAtEndings(String raw) {
+            return raw.replaceAll("(?m)\\s+$", "");
         }
-    }
-
-    private String loadFileToString(String expectedFileName) throws IOException {
-        return Resources.toString(Resources.getResource(expectedFileName), Charset.defaultCharset());
     }
 
 }

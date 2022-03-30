@@ -23,15 +23,15 @@ import javax.annotation.processing.Generated;
 @Generated("truth-generator")
 public class JavaClassSourceSubject extends JavaClassSourceParentSubject {
 
-    protected JavaClassSourceSubject(FailureMetadata failureMetadata, JavaClassSource actual) {
-        super(failureMetadata, actual);
-    }
-
     /**
      * Returns an assertion builder for a {@link JavaClassSource} class.
      */
     public static Factory<JavaClassSourceSubject, JavaClassSource> javaClassSources() {
         return JavaClassSourceSubject::new;
+    }
+
+    protected JavaClassSourceSubject(FailureMetadata failureMetadata, JavaClassSource actual) {
+        super(failureMetadata, actual);
     }
 
     public MyStringSubject hasSourceText() {

@@ -68,6 +68,14 @@ public class Utils {
         return base.resolve(packageNameDir);
     }
 
+    public static Path getManagedPath() {
+        return testOutputDir.resolve(Utils.DIR_TRUTH_ASSERTIONS_MANAGED);
+    }
+
+    public static Path getTemplatesPath() {
+        return testOutputDir.resolve(Utils.DIR_TRUTH_ASSERTIONS_TEMPLATES);
+    }
+
     public static <T> String getFactoryName(Class<T> source) {
         String simpleName = source.getSimpleName();
         String plural = English.plural(simpleName);
@@ -99,14 +107,6 @@ public class Utils {
 
     public static void setOutputBase(java.nio.file.Path testOutputDir) {
         Utils.testOutputDir = testOutputDir;
-    }
-
-    public static Path getTemplatesPath() {
-        return testOutputDir.resolve(Utils.DIR_TRUTH_ASSERTIONS_TEMPLATES);
-    }
-
-    public static Path getManagedPath() {
-        return testOutputDir.resolve(Utils.DIR_TRUTH_ASSERTIONS_MANAGED);
     }
 
     public static String msg(String s, Object... args) {

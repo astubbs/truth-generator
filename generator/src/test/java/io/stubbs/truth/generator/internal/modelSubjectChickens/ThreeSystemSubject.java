@@ -21,16 +21,16 @@ import javax.annotation.processing.Generated;
 @Generated("truth-generator")
 public class ThreeSystemSubject extends ThreeSystemParentSubject {
 
-    protected ThreeSystemSubject(FailureMetadata failureMetadata,
-                                 ThreeSystem actual) {
-        super(failureMetadata, actual);
-    }
-
     /**
      * Returns an assertion builder for a {@link ThreeSystem} class.
      */
     public static Factory<ThreeSystemSubject, ThreeSystem> threeSystems() {
         return ThreeSystemSubject::new;
+    }
+
+    protected ThreeSystemSubject(FailureMetadata failureMetadata,
+                                 ThreeSystem actual) {
+        super(failureMetadata, actual);
     }
 
     public void hasParentSource(String expected) {

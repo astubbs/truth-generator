@@ -45,6 +45,28 @@ public class TruthGenerator implements TruthGeneratorAPI {
         this.builtInStore = new BuiltInSubjectTypeStore();
     }
 
+    /**
+     * todo change this to do this by finding the highest common package of all outputs
+     */
+    private String createEntrypointPackage(final Set<Class<?>> classes) {
+        return classes.stream().findFirst().get().getPackageName();
+    }
+
+    @Override
+    public String maintain(final Class source, final Class userAndGeneratedMix) {
+        throw new IllegalStateException("Not implemented yet");
+    }
+
+    @Override
+    public <T> String combinedSystem(final Class<T> source) {
+        throw new IllegalStateException("Not implemented yet");
+    }
+
+    @Override
+    public void combinedSystem(final String... modelPackages) {
+        throw new IllegalStateException("Not implemented yet");
+    }
+
     @Override
     public void generate(String... modelPackages) {
         Utils.requireNotEmpty(modelPackages);
@@ -63,6 +85,11 @@ public class TruthGenerator implements TruthGeneratorAPI {
     private Set<ThreeSystem<?>> generateSkeletonsFromPackages(Set<String> modelPackages, OverallEntryPoint overallEntryPoint, SourceClassSets ss) {
         Set<Class<?>> allTypes = classUtils.collectSourceClasses(ss, modelPackages.toArray(new String[0]));
         return generateSkeletons(allTypes, Optional.empty(), overallEntryPoint);
+    }
+
+    private void addTests(final Set<ThreeSystem<?>> allTypes) {
+        SubjectMethodGenerator tg = new SubjectMethodGenerator(allTypes, builtInStore);
+        tg.addTests(allTypes);
     }
 
     private Set<ThreeSystem<?>> generateSkeletons(Set<Class<?>> classes, Optional<String> targetPackageName,
@@ -88,11 +115,6 @@ public class TruthGenerator implements TruthGeneratorAPI {
         classes = classes.stream().filter(x -> !Subject.class.isAssignableFrom(x)).collect(toSet());
         log.at(Level.FINE).log("Removed %s Subjects from inbound", classes.size() - sizeBeforeFilter);
         return classes;
-    }
-
-    private void addTests(final Set<ThreeSystem<?>> allTypes) {
-        SubjectMethodGenerator tg = new SubjectMethodGenerator(allTypes, builtInStore);
-        tg.addTests(allTypes);
     }
 
     @Override
@@ -202,13 +224,6 @@ public class TruthGenerator implements TruthGeneratorAPI {
         return generate(ss);
     }
 
-    /**
-     * todo change this to do this by finding the highest common package of all outputs
-     */
-    private String createEntrypointPackage(final Set<Class<?>> classes) {
-        return classes.stream().findFirst().get().getPackageName();
-    }
-
     @Override
     public Map<Class<?>, ThreeSystem<?>> generate(Class<?>... classes) {
         return generate(stream(classes).collect(toSet()));
@@ -217,20 +232,5 @@ public class TruthGenerator implements TruthGeneratorAPI {
     @Override
     public void registerStandardSubjectExtension(Class<?> targetType, Class<? extends Subject> subjectExtensionClass) {
         builtInStore.registerStandardSubjectExtension(targetType, subjectExtensionClass);
-    }
-
-    @Override
-    public String maintain(final Class source, final Class userAndGeneratedMix) {
-        throw new IllegalStateException("Not implemented yet");
-    }
-
-    @Override
-    public <T> String combinedSystem(final Class<T> source) {
-        throw new IllegalStateException("Not implemented yet");
-    }
-
-    @Override
-    public void combinedSystem(final String... modelPackages) {
-        throw new IllegalStateException("Not implemented yet");
     }
 }

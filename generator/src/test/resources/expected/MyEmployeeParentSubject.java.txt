@@ -21,6 +21,10 @@ import static io.stubbs.truth.generator.internal.autoShaded.java.util.UUIDSubjec
 import io.stubbs.truth.generator.internal.autoShaded.java.util.UUIDSubject;
 import java.util.UUID;
 import com.google.common.truth.PrimitiveIntArraySubject;
+import static io.stubbs.truth.generator.internal.autoShaded.java.util.OptionalSubject.optionals;
+import static io.stubbs.truth.generator.internal.autoShaded.java.util.OptionalSubject.optionals;
+import java.util.Optional;
+import io.stubbs.truth.generator.internal.autoShaded.java.util.OptionalSubject;
 import static io.stubbs.truth.generator.internal.autoShaded.java.util.stream.DoubleStreamSubject.doubleStreams;
 import io.stubbs.truth.generator.internal.autoShaded.java.util.stream.DoubleStreamSubject;
 import java.util.stream.DoubleStream;
@@ -46,7 +50,6 @@ import com.google.common.truth.LongSubject;
 import static io.stubbs.truth.generator.internal.autoShaded.java.time.InstantSubject.instants;
 import io.stubbs.truth.generator.internal.autoShaded.java.time.InstantSubject;
 import java.time.Instant;
-import java.util.Optional;
 import static io.stubbs.truth.generator.subjects.MyStringSubject.strings;
 import static io.stubbs.truth.generator.subjects.MyStringSubject.strings;
 import com.google.common.truth.DoubleSubject;
@@ -413,6 +416,130 @@ public class MyEmployeeParentSubject extends Subject {
 	 * Returns the Subject for the given field type, so you can chain on other
 	 * assertions.
 	 */
+	public OptionalSubject hasMyWildcardTypeWithLowerAndUpperBoundsGeneric() {
+		isNotNull();
+		return check("getMyWildcardTypeWithLowerAndUpperBoundsGeneric()").about(optionals())
+				.that(actual.getMyWildcardTypeWithLowerAndUpperBoundsGeneric());
+	}
+	/**
+	 * Checks Optional fields for presence.
+	 */
+	public void hasMyWildcardTypeWithLowerAndUpperBoundsGenericNotPresent() {
+		if (actual.getMyWildcardTypeWithLowerAndUpperBoundsGeneric().isPresent()) {
+			failWithActual(simpleFact("expected MyWildcardTypeWithLowerAndUpperBoundsGeneric NOT to be present"));
+		}
+	}
+	/**
+	 * Checks Optional fields for presence.
+	 */
+	public void hasMyWildcardTypeWithLowerAndUpperBoundsGenericPresent() {
+		if (!actual.getMyWildcardTypeWithLowerAndUpperBoundsGeneric().isPresent()) {
+			failWithActual(simpleFact("expected MyWildcardTypeWithLowerAndUpperBoundsGeneric to be present"));
+		}
+	}
+	/**
+	 * Simple check for equality for all fields.
+	 */
+	public void hasMyWildcardTypeWithLowerAndUpperBoundsGenericNotEqualTo(java.util.Optional expected) {
+		if (!(actual.getMyWildcardTypeWithLowerAndUpperBoundsGeneric().equals(expected))) {
+			failWithActual(fact("expected MyWildcardTypeWithLowerAndUpperBoundsGeneric NOT to be equal to", expected));
+		}
+	}
+	/**
+	 * Simple check for equality for all fields.
+	 */
+	public void hasMyWildcardTypeWithLowerAndUpperBoundsGenericEqualTo(java.util.Optional expected) {
+		if ((actual.getMyWildcardTypeWithLowerAndUpperBoundsGeneric().equals(expected))) {
+			failWithActual(fact("expected MyWildcardTypeWithLowerAndUpperBoundsGeneric to be equal to", expected));
+		}
+	}
+	/**
+	 * Returns the Subject for the given field type, so you can chain on other
+	 * assertions.
+	 */
+	public OptionalSubject hasMyWildcardTypeWithLowerAndUpperBoundsIdCard() {
+		isNotNull();
+		return check("getMyWildcardTypeWithLowerAndUpperBoundsIdCard()").about(optionals())
+				.that(actual.getMyWildcardTypeWithLowerAndUpperBoundsIdCard());
+	}
+	/**
+	 * Checks Optional fields for presence.
+	 */
+	public void hasMyWildcardTypeWithLowerAndUpperBoundsIdCardNotPresent() {
+		if (actual.getMyWildcardTypeWithLowerAndUpperBoundsIdCard().isPresent()) {
+			failWithActual(simpleFact("expected MyWildcardTypeWithLowerAndUpperBoundsIdCard NOT to be present"));
+		}
+	}
+	/**
+	 * Checks Optional fields for presence.
+	 */
+	public void hasMyWildcardTypeWithLowerAndUpperBoundsIdCardPresent() {
+		if (!actual.getMyWildcardTypeWithLowerAndUpperBoundsIdCard().isPresent()) {
+			failWithActual(simpleFact("expected MyWildcardTypeWithLowerAndUpperBoundsIdCard to be present"));
+		}
+	}
+	/**
+	 * Simple check for equality for all fields.
+	 */
+	public void hasMyWildcardTypeWithLowerAndUpperBoundsIdCardNotEqualTo(java.util.Optional expected) {
+		if (!(actual.getMyWildcardTypeWithLowerAndUpperBoundsIdCard().equals(expected))) {
+			failWithActual(fact("expected MyWildcardTypeWithLowerAndUpperBoundsIdCard NOT to be equal to", expected));
+		}
+	}
+	/**
+	 * Simple check for equality for all fields.
+	 */
+	public void hasMyWildcardTypeWithLowerAndUpperBoundsIdCardEqualTo(java.util.Optional expected) {
+		if ((actual.getMyWildcardTypeWithLowerAndUpperBoundsIdCard().equals(expected))) {
+			failWithActual(fact("expected MyWildcardTypeWithLowerAndUpperBoundsIdCard to be equal to", expected));
+		}
+	}
+	/**
+	 * Returns the Subject for the given field type, so you can chain on other
+	 * assertions.
+	 */
+	public IntegerSubject hasMyWildcardTypeWithUpperBoundsIdCard() {
+		isNotNull();
+		hasMyWildcardTypeWithUpperBoundsIdCardPresent();
+		return check("getMyWildcardTypeWithUpperBoundsIdCard().get()")
+				.that((Integer) actual.getMyWildcardTypeWithUpperBoundsIdCard().get());
+	}
+	/**
+	 * Checks Optional fields for presence.
+	 */
+	public void hasMyWildcardTypeWithUpperBoundsIdCardNotPresent() {
+		if (actual.getMyWildcardTypeWithUpperBoundsIdCard().isPresent()) {
+			failWithActual(simpleFact("expected MyWildcardTypeWithUpperBoundsIdCard NOT to be present"));
+		}
+	}
+	/**
+	 * Checks Optional fields for presence.
+	 */
+	public void hasMyWildcardTypeWithUpperBoundsIdCardPresent() {
+		if (!actual.getMyWildcardTypeWithUpperBoundsIdCard().isPresent()) {
+			failWithActual(simpleFact("expected MyWildcardTypeWithUpperBoundsIdCard to be present"));
+		}
+	}
+	/**
+	 * Simple check for equality for all fields.
+	 */
+	public void hasMyWildcardTypeWithUpperBoundsIdCardNotEqualTo(java.util.Optional expected) {
+		if (!(actual.getMyWildcardTypeWithUpperBoundsIdCard().equals(expected))) {
+			failWithActual(fact("expected MyWildcardTypeWithUpperBoundsIdCard NOT to be equal to", expected));
+		}
+	}
+	/**
+	 * Simple check for equality for all fields.
+	 */
+	public void hasMyWildcardTypeWithUpperBoundsIdCardEqualTo(java.util.Optional expected) {
+		if ((actual.getMyWildcardTypeWithUpperBoundsIdCard().equals(expected))) {
+			failWithActual(fact("expected MyWildcardTypeWithUpperBoundsIdCard to be equal to", expected));
+		}
+	}
+	/**
+	 * Returns the Subject for the given field type, so you can chain on other
+	 * assertions.
+	 */
 	public MyStringSubject hasName() {
 		isNotNull();
 		return check("getName()").about(strings()).that(actual.getName());
@@ -591,7 +718,7 @@ public class MyEmployeeParentSubject extends Subject {
 	/**
 	 * Simple check for equality for all fields.
 	 */
-	public void hasStartedAtNotEqualTo(Optional expected) {
+	public void hasStartedAtNotEqualTo(java.util.Optional expected) {
 		if (!(actual.getStartedAt().equals(expected))) {
 			failWithActual(fact("expected StartedAt NOT to be equal to", expected));
 		}

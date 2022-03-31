@@ -7,12 +7,15 @@ import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 
 import javax.annotation.Nonnull;
+import java.io.File;
+import java.nio.file.Path;
 import java.time.Instant;
 import java.time.ZonedDateTime;
 import java.util.*;
 import java.util.stream.DoubleStream;
 import java.util.stream.IntStream;
 import java.util.stream.LongStream;
+import java.util.stream.Stream;
 
 import static io.stubbs.truth.generator.testModel.MyEmployee.State.EMPLOLYED;
 import static io.stubbs.truth.generator.testModel.MyEmployee.State.IS_A_BOSS;
@@ -42,6 +45,8 @@ public class MyEmployee extends Person<String> {
     private Optional<Instant> startedAt = Optional.empty();
     private Map<String, Project> projectMap = new HashMap<>();
     private int[] intArray = {0, 1, 2};
+    private Path myPath = new File("").toPath();
+    private Stream<String> myStreamOfStrings = Stream.of("aString");
     private IntStream myIntStream = IntStream.builder().build();
     private LongStream myLongStream = LongStream.builder().build();
     private DoubleStream myDoubleStream = DoubleStream.builder().build();

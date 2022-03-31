@@ -14,10 +14,7 @@ import org.reflections.Reflections;
 import java.math.BigDecimal;
 import java.nio.file.Path;
 import java.util.*;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
-import java.util.stream.LongStream;
-import java.util.stream.Stream;
+import java.util.stream.*;
 
 import static java.util.Optional.empty;
 import static java.util.Optional.ofNullable;
@@ -37,7 +34,7 @@ public class BuiltInSubjectTypeStore {
      * In priority order - most specific first. Types that are native to {@link Truth} - i.e. you can call {@link
      * Truth#assertThat}(...) with it. Note that this does not include {@link Truth8} types.
      */
-    @Getter(AccessLevel.PROTECTED)
+    @Getter(AccessLevel.PRIVATE)
     private static final HashSet<Class<?>> nativeTypes = new LinkedHashSet<>();
 
     @Getter(AccessLevel.PRIVATE)
@@ -46,38 +43,49 @@ public class BuiltInSubjectTypeStore {
     @Getter(AccessLevel.PRIVATE)
     private static final Map<String, Class<? extends Subject>> classPathSubjectTypes = new HashMap<>();
 
+    /**
+     * Higher priority first.
+     */
+    static Class<?>[] classes = {
+            Map.class,
+            Iterable.class,
+            List.class,
+            Set.class,
+            Throwable.class,
+            BigDecimal.class,
+            String.class,
+            Double.class,
+            Long.class,
+            Integer.class,
+            Short.class,
+            Number.class,
+            Boolean.class,
+            Comparable.class,
+            Class.class, // Enum#getDeclaringClass
+            Object.class, // catch all - uses plain Subject.class
+    };
+
+    /**
+     * {@link Path} is excluded, because Turth8's {@link com.google.common.truth.PathSubject} is empty, so our generated
+     * PathSubject is superior.
+     */
+    static Class<?>[] classesFromTruth8 = {
+            // Truth8
+            // Path.class,
+            OptionalDouble.class,
+            OptionalInt.class,
+            OptionalLong.class,
+            Stream.class,
+            IntStream.class,
+            DoubleStream.class,
+            LongStream.class,
+    };
+
     static {
-        // higher priority first
-        Class<?>[] classes = {
-                OptionalDouble.class,
-                OptionalInt.class,
-                OptionalLong.class,
-                IntStream.class,
-                LongStream.class,
-                Path.class,
-                Stream.class,
-                Map.class,
-                Iterable.class,
-                List.class,
-                Set.class,
-                Throwable.class,
-                BigDecimal.class,
-                String.class,
-                Double.class,
-                Long.class,
-                Integer.class,
-                Short.class,
-                Number.class,
-                Boolean.class,
-                Comparable.class,
-                Class.class, // Enum#getDeclaringClass
-                Object.class, // catch all - uses plain Subject.class
-        };
         nativeTypes.addAll(Arrays.stream(classes).collect(Collectors.toList()));
 
         //
-        nativeTypesTruth8.add(Optional.class);
-        nativeTypesTruth8.add(Stream.class);
+        nativeTypesTruth8.addAll(Arrays.stream(classesFromTruth8).collect(Collectors.toList()));
     }
 
     static {
@@ -95,6 +103,13 @@ public class BuiltInSubjectTypeStore {
 
     public BuiltInSubjectTypeStore() {
         autoRegisterStandardSubjectExtension();
+    }
+
+    public static boolean isANativeType(Class<?> aClass) {
+        return Stream.concat(
+                        getNativeTypes().stream(),
+                        getNativeTypesTruth8().stream())
+                .anyMatch(aClass::equals);
     }
 
     protected void autoRegisterStandardSubjectExtension() {
@@ -126,6 +141,10 @@ public class BuiltInSubjectTypeStore {
         subjectTypes.forEach(x -> classPathSubjectTypes.put(x.getSimpleName(), x));
     }
 
+    public static boolean hasStaticAccessThroughTruthEntryPoint(final Class<?> returnType) {
+        return getNativeTypes().contains(returnType);
+    }
+
     /**
      * Should only do this, if we can't find a more specific subject for the returnType.
      */
@@ -138,14 +157,17 @@ public class BuiltInSubjectTypeStore {
                 ? returnType.getComponentType()
                 : returnType;
 
-        List<Class<?>> assignable = nativeTypes.stream().filter(x ->
-                x.isAssignableFrom(normalised)
-        ).collect(Collectors.toList());
-        boolean isCoveredByNonPrimitiveStandardSubjects = !assignable.isEmpty();
+        boolean isCoveredByNonPrimitiveStandardSubjects = Stream.concat(
+                        getNativeTypes().stream(),
+                        getNativeTypesTruth8().stream()
+                )
+                .anyMatch(x ->
+                        x.isAssignableFrom(normalised)
+                );
 
-        boolean array = returnType.isArray();
+        boolean isAnArray = returnType.isArray();
 
-        return isCoveredByNonPrimitiveStandardSubjects || array;
+        return isCoveredByNonPrimitiveStandardSubjects || isAnArray;
     }
 
     public Optional<Class<? extends Subject>> getSubjectForNotNativeType(String simpleName, Class<?> clazzUnderTest) {

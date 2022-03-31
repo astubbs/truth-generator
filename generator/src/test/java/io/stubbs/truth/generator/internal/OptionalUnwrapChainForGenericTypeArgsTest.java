@@ -1,5 +1,7 @@
 package io.stubbs.truth.generator.internal;
 
+import com.google.common.truth.IntegerSubject;
+import com.google.common.truth.OptionalSubject;
 import com.google.common.truth.Subject;
 import com.google.common.truth.Truth8;
 import io.stubbs.truth.generator.internal.model.ThreeSystem;
@@ -12,6 +14,7 @@ import org.junit.Test;
 
 import java.lang.reflect.Method;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 
 import static com.google.common.truth.Truth.assertThat;
@@ -74,6 +77,71 @@ public class OptionalUnwrapChainForGenericTypeArgsTest {
         Truth8.assertThat(resolvedPair.getSubject()).isPresent();
         assertThat(resolvedPair.getSubject().get().getClazz()).isEqualTo(Subject.class);
     }
+
+
+    /**
+     * @see Person#getMyWildcardTypeWithUpperBoundsIdCard()
+     */
+    @Test
+    public void wildCardTypeDirect() {
+        var resolvedPair = testResolution(Person.class, "getMyWildcardTypeWithUpperBoundsIdCard", Integer.class);
+        Truth8.assertThat(resolvedPair.getSubject()).isPresent();
+        assertThat(resolvedPair.getSubject().get().getClazz()).isEqualTo(IntegerSubject.class);
+    }
+
+
+    /**
+     * @see Person#getMyWildcardTypeWithUpperBoundsIdCard()
+     */
+    @Test
+    public void wildCardTypeFromSubtype() {
+        var resolvedPair = testResolution(MyEmployee.class, "getMyWildcardTypeWithUpperBoundsIdCard", Integer.class);
+        Truth8.assertThat(resolvedPair.getSubject()).isPresent();
+        assertThat(resolvedPair.getSubject().get().getClazz()).isEqualTo(IntegerSubject.class);
+    }
+
+    /**
+     * @see Person#getMyWildcardTypeWithLowerAndUpperBoundsGeneric()
+     */
+    @Test
+    public void wildCardTypeDirectUpperBoundGeneric() {
+        var resolvedPair = testResolution(Person.class, "getMyWildcardTypeWithLowerAndUpperBoundsGeneric", Optional.class);
+        Truth8.assertThat(resolvedPair.getSubject()).isPresent();
+        assertThat(resolvedPair.getSubject().get().getClazz()).isEqualTo(OptionalSubject.class);
+    }
+
+
+    /**
+     * @see Person#getMyWildcardTypeWithLowerAndUpperBoundsGeneric()
+     */
+    @Test
+    public void wildCardTypeFromSubtypeUpperBoundGeneric() {
+        var resolvedPair = testResolution(MyEmployee.class, "getMyWildcardTypeWithLowerAndUpperBoundsGeneric", Optional.class);
+        Truth8.assertThat(resolvedPair.getSubject()).isPresent();
+        assertThat(resolvedPair.getSubject().get().getClazz()).isEqualTo(OptionalSubject.class);
+    }
+
+    /**
+     * @see Person#getMyWildcardTypeWithLowerAndUpperBoundsIdCard()
+     */
+    @Test
+    public void wildCardTypeDirectUpperBoundIdCard() {
+        var resolvedPair = testResolution(Person.class, "getMyWildcardTypeWithLowerAndUpperBoundsIdCard", Optional.class);
+        Truth8.assertThat(resolvedPair.getSubject()).isPresent();
+        assertThat(resolvedPair.getSubject().get().getClazz()).isEqualTo(OptionalSubject.class);
+    }
+
+
+    /**
+     * @see Person#getMyWildcardTypeWithLowerAndUpperBoundsIdCard()
+     */
+    @Test
+    public void wildCardTypeFromSubtypeUpperBoundIdCard() {
+        var resolvedPair = testResolution(MyEmployee.class, "getMyWildcardTypeWithLowerAndUpperBoundsIdCard", Optional.class);
+        Truth8.assertThat(resolvedPair.getSubject()).isPresent();
+        assertThat(resolvedPair.getSubject().get().getClazz()).isEqualTo(OptionalSubject.class);
+    }
+
 
     private <T> GeneratedSubjectTypeStore.ResolvedPair testResolution(Class<T> classType, String methodName, Class<?> expectedReturnType) {
         Method getIterationStartingPoint = findMethod(classType, methodName);

@@ -21,10 +21,10 @@ import static io.stubbs.truth.generator.internal.autoShaded.java.util.UUIDSubjec
 import io.stubbs.truth.generator.internal.autoShaded.java.util.UUIDSubject;
 import java.util.UUID;
 import com.google.common.truth.PrimitiveIntArraySubject;
-import static io.stubbs.truth.generator.subjects.MyStringSubject.strings;
-import static io.stubbs.truth.generator.subjects.MyStringSubject.strings;
 import com.google.common.truth.IterableSubject;
 import java.util.List;
+import static io.stubbs.truth.generator.subjects.MyStringSubject.strings;
+import static io.stubbs.truth.generator.subjects.MyStringSubject.strings;
 import static io.stubbs.truth.generator.subjects.MyMapSubject.maps;
 import io.stubbs.truth.generator.subjects.MyMapSubject;
 import java.util.Map;
@@ -250,6 +250,46 @@ public class MyEmployeeParentSubject extends Subject {
 	public void hasIntArrayEqualTo(int[] expected) {
 		if ((actual.getIntArray().equals(expected))) {
 			failWithActual(fact("expected IntArray to be equal to", expected));
+		}
+	}
+	/**
+	 * Returns the Subject for the given field type, so you can chain on other
+	 * assertions.
+	 */
+	public IterableSubject hasMyWildcardTypeWithUpperBounds() {
+		isNotNull();
+		return check("getMyWildcardTypeWithUpperBounds()").that(actual.getMyWildcardTypeWithUpperBounds());
+	}
+	/**
+	 * Checks if a {@link IdCard} element is, or is not contained in the collection.
+	 */
+	public void hasMyWildcardTypeWithUpperBoundsNotWithElement(io.stubbs.truth.generator.testModel.IdCard expected) {
+		if (!actual.getMyWildcardTypeWithUpperBounds().contains(expected)) {
+			failWithActual(fact("expected MyWildcardTypeWithUpperBounds NOT to have element", expected));
+		}
+	}
+	/**
+	 * Checks if a {@link IdCard} element is, or is not contained in the collection.
+	 */
+	public void hasMyWildcardTypeWithUpperBoundsWithElement(io.stubbs.truth.generator.testModel.IdCard expected) {
+		if (actual.getMyWildcardTypeWithUpperBounds().contains(expected)) {
+			failWithActual(fact("expected MyWildcardTypeWithUpperBounds to have element", expected));
+		}
+	}
+	/**
+	 * Simple check for equality for all fields.
+	 */
+	public void hasMyWildcardTypeWithUpperBoundsNotEqualTo(java.util.List expected) {
+		if (!(actual.getMyWildcardTypeWithUpperBounds().equals(expected))) {
+			failWithActual(fact("expected MyWildcardTypeWithUpperBounds NOT to be equal to", expected));
+		}
+	}
+	/**
+	 * Simple check for equality for all fields.
+	 */
+	public void hasMyWildcardTypeWithUpperBoundsEqualTo(java.util.List expected) {
+		if ((actual.getMyWildcardTypeWithUpperBounds().equals(expected))) {
+			failWithActual(fact("expected MyWildcardTypeWithUpperBounds to be equal to", expected));
 		}
 	}
 	/**

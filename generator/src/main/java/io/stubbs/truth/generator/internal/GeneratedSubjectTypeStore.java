@@ -18,6 +18,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import static io.stubbs.truth.generator.internal.Utils.msg;
 import static java.util.Optional.empty;
 import static java.util.Optional.of;
 import static java.util.logging.Level.INFO;
@@ -140,17 +141,23 @@ public class GeneratedSubjectTypeStore {
         if (rawReturnType.isPrimitive()) {
             returnType = getWrappedReturnType(method);
         } else {
-            Type maybeParamType = TypeResolver.reify(genericReturnTypeRaw, classUnderTest);
-            if (maybeParamType instanceof Class) {
-                returnType = (Class<?>) maybeParamType;
-            } else if (maybeParamType instanceof ParameterizedType && rawReturnType.isAssignableFrom(Optional.class)) {
-                ParameterizedType paramType = (ParameterizedType) maybeParamType;
-                Type[] actualTypeArguments = paramType.getActualTypeArguments();
-                if (actualTypeArguments.length == 1 && actualTypeArguments[0] instanceof Class<?>) {
-                    returnType = (Class<?>) actualTypeArguments[0];
-                    optionalUnwrap = true;
+            Type maybeParamType;
+            try {
+                maybeParamType = TypeResolver.reify(genericReturnTypeRaw, classUnderTest);
+                if (maybeParamType instanceof Class) {
+                    returnType = (Class<?>) maybeParamType;
+                } else if (maybeParamType instanceof ParameterizedType && rawReturnType.isAssignableFrom(Optional.class)) {
+                    ParameterizedType paramType = (ParameterizedType) maybeParamType;
+                    Type[] actualTypeArguments = paramType.getActualTypeArguments();
+                    if (actualTypeArguments.length == 1 && actualTypeArguments[0] instanceof Class<?>) {
+                        returnType = (Class<?>) actualTypeArguments[0];
+                        optionalUnwrap = true;
+                    }
                 }
+            } catch (UnsupportedOperationException e) {
+                log.warn(msg("Cannot get type param for return type of {} from {}, in ThreeSystem {}. Details: {}", rawReturnType, method, threeSystem, e.getMessage()));
             }
+
         }
 
         Optional<SubjectMethodGenerator.ClassOrGenerated> subjectForType = getSubjectForType(returnType);

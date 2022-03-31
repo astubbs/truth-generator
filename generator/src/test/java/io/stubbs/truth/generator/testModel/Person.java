@@ -22,6 +22,10 @@ public class Person<T> {
     protected final Optional<T> typeParamTestOptional;
     protected final T typeParamTest;
 
+    protected final Optional<? extends Integer> myWildcardTypeWithUpperBoundsIdCard;
+    protected final Optional<? super Integer> myWildcardTypeWithLowerAndUpperBoundsIdCard;
+    protected final Optional<? super T> myWildcardTypeWithLowerAndUpperBoundsGeneric;
+
     public int getBirthYear() {
         return birthday.getYear();
     }

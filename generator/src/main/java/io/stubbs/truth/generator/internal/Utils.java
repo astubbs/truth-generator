@@ -36,7 +36,7 @@ public class Utils {
         try (PrintWriter out = new PrintWriter(fileName.toFile())) {
             out.println(classSource);
         } catch (FileNotFoundException e) {
-            throw new IllegalStateException(format("Cannot write to file %s", fileName));
+            throw new IllegalStateException(format("Cannot write to file %s", fileName), e);
         }
         return classSource;
     }

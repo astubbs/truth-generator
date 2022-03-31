@@ -22,7 +22,7 @@ import static com.google.common.truth.Truth.assertThat;
 /**
  * Uses output from packages completed tests run from the generator module.
  *
- * @see TruthGeneratorTest#generate_code
+ * @see TruthGeneratorTest#fullGeneratedCode
  */
 public class GeneratedAssertionTests {
 
@@ -95,7 +95,7 @@ public class GeneratedAssertionTests {
         MyEmployee emp = TestModelUtils.createInstance(MyEmployee.class)
                 // not sure how or why, but PODAM is always setting our FALSE test boolean to true, so... ->
                 .toBuilder().testBooleanIsFalse(false).build();
-        String santity = emp.getSantity();
+        String santity = emp.getSanity();
         boolean boss = emp.isBoss();
         boolean testBoolean = emp.isTestBooleanIsFalse();
 

@@ -113,12 +113,23 @@
             <artifactId>javassist</artifactId>
             <version>3.28.0-GA</version>
         </dependency>
+        <dependency>
+            <groupId>net.jodah</groupId>
+            <artifactId>typetools</artifactId>
+            <version>0.6.3</version>
+        </dependency>
 
         <!-- Test -->
         <dependency>
             <groupId>org.threeten</groupId>
             <artifactId>threeten-extra</artifactId>
             <version>1.7.0</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+            <version>1.2.11</version>
             <scope>test</scope>
         </dependency>
     </dependencies>

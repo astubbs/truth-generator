@@ -4,8 +4,15 @@ import com.google.common.flogger.FluentLogger;
 import com.google.common.truth.ObjectArraySubject;
 import com.google.common.truth.Subject;
 import io.stubbs.truth.generator.internal.model.ThreeSystem;
+import lombok.Value;
 import lombok.experimental.Delegate;
+import lombok.extern.slf4j.Slf4j;
+import net.jodah.typetools.TypeResolver;
 
+import javax.annotation.Nonnull;
+import java.lang.reflect.Method;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
@@ -23,6 +30,7 @@ import static org.apache.commons.lang3.StringUtils.capitalize;
  * @author Antony Stubbs
  * @see BuiltInSubjectTypeStore
  */
+@Slf4j
 public class GeneratedSubjectTypeStore {
 
     private static final FluentLogger logger = FluentLogger.forEnclosingClass();
@@ -73,10 +81,9 @@ public class GeneratedSubjectTypeStore {
         return getSubjectForNotNativeType(name, type);
     }
 
-    /**
-     * @param nameOfType todo redundant? and smelly
-     */
-    protected Optional<SubjectMethodGenerator.ClassOrGenerated> getSubjectForNotNativeType(String nameOfType, Class<?> type) {
+    protected Optional<SubjectMethodGenerator.ClassOrGenerated> getSubjectForNotNativeType(
+            String nameOfType, // todo redundant? and smelly
+            Class<?> type) {
         // explicit extensions take priority
         Class<? extends Subject> extension = this.builtInSubjectTypeStore.getSubjectExtensions(type);
         if (extension != null)
@@ -88,6 +95,7 @@ public class GeneratedSubjectTypeStore {
         // Can't find any generated ones or compiled ones - fall back to native subjects that are assignable (e.g. comparable or iterable)
         if (subject.isEmpty()) {
             Optional<Class<? extends Subject>> nativeSubjectForType = builtInSubjectTypeStore.getClosestTruthNativeSubjectForType(type);
+
             subject = SubjectMethodGenerator.ClassOrGenerated.ofClass(nativeSubjectForType);
             subject.ifPresent(classOrGenerated -> logger.at(INFO).log("Falling back to native interface subject %s for type %s", classOrGenerated.clazz, type));
         }
@@ -121,4 +129,46 @@ public class GeneratedSubjectTypeStore {
     public boolean isAnExtendedSubject(Class<?> clazz) {
         return builtInSubjectTypeStore.isAnExtendedSubject(clazz);
     }
+
+    public ResolvedPair resolveSubjectForOptionals(final ThreeSystem<?> threeSystem, Method method) {
+        Class<?> classUnderTest = threeSystem.classUnderTest;
+        Class<?> rawReturnType = method.getReturnType();
+        Type genericReturnTypeRaw = method.getGenericReturnType();
+
+        Class<?> returnType = rawReturnType;
+        boolean optionalUnwrap = false;
+        if (rawReturnType.isPrimitive()) {
+            returnType = getWrappedReturnType(method);
+        } else {
+            Type maybeParamType = TypeResolver.reify(genericReturnTypeRaw, classUnderTest);
+            if (maybeParamType instanceof Class) {
+                returnType = (Class<?>) maybeParamType;
+            } else if (maybeParamType instanceof ParameterizedType && rawReturnType.isAssignableFrom(Optional.class)) {
+                ParameterizedType paramType = (ParameterizedType) maybeParamType;
+                Type[] actualTypeArguments = paramType.getActualTypeArguments();
+                if (actualTypeArguments.length == 1 && actualTypeArguments[0] instanceof Class<?>) {
+                    returnType = (Class<?>) actualTypeArguments[0];
+                    optionalUnwrap = true;
+                }
+            }
+        }
+
+        Optional<SubjectMethodGenerator.ClassOrGenerated> subjectForType = getSubjectForType(returnType);
+        return new ResolvedPair(returnType, subjectForType, optionalUnwrap);
+    }
+
+    // todo rename unboxed
+    protected Class<?> getWrappedReturnType(Method method) {
+        return primitiveToWrapper(method.getReturnType());
+    }
+
+    @Value
+    public static class ResolvedPair {
+        @Nonnull
+        Class<?> returnType;
+        @Nonnull
+        Optional<SubjectMethodGenerator.ClassOrGenerated> subject;
+        boolean unwrapped;
+    }
+
 }

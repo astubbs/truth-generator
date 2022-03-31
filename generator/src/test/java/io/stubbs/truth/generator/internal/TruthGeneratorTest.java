@@ -38,9 +38,9 @@ import java.util.stream.Stream;
 import static com.google.common.truth.Correspondence.from;
 import static com.google.common.truth.Correspondence.transforming;
 import static com.google.common.truth.Truth.assertThat;
+import static io.stubbs.truth.generator.TestModelUtils.findMethod;
 import static io.stubbs.truth.generator.internal.modelSubjectChickens.ThreeSystemChildSubject.assertThat;
 import static java.util.Optional.of;
-import static java.util.stream.Collectors.toList;
 
 /**
  * @author Antony Stubbs
@@ -49,13 +49,13 @@ import static java.util.stream.Collectors.toList;
 public class TruthGeneratorTest {
 
     public static final Path testOutputDirectory = Paths.get("").resolve("target").toAbsolutePath();
-    Correspondence<MethodSource, String> methodHasName = transforming(MethodSource::getName, "has name of");
+    Correspondence<MethodSource<?>, String> methodHasName = transforming(MethodSource::getName, "has name of");
 
     /**
-     * Base test that compares with expected generated code for test model
+     * Base test that compares with expected generated code for test model. Brute force test.
      */
     @Test
-    public void generate_code() throws IOException {
+    public void fullGeneratedCode() throws IOException {
         // todo need to be able to set base package for all generated classes, kind of like shade, so you cah generate test for classes in other restricted modules
         // todo replace with @TempDir
         TruthGenerator truthGenerator = TruthGeneratorAPI.create(testOutputDirectory, Options.builder().useHasInsteadOfGet(true).build());
@@ -91,7 +91,7 @@ public class TruthGeneratorTest {
         assertThat(generatedSourceClasses).containsAtLeast(UUID.class, ZonedDateTime.class, MyEmployee.class, MyEmployee.State.class);
 
         //
-        ThreeSystem threeSystemGenerated = generated.get(MyEmployee.class);
+        ThreeSystem<?> threeSystemGenerated = generated.get(MyEmployee.class);
         assertThat(threeSystemGenerated).isNotNull();
 
         // check package of generated target is correct
@@ -268,20 +268,16 @@ public class TruthGeneratorTest {
         // map contains strong key, value
         {
             String name = "hasProjectMapWithKey";
-            List<MethodSource<JavaClassSource>> method = generated.getMethods().stream().filter(x -> x.getName().equals(name)).collect(toList());
-            assertThat(method).hasSize(1);
-            MethodSource<JavaClassSource> hasKey = method.get(0);
-            List<ParameterSource<JavaClassSource>> parameters = hasKey.getParameters();
+            MethodSource<JavaClassSource> method = findMethod(generated, name);
+            List<ParameterSource<JavaClassSource>> parameters = method.getParameters();
             assertThat(parameters).comparingElementsUsing(classNames).containsExactly(String.class);
         }
 
         // list contains strong element
         {
             String name = "hasProjectListWithElement";
-            List<MethodSource<JavaClassSource>> method = generated.getMethods().stream().filter(x -> x.getName().equals(name)).collect(toList());
-            assertThat(method).hasSize(1);
-            MethodSource<JavaClassSource> hasKey = method.get(0);
-            List<ParameterSource<JavaClassSource>> parameters = hasKey.getParameters();
+            MethodSource<JavaClassSource> method = findMethod(generated, name);
+            List<ParameterSource<JavaClassSource>> parameters = method.getParameters();
             assertThat(parameters).comparingElementsUsing(classNames).containsExactly(Project.class);
         }
     }
@@ -297,32 +293,31 @@ public class TruthGeneratorTest {
         tg.setEntryPoint(of(this.getClass().getPackage().getName() + ".extensions"));
 
         // register handlers
-        // todo do this with annotation scanning instead
+        // todo do this with annotation scanning instead - this is done now?
         tgApi.registerStandardSubjectExtension(String.class, MyStringSubject.class);
         tgApi.registerStandardSubjectExtension(Map.class, MyMapSubject.class);
 
         //
         var generate = tg.generate(MyEmployee.class);
-        ThreeSystem threeSystem = generate.get(MyEmployee.class);
+
+        //
+        ThreeSystem<?> threeSystem = generate.get(MyEmployee.class);
         JavaClassSource generatedParent = threeSystem.getParent().getGenerated();
 
         // custom string
         {
             String name = "hasName";
-            List<MethodSource<JavaClassSource>> method = generatedParent.getMethods().stream().filter(x -> x.getName().equals(name)).collect(toList());
-            assertThat(method).hasSize(1);
-            MethodSource<JavaClassSource> hasKey = method.get(0);
-            Type<JavaClassSource> returnType = hasKey.getReturnType();
+            MethodSource<JavaClassSource> method = findMethod(generatedParent, name);
+            Type<JavaClassSource> returnType = method.getReturnType();
+            assertThat(returnType.getName()).isEqualTo(MyStringSubject.class.getSimpleName());
             assertThat(returnType.getName()).isEqualTo(MyStringSubject.class.getSimpleName());
         }
 
         // custom map
         {
             String name = "hasProjectMap";
-            List<MethodSource<JavaClassSource>> method = generatedParent.getMethods().stream().filter(x -> x.getName().equals(name)).collect(toList());
-            assertThat(method).hasSize(1);
-            MethodSource<JavaClassSource> hasKey = method.get(0);
-            Type<JavaClassSource> returnType = hasKey.getReturnType();
+            MethodSource<JavaClassSource> method = findMethod(generatedParent, name);
+            Type<JavaClassSource> returnType = method.getReturnType();
             assertThat(returnType.getName()).isEqualTo(MyMapSubject.class.getSimpleName());
         }
     }

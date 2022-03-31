@@ -12,7 +12,6 @@ import java.util.Optional;
 import java.util.stream.Stream;
 
 import static java.lang.reflect.Modifier.STATIC;
-import static org.apache.commons.lang3.ClassUtils.primitiveToWrapper;
 import static org.reflections.util.ReflectionUtilsPredicates.withModifier;
 
 /**
@@ -22,17 +21,13 @@ import static org.reflections.util.ReflectionUtilsPredicates.withModifier;
  */
 public abstract class AssertionMethodStrategy {
 
-    protected abstract boolean addStrategyMaybe(ThreeSystem<?> threeSystem, Method method, JavaClassSource generated);
+    public abstract boolean addStrategyMaybe(ThreeSystem<?> threeSystem, Method method, JavaClassSource generated);
 
     protected void copyThrownExceptions(Method method, MethodSource<JavaClassSource> generated) {
         Class<? extends Exception>[] exceptionTypes = (Class<? extends Exception>[]) method.getExceptionTypes();
         Stream<Class<? extends Exception>> runtimeExceptions = Arrays.stream(exceptionTypes)
                 .filter(x -> !RuntimeException.class.isAssignableFrom(x));
         runtimeExceptions.forEach(generated::addThrows);
-    }
-
-    protected Class<?> getWrappedReturnType(Method method) {
-        return primitiveToWrapper(method.getReturnType());
     }
 
     protected boolean methodIsStatic(Method method) {

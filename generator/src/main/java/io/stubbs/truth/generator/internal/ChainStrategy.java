@@ -10,9 +10,6 @@ import org.jboss.forge.roaster.model.source.JavaClassSource;
 import org.jboss.forge.roaster.model.source.MethodSource;
 
 import java.lang.reflect.Method;
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
-import java.util.Optional;
 
 import static io.stubbs.truth.generator.internal.Utils.msg;
 import static java.lang.String.format;
@@ -35,47 +32,23 @@ public class ChainStrategy extends AssertionMethodStrategy {
     private final GeneratedSubjectTypeStore subjects;
 
     @Override
-    protected boolean addStrategyMaybe(ThreeSystem threeSystem, Method method, JavaClassSource generated) {
+    public boolean addStrategyMaybe(ThreeSystem<?> threeSystem, Method method, JavaClassSource generated) {
         addChainStrategy(threeSystem, method, generated);
         return true;
     }
 
-    protected MethodSource<JavaClassSource> addChainStrategy(ThreeSystem threeSystem, Method method, JavaClassSource generated) {
-        Class<?> returnType = getWrappedReturnType(method);
-        boolean optionalUnwrap = false;
+    public MethodSource<JavaClassSource> addChainStrategy(ThreeSystem<?> threeSystem, Method method, JavaClassSource generated) {
+        GeneratedSubjectTypeStore.ResolvedPair resolvedPair = subjects.resolveSubjectForOptionals(threeSystem, method);
 
-        // todo refactor this chunk out?
-        Optional<SubjectMethodGenerator.ClassOrGenerated> subjectForType;
-        if (returnType.isAssignableFrom(Optional.class) && returnType != Object.class) {
-            // unwrap
-            Type genericReturnTypeRaw = method.getGenericReturnType();
-            if (ParameterizedType.class.isAssignableFrom(genericReturnTypeRaw.getClass())) {
-                Type[] actualTypeArguments = ((ParameterizedType) genericReturnTypeRaw).getActualTypeArguments();
-                if (actualTypeArguments.length == 1) {
-                    Type optionalReturnType = actualTypeArguments[0];
-                    if (optionalReturnType.getClass().isAssignableFrom(Class.class)) {
-                        returnType = (Class<?>) optionalReturnType;
-                        subjectForType = subjects.getSubjectForType(returnType);
-                        optionalUnwrap = true;
-                    } else {
-                        throw new IllegalStateException("Can't cast optionally wrapped type to class");
-                    }
-                } else {
-                    throw new IllegalStateException("Wrong number of type arguments for Optional - should be only one");
-                }
-            } else {
-                log.warn("Optional type without type parameter, can't add optional chain.");
-                return null;
-            }
-        } else {
-            subjectForType = subjects.getSubjectForType(returnType);
-        }
+        var subjectForType = resolvedPair.getSubject();
+        var optionalUnwrap = resolvedPair.isUnwrapped();
+        var returnType = resolvedPair.getReturnType();
 
-        boolean isCoveredByNonPrimitiveStandardSubjects = subjects.isTypeCoveredUnderStandardSubjects(returnType);
+        boolean isCoveredByNonPrimitiveStandardSubjects = subjects.isTypeCoveredUnderStandardSubjects(resolvedPair.getReturnType());
 
         // no subject to chain
         if (subjectForType.isEmpty()) {
-            logger.at(WARNING).log("Cant find subject for " + returnType);
+            logger.at(WARNING).log("Cant find subject for " + resolvedPair);
             return null;
         }
 
@@ -163,6 +136,7 @@ public class ChainStrategy extends AssertionMethodStrategy {
 
         return has;
     }
+
 
     /**
      * Attempt to swap get for has, but only if it starts with get - otherwise leave it alone.

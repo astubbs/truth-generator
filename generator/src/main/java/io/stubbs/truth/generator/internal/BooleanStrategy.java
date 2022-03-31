@@ -20,7 +20,7 @@ import static org.apache.commons.lang3.StringUtils.removeStart;
 public class BooleanStrategy extends AssertionMethodStrategy {
 
     @Override
-    protected boolean addStrategyMaybe(ThreeSystem<?> threeSystem, Method method, JavaClassSource generated) {
+    public boolean addStrategyMaybe(ThreeSystem<?> threeSystem, Method method, JavaClassSource generated) {
         var positive = addBooleanGeneric(threeSystem, method, generated, true);
         var negative = addBooleanGeneric(threeSystem, method, generated, false);
         return positive.isPresent() && negative.isPresent();

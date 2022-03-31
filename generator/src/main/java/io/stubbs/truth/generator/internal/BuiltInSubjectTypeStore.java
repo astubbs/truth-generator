@@ -61,6 +61,7 @@ public class BuiltInSubjectTypeStore {
                 Boolean.class,
                 Comparable.class,
                 Class.class, // Enum#getDeclaringClass
+                Object.class, // catch all - uses plain Subject.class
         };
         nativeTypes.addAll(Arrays.stream(classes).collect(Collectors.toList()));
 
@@ -80,7 +81,7 @@ public class BuiltInSubjectTypeStore {
      */
     @Getter(AccessLevel.PRIVATE)
     private final Map<Class<?>, Class<? extends Subject>> subjectExtensions = new HashMap<>();
-    private ClassUtils classUtils = new ClassUtils();
+    private final ClassUtils classUtils = new ClassUtils();
 
     public BuiltInSubjectTypeStore() {
         autoRegisterStandardSubjectExtension();
@@ -115,16 +116,14 @@ public class BuiltInSubjectTypeStore {
         subjectTypes.forEach(x -> classPathSubjectTypes.put(x.getSimpleName(), x));
     }
 
-    // todo cleanup
+    /**
+     * Should only do this, if we can't find a more specific subject for the returnType.
+     */
     public boolean isTypeCoveredUnderStandardSubjects(final Class<?> returnType) {
-        // todo should only do this, if we can't find a more specific subject for the returnType
         // todo should check if class is assignable from the super subjects, instead of checking names
-        // todo use qualified names
+        // todo use canonical names
         // todo add support truth8 extensions - optional etc
-        // todo try generating classes for DateTime packages, like Instant and Duration
-        // todo this is of course too aggressive
 
-//    boolean isCoveredByNonPrimitiveStandardSubjects = specials.contains(returnType.getSimpleName());
         final Class<?> normalised = (returnType.isArray())
                 ? returnType.getComponentType()
                 : returnType;
@@ -134,12 +133,7 @@ public class BuiltInSubjectTypeStore {
         ).collect(Collectors.toList());
         boolean isCoveredByNonPrimitiveStandardSubjects = !assignable.isEmpty();
 
-        // todo is it an array of objects?
-        // TODO delete dead code
         boolean array = returnType.isArray();
-        Class<?>[] classes = returnType.getClasses();
-        String typeName = returnType.getTypeName();
-        Class<?> componentType = returnType.getComponentType();
 
         return isCoveredByNonPrimitiveStandardSubjects || array;
     }
@@ -152,9 +146,13 @@ public class BuiltInSubjectTypeStore {
         // native
         Optional<Class<?>> highestPriorityNativeType = findHighestPriorityNativeType(type);
         if (highestPriorityNativeType.isPresent()) {
-            Class<?> aClass = highestPriorityNativeType.get();
-            Class<? extends Subject> compiledSubjectForTypeName = getCompiledSubjectForTypeName(aClass.getSimpleName());
-            return ofNullable(compiledSubjectForTypeName);
+            if (highestPriorityNativeType.get().equals(Object.class)) {
+                return Optional.of(Subject.class);
+            } else {
+                Class<?> aClass = highestPriorityNativeType.get();
+                Class<? extends Subject> compiledSubjectForTypeName = getCompiledSubjectForTypeName(aClass.getSimpleName());
+                return ofNullable(compiledSubjectForTypeName);
+            }
         }
         return empty();
     }

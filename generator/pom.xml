@@ -138,14 +138,6 @@
             <version>1.2.11</version>
             <scope>test</scope>
         </dependency>
-
-        <!-- Test Cases -->
-        <!--        <dependency>-->
-        <!--            <groupId>io.confluent.parallelconsumer</groupId>-->
-        <!--            <artifactId>parallel-consumer-core</artifactId>-->
-        <!--            <version>0.4.0.1</version>-->
-        <!--            <scope>test</scope>-->
-        <!--        </dependency>-->
     </dependencies>
 
     <build>

@@ -21,6 +21,19 @@ import static io.stubbs.truth.generator.internal.autoShaded.java.util.UUIDSubjec
 import io.stubbs.truth.generator.internal.autoShaded.java.util.UUIDSubject;
 import java.util.UUID;
 import com.google.common.truth.PrimitiveIntArraySubject;
+import static io.stubbs.truth.generator.internal.autoShaded.java.util.stream.DoubleStreamSubject.doubleStreams;
+import io.stubbs.truth.generator.internal.autoShaded.java.util.stream.DoubleStreamSubject;
+import java.util.stream.DoubleStream;
+import com.google.common.truth.IntStreamSubject;
+import java.util.stream.IntStream;
+import com.google.common.truth.LongStreamSubject;
+import java.util.stream.LongStream;
+import com.google.common.truth.OptionalDoubleSubject;
+import java.util.OptionalDouble;
+import com.google.common.truth.OptionalIntSubject;
+import java.util.OptionalInt;
+import com.google.common.truth.OptionalLongSubject;
+import java.util.OptionalLong;
 import static io.stubbs.truth.generator.subjects.MyStringSubject.strings;
 import static io.stubbs.truth.generator.subjects.MyStringSubject.strings;
 import com.google.common.truth.IterableSubject;
@@ -250,6 +263,150 @@ public class MyEmployeeParentSubject extends Subject {
 	public void hasIntArrayEqualTo(int[] expected) {
 		if ((actual.getIntArray().equals(expected))) {
 			failWithActual(fact("expected IntArray to be equal to", expected));
+		}
+	}
+	/**
+	 * Returns the Subject for the given field type, so you can chain on other
+	 * assertions.
+	 */
+	public DoubleStreamSubject hasMyDoubleStream() {
+		isNotNull();
+		return check("getMyDoubleStream()").about(doubleStreams()).that(actual.getMyDoubleStream());
+	}
+	/**
+	 * Simple check for equality for all fields.
+	 */
+	public void hasMyDoubleStreamNotEqualTo(java.util.stream.DoubleStream expected) {
+		if (!(actual.getMyDoubleStream().equals(expected))) {
+			failWithActual(fact("expected MyDoubleStream NOT to be equal to", expected));
+		}
+	}
+	/**
+	 * Simple check for equality for all fields.
+	 */
+	public void hasMyDoubleStreamEqualTo(java.util.stream.DoubleStream expected) {
+		if ((actual.getMyDoubleStream().equals(expected))) {
+			failWithActual(fact("expected MyDoubleStream to be equal to", expected));
+		}
+	}
+	/**
+	 * Returns the Subject for the given field type, so you can chain on other
+	 * assertions.
+	 */
+	public IntStreamSubject hasMyIntStream() {
+		isNotNull();
+		return check("getMyIntStream()").that(actual.getMyIntStream());
+	}
+	/**
+	 * Simple check for equality for all fields.
+	 */
+	public void hasMyIntStreamNotEqualTo(java.util.stream.IntStream expected) {
+		if (!(actual.getMyIntStream().equals(expected))) {
+			failWithActual(fact("expected MyIntStream NOT to be equal to", expected));
+		}
+	}
+	/**
+	 * Simple check for equality for all fields.
+	 */
+	public void hasMyIntStreamEqualTo(java.util.stream.IntStream expected) {
+		if ((actual.getMyIntStream().equals(expected))) {
+			failWithActual(fact("expected MyIntStream to be equal to", expected));
+		}
+	}
+	/**
+	 * Returns the Subject for the given field type, so you can chain on other
+	 * assertions.
+	 */
+	public LongStreamSubject hasMyLongStream() {
+		isNotNull();
+		return check("getMyLongStream()").that(actual.getMyLongStream());
+	}
+	/**
+	 * Simple check for equality for all fields.
+	 */
+	public void hasMyLongStreamNotEqualTo(java.util.stream.LongStream expected) {
+		if (!(actual.getMyLongStream().equals(expected))) {
+			failWithActual(fact("expected MyLongStream NOT to be equal to", expected));
+		}
+	}
+	/**
+	 * Simple check for equality for all fields.
+	 */
+	public void hasMyLongStreamEqualTo(java.util.stream.LongStream expected) {
+		if ((actual.getMyLongStream().equals(expected))) {
+			failWithActual(fact("expected MyLongStream to be equal to", expected));
+		}
+	}
+	/**
+	 * Returns the Subject for the given field type, so you can chain on other
+	 * assertions.
+	 */
+	public OptionalDoubleSubject hasMyOptionalDouble() {
+		isNotNull();
+		return check("getMyOptionalDouble()").that(actual.getMyOptionalDouble());
+	}
+	/**
+	 * Simple check for equality for all fields.
+	 */
+	public void hasMyOptionalDoubleNotEqualTo(java.util.OptionalDouble expected) {
+		if (!(actual.getMyOptionalDouble().equals(expected))) {
+			failWithActual(fact("expected MyOptionalDouble NOT to be equal to", expected));
+		}
+	}
+	/**
+	 * Simple check for equality for all fields.
+	 */
+	public void hasMyOptionalDoubleEqualTo(java.util.OptionalDouble expected) {
+		if ((actual.getMyOptionalDouble().equals(expected))) {
+			failWithActual(fact("expected MyOptionalDouble to be equal to", expected));
+		}
+	}
+	/**
+	 * Returns the Subject for the given field type, so you can chain on other
+	 * assertions.
+	 */
+	public OptionalIntSubject hasMyOptionalInteger() {
+		isNotNull();
+		return check("getMyOptionalInteger()").that(actual.getMyOptionalInteger());
+	}
+	/**
+	 * Simple check for equality for all fields.
+	 */
+	public void hasMyOptionalIntegerNotEqualTo(java.util.OptionalInt expected) {
+		if (!(actual.getMyOptionalInteger().equals(expected))) {
+			failWithActual(fact("expected MyOptionalInteger NOT to be equal to", expected));
+		}
+	}
+	/**
+	 * Simple check for equality for all fields.
+	 */
+	public void hasMyOptionalIntegerEqualTo(java.util.OptionalInt expected) {
+		if ((actual.getMyOptionalInteger().equals(expected))) {
+			failWithActual(fact("expected MyOptionalInteger to be equal to", expected));
+		}
+	}
+	/**
+	 * Returns the Subject for the given field type, so you can chain on other
+	 * assertions.
+	 */
+	public OptionalLongSubject hasMyOptionalLong() {
+		isNotNull();
+		return check("getMyOptionalLong()").that(actual.getMyOptionalLong());
+	}
+	/**
+	 * Simple check for equality for all fields.
+	 */
+	public void hasMyOptionalLongNotEqualTo(java.util.OptionalLong expected) {
+		if (!(actual.getMyOptionalLong().equals(expected))) {
+			failWithActual(fact("expected MyOptionalLong NOT to be equal to", expected));
+		}
+	}
+	/**
+	 * Simple check for equality for all fields.
+	 */
+	public void hasMyOptionalLongEqualTo(java.util.OptionalLong expected) {
+		if ((actual.getMyOptionalLong().equals(expected))) {
+			failWithActual(fact("expected MyOptionalLong to be equal to", expected));
 		}
 	}
 	/**

@@ -41,7 +41,6 @@ public class MyEmployee extends Person<String> {
     private int[] intArray = {0, 1, 2};
 
     public MyEmployee(@Nonnull String name, long someLongAspect, @Nonnull ZonedDateTime birthday) {
-//        super(name, someLongAspect, birthday, Optional.of("an optional string"), "another string", List.of(), List.of(), List.of());
         super(name, someLongAspect, birthday, Optional.of("an optional string"), "another string", Optional.empty(), Optional.empty(), Optional.empty());
     }
 

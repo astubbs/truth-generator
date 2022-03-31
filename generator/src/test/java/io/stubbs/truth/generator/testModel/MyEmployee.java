@@ -10,6 +10,9 @@ import javax.annotation.Nonnull;
 import java.time.Instant;
 import java.time.ZonedDateTime;
 import java.util.*;
+import java.util.stream.DoubleStream;
+import java.util.stream.IntStream;
+import java.util.stream.LongStream;
 
 import static io.stubbs.truth.generator.testModel.MyEmployee.State.EMPLOLYED;
 import static io.stubbs.truth.generator.testModel.MyEmployee.State.IS_A_BOSS;
@@ -39,6 +42,13 @@ public class MyEmployee extends Person<String> {
     private Optional<Instant> startedAt = Optional.empty();
     private Map<String, Project> projectMap = new HashMap<>();
     private int[] intArray = {0, 1, 2};
+    private IntStream myIntStream = IntStream.builder().build();
+    private LongStream myLongStream = LongStream.builder().build();
+    private DoubleStream myDoubleStream = DoubleStream.builder().build();
+    private OptionalInt myOptionalInteger = OptionalInt.empty();
+    private OptionalDouble myOptionalDouble = OptionalDouble.empty();
+    private OptionalLong myOptionalLong = OptionalLong.empty();
+
 
     public MyEmployee(@Nonnull String name, long someLongAspect, @Nonnull ZonedDateTime birthday) {
         super(name, someLongAspect, birthday, Optional.of("an optional string"), "another string");

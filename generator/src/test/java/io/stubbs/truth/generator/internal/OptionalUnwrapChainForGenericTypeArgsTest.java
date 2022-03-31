@@ -1,8 +1,6 @@
 package io.stubbs.truth.generator.internal;
 
 import com.google.common.truth.Subject;
-import com.google.common.truth.Truth8;
-import io.stubbs.truth.generator.internal.model.ThreeSystem;
 import io.stubbs.truth.generator.subjects.MyMapSubject;
 import io.stubbs.truth.generator.subjects.MyStringSubject;
 import io.stubbs.truth.generator.testModel.MyEmployee;
@@ -10,20 +8,15 @@ import io.stubbs.truth.generator.testModel.Person;
 import lombok.SneakyThrows;
 import org.junit.Test;
 
-import java.lang.reflect.Method;
 import java.util.Map;
-import java.util.Set;
 
 import static com.google.common.truth.Truth.assertThat;
-import static io.stubbs.truth.generator.TestModelUtils.findMethod;
 
 /**
  * Not possible to unwrap an Optional<TYPE> return type for a class with type parameters. Can only do so with a subtype
  * where the type parameter has been set.
  */
-public class OptionalUnwrapChainForGenericTypeArgsTest {
-
-    GeneratedSubjectTypeStore subjects = new GeneratedSubjectTypeStore(Set.of(), new BuiltInSubjectTypeStore());
+public class OptionalUnwrapChainForGenericTypeArgsTest extends SubjectStoreTests {
 
     /**
      * @see MyEmployee#getTypeParamTest()
@@ -31,14 +24,12 @@ public class OptionalUnwrapChainForGenericTypeArgsTest {
     @Test
     public void subclass() {
         var resolvedPair = testResolution(MyEmployee.class, "getTypeParamTest", String.class);
-        Truth8.assertThat(resolvedPair.getSubject()).isPresent();
         assertThat(resolvedPair.getSubject().get().getClazz()).isEqualTo(MyStringSubject.class);
     }
 
     @Test
     public void genericReturnTypeWithoutSpecialHandling() {
         var resolvedPair = testResolution(MyEmployee.class, "getProjectMap", Map.class);
-        Truth8.assertThat(resolvedPair.getSubject()).isPresent();
         assertThat(resolvedPair.getSubject().get().getClazz()).isEqualTo(MyMapSubject.class);
     }
 
@@ -49,7 +40,6 @@ public class OptionalUnwrapChainForGenericTypeArgsTest {
     @Test
     public void subclassOptional() {
         var resolvedPair = testResolution(MyEmployee.class, "getTypeParamTestOptional", String.class);
-        Truth8.assertThat(resolvedPair.getSubject()).isPresent();
         assertThat(resolvedPair.getSubject().get().getClazz()).isEqualTo(MyStringSubject.class);
     }
 
@@ -60,7 +50,6 @@ public class OptionalUnwrapChainForGenericTypeArgsTest {
     @Test
     public void directClass() {
         var resolvedPair = testResolution(Person.class, "getTypeParamTest", Object.class);
-        Truth8.assertThat(resolvedPair.getSubject()).isPresent();
         assertThat(resolvedPair.getSubject().get().getClazz()).isEqualTo(Subject.class);
     }
 
@@ -71,19 +60,7 @@ public class OptionalUnwrapChainForGenericTypeArgsTest {
     @Test
     public void directClassOptional() {
         var resolvedPair = testResolution(Person.class, "getTypeParamTestOptional", Object.class);
-        Truth8.assertThat(resolvedPair.getSubject()).isPresent();
         assertThat(resolvedPair.getSubject().get().getClazz()).isEqualTo(Subject.class);
-    }
-
-    private <T> GeneratedSubjectTypeStore.ResolvedPair testResolution(Class<T> classType, String methodName, Class<?> expectedReturnType) {
-        Method getIterationStartingPoint = findMethod(classType, methodName);
-
-        ThreeSystem<T> myEmployeeThreeSystem = new ThreeSystem<T>(classType, null, null, null);
-
-        GeneratedSubjectTypeStore.ResolvedPair resolvedPair = subjects.resolveSubjectForOptionals(myEmployeeThreeSystem, getIterationStartingPoint);
-
-        assertThat(resolvedPair.getReturnType()).isEqualTo(expectedReturnType);
-        return resolvedPair;
     }
 
 

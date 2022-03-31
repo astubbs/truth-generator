@@ -12,8 +12,11 @@ import org.apache.commons.lang3.Validate;
 import org.reflections.Reflections;
 
 import java.math.BigDecimal;
+import java.nio.file.Path;
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
+import java.util.stream.LongStream;
 import java.util.stream.Stream;
 
 import static java.util.Optional.empty;
@@ -46,6 +49,13 @@ public class BuiltInSubjectTypeStore {
     static {
         // higher priority first
         Class<?>[] classes = {
+                OptionalDouble.class,
+                OptionalInt.class,
+                OptionalLong.class,
+                IntStream.class,
+                LongStream.class,
+                Path.class,
+                Stream.class,
                 Map.class,
                 Iterable.class,
                 List.class,

@@ -3,7 +3,6 @@ package io.stubbs.truth.generator.internal;
 import com.google.common.truth.Truth8;
 import javassist.bytecode.ClassFile;
 import javassist.bytecode.MethodInfo;
-import jdk.nio.Channels;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import one.util.streamex.StreamEx;
@@ -17,6 +16,7 @@ import javax.lang.model.SourceVersion;
 import javax.tools.JavaCompiler;
 import javax.tools.ToolProvider;
 import java.lang.reflect.Method;
+import java.net.http.HttpClient;
 import java.nio.file.FileSystem;
 import java.nio.file.Path;
 import java.time.Duration;
@@ -156,12 +156,12 @@ public class JDKOverrideAnalyserTest {
     @SneakyThrows
     @Test
     public void java11NewInnerClasses() {
-        Class<Channels> httpClientBuilder = Channels.class;
+        Class<?> clazz = HttpClient.Builder.class;
 
-        ClassFile classInJava9 = jdkOverrideAnalyser.getClassFileEclipse(9, httpClientBuilder);
+        ClassFile classInJava9 = jdkOverrideAnalyser.getClassFileEclipse(9, clazz);
         assertThat(classInJava9).isNull();
 
-        ClassFile classInJava11 = jdkOverrideAnalyser.getClassFileEclipse(11, httpClientBuilder);
+        ClassFile classInJava11 = jdkOverrideAnalyser.getClassFileEclipse(11, clazz);
         assertThat(classInJava11).isNotNull();
     }
 

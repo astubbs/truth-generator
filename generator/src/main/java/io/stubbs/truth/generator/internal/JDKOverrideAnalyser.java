@@ -92,16 +92,18 @@ public class JDKOverrideAnalyser {
         Optional<Path> fullPath = Optional.ofNullable(ctSym.getFullPath(releaseCode, qualifiedSigFilename, clazz.getModule().getName()));
 
         if (fullPath.isEmpty()) {
-            log.info("ct.sym look up failed for class {} in jdk version {} with sig address {}", clazz, platformName, qualifiedSigFilename);
+            log.info("ct.sym look up failed for class {} in jdk version {}, name {} with sig address {}", clazz, platformNumber, platformName, qualifiedSigFilename);
+
+
+            Method getCachedReleasePaths = CtSym.class.getDeclaredMethod("getCachedReleasePaths", String.class);
+            getCachedReleasePaths.setAccessible(true);
+            Map<String, Path> invoke = (Map) getCachedReleasePaths.invoke(ctSym, releaseCode);
+            Stream<String> stringStream = invoke.keySet().stream().filter(x -> x.contains(clazz.getSimpleName()));
+            stringStream.forEach(x -> log.error("Found: {}", x));
+
+
             return null;
         }
-
-        Method getCachedReleasePaths = CtSym.class.getDeclaredMethod("getCachedReleasePaths", String.class);
-        getCachedReleasePaths.setAccessible(true);
-        Map<String, Path> invoke = (Map) getCachedReleasePaths.invoke(ctSym, releaseCode);
-        Stream<String> stringStream = invoke.keySet().stream().filter(x -> x.contains(clazz.getSimpleName()));
-        stringStream.forEach(x -> log.info("Found: {}", x));
-
 
         byte[] fileBytes = ctSym.getFileBytes(fullPath.get());
         return new ClassFile(new DataInputStream(new ByteArrayInputStream(fileBytes)));

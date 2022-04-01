@@ -93,7 +93,7 @@ public class JDKOverrideAnalyser {
         Optional<Path> fullPath = Optional.ofNullable(ctSym.getFullPath(releaseCode, qualifiedSigFilename, clazz.getModule().getName()));
         if (fullPath.isEmpty()) {
             // Zulu 11 VM on GitHub shows this issue, however zulu vm 11 on local machine works fine... so..?
-            log.debug("Lookup with Module specified failed, will try without module");
+            log.error("Lookup with Module specified failed, will try without module");
             fullPath = Optional.ofNullable(ctSym.getFullPath(releaseCode, qualifiedSigFilename, null));
         }
 
@@ -104,7 +104,7 @@ public class JDKOverrideAnalyser {
             getCachedReleasePaths.setAccessible(true);
             Map<String, Path> invoke = (Map) getCachedReleasePaths.invoke(ctSym, releaseCode);
             Stream<String> stringStream = invoke.keySet().stream().filter(x -> x.contains(clazz.getSimpleName()));
-            stringStream.forEach(x -> log.error("Found: {}", x));
+            stringStream.forEach(x -> log.info("Found: {}", x));
 
             return null;
         }

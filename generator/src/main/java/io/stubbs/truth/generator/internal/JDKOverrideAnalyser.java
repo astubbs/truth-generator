@@ -89,19 +89,22 @@ public class JDKOverrideAnalyser {
         String qualifiedSigFilename = clazz.getTypeName().replace('.', '/') + ".sig";
 
         String releaseCode = CtSym.getReleaseCode(platformName);
-//        Optional<Path> fullPath = Optional.ofNullable(ctSym.getFullPath(releaseCode, qualifiedSigFilename, clazz.getModule().getName()));
-        Optional<Path> fullPath = Optional.ofNullable(ctSym.getFullPath(releaseCode, qualifiedSigFilename, null));
 
-
-        Method getCachedReleasePaths = CtSym.class.getDeclaredMethod("getCachedReleasePaths", String.class);
-        getCachedReleasePaths.setAccessible(true);
-        Map<String, Path> invoke = (Map) getCachedReleasePaths.invoke(ctSym, releaseCode);
-        Stream<String> stringStream = invoke.keySet().stream().filter(x -> x.contains(clazz.getSimpleName()));
-        stringStream.forEach(x -> log.error("Found: {}", x));
+        Optional<Path> fullPath = Optional.ofNullable(ctSym.getFullPath(releaseCode, qualifiedSigFilename, clazz.getModule().getName()));
+        if (fullPath.isEmpty()) {
+            // Zulu 11 VM on GitHub shows this issue, however zulu vm 11 on local machine works fine... so..?
+            log.debug("Lookup with Module specified failed, will try without module");
+            fullPath = Optional.ofNullable(ctSym.getFullPath(releaseCode, qualifiedSigFilename, null));
+        }
 
         if (fullPath.isEmpty()) {
             log.info("ct.sym look up failed for class {} in jdk version {}, name {} with sig address {}", clazz, platformNumber, platformName, qualifiedSigFilename);
 
+            Method getCachedReleasePaths = CtSym.class.getDeclaredMethod("getCachedReleasePaths", String.class);
+            getCachedReleasePaths.setAccessible(true);
+            Map<String, Path> invoke = (Map) getCachedReleasePaths.invoke(ctSym, releaseCode);
+            Stream<String> stringStream = invoke.keySet().stream().filter(x -> x.contains(clazz.getSimpleName()));
+            stringStream.forEach(x -> log.error("Found: {}", x));
 
             return null;
         }

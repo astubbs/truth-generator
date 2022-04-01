@@ -16,6 +16,7 @@ import javax.lang.model.SourceVersion;
 import javax.tools.JavaCompiler;
 import javax.tools.ToolProvider;
 import java.lang.reflect.Method;
+import java.net.http.HttpClient;
 import java.nio.file.FileSystem;
 import java.nio.file.Path;
 import java.time.Duration;
@@ -26,6 +27,8 @@ import static com.google.common.truth.Truth.assertThat;
 
 /**
  * These tests require a JDK override to be present
+ * <p>
+ * {@code https://gunnarmorling.github.io/jdk-api-diff/jdk10-jdk11-api-diff.html}
  *
  * @author Antony Stubbs
  * @see JDKOverrideAnalyser
@@ -147,16 +150,19 @@ public class JDKOverrideAnalyserTest {
         Truth8.assertThat(toSeconds).isEmpty();
     }
 
+    /**
+     * https://gunnarmorling.github.io/jdk-api-diff/jdk10-jdk11-api-diff.html
+     */
     @SneakyThrows
     @Test
-    public void java12NewInnerClasses() {
-        Class<Enum.EnumDesc> enumDescClass = Enum.EnumDesc.class;
+    public void java11NewInnerClasses() {
+        Class<HttpClient.Builder> httpClientBuilder = HttpClient.Builder.class;
 
-        ClassFile classRepresentation9 = jdkOverrideAnalyser.getClassFileEclipse(9, Enum.EnumDesc.class);
-        assertThat(classRepresentation9).isNull();
+        ClassFile classInJava9 = jdkOverrideAnalyser.getClassFileEclipse(9, httpClientBuilder);
+        assertThat(classInJava9).isNull();
 
-        ClassFile classRepresentation12 = jdkOverrideAnalyser.getClassFileEclipse(12, Enum.EnumDesc.class);
-        assertThat(classRepresentation12).isNotNull();
+        ClassFile classInJava11 = jdkOverrideAnalyser.getClassFileEclipse(11, httpClientBuilder);
+        assertThat(classInJava11).isNotNull();
     }
 
     @SneakyThrows

@@ -82,8 +82,10 @@ public class JDKOverrideAnalyser {
 
         Optional<Path> fullPath = Optional.ofNullable(ctSym.getFullPath(releaseCode, qualifiedSigFilename, clazz.getModule().getName()));
 
-        if (fullPath.isEmpty())
+        if (fullPath.isEmpty()) {
+            log.info("ct.sym look up failed for class {} in jdk version {} with sig address {}", clazz, platformName, qualifiedSigFilename);
             return null;
+        }
 
         byte[] fileBytes = ctSym.getFileBytes(fullPath.get());
         return new ClassFile(new DataInputStream(new ByteArrayInputStream(fileBytes)));

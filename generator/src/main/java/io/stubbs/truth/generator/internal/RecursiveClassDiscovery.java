@@ -1,8 +1,8 @@
 package io.stubbs.truth.generator.internal;
 
-import com.google.common.flogger.FluentLogger;
 import com.google.common.truth.Subject;
 import io.stubbs.truth.generator.SourceClassSets;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ClassUtils;
 
 import java.lang.reflect.Method;
@@ -22,9 +22,8 @@ import static org.apache.commons.lang3.StringUtils.startsWithAny;
  *
  * @author Antony Stubbs
  */
+@Slf4j
 public class RecursiveClassDiscovery {
-
-    private static final FluentLogger log = FluentLogger.forEnclosingClass();
 
     private final HashSet<Class<?>> seen = new HashSet<>();
 
@@ -89,7 +88,7 @@ public class RecursiveClassDiscovery {
                 .collect(Collectors.toList());
 
         if (!filtered.isEmpty()) {
-            log.atInfo().log("Adding return types from %s : %s", theClass,
+            log.info("Adding return types from %s : %s", theClass,
                     filtered.stream().map(Class::getSimpleName).collect(Collectors.toList()));
         }
 

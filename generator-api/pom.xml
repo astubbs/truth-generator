@@ -13,5 +13,8 @@
     <description>Container for classes referenced from the generated code.</description>
 
     <artifactId>truth-generator-api</artifactId>
-
+    <properties>
+        <maven.compiler.source>13</maven.compiler.source>
+        <maven.compiler.target>13</maven.compiler.target>
+    </properties>
 </project>

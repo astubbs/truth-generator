@@ -37,6 +37,8 @@ public class JDKOverrideAnalyser {
     public boolean doesOverrideClassContainMethod(Class<?> clazz, Method method) {
         Optional<ClassFile> classModel = getCachedClass(clazz);
 
+        JDKPlatformProvider
+
         return classModel
                 .filter(model ->
                         doesContainsMethod(model, method))

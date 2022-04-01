@@ -64,7 +64,7 @@ public class SkeletonGenerator implements SkeletonGeneratorAPI {
      */
     @Override
     public <T> Optional<ThreeSystem<T>> threeLayerSystem(Class<T> source, Class<T> usersMiddleClass) {
-        if (SourceChecking.checkSource(source, empty()))
+        if (SourceChecking.checkSourceShouldBeIncluded(source, empty()))
             return empty();
 
         // make parent - boilerplate access
@@ -82,7 +82,7 @@ public class SkeletonGenerator implements SkeletonGeneratorAPI {
 
     @Override
     public <T> Optional<ThreeSystem<T>> threeLayerSystem(Class<T> clazzUnderTest) {
-        if (SourceChecking.checkSource(clazzUnderTest, targetPackageName))
+        if (SourceChecking.checkSourceShouldBeIncluded(clazzUnderTest, targetPackageName))
             return empty();
 
         // todo make sure this doesn't override explicit shading settings

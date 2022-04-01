@@ -17,7 +17,7 @@ public class SourceChecking {
 
     private static final FluentLogger logger = FluentLogger.forEnclosingClass();
 
-    static boolean checkSource(Class<?> source, Optional<String> targetPackage) {
+    static boolean checkSourceShouldBeIncluded(Class<?> source, Optional<String> targetPackage) {
         if (isAnonymous(source))
             return true;
 
@@ -27,7 +27,8 @@ public class SourceChecking {
         if (isTestClass(source))
             return true;
 
-        if (BuiltInSubjectTypeStore.getNativeTypes().contains(source))
+        //noinspection RedundantIfStatement - readability
+        if (BuiltInSubjectTypeStore.isANativeType(source))
             return true;
 
         return false;

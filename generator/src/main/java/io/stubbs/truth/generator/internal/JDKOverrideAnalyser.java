@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import static io.stubbs.truth.generator.internal.Utils.msg;
 import static java.util.Optional.ofNullable;
 
 /**
@@ -69,9 +70,15 @@ public class JDKOverrideAnalyser {
 
         String qualifiedSigFilename = clazz.getTypeName().replace('.', '/') + ".sig";
 
+        // todo move to field
         String releaseCode = CtSym.getReleaseCode(platformName);
-        Path java_home = Path.of(System.getenv("JAVA_HOME"));
-        CtSym ctSym = JRTUtil.getCtSym(java_home);
+        Path javaHome = Path.of(System.getenv("JAVA_HOME"));
+
+        if (!(javaHome.toFile().exists() && javaHome.toFile().isDirectory())) {
+            throw new TruthGeneratorRuntimeException(msg("Cannot look up JAVA_HOME env variable. Found {}, and it either doesn't exist or isn't a directory", javaHome));
+        }
+
+        CtSym ctSym = JRTUtil.getCtSym(javaHome);
 
         Optional<Path> fullPath = Optional.ofNullable(ctSym.getFullPath(releaseCode, qualifiedSigFilename, clazz.getModule().getName()));
 

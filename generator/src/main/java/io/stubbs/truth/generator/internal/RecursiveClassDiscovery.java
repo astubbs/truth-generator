@@ -88,7 +88,7 @@ public class RecursiveClassDiscovery {
                 .collect(Collectors.toList());
 
         if (!filtered.isEmpty()) {
-            log.info("Adding return types from %s : %s", theClass,
+            log.debug("Adding return types from {} : {}", theClass,
                     filtered.stream().map(Class::getSimpleName).collect(Collectors.toList()));
         }
 

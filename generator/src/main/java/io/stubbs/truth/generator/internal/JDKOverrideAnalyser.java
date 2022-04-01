@@ -14,11 +14,10 @@ import org.eclipse.jdt.internal.compiler.util.JRTUtil;
 import javax.annotation.Nullable;
 import java.io.ByteArrayInputStream;
 import java.io.DataInputStream;
+import java.io.IOException;
 import java.lang.reflect.Method;
 import java.nio.file.Path;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 import static io.stubbs.truth.generator.internal.Utils.msg;
@@ -37,7 +36,21 @@ public class JDKOverrideAnalyser {
 
     private final Options options;
 
-    private final Map<Class<?>, ClassFile> cache = new HashMap<>();
+    private static final CtSym ctSym;
+
+    static {
+        Path javaHome = Path.of(System.getenv("JAVA_HOME"));
+
+        if (!(javaHome.toFile().exists() && javaHome.toFile().isDirectory())) {
+            throw new TruthGeneratorRuntimeException(msg("Cannot look up JAVA_HOME env variable. Found {}, and it either doesn't exist or isn't a directory", javaHome));
+        }
+
+        try {
+            ctSym = JRTUtil.getCtSym(javaHome);
+        } catch (IOException e) {
+            throw new TruthGeneratorRuntimeException("Cannot instantiate CtSym abstraction", e);
+        }
+    }
 
     public static Optional<MethodInfo> findMethodWithNoParamsJA(ClassFile classRepresentation, String name) {
         return findMethodJA(classRepresentation, name, 0);
@@ -70,16 +83,7 @@ public class JDKOverrideAnalyser {
 
         String qualifiedSigFilename = clazz.getTypeName().replace('.', '/') + ".sig";
 
-        // todo move to field
         String releaseCode = CtSym.getReleaseCode(platformName);
-        Path javaHome = Path.of(System.getenv("JAVA_HOME"));
-
-        if (!(javaHome.toFile().exists() && javaHome.toFile().isDirectory())) {
-            throw new TruthGeneratorRuntimeException(msg("Cannot look up JAVA_HOME env variable. Found {}, and it either doesn't exist or isn't a directory", javaHome));
-        }
-
-        CtSym ctSym = JRTUtil.getCtSym(javaHome);
-
         Optional<Path> fullPath = Optional.ofNullable(ctSym.getFullPath(releaseCode, qualifiedSigFilename, clazz.getModule().getName()));
 
         if (fullPath.isEmpty()) {

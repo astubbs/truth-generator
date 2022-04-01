@@ -1,7 +1,6 @@
 package io.stubbs.truth.generator.internal;
 
 import com.google.common.truth.Truth8;
-import io.stubbs.truth.generator.TestModelUtils;
 import javassist.bytecode.ClassFile;
 import javassist.bytecode.MethodInfo;
 import lombok.SneakyThrows;
@@ -10,16 +9,12 @@ import one.util.streamex.StreamEx;
 import org.eclipse.jdt.internal.compiler.classfmt.ClassFileReader;
 import org.eclipse.jdt.internal.compiler.util.CtSym;
 import org.eclipse.jdt.internal.compiler.util.JRTUtil;
-import org.junit.Assume;
+import org.junit.Before;
 import org.junit.Test;
 
-import javax.annotation.Nullable;
 import javax.lang.model.SourceVersion;
 import javax.tools.JavaCompiler;
 import javax.tools.ToolProvider;
-import java.io.ByteArrayInputStream;
-import java.io.DataInputStream;
-import java.io.File;
 import java.lang.reflect.Method;
 import java.nio.file.FileSystem;
 import java.nio.file.Path;
@@ -38,18 +33,23 @@ import static com.google.common.truth.Truth.assertThat;
 @Slf4j
 public class JDKOverrideAnalyserTest {
 
-    File overrideJar = new File("C:\\Users\\anton\\.jdks\\adopt-openjdk-1.8.0_292\\jre\\lib\\rt.jar");
-    Options options = Options.builder()
-            .runtimeJavaClassSourceOverride(
-                    Optional.of(overrideJar)
-            ).build();
+//    File overrideJar = new File("C:\\Users\\anton\\.jdks\\adopt-openjdk-1.8.0_292\\jre\\lib\\rt.jar");
+//    Options options = Options.builder()
+//            .releaseTarget(
+//                    Optional.of(overrideJar)
+//            ).build();
 
+    JDKOverrideAnalyser jdkOverrideAnalyser;
+
+    @Before
+    public void setup() {
+        jdkOverrideAnalyser = new JDKOverrideAnalyser(Options.builder().build());
+    }
 
     @Test
     public void missing() {
-        JDKOverrideAnalyser jdkOverrideAnalyser = new JDKOverrideAnalyser(options);
-        Assume.assumeTrue(overrideJar.exists());
         Class<Duration> clazz = Duration.class;
+        jdkOverrideAnalyser = new JDKOverrideAnalyser(Options.builder().releaseTarget(Optional.of(8)).build());
         Method toSeconds = StreamEx.of(clazz.getMethods()).filter(x -> x.getName().contains("toSeconds")).findFirst().get();
         boolean contains = jdkOverrideAnalyser.doesOverrideClassContainMethod(clazz, toSeconds);
         assertThat(contains).isFalse();
@@ -57,9 +57,8 @@ public class JDKOverrideAnalyserTest {
 
     @Test
     public void present() {
-        JDKOverrideAnalyser jdkOverrideAnalyser = new JDKOverrideAnalyser(options);
-        Assume.assumeTrue(overrideJar.exists());
         Class<Duration> clazz = Duration.class;
+        jdkOverrideAnalyser = new JDKOverrideAnalyser(Options.builder().releaseTarget(Optional.of(9)).build());
         Method toSeconds = StreamEx.of(clazz.getMethods()).filter(x -> x.getName().contains("toMillis")).findFirst().get();
         boolean contains = jdkOverrideAnalyser.doesOverrideClassContainMethod(clazz, toSeconds);
         assertThat(contains).isTrue();
@@ -71,38 +70,18 @@ public class JDKOverrideAnalyserTest {
         Set<Object> objects = Set.copyOf(Set.of());
 
         {
-            ClassFile classRepresentation = getClassFileEclipse(9, Set.class);
-            Optional<MethodInfo> method = TestModelUtils.findMethodJA(classRepresentation, "copyOf", 1);
+            ClassFile classRepresentation = jdkOverrideAnalyser.getClassFileEclipse(9, Set.class);
+            Optional<MethodInfo> method = JDKOverrideAnalyser.findMethodJA(classRepresentation, "copyOf", 1);
 
             Truth8.assertThat(method).isEmpty();
         }
 
         {
-            ClassFile classRepresentation = getClassFileEclipse(10, Set.class);
-            Optional<MethodInfo> method = TestModelUtils.findMethodJA(classRepresentation, "copyOf", 1);
+            ClassFile classRepresentation = jdkOverrideAnalyser.getClassFileEclipse(10, Set.class);
+            Optional<MethodInfo> method = JDKOverrideAnalyser.findMethodJA(classRepresentation, "copyOf", 1);
 
             Truth8.assertThat(method).isPresent();
         }
-    }
-
-    @SneakyThrows
-    private @Nullable
-    ClassFile getClassFileEclipse(int platformNumber, Class<?> clazz) {
-        String platformName = Integer.toString(platformNumber);
-
-        String qualifiedSigFilename = clazz.getTypeName().replace('.', '/') + ".sig";
-
-        String releaseCode = CtSym.getReleaseCode(platformName);
-        Path java_home = Path.of(System.getenv("JAVA_HOME"));
-        CtSym ctSym = JRTUtil.getCtSym(java_home);
-
-        Optional<Path> fullPath = Optional.ofNullable(ctSym.getFullPath(releaseCode, qualifiedSigFilename, clazz.getModule().getName()));
-
-        if (fullPath.isEmpty())
-            return null;
-
-        byte[] fileBytes = ctSym.getFileBytes(fullPath.get());
-        return new ClassFile(new DataInputStream(new ByteArrayInputStream(fileBytes)));
     }
 
     @SneakyThrows
@@ -120,8 +99,8 @@ public class JDKOverrideAnalyserTest {
     private void test9and10MissingPresent(String methodName, Class<?> clazz) {
         {
             {
-                ClassFile classRepresentation = getClassFileEclipse(9, clazz);
-                Optional<MethodInfo> method = TestModelUtils.findMethodWithNoParamsJA(classRepresentation, methodName);
+                ClassFile classRepresentation = jdkOverrideAnalyser.getClassFileEclipse(9, clazz);
+                Optional<MethodInfo> method = JDKOverrideAnalyser.findMethodWithNoParamsJA(classRepresentation, methodName);
 
                 Truth8.assertThat(method).isEmpty();
 
@@ -129,8 +108,8 @@ public class JDKOverrideAnalyserTest {
         }
 
         {
-            ClassFile classRepresentation = getClassFileEclipse(10, clazz);
-            Optional<MethodInfo> method = TestModelUtils.findMethodWithNoParamsJA(classRepresentation, methodName);
+            ClassFile classRepresentation = jdkOverrideAnalyser.getClassFileEclipse(10, clazz);
+            Optional<MethodInfo> method = JDKOverrideAnalyser.findMethodWithNoParamsJA(classRepresentation, methodName);
 
             Truth8.assertThat(method).isPresent();
         }
@@ -152,8 +131,8 @@ public class JDKOverrideAnalyserTest {
     public void durationInJava9() {
         long l = Duration.ofSeconds(0).toSeconds();
 
-        ClassFile classRepresentation = getClassFileEclipse(9, Duration.class);
-        Optional<MethodInfo> toSeconds = TestModelUtils.findMethodWithNoParamsJA(classRepresentation, "toSeconds");
+        ClassFile classRepresentation = jdkOverrideAnalyser.getClassFileEclipse(9, Duration.class);
+        Optional<MethodInfo> toSeconds = JDKOverrideAnalyser.findMethodWithNoParamsJA(classRepresentation, "toSeconds");
 
         Truth8.assertThat(toSeconds).isPresent();
     }
@@ -161,9 +140,9 @@ public class JDKOverrideAnalyserTest {
     @SneakyThrows
     @Test
     public void durationInJava8() {
-        ClassFile classRepresentation = getClassFileEclipse(8, Duration.class);
+        ClassFile classRepresentation = jdkOverrideAnalyser.getClassFileEclipse(8, Duration.class);
 
-        Optional<MethodInfo> toSeconds = TestModelUtils.findMethodWithNoParamsJA(classRepresentation, "toSeconds");
+        Optional<MethodInfo> toSeconds = JDKOverrideAnalyser.findMethodWithNoParamsJA(classRepresentation, "toSeconds");
 
         Truth8.assertThat(toSeconds).isEmpty();
     }
@@ -173,10 +152,10 @@ public class JDKOverrideAnalyserTest {
     public void java12NewInnerClasses() {
         Class<Enum.EnumDesc> enumDescClass = Enum.EnumDesc.class;
 
-        ClassFile classRepresentation9 = getClassFileEclipse(9, Enum.EnumDesc.class);
+        ClassFile classRepresentation9 = jdkOverrideAnalyser.getClassFileEclipse(9, Enum.EnumDesc.class);
         assertThat(classRepresentation9).isNull();
 
-        ClassFile classRepresentation12 = getClassFileEclipse(12, Enum.EnumDesc.class);
+        ClassFile classRepresentation12 = jdkOverrideAnalyser.getClassFileEclipse(12, Enum.EnumDesc.class);
         assertThat(classRepresentation12).isNotNull();
     }
 

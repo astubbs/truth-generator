@@ -2,10 +2,6 @@ package io.stubbs.truth.generator;
 
 import io.stubbs.truth.generator.testModel.IdCard;
 import io.stubbs.truth.generator.testModel.MyEmployee;
-import javassist.bytecode.AttributeInfo;
-import javassist.bytecode.ClassFile;
-import javassist.bytecode.MethodInfo;
-import org.apache.commons.lang3.StringUtils;
 import org.eclipse.jdt.internal.compiler.classfmt.ClassFileReader;
 import org.eclipse.jdt.internal.compiler.env.IBinaryAnnotation;
 import org.eclipse.jdt.internal.compiler.env.IBinaryMethod;
@@ -64,31 +60,6 @@ public class TestModelUtils {
 
     public static <T> Method findMethodWithNoParamsJRflect(Class<T> classType, String methodName) {
         return Arrays.stream(classType.getMethods()).filter(x -> x.getName().equals(methodName)).findFirst().get();
-    }
-
-    public static Optional<MethodInfo> findMethodWithNoParamsJA(ClassFile classRepresentation, String name) {
-        return findMethodJA(classRepresentation, name, 0);
-    }
-
-    public static Optional<MethodInfo> findMethodJA(ClassFile classRepresentation, String name, int paramCount) {
-        List<MethodInfo> methods = classRepresentation.getMethods();
-        return methods.stream().filter(x -> {
-            if (x.getName().equals(name)) {
-
-                List<AttributeInfo> attributes = x.getAttributes();
-
-                if (attributes.isEmpty() && paramCount == 0) {
-                    return true;
-                }
-
-                String descriptor = x.getDescriptor();
-                String params = StringUtils.substringBetween(descriptor, "(", ")");
-                int hackyParamCount = StringUtils.countMatches(params, ';');
-                return hackyParamCount == paramCount;
-
-            }
-            return false;
-        }).findFirst();
     }
 
     public static Optional<IBinaryMethod> findMethodWithNoParamsEclipse(ClassFileReader classRepresentation, String methodName) {

@@ -9,7 +9,6 @@ import io.stubbs.truth.generator.internal.model.ThreeSystem;
 import lombok.Getter;
 import lombok.SneakyThrows;
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.maven.artifact.DependencyResolutionRequiredException;
 import org.apache.maven.model.Plugin;
 import org.apache.maven.plugin.AbstractMojo;
@@ -128,12 +127,15 @@ public class GeneratorMojo extends AbstractMojo {
      */
     @Parameter(property = "truth.recursive", defaultValue = "true")
     public boolean recursive;
+
     /**
-     * Advanced setting - override class source for class reflection. Useful for when runtime env is different than
-     * plugin execution environment - e.g. when building on a newer jdk than running on.
+     * Advanced setting - configure the release target for class reflection. Useful for when runtime env is different
+     * from the execution environment - e.g. when building on a newer jdk than running on. Same as the maven compiler
+     * plugin target option. In fact, we first try to copy the same release target from there, so if that's specified,
+     * this shouldn't be needed.
      */
-    @Parameter(property = "truth.jdkClassSourceOverride")
-    public String jdkClassSourceOverride;
+    @Parameter(property = "truth.releaseTarget")
+    public Integer releaseTarget;
     /**
      * Location of the file.
      */
@@ -222,9 +224,9 @@ public class GeneratorMojo extends AbstractMojo {
                 .useGetterForLegacyClasses(isUseGetterForLegacyClasses())
                 .compilationTargetLowerThanNine(isCompilationTargetBelowJavaNine());
 
-        String jdkClassSourceOverride = getJdkClassSourceOverride();
-        if (StringUtils.isNotBlank(jdkClassSourceOverride)) {
-            optionsBuilder.runtimeJavaClassSourceOverride(Optional.of(new File(jdkClassSourceOverride)));
+        Integer foundReleaseTarget = getReleaseTarget();
+        if (foundReleaseTarget != null) {
+            optionsBuilder.releaseTarget(Optional.of(foundReleaseTarget));
         }
 
         return optionsBuilder.build();

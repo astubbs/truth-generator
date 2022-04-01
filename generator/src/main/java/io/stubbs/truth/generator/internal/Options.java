@@ -5,7 +5,6 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
-import java.io.File;
 import java.util.Optional;
 
 /**
@@ -25,7 +24,7 @@ public class Options {
     @Builder.Default
     boolean compilationTargetLowerThanNine = false;
     @Builder.Default
-    Optional<File> runtimeJavaClassSourceOverride = Optional.empty();
+    Optional<Integer> releaseTarget = Optional.empty();
     /**
      * Marks whether to try to find all referenced types from the source types, to generate Subjects for all of them,
      * and use them all in the Subject tree.

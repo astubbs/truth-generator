@@ -45,6 +45,9 @@ public class JDKOverrideAnalyser {
             throw new TruthGeneratorRuntimeException(msg("Cannot look up JAVA_HOME env variable. Found {}, and it either doesn't exist or isn't a directory", javaHome));
         }
 
+        Path ctsymPath = javaHome.resolve("lib").resolve("ct.sym");
+        log.error("Using {} as home for ct.sym located at {} which exists? {}", javaHome, ctsymPath, ctsymPath.toFile().exists());
+
         try {
             ctSym = JRTUtil.getCtSym(javaHome);
         } catch (IOException e) {

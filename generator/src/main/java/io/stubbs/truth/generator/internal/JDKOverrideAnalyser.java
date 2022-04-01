@@ -18,7 +18,9 @@ import java.io.IOException;
 import java.lang.reflect.Method;
 import java.nio.file.Path;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 import static io.stubbs.truth.generator.internal.Utils.msg;
 import static java.util.Optional.ofNullable;
@@ -93,6 +95,13 @@ public class JDKOverrideAnalyser {
             log.info("ct.sym look up failed for class {} in jdk version {} with sig address {}", clazz, platformName, qualifiedSigFilename);
             return null;
         }
+
+        Method getCachedReleasePaths = CtSym.class.getDeclaredMethod("getCachedReleasePaths", String.class);
+        getCachedReleasePaths.setAccessible(true);
+        Map<String, Path> invoke = (Map) getCachedReleasePaths.invoke(ctSym, releaseCode);
+        Stream<String> stringStream = invoke.keySet().stream().filter(x -> x.contains(clazz.getSimpleName()));
+        stringStream.forEach(x -> log.info("Found: {}", x));
+
 
         byte[] fileBytes = ctSym.getFileBytes(fullPath.get());
         return new ClassFile(new DataInputStream(new ByteArrayInputStream(fileBytes)));

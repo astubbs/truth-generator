@@ -2,6 +2,7 @@ package io.stubbs.truth.generator.internal;
 
 import com.sun.tools.javac.platform.JDKPlatformProvider;
 import com.sun.tools.javac.platform.PlatformDescription;
+import com.sun.tools.javac.platform.PlatformProvider;
 import com.sun.tools.javac.platform.PlatformUtils;
 import lombok.extern.slf4j.Slf4j;
 import one.util.streamex.StreamEx;
@@ -15,6 +16,7 @@ import java.io.File;
 import java.lang.reflect.Method;
 import java.time.Duration;
 import java.util.Optional;
+import java.util.ServiceLoader;
 import java.util.Set;
 
 import static com.google.common.truth.Truth.assertThat;
@@ -62,7 +64,7 @@ public class JDKOverrideAnalyserTest {
         Set<SourceVersion> sourceVersions = systemJavaCompiler.getSourceVersions();
 
 
-//        ServiceLoader<PlatformProvider> load = ServiceLoader.load(PlatformProvider.class);
+        ServiceLoader<PlatformProvider> load = ServiceLoader.load(PlatformProvider.class);
 
         JDKPlatformProvider jdkPlatformProvider = new JDKPlatformProvider();
         Iterable<String> supportedPlatformNames = jdkPlatformProvider.getSupportedPlatformNames();

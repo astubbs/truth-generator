@@ -20,7 +20,7 @@
         <option name="PACKAGE_NAME" value="io.stubbs.truth.generator.internal"/>
         <option name="MAIN_CLASS_NAME" value="io.stubbs.truth.generator.internal.JDKOverrideAnalyserTest"/>
         <option name="METHOD_NAME" value="madscientest"/>
-        <option name="TEST_OBJECT" value="method"/>
+        <option name="TEST_OBJECT" value="class"/>
         <option name="VM_PARAMETERS" value="-ea --add-exports jdk.compiler/com.sun.tools.javac.platform=ALL-UNNAMED"/>
         <method v="2">
             <option name="Make" enabled="true"/>

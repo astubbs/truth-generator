@@ -26,7 +26,7 @@ public class CustomClassPathSubjects {
         Map<String, Project> projectMap = employee.getProjectMap();
 
         //
-        Method getProjectMap = TestModelUtils.findMethod(MyEmployee.class, "getProjectMap");
+        Method getProjectMap = TestModelUtils.findMethodWithNoParamsJRflect(MyEmployee.class, "getProjectMap");
         var subjectForType = subjects.getSubjectForType(getProjectMap.getReturnType());
         assertThat(subjectForType.get().getClazz()).isEqualTo(MyMapSubject.class);
     }

@@ -4,6 +4,7 @@ import com.google.common.io.Resources;
 import com.google.common.truth.Correspondence;
 import com.google.common.truth.ObjectArraySubject;
 import io.stubbs.truth.generator.SourceClassSets;
+import io.stubbs.truth.generator.TestModelUtils;
 import io.stubbs.truth.generator.TruthGeneratorAPI;
 import io.stubbs.truth.generator.internal.model.ThreeSystem;
 import io.stubbs.truth.generator.internal.modelSubjectChickens.ThreeSystemChildSubject;
@@ -38,7 +39,6 @@ import java.util.stream.Stream;
 import static com.google.common.truth.Correspondence.from;
 import static com.google.common.truth.Correspondence.transforming;
 import static com.google.common.truth.Truth.assertThat;
-import static io.stubbs.truth.generator.TestModelUtils.findMethod;
 import static io.stubbs.truth.generator.internal.modelSubjectChickens.ThreeSystemChildSubject.assertThat;
 import static java.util.Optional.of;
 
@@ -268,7 +268,7 @@ public class TruthGeneratorTest {
         // map contains strong key, value
         {
             String name = "hasProjectMapWithKey";
-            MethodSource<JavaClassSource> method = findMethod(generated, name);
+            MethodSource<JavaClassSource> method = TestModelUtils.findMethodWithNoParamsRoast(generated, name);
             List<ParameterSource<JavaClassSource>> parameters = method.getParameters();
             assertThat(parameters).comparingElementsUsing(classNames).containsExactly(String.class);
         }
@@ -276,7 +276,7 @@ public class TruthGeneratorTest {
         // list contains strong element
         {
             String name = "hasProjectListWithElement";
-            MethodSource<JavaClassSource> method = findMethod(generated, name);
+            MethodSource<JavaClassSource> method = TestModelUtils.findMethodWithNoParamsRoast(generated, name);
             List<ParameterSource<JavaClassSource>> parameters = method.getParameters();
             assertThat(parameters).comparingElementsUsing(classNames).containsExactly(Project.class);
         }
@@ -307,7 +307,7 @@ public class TruthGeneratorTest {
         // custom string
         {
             String name = "hasName";
-            MethodSource<JavaClassSource> method = findMethod(generatedParent, name);
+            MethodSource<JavaClassSource> method = TestModelUtils.findMethodWithNoParamsRoast(generatedParent, name);
             Type<JavaClassSource> returnType = method.getReturnType();
             assertThat(returnType.getName()).isEqualTo(MyStringSubject.class.getSimpleName());
             assertThat(returnType.getName()).isEqualTo(MyStringSubject.class.getSimpleName());
@@ -316,7 +316,7 @@ public class TruthGeneratorTest {
         // custom map
         {
             String name = "hasProjectMap";
-            MethodSource<JavaClassSource> method = findMethod(generatedParent, name);
+            MethodSource<JavaClassSource> method = TestModelUtils.findMethodWithNoParamsRoast(generatedParent, name);
             Type<JavaClassSource> returnType = method.getReturnType();
             assertThat(returnType.getName()).isEqualTo(MyMapSubject.class.getSimpleName());
         }

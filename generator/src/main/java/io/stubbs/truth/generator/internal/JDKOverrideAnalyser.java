@@ -90,15 +90,17 @@ public class JDKOverrideAnalyser {
 
         String releaseCode = CtSym.getReleaseCode(platformName);
 
-        Optional<Path> fullPath = Optional.ofNullable(ctSym.getFullPath(releaseCode, qualifiedSigFilename, clazz.getModule().getName()));
+        Module module = clazz.getModule();
+        Optional<Path> fullPath = Optional.ofNullable(ctSym.getFullPath(releaseCode, qualifiedSigFilename, module.getName()));
         if (fullPath.isEmpty()) {
             // Zulu 11 VM on GitHub shows this issue, however zulu vm 11 on local machine works fine... so..?
-            log.error("Lookup with Module specified failed, will try without module");
+            // todo change to debug?
+            log.error("Lookup for {} {} with Module {} specified failed, will try without module", clazz, qualifiedSigFilename, module);
             fullPath = Optional.ofNullable(ctSym.getFullPath(releaseCode, qualifiedSigFilename, null));
         }
 
         if (fullPath.isEmpty()) {
-            log.info("ct.sym look up failed for class {} in jdk version {}, name {} with sig address {}", clazz, platformNumber, platformName, qualifiedSigFilename);
+            log.info("ct.sym look up failed for class {} in jdk version {}, name {}, module {}, with sig address {}", clazz, platformNumber, platformName, module, qualifiedSigFilename);
 
             Method getCachedReleasePaths = CtSym.class.getDeclaredMethod("getCachedReleasePaths", String.class);
             getCachedReleasePaths.setAccessible(true);

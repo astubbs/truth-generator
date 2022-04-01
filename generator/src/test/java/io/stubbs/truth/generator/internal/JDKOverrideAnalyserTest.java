@@ -16,7 +16,7 @@ import javax.lang.model.SourceVersion;
 import javax.tools.JavaCompiler;
 import javax.tools.ToolProvider;
 import java.lang.reflect.Method;
-import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
 import java.nio.file.FileSystem;
 import java.nio.file.Path;
 import java.time.Duration;
@@ -156,7 +156,7 @@ public class JDKOverrideAnalyserTest {
     @SneakyThrows
     @Test
     public void java11NewInnerClasses() {
-        Class<?> clazz = HttpClient.Builder.class;
+        Class<?> clazz = HttpRequest.Builder.class;
 
         ClassFile classInJava9 = jdkOverrideAnalyser.getClassFileEclipse(9, clazz);
         assertThat(classInJava9).isNull();

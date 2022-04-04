@@ -144,7 +144,7 @@ public class OptionalUnwrapChainForGenericTypeArgsTest {
 
 
     private <T> GeneratedSubjectTypeStore.ResolvedPair testResolution(Class<T> classType, String methodName, Class<?> expectedReturnType) {
-        Method getIterationStartingPoint = TestModelUtils.findMethodWithNoParamsJRflect(classType, methodName);
+        Method getIterationStartingPoint = TestModelUtils.findMethodWithNoParamsJReflect(classType, methodName);
 
         ThreeSystem<T> myEmployeeThreeSystem = new ThreeSystem<T>(classType, null, null, null);
 

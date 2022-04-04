@@ -62,7 +62,7 @@ public class OverallEntryPoint {
                 // roaster just throws up a NPE when this happens
                 Set<String> simpleNames = overallAccess.getImports().stream().map(Import::getSimpleName).filter(x -> !x.equals("*")).collect(Collectors.toSet());
                 if (simpleNames.contains(i.getSimpleName())) {
-                    log.trace("Collision of imports - not adding duplicated import {}", i);
+                    log.debug("Expected collision of imports - not adding duplicated import {}", i);
                 } else {
                     overallAccess.addImport(i);
                 }
@@ -72,7 +72,7 @@ public class OverallEntryPoint {
         Utils.writeToDisk(overallAccess);
     }
 
-    public void add(ThreeSystem ts) {
+    public void add(ThreeSystem<?> ts) {
         this.children.add(ts.child);
     }
 }

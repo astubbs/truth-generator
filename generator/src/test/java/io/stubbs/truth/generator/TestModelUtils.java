@@ -2,10 +2,6 @@ package io.stubbs.truth.generator;
 
 import io.stubbs.truth.generator.testModel.IdCard;
 import io.stubbs.truth.generator.testModel.MyEmployee;
-import org.eclipse.jdt.internal.compiler.classfmt.ClassFileReader;
-import org.eclipse.jdt.internal.compiler.env.IBinaryAnnotation;
-import org.eclipse.jdt.internal.compiler.env.IBinaryMethod;
-import org.eclipse.jdt.internal.compiler.env.IBinaryTypeAnnotation;
 import org.jboss.forge.roaster.model.source.JavaClassSource;
 import org.jboss.forge.roaster.model.source.MethodSource;
 import uk.co.jemos.podam.api.PodamFactory;
@@ -15,7 +11,6 @@ import java.lang.reflect.Method;
 import java.time.ZonedDateTime;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
 
 import static com.google.common.truth.Truth.assertThat;
 import static io.stubbs.truth.generator.testModel.IdCard.SecurityType.Type.FOB;
@@ -58,36 +53,8 @@ public class TestModelUtils {
     }
 
 
-    public static <T> Method findMethodWithNoParamsJRflect(Class<T> classType, String methodName) {
+    public static <T> Method findMethodWithNoParamsJReflect(Class<T> classType, String methodName) {
         return Arrays.stream(classType.getMethods()).filter(x -> x.getName().equals(methodName)).findFirst().get();
     }
 
-    public static Optional<IBinaryMethod> findMethodWithNoParamsEclipse(ClassFileReader classRepresentation, String methodName) {
-        IBinaryMethod[] methods = classRepresentation.getMethods();
-
-        return Arrays.stream(methods).filter(x1 -> {
-
-            char[] selector = x1.getSelector();
-            String s1 = String.valueOf(selector);
-
-
-            if (s1.equals(methodName)) {
-                char[] methodDescriptor = x1.getMethodDescriptor();
-                IBinaryAnnotation[] annotations = x1.getAnnotations();
-                char[][] exceptionTypeNames = x1.getExceptionTypeNames();
-                char[] genericSignature = x1.getGenericSignature();
-                long tagBits = x1.getTagBits();
-                char[][] argumentNames = x1.getArgumentNames();
-                Object defaultValue = x1.getDefaultValue();
-                IBinaryTypeAnnotation[] typeAnnotations = x1.getTypeAnnotations();
-
-
-                return s1.equals(methodName) && x1.getAnnotatedParametersCount() == 0;
-            }
-
-            return false;
-
-        }).findFirst();
-
-    }
 }

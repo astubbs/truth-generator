@@ -46,16 +46,15 @@ public class TestModelUtils {
     }
 
 
-    public static MethodSource<JavaClassSource> findMethod(JavaClassSource generatedParent, String name) {
+    public static MethodSource<JavaClassSource> findMethodWithNoParamsRoast(JavaClassSource generatedParent, String name) {
         List<MethodSource<JavaClassSource>> collect = generatedParent.getMethods().stream().filter(x -> x.getName().equals(name)).collect(toList());
         assertThat(collect).hasSize(1);
         return collect.get(0);
     }
 
 
-    public static <T> Method findMethod(Class<T> classType, String methodName) {
+    public static <T> Method findMethodWithNoParamsJReflect(Class<T> classType, String methodName) {
         return Arrays.stream(classType.getMethods()).filter(x -> x.getName().equals(methodName)).findFirst().get();
     }
-
 
 }

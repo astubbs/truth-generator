@@ -21,7 +21,6 @@ import java.util.stream.Collectors;
 import static io.stubbs.truth.generator.internal.Utils.msg;
 import static java.util.Optional.empty;
 import static java.util.Optional.of;
-import static java.util.logging.Level.INFO;
 import static org.apache.commons.lang3.ClassUtils.primitiveToWrapper;
 import static org.apache.commons.lang3.StringUtils.capitalize;
 
@@ -98,7 +97,7 @@ public class GeneratedSubjectTypeStore {
             Optional<Class<? extends Subject>> nativeSubjectForType = builtInSubjectTypeStore.getClosestTruthNativeSubjectForType(type);
 
             subject = SubjectMethodGenerator.ClassOrGenerated.ofClass(nativeSubjectForType);
-            subject.ifPresent(classOrGenerated -> logger.at(INFO).log("Falling back to native interface subject %s for type %s", classOrGenerated.clazz, type));
+            subject.ifPresent(classOrGenerated -> log.debug("For type {} - falling back to native interface subject {}", type, classOrGenerated.clazz));
         }
 
         return subject;

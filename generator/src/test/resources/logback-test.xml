@@ -1,0 +1,21 @@
+<configuration packagingData="true" scan="true" scanPeriod="5 seconds" debug="true">
+
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%d{mm:ss.SSS} %highlight(%-5level) %yellow([%thread]) %X{offset} %cyan(\(%file:%line\)#%M) %msg%n
+            </pattern>
+        </encoder>
+    </appender>
+
+    <root level="info">
+        <!--    <root level="debug">-->
+        <appender-ref ref="STDOUT"/>
+    </root>
+
+    <!-- primary -->
+
+    <!-- external -->
+    <logger name="pl.tlinkowski" level="warn"/>
+    <logger name="uk.co.jemos.podam" level="error"/>
+
+</configuration>

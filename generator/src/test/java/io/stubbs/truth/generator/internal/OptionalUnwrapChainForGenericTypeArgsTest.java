@@ -4,6 +4,7 @@ import com.google.common.truth.IntegerSubject;
 import com.google.common.truth.OptionalSubject;
 import com.google.common.truth.Subject;
 import com.google.common.truth.Truth8;
+import io.stubbs.truth.generator.TestModelUtils;
 import io.stubbs.truth.generator.internal.model.ThreeSystem;
 import io.stubbs.truth.generator.subjects.MyMapSubject;
 import io.stubbs.truth.generator.subjects.MyStringSubject;
@@ -18,7 +19,6 @@ import java.util.Optional;
 import java.util.Set;
 
 import static com.google.common.truth.Truth.assertThat;
-import static io.stubbs.truth.generator.TestModelUtils.findMethod;
 
 /**
  * Not possible to unwrap an Optional<TYPE> return type for a class with type parameters. Can only do so with a subtype
@@ -144,7 +144,7 @@ public class OptionalUnwrapChainForGenericTypeArgsTest {
 
 
     private <T> GeneratedSubjectTypeStore.ResolvedPair testResolution(Class<T> classType, String methodName, Class<?> expectedReturnType) {
-        Method getIterationStartingPoint = findMethod(classType, methodName);
+        Method getIterationStartingPoint = TestModelUtils.findMethodWithNoParamsJReflect(classType, methodName);
 
         ThreeSystem<T> myEmployeeThreeSystem = new ThreeSystem<T>(classType, null, null, null);
 

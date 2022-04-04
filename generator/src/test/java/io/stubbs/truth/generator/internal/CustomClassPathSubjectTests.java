@@ -1,5 +1,6 @@
 package io.stubbs.truth.generator.internal;
 
+import com.google.common.truth.Subject;
 import io.stubbs.truth.generator.TestModelUtils;
 import io.stubbs.truth.generator.subjects.MyMapSubject;
 import io.stubbs.truth.generator.testModel.MyEmployee;
@@ -10,14 +11,18 @@ import java.lang.reflect.Method;
 import java.util.Map;
 import java.util.Set;
 
-import static com.google.common.truth.Truth.assertThat;
+import static com.google.common.truth.Truth8.assertThat;
 
-public class CustomClassPathSubjects {
+public class CustomClassPathSubjectTests {
 
     GeneratedSubjectTypeStore subjects = new GeneratedSubjectTypeStore(Set.of(), new BuiltInSubjectTypeStore());
 
     /**
+     * Checks that {@link Subject} subtypes are found and added to the Subject graph for inclusion into the assertion
+     * chains.
+     *
      * @see MyEmployee#getTypeParamTest()
+     * @see MyMapSubject
      */
     @Test
     public void subclass() {
@@ -28,6 +33,6 @@ public class CustomClassPathSubjects {
         //
         Method getProjectMap = TestModelUtils.findMethodWithNoParamsJReflect(MyEmployee.class, "getProjectMap");
         var subjectForType = subjects.getSubjectForType(getProjectMap.getReturnType());
-        assertThat(subjectForType.get().getClazz()).isEqualTo(MyMapSubject.class);
+        assertThat(subjectForType).hasValue(MyMapSubject.class);
     }
 }

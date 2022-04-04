@@ -76,31 +76,31 @@ public class JDKOverrideAnalyser {
     }
 
 
-    @SneakyThrows
-    @Nullable
-    protected ClassFile getClassFileEclipse(int platformNumber, Class<?> clazz) {
-        String platformName = Integer.toString(platformNumber);
+    /**
+     * JA - using JavaAssist
+     *
+     * @see ClassFile
+     * @see MethodInfo
+     */
+    public static Optional<MethodInfo> findMethodJA(ClassFile classRepresentation, String methodName, int paramCount) {
+        return classRepresentation.getMethods().stream()
+                .filter(x -> {
+                    if (x.getName().equals(methodName)) {
 
-        String qualifiedSigFilename = clazz.getTypeName().replace('.', '/') + ".sig";
+                        List<AttributeInfo> attributes = x.getAttributes();
 
-        String releaseCode = CtSym.getReleaseCode(platformName);
+                        if (attributes.isEmpty() && paramCount == 0) {
+                            return true;
+                        }
 
-        Module module = clazz.getModule();
-        Optional<Path> fullPath = Optional.ofNullable(ctSym.getFullPath(releaseCode, qualifiedSigFilename, module.getName()));
-        if (fullPath.isEmpty()) {
-            // Zulu 11 VM on GitHub shows this issue, however zulu vm 11 on local machine works fine... so..?
-            log.error("Lookup for {} {} with Module {} specified failed, will try without module", clazz, qualifiedSigFilename, module);
-            fullPath = Optional.ofNullable(ctSym.getFullPath(releaseCode, qualifiedSigFilename, null));
-        }
+                        String descriptor = x.getDescriptor();
+                        String params = StringUtils.substringBetween(descriptor, "(", ")");
+                        int hackyParamCount = StringUtils.countMatches(params, ';');
+                        return hackyParamCount == paramCount;
 
-        if (fullPath.isEmpty()) {
-            log.info("ct.sym look up failed for class {} in jdk version {}, name {}, module {}, with sig address {}", clazz, platformNumber, platformName, module, qualifiedSigFilename);
-            debugCtSymEntries(clazz, releaseCode);
-            return null;
-        }
-
-        byte[] fileBytes = ctSym.getFileBytes(fullPath.get());
-        return new ClassFile(new DataInputStream(new ByteArrayInputStream(fileBytes)));
+                    }
+                    return false;
+                }).findFirst();
     }
 
     /**
@@ -125,26 +125,32 @@ public class JDKOverrideAnalyser {
         return methodJA.isPresent() && AccessFlag.isPublic(methodJA.get().getAccessFlags());
     }
 
+    @SneakyThrows
+    @Nullable
+    protected ClassFile getClassFileEclipse(int platformNumber, Class<?> clazz) {
+        String platformName = Integer.toString(platformNumber);
 
-    public static Optional<MethodInfo> findMethodJA(ClassFile classRepresentation, String name, int paramCount) {
-        List<MethodInfo> methods = classRepresentation.getMethods();
-        return methods.stream().filter(x -> {
-            if (x.getName().equals(name)) {
+        String qualifiedSigFilename = clazz.getTypeName().replace('.', '/') + ".sig";
 
-                List<AttributeInfo> attributes = x.getAttributes();
+        String releaseCode = CtSym.getReleaseCode(platformName);
 
-                if (attributes.isEmpty() && paramCount == 0) {
-                    return true;
-                }
+        Module module = clazz.getModule();
+        Optional<Path> fullPath = Optional.ofNullable(ctSym.getFullPath(releaseCode, qualifiedSigFilename, module.getName()));
+        if (fullPath.isEmpty()) {
+            // Zulu 11 VM on GitHub shows this issue, however zulu vm 11 on local machine works fine... so..?
+            log.error("Lookup for {} {} with Module {} specified failed, will try without module", clazz, qualifiedSigFilename, module);
+            fullPath = Optional.ofNullable(ctSym.getFullPath(releaseCode, qualifiedSigFilename, null));
+        }
 
-                String descriptor = x.getDescriptor();
-                String params = StringUtils.substringBetween(descriptor, "(", ")");
-                int hackyParamCount = StringUtils.countMatches(params, ';');
-                return hackyParamCount == paramCount;
+        if (fullPath.isEmpty()) {
+            log.info("ct.sym look up failed for class {} in jdk version {}, name {}, module {}, with sig address {}", clazz, platformNumber, platformName, module, qualifiedSigFilename);
+            debugCtSymEntries(clazz, releaseCode);
+            return null;
+        }
 
-            }
-            return false;
-        }).findFirst();
+        // load bytes into ClassFile stub signature
+        byte[] fileBytes = ctSym.getFileBytes(fullPath.get());
+        return new ClassFile(new DataInputStream(new ByteArrayInputStream(fileBytes)));
     }
 
     public boolean isOverrideConfigured() {

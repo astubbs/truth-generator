@@ -214,7 +214,7 @@ public class SubjectMethodGenerator extends AssertionMethodStrategy {
                 "    failWithActual(fact(\"expected %s %sto be equal to\", expected));\n" +
                 "  }\n";
 
-        String testPrefix = positive ? "" : "!";
+        String testPrefix = positive ? "!" : "";
         String say = positive ? "" : "NOT ";
         String fieldName = removeStart(method.getName(), "get");
         body = format(body, testPrefix, method.getName(), equality, fieldName, say);

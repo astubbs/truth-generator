@@ -39,6 +39,7 @@ public class MyEmployee extends Person<String> {
     private Optional<Instant> startedAt = Optional.empty();
     private Map<String, Project> projectMap = new HashMap<>();
     private int[] intArray = {0, 1, 2};
+    private boolean dueToBeGivenAPromotionNextCycle = true;
 
     public MyEmployee(@Nonnull String name, long someLongAspect, @Nonnull ZonedDateTime birthday) {
         super(name, someLongAspect, birthday, Optional.of("an optional string"), "another string", Optional.empty(), Optional.empty(), Optional.empty());
@@ -76,7 +77,7 @@ public class MyEmployee extends Person<String> {
     /**
      * Primitive vs Wrapper test
      */
-    Boolean isEmployedWrapped() {
+    public Boolean isEmployedWrapped() {
         return this.employmentState == EMPLOLYED;
     }
 

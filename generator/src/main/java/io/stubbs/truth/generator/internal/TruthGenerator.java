@@ -8,12 +8,11 @@ import io.stubbs.truth.generator.internal.model.Result;
 import io.stubbs.truth.generator.internal.model.ThreeSystem;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
+import one.util.streamex.StreamEx;
 
 import java.nio.file.Path;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.logging.Level;
 import java.util.stream.Collectors;
 
@@ -24,18 +23,19 @@ import static java.util.stream.Collectors.toSet;
 /**
  * @author Antony Stubbs
  */
+@Slf4j
 public class TruthGenerator implements TruthGeneratorAPI {
 
-    private static final FluentLogger log = FluentLogger.forEnclosingClass();
+    private static final FluentLogger logger = FluentLogger.forEnclosingClass();
     private final Path testOutputDir;
     private final Options options;
-    private ClassUtils classUtils = new ClassUtils();
+    private final ClassUtils classUtils = new ClassUtils();
 
     @Setter
     @Getter
     private Optional<String> entryPoint = Optional.empty();
 
-    private BuiltInSubjectTypeStore builtInStore;
+    private final BuiltInSubjectTypeStore builtInStore;
 
     public TruthGenerator(Path testOutputDirectory, Options options) {
         Options.setInstance(options);
@@ -113,7 +113,7 @@ public class TruthGenerator implements TruthGeneratorAPI {
     private Set<Class<?>> filterSubjects(Set<Class<?>> classes, int sizeBeforeFilter) {
         // filter existing subjects from inbound set
         classes = classes.stream().filter(x -> !Subject.class.isAssignableFrom(x)).collect(toSet());
-        log.at(Level.FINE).log("Removed %s Subjects from inbound", classes.size() - sizeBeforeFilter);
+        logger.at(Level.FINE).log("Removed %s Subjects from inbound", classes.size() - sizeBeforeFilter);
         return classes;
     }
 
@@ -132,20 +132,22 @@ public class TruthGenerator implements TruthGeneratorAPI {
     }
 
     @Override
-    public Map<Class<?>, ThreeSystem<?>> generate(SourceClassSets ss) {
+    public Result generate(SourceClassSets ss) {
         RecursiveClassDiscovery rc = new RecursiveClassDiscovery();
         Result.ResultBuilder results = Result.builder();
 
         if (options.isRecursive()) {
             Set<Class<?>> referencedBuilt = rc.addReferencedIncluded(ss);
-            log.at(Level.INFO)
-                    .log("Added classes not explicitly configured: %s", referencedBuilt);
+            var reduce = StreamEx.of(referencedBuilt)
+                    .sorted(Comparator.comparing(Class::toString))
+                    .joining("\n", "\n", "");
+            log.info("Added classes not explicitly configured: {}", !referencedBuilt.isEmpty() ? reduce : "none");
             results.referencedBuilt(referencedBuilt);
         } else {
             Set<Class<?>> missing = rc.findReferencedNotIncluded(ss);
             if (!missing.isEmpty()) {
                 results.referencedNotBuild(missing);
-                log.at(Level.WARNING)
+                logger.at(Level.WARNING)
                         .log("Some referenced classes in the tree are not in the list of Subjects to be generated. " +
                                 "Consider using automatic recursive generation, or add the missing classes. " +
                                 "Otherwise your experience will be limited in places." +
@@ -202,19 +204,23 @@ public class TruthGenerator implements TruthGeneratorAPI {
         union.addAll(legacyPackageSet);
 
         if (union.isEmpty())
-            log.atWarning().log("Nothing generated. Check your settings.");
+            logger.atWarning().log("Nothing generated. Check your settings.");
 
         //
         addTests(union);
 
         // create overall entry point
         packageForEntryPoint.createOverallAccessPoints();
+        results.overallEntryPoint(packageForEntryPoint);
 
-        return union.stream().collect(Collectors.toMap(ThreeSystem::getClassUnderTest, x -> x));
+        Map<Class<?>, ThreeSystem<?>> all = union.stream().collect(Collectors.toMap(ThreeSystem::getClassUnderTest, x -> x));
+        results.all(all);
+
+        return results.build();
     }
 
     @Override
-    public Map<Class<?>, ThreeSystem<?>> generate(Set<Class<?>> classes) {
+    public Result generate(Set<Class<?>> classes) {
         Utils.requireNotEmpty(classes);
         String entrypointPackage = (this.entryPoint.isPresent())
                 ? entryPoint.get()
@@ -225,7 +231,7 @@ public class TruthGenerator implements TruthGeneratorAPI {
     }
 
     @Override
-    public Map<Class<?>, ThreeSystem<?>> generate(Class<?>... classes) {
+    public Result generate(Class<?>... classes) {
         return generate(stream(classes).collect(toSet()));
     }
 

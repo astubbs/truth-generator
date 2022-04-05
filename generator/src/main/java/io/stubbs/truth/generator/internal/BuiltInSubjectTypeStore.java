@@ -75,12 +75,15 @@ public class BuiltInSubjectTypeStore {
     }
 
     /**
-     * Base Truth subject extensions to inject into Subject tree
+     * Base Truth subject extensions to inject into Subject tree.
+     * <p>
+     * Sorted to keep any derived generated code in stable order.
      *
      * @see io.stubbs.truth.generator.BaseSubjectExtension
      */
     @Getter(AccessLevel.PRIVATE)
-    private final Map<Class<?>, Class<? extends Subject>> subjectExtensions = new HashMap<>();
+    private final SortedMap<Class<?>, Class<? extends Subject>> subjectExtensions = new TreeMap<>(Comparator.comparing(Class::getCanonicalName));
+
     private final ClassUtils classUtils = new ClassUtils();
 
     public BuiltInSubjectTypeStore() {
@@ -90,18 +93,18 @@ public class BuiltInSubjectTypeStore {
     protected void autoRegisterStandardSubjectExtension() {
         Set<Class<?>> nativeExtensions = classUtils.findNativeExtensions("io.stubbs");
         for (Class<?> nativeExtension : nativeExtensions) {
-            BaseSubjectExtension[] annotationsByType = nativeExtension.getAnnotationsByType(BaseSubjectExtension.class);
-            List<BaseSubjectExtension> list = Arrays.asList(annotationsByType);
-            Validate.isTrue(list.size() == 1, "Class must be annotated exactly once - found: %s", list);
-            BaseSubjectExtension baseSubjectExtension = list.get(0);
-            Class<?> targetClass = baseSubjectExtension.value();
-            if (Subject.class.isAssignableFrom(nativeExtension)) {
-                //noinspection unchecked - checked above as assignable from
-                Class<? extends Subject> nativeExtensionSubject = (Class<? extends Subject>) nativeExtension;
-                registerStandardSubjectExtension(targetClass, nativeExtensionSubject);
-            } else {
+
+            if (!Subject.class.isAssignableFrom(nativeExtension)) {
                 throw new GeneratorException("Class that isn't a Subject incorrectly annotation with " + BaseSubjectExtension.class);
             }
+
+            List<BaseSubjectExtension> annotationsByType = Arrays.asList(nativeExtension.getAnnotationsByType(BaseSubjectExtension.class));
+            Validate.isTrue(annotationsByType.size() == 1, "Class must be annotated exactly once - found: %s", annotationsByType);
+            BaseSubjectExtension baseSubjectExtension = annotationsByType.get(0);
+            Class<?> targetClass = baseSubjectExtension.value();
+            //noinspection unchecked - checked above as assignable from
+            Class<? extends Subject> nativeExtensionSubject = (Class<? extends Subject>) nativeExtension;
+            registerStandardSubjectExtension(targetClass, nativeExtensionSubject);
         }
     }
 
@@ -179,7 +182,14 @@ public class BuiltInSubjectTypeStore {
         return getSubjectExtensions().containsValue(subjectClass);
     }
 
-    public Class<? extends Subject> getSubjectExtensions(Class<?> type) {
-        return getSubjectExtensions().get(type);
+    public Optional<Class<? extends Subject>> getSubjectExtensions(Class<?> type) {
+        var classStream = getSubjectExtensions().entrySet().stream()
+                .filter(x -> x.getKey().isAssignableFrom(type))
+                .findFirst();
+        return classStream.map(Map.Entry::getValue);
+    }
+
+    public SortedMap<Class<?>, Class<? extends Subject>> getAllSubjectExtensions() {
+        return getSubjectExtensions();
     }
 }

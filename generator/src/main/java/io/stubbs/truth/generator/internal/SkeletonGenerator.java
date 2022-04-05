@@ -1,10 +1,8 @@
 package io.stubbs.truth.generator.internal;
 
-import com.google.common.base.Joiner;
 import com.google.common.flogger.FluentLogger;
 import com.google.common.truth.FailureMetadata;
 import com.google.common.truth.Subject;
-import com.google.common.truth.Truth;
 import io.stubbs.truth.generator.UserManagedTruth;
 import io.stubbs.truth.generator.internal.model.MiddleClass;
 import io.stubbs.truth.generator.internal.model.ParentClass;
@@ -48,6 +46,8 @@ public class SkeletonGenerator implements SkeletonGeneratorAPI {
     @Setter
     private boolean legacyMode = false;
 
+    private final AssertionEntryPointGenerator aepg = new AssertionEntryPointGenerator();
+
     public SkeletonGenerator(Optional<String> targetPackageName, OverallEntryPoint overallEntryPoint, BuiltInSubjectTypeStore subjectTypeStore) {
         this.targetPackageName = targetPackageName;
         this.overallEntryPoint = overallEntryPoint;
@@ -70,7 +70,7 @@ public class SkeletonGenerator implements SkeletonGeneratorAPI {
         // make parent - boilerplate access
         ParentClass parent = createParent(source);
 
-        String factoryMethodName = Utils.getFactoryName(source);
+        String factoryMethodName = Utils.createFactoryName(source);
 
         // make child - client code entry point
         JavaClassSource child = createChild(parent, usersMiddleClass.getName(), source, factoryMethodName);
@@ -96,7 +96,7 @@ public class SkeletonGenerator implements SkeletonGeneratorAPI {
         MiddleClass middle = createMiddleUserTemplate(parent.getGenerated(), clazzUnderTest);
         this.middle = middle;
 
-        String factoryName = Utils.getFactoryName(clazzUnderTest);
+        String factoryName = Utils.createFactoryName(clazzUnderTest);
         JavaClassSource child = createChild(parent, middle.getSimpleName(), clazzUnderTest, factoryName);
 
         return of(new ThreeSystem<>(clazzUnderTest, parent, middle, child));
@@ -126,7 +126,7 @@ public class SkeletonGenerator implements SkeletonGeneratorAPI {
 
         middle.addAnnotation(UserManagedTruth.class).setClassValue(source);
 
-        MethodSource factory = addFactoryAccesor(source, middle, source.getSimpleName());
+        MethodSource factory = aepg.addFactoryAccessor(source, middle, source.getSimpleName());
 
         addGeneratedMarker(middle);
 
@@ -146,32 +146,6 @@ public class SkeletonGenerator implements SkeletonGeneratorAPI {
         } catch (ClassNotFoundException e) {
             return empty();
         }
-    }
-
-    private <T> MethodSource<JavaClassSource> addFactoryAccesor(Class<T> source, JavaClassSource javaClass, String sourceName) {
-        String factoryName = Utils.getFactoryName(source);
-        if (containsMethodCalled(javaClass, factoryName)) {
-            return getMethodCalled(javaClass, factoryName);
-        } else {
-            // factory accessor
-            String returnType = getTypeWithGenerics(Subject.Factory.class, javaClass.getName(), sourceName);
-            MethodSource<JavaClassSource> factory = javaClass.addMethod()
-                    .setName(factoryName)
-                    .setPublic()
-                    .setStatic(true)
-                    // todo replace with something other than the string method - I suppose it's not possible to do generics type safely
-                    .setReturnType(returnType)
-                    .setBody("return " + javaClass.getName() + "::new;");
-            JavaDocSource<MethodSource<JavaClassSource>> factoryDocs = factory.getJavaDoc();
-            factoryDocs.setText("Returns an assertion builder for a {@link " + sourceName + "} class.");
-            return factory;
-        }
-    }
-
-    private String getTypeWithGenerics(Class<?> factoryClass, String... classes) {
-        String genericsList = Joiner.on(", ").skipNulls().join(classes);
-        String generics = new StringBuilder("<>").insert(1, genericsList).toString();
-        return factoryClass.getSimpleName() + generics;
     }
 
     @Override
@@ -197,7 +171,7 @@ public class SkeletonGenerator implements SkeletonGeneratorAPI {
 
         addConstructor(clazzUnderTest, javaClass, true);
 
-        MethodSource<JavaClassSource> factory = addFactoryAccesor(clazzUnderTest, javaClass, sourceName);
+        MethodSource<JavaClassSource> factory = aepg.addFactoryAccessor(clazzUnderTest, javaClass, sourceName);
 
         addAccessPoints(clazzUnderTest, javaClass, factory.getName(), javaClass.getQualifiedName());
 
@@ -318,9 +292,9 @@ public class SkeletonGenerator implements SkeletonGeneratorAPI {
     private <T> void addAccessPoints(Class<T> source, JavaClassSource javaClass,
                                      String factoryMethod,
                                      String factoryContainerQualifiedName) {
-        MethodSource<JavaClassSource> assertThat = addAssertThat(source, javaClass, factoryMethod, factoryContainerQualifiedName);
+        MethodSource<JavaClassSource> assertThat = aepg.addAssertThat(source, javaClass, factoryMethod, factoryContainerQualifiedName);
 
-        addAssertTruth(source, javaClass, assertThat);
+        aepg.addAssertTruth(source, javaClass, assertThat);
     }
 
     private void addGeneratedMarker(final JavaClassSource javaClass) {
@@ -352,61 +326,9 @@ public class SkeletonGenerator implements SkeletonGeneratorAPI {
         addGeneratedMarker(javaClass);
     }
 
-    private <T> MethodSource<JavaClassSource> addAssertThat(Class<T> source,
-                                                            JavaClassSource javaClass,
-                                                            String factoryMethodName,
-                                                            String factoryContainerQualifiedName) {
-        String methodName = "assertThat";
-        if (containsMethodCalled(javaClass, methodName)) {
-            return getMethodCalled(javaClass, methodName);
-        } else {
-            // entry point
-            MethodSource<JavaClassSource> assertThat = javaClass.addMethod()
-                    .setName(methodName)
-                    .setPublic()
-                    .setStatic(true)
-                    .setReturnType(factoryContainerQualifiedName);
-            assertThat.addParameter(source, "actual");
-            //         return assertAbout(things()).that(actual);
-            // add explicit static reference for now - see below
-            javaClass.addImport(factoryContainerQualifiedName + ".*")
-                    .setStatic(true);
-            String entryPointBody = "return Truth.assertAbout(" + factoryMethodName + "()).that(actual);";
-            assertThat.setBody(entryPointBody);
-            javaClass.addImport(Truth.class);
-            assertThat.getJavaDoc().setText("Entry point for {@link " + source.getSimpleName() + "} assertions.");
-            return assertThat;
-        }
-    }
-
-    private <T> void addAssertTruth(Class<T> source, JavaClassSource javaClass, MethodSource<JavaClassSource> assertThat) {
-        String name = "assertTruth";
-        if (!containsMethodCalled(javaClass, name)) {
-            // convenience entry point when being mixed with other "assertThat" assertion libraries
-            MethodSource<JavaClassSource> assertTruth = javaClass.addMethod()
-                    .setName(name)
-                    .setPublic()
-                    .setStatic(true)
-                    .setReturnType(assertThat.getReturnType());
-            assertTruth.addParameter(source, "actual");
-            assertTruth.setBody("return " + assertThat.getName() + "(actual);");
-            assertTruth.getJavaDoc().setText("Convenience entry point for {@link " + source.getSimpleName() + "} assertions when being " +
-                            "mixed with other \"assertThat\" assertion libraries.")
-                    .addTagValue("@see", "#assertThat");
-        }
-    }
-
     private void addClassExtension(final Class<?> clazzUnderTest, JavaClassSource javaClass) {
         Class<?> bestSubject = findBestSubjectToExtend(clazzUnderTest);
         javaClass.extendSuperType(bestSubject);
-    }
-
-    private boolean containsMethodCalled(JavaClassSource javaClass, String factoryName) {
-        return javaClass.getMethods().stream().anyMatch(x -> x.getName().equals(factoryName));
-    }
-
-    private MethodSource<JavaClassSource> getMethodCalled(JavaClassSource javaClass, String methodName) {
-        return javaClass.getMethods().stream().filter(x -> x.getName().equals(methodName)).findFirst().get();
     }
 
     private Class<?> findBestSubjectToExtend(Class<?> clazzUnderTest) {

@@ -3,17 +3,21 @@ package io.stubbs.truth.generator.internal;
 import com.google.common.io.Resources;
 import com.google.common.truth.Correspondence;
 import com.google.common.truth.ObjectArraySubject;
+import com.google.common.truth.Truth;
 import io.stubbs.truth.generator.SourceClassSets;
 import io.stubbs.truth.generator.TestModelUtils;
 import io.stubbs.truth.generator.TruthGeneratorAPI;
+import io.stubbs.truth.generator.internal.model.Result;
 import io.stubbs.truth.generator.internal.model.ThreeSystem;
 import io.stubbs.truth.generator.internal.modelSubjectChickens.ThreeSystemChildSubject;
+import io.stubbs.truth.generator.shaded.org.jboss.forge.roaster.model.sourceChickens.JavaClassSourceSubject;
 import io.stubbs.truth.generator.subjects.MyMapSubject;
 import io.stubbs.truth.generator.subjects.MyStringSubject;
 import io.stubbs.truth.generator.testModel.IdCard;
 import io.stubbs.truth.generator.testModel.MyEmployee;
 import io.stubbs.truth.generator.testModel.Project;
 import io.stubbs.truth.generator.testing.legacy.NonBeanLegacy;
+import lombok.SneakyThrows;
 import org.jboss.forge.roaster.model.Method;
 import org.jboss.forge.roaster.model.Type;
 import org.jboss.forge.roaster.model.source.JavaClassSource;
@@ -84,7 +88,9 @@ public class TruthGeneratorTest {
         ss.generateFrom(packageForEntryPoint, UUID.class);
         ss.generateFromShaded(ZoneId.class, ZonedDateTime.class, Chronology.class);
 
-        Map<Class<?>, ThreeSystem<?>> generated = truthGenerator.generate(ss);
+
+        Result generate = truthGenerator.generate(ss);
+        Map<Class<?>, ThreeSystem<?>> generated = generate.getAll();
 
         assertThat(generated.size()).isAtLeast(classes.size());
         Set<? extends Class<?>> generatedSourceClasses = generated.values().stream().map(x -> x.classUnderTest).collect(Collectors.toSet());
@@ -114,8 +120,37 @@ public class TruthGeneratorTest {
 
         String expected2 = loadFileToString("expected/MyEmployeeChildSubject.java.txt");
         assertThat(threeSystemGenerated).hasChildSource(expected2);
-
     }
+
+    @SneakyThrows
+    @Test
+    public void generatedManagedEntryPoint() {
+        TruthGenerator truthGenerator = TruthGeneratorAPI.create(testOutputDirectory, Options.builder().build());
+
+        String packageForEntryPoint = getClass().getPackage().getName();
+        SourceClassSets ss = new SourceClassSets(packageForEntryPoint);
+
+        ss.generateFrom(MyEmployee.class);
+
+        Result generate = truthGenerator.generate(ss);
+
+        OverallEntryPoint overallEntryPoint = generate.getOverallEntryPoint();
+
+        JavaClassSource generated = overallEntryPoint.getGenerated();
+
+        String actual = generated.toString();
+        assertThat(actual).contains("collections()).that");
+        assertThat(actual).contains("maps()).that");
+        assertThat(actual).contains("strings()).that");
+
+        String expected = loadFileToString("expected/ManagedTruth.java.txt");
+        Truth.assertAbout(JavaClassSourceSubject.javaClassSources())
+                .that(generated)
+                .hasSourceText()
+                .ignoringTrailingWhiteSpace()
+                .equalTo(expected);
+    }
+
 
     private String loadFileToString(String expectedFileName) throws IOException {
         return Resources.toString(Resources.getResource(expectedFileName), Charset.defaultCharset());
@@ -146,7 +181,7 @@ public class TruthGeneratorTest {
         ss.generateFrom(targetPackageName, UUID.class);
         ss.generateFromShaded(ZoneId.class, ZonedDateTime.class, Chronology.class);
 
-        var generated = tg.generate(ss);
+        var generated = tg.generate(ss).getAll();
         assertThat(generated.size()).isAtLeast(ss.getTargetPackageAndClasses().size());
     }
 
@@ -158,7 +193,7 @@ public class TruthGeneratorTest {
                 .build());
         SourceClassSets ss = new SourceClassSets(this.getClass().getPackage().getName() + ".legacy");
         ss.generateFromNonBean(NonBeanLegacy.class);
-        var generated = tg.generate(ss);
+        var generated = tg.generate(ss).getAll();
 
         assertThat(generated).containsKey(NonBeanLegacy.class);
         ThreeSystem actual = generated.get(NonBeanLegacy.class);
@@ -174,7 +209,7 @@ public class TruthGeneratorTest {
     @Test
     public void recursive_generation() {
         TruthGenerator tg = TruthGeneratorAPI.createDefaultOptions(testOutputDirectory);
-        var generate = tg.generate(MyEmployee.class);
+        var generate = tg.generate(MyEmployee.class).getAll();
 
         //
         assertThat(generate).containsKey(MyEmployee.class);
@@ -207,7 +242,7 @@ public class TruthGeneratorTest {
         tg.setEntryPoint(of(basePackage));
 
         Class<UUID> clazz = UUID.class;
-        var generate = tg.generate(clazz);
+        var generate = tg.generate(clazz).getAll();
 
         //
         assertThat(generate).containsKey(clazz);
@@ -224,7 +259,7 @@ public class TruthGeneratorTest {
     @Test
     public void toers() {
         TruthGenerator tg = TruthGeneratorAPI.createDefaultOptions(testOutputDirectory);
-        var generate = tg.generate(MyEmployee.class);
+        var generate = tg.generate(MyEmployee.class).getAll();
         ThreeSystem threeSystem = generate.get(MyEmployee.class);
         assertThat(threeSystem).hasParent().hasGenerated().hasMethods().comparingElementsUsing(methodHasName)
                 .contains("hasToPlainPerson");
@@ -239,7 +274,7 @@ public class TruthGeneratorTest {
     public void toArrays() {
         // would like to use generated truth subjects here, but don't want to have to copy in too many things, until the plugin is boot-strapable
         TruthGenerator tg = TruthGeneratorAPI.createDefaultOptions(testOutputDirectory);
-        var generate = tg.generate(MyEmployee.class);
+        var generate = tg.generate(MyEmployee.class).getAll();
         ThreeSystem threeSystem = generate.get(MyEmployee.class);
         ThreeSystemChildSubject.assertThat(threeSystem).hasParent().hasGenerated().hasMethods().comparingElementsUsing(methodHasName)
                 .containsAtLeast("hasToProjectObjectArray", "hasToStateArray");
@@ -256,7 +291,7 @@ public class TruthGeneratorTest {
         Options.OptionsBuilder recursive = Options.builder().recursive(false);// speed
         TruthGenerator tg = TruthGeneratorAPI.create(testOutputDirectory, recursive.build());
 
-        var generate = tg.generate(MyEmployee.class);
+        var generate = tg.generate(MyEmployee.class).getAll();
         ThreeSystem threeSystem = generate.get(MyEmployee.class);
         JavaClassSource generated = threeSystem.getParent().getGenerated();
 
@@ -298,7 +333,7 @@ public class TruthGeneratorTest {
         tgApi.registerStandardSubjectExtension(Map.class, MyMapSubject.class);
 
         //
-        var generate = tg.generate(MyEmployee.class);
+        var generate = tg.generate(MyEmployee.class).getAll();
 
         //
         ThreeSystem<?> threeSystem = generate.get(MyEmployee.class);

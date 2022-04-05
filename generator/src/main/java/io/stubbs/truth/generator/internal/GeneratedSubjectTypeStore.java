@@ -85,9 +85,9 @@ public class GeneratedSubjectTypeStore {
             String nameOfType, // todo redundant? and smelly
             Class<?> type) {
         // explicit extensions take priority
-        Class<? extends Subject> extension = this.builtInSubjectTypeStore.getSubjectExtensions(type);
-        if (extension != null)
-            return SubjectMethodGenerator.ClassOrGenerated.ofClass(extension);
+        var extension = this.builtInSubjectTypeStore.getSubjectExtensions(type);
+        if (extension.isPresent())
+            return SubjectMethodGenerator.ClassOrGenerated.ofClass(extension.get());
 
         //
         Optional<SubjectMethodGenerator.ClassOrGenerated> subject = getGeneratedOrCompiledSubjectFromString(nameOfType);

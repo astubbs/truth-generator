@@ -22,7 +22,7 @@ public class SkeletonGeneratorTest {
         TruthGenerator tg = TruthGeneratorAPI.createDefaultOptions(testOutputDirectory);
         SourceClassSets ss = new SourceClassSets(getClass().getPackage().getName());
         ss.generateFrom(Instant.class);
-        var generate = tg.generate(ss);
+        var generate = tg.generate(ss).getAll();
         ThreeSystem<?> threeSystem = generate.get(Instant.class);
         assertThat(threeSystem).hasParent().hasGenerated().hasSourceText().contains("InstantParentSubject extends ComparableSubject");
     }
@@ -32,7 +32,7 @@ public class SkeletonGeneratorTest {
         TruthGenerator tg = TruthGeneratorAPI.createDefaultOptions(testOutputDirectory);
         SourceClassSets ss = new SourceClassSets(getClass().getPackage().getName());
         ss.generateFrom(MyEmployee.class);
-        var generate = tg.generate(ss);
+        var generate = tg.generate(ss).getAll();
 
         {
             var threeSystem = generate.get(MyEmployee.class);

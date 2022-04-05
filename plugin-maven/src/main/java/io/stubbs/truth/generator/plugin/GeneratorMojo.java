@@ -5,6 +5,7 @@ import io.stubbs.truth.generator.TruthGeneratorAPI;
 import io.stubbs.truth.generator.internal.Options;
 import io.stubbs.truth.generator.internal.TruthGenerator;
 import io.stubbs.truth.generator.internal.Utils;
+import io.stubbs.truth.generator.internal.model.Result;
 import io.stubbs.truth.generator.internal.model.ThreeSystem;
 import lombok.Getter;
 import lombok.SneakyThrows;
@@ -206,7 +207,8 @@ public class GeneratorMojo extends AbstractMojo {
         ss.generateFromNonBean(projectClassLoader, legacyClasses);
         ss.generateAllFoundInPackages(getPackages());
 
-        Map<Class<?>, ThreeSystem<?>> generated = tg.generate(ss);
+        Result generate = tg.generate(ss);
+        Map<Class<?>, ThreeSystem<?>> generated = generate.getAll();
 
         return generated;
     }

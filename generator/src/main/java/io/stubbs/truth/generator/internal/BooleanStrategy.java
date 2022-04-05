@@ -2,6 +2,7 @@ package io.stubbs.truth.generator.internal;
 
 import io.stubbs.truth.generator.internal.model.ThreeSystem;
 import lombok.extern.slf4j.Slf4j;
+import one.util.streamex.StreamEx;
 import org.apache.commons.lang3.StringUtils;
 import org.jboss.forge.roaster.model.source.JavaClassSource;
 import org.jboss.forge.roaster.model.source.MethodSource;
@@ -35,7 +36,7 @@ public class BooleanStrategy extends AssertionMethodStrategy {
                 "    failWithActual(simpleFact(\"expected %sto be %s\"));\n" +
                 "  }\n";
 
-        String noun = StringUtils.remove(method.getName(), "is");
+        String noun = buildNoun(method);
 
         body = format(body, testPrefix, method.getName(), say, noun);
 
@@ -59,6 +60,18 @@ public class BooleanStrategy extends AssertionMethodStrategy {
             log.warn("Method name collision, skipping adding boolean generic for {}", methodName);
             return Optional.empty();
         }
+    }
+
+    protected String buildNoun(Method method) {
+        String noun = StringUtils.remove(method.getName(), "is");
+
+        String[] camels = StringUtils.splitByCharacterTypeCamelCase(noun);
+
+        noun = StreamEx.of(camels)
+                .map(String::toLowerCase)
+                .joining(" ", "'", "'") + " (`" + noun + "`)";
+
+        return noun;
     }
 
 }

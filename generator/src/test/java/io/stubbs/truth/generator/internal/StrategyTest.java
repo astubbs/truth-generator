@@ -19,8 +19,8 @@ public abstract class StrategyTest {
     }
 
     JavaClassSource generated = Roaster.create(JavaClassSource.class);
-    MyEmployee employee = TestModelUtils.createEmployee();
-    Class<? extends MyEmployee> employeeClass = employee.getClass();
+    MyEmployee myEmployee = TestModelUtils.createEmployee();
+    Class<? extends MyEmployee> employeeClass = myEmployee.getClass();
     BuiltInSubjectTypeStore builtInSubjectTypeStore = new BuiltInSubjectTypeStore();
 
     protected <T> ThreeSystem<T> createThreeSystem(Class<T> clazzUnderTest) {

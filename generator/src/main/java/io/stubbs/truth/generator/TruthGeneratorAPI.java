@@ -3,10 +3,9 @@ package io.stubbs.truth.generator;
 import com.google.common.truth.Subject;
 import io.stubbs.truth.generator.internal.Options;
 import io.stubbs.truth.generator.internal.TruthGenerator;
-import io.stubbs.truth.generator.internal.model.ThreeSystem;
+import io.stubbs.truth.generator.internal.model.Result;
 
 import java.nio.file.Path;
-import java.util.Map;
 import java.util.Set;
 
 /**
@@ -65,17 +64,18 @@ public interface TruthGeneratorAPI {
      * <p>
      * There are many different ways to add, check out the different methods in {@link SourceClassSets}.
      *
+     * @return
      * @see SourceClassSets
      */
-    Map<Class<?>, ThreeSystem<?>> generate(SourceClassSets ss);
+    Result generate(SourceClassSets ss);
 
     /**
      * @param classes
      * @return
      */
-    Map<Class<?>, ThreeSystem<?>> generate(Set<Class<?>> classes);
+    Result generate(Set<Class<?>> classes);
 
-    Map<Class<?>, ThreeSystem<?>> generate(Class<?>... classes);
+    Result generate(Class<?>... classes);
 
     /**
      * Manually register extensions to base Subject types - i.e. extend StringSubject with your own features. These will

@@ -13,7 +13,7 @@ import java.util.Map;
 @BaseSubjectExtension(Map.class)
 public class MyMapSubject extends MapSubject {
 
-    private final Map<?, ?> actual;
+    protected final Map<?, ?> actual;
 
     @SubjectFactoryMethod
     public static Factory<MyMapSubject, Map<?, ?>> maps() {

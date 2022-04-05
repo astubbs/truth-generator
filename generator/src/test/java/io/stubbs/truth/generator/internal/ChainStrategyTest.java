@@ -7,6 +7,7 @@ import io.stubbs.truth.generator.internal.model.ParentClass;
 import io.stubbs.truth.generator.internal.model.ThreeSystem;
 import io.stubbs.truth.generator.internal.modelSubjectChickens.ThreeSystemChildSubject;
 import io.stubbs.truth.generator.testModel.MyEmployee;
+import io.stubbs.truth.generator.testModel.Project;
 import lombok.Data;
 import org.apache.commons.lang3.StringUtils;
 import org.jboss.forge.roaster.Roaster;
@@ -16,6 +17,7 @@ import org.junit.Test;
 import java.lang.reflect.Method;
 import java.time.Instant;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
@@ -183,6 +185,23 @@ public class ChainStrategyTest extends StrategyTest {
     class BadGenerics {
         @SuppressWarnings("rawtypes")
         Optional genericsMissing;
+    }
+
+    @Test
+    public void chainSubtype() {
+        MyEmployee employee = TestModelUtils.createEmployee();
+        List<Project> projectList = employee.getProjectList();
+
+        var threeSystem = createThreeSystem(MyEmployee.class);
+        GeneratedSubjectTypeStore subjects = new GeneratedSubjectTypeStore(Set.of(threeSystem), builtInSubjectTypeStore);
+
+        strat = new ChainStrategy(subjects);
+
+        Method method = getMethod(employeeClass, "getProjectList");
+
+        var source = strat.addChainStrategy(threeSystem, method, this.generated).toString();
+
+        assertThat(source).contains("about(collections()).that");
     }
 
 }

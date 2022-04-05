@@ -27,7 +27,8 @@ import java.util.Optional;
 import io.stubbs.truth.generator.internal.autoShaded.java.util.OptionalSubject;
 import static io.stubbs.truth.generator.subjects.MyStringSubject.strings;
 import static io.stubbs.truth.generator.subjects.MyStringSubject.strings;
-import com.google.common.truth.IterableSubject;
+import static io.stubbs.truth.generator.subjects.MyCollectionSubject.collections;
+import io.stubbs.truth.generator.subjects.MyCollectionSubject;
 import java.util.List;
 import static io.stubbs.truth.generator.subjects.MyMapSubject.maps;
 import io.stubbs.truth.generator.subjects.MyMapSubject;
@@ -407,9 +408,9 @@ public class MyEmployeeParentSubject extends Subject {
 	 * Returns the Subject for the given field type, so you can chain on other
 	 * assertions.
 	 */
-	public IterableSubject hasProjectList() {
+	public MyCollectionSubject hasProjectList() {
 		isNotNull();
-		return check("getProjectList()").that(actual.getProjectList());
+		return check("getProjectList()").about(collections()).that(actual.getProjectList());
 	}
 	/**
 	 * Checks if a {@link Project} element is, or is not contained in the

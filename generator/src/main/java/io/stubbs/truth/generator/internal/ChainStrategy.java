@@ -68,7 +68,7 @@ public class ChainStrategy extends AssertionMethodStrategy {
 
         if (optionalUnwrap) {
             String name = capitalize(removeStart(method.getName(), "get"));
-            body.append("has" + name + "Present();\n");
+            body.append("has").append(name).append("Present();\n");
         }
 
         String check = format("return check(\"%s()", method.getName());
@@ -86,8 +86,11 @@ public class ChainStrategy extends AssertionMethodStrategy {
         boolean needsAboutCall = notPrimitive && !isCoveredByNonPrimitiveStandardSubjects || isAnExtendedSubject;
 
         if (needsAboutCall || subjectClass.isGenerated()) {
-            String aboutName;
-            aboutName = Utils.getFactoryName(returnType); // take a guess
+
+            var aboutName = subjectClass.isGenerated() ?
+                    Utils.createFactoryName(returnType) : // take a guess
+                    Utils.findFactoryMethod(subjectClass.getClazz()).getName();
+
             body.append(format(".about(%s())", aboutName));
 
             // import

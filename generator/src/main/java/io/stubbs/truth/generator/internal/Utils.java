@@ -1,6 +1,8 @@
 package io.stubbs.truth.generator.internal;
 
+import io.stubbs.truth.generator.SubjectFactoryMethod;
 import io.stubbs.truth.generator.UserManagedTruth;
+import org.apache.commons.lang3.reflect.MethodUtils;
 import org.atteo.evo.inflector.English;
 import org.jboss.forge.roaster.model.source.JavaClassSource;
 import org.slf4j.helpers.MessageFormatter;
@@ -8,6 +10,7 @@ import org.slf4j.helpers.MessageFormatter;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
+import java.lang.reflect.Method;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.Optional;
@@ -76,7 +79,7 @@ public class Utils {
         return testOutputDir.resolve(Utils.DIR_TRUTH_ASSERTIONS_TEMPLATES);
     }
 
-    public static <T> String getFactoryName(Class<T> source) {
+    public static <T> String createFactoryName(Class<T> source) {
         String simpleName = source.getSimpleName();
         String plural = English.plural(simpleName);
         String normal = toLowerCaseFirstLetter(plural);
@@ -113,4 +116,16 @@ public class Utils {
         return MessageFormatter.arrayFormat(s, args).getMessage();
     }
 
+    public static Method findFactoryMethod(Class<?> subjectClass) {
+        List<Method> factoryMethods = MethodUtils.getMethodsListWithAnnotation(subjectClass, SubjectFactoryMethod.class);
+        if (factoryMethods.size() > 1) {
+            throw new TruthGeneratorRuntimeException(msg("Subject class {} has too many ({}) methods annotated with {} - there can be only one.",
+                    subjectClass, factoryMethods.size(), SubjectFactoryMethod.class));
+        }
+        Optional<Method> first = factoryMethods.stream().findFirst();
+        if (first.isEmpty()) {
+            throw new TruthGeneratorRuntimeException(msg("Subject {} is missing {}.", subjectClass, SubjectFactoryMethod.class));
+        }
+        return first.get();
+    }
 }

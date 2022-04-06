@@ -136,7 +136,7 @@ public class TruthGeneratorTest {
 
         OverallEntryPoint overallEntryPoint = generate.getOverallEntryPoint();
 
-        JavaClassSource generated = overallEntryPoint.getGenerated();
+        JavaClassSource generated = overallEntryPoint.getOverallEntryPointGenerated();
 
         String actual = generated.toString();
         assertThat(actual).contains("collections()).that");
@@ -151,6 +151,34 @@ public class TruthGeneratorTest {
                 .equalTo(expected);
     }
 
+    @SneakyThrows
+    @Test
+    public void generatedManagedSubjectBuilder() {
+        TruthGenerator truthGenerator = TruthGeneratorAPI.create(testOutputDirectory, Options.builder().build());
+
+        String packageForEntryPoint = getClass().getPackage().getName();
+        SourceClassSets ss = new SourceClassSets(packageForEntryPoint);
+
+        ss.generateFrom(MyEmployee.class);
+
+        Result generate = truthGenerator.generate(ss);
+
+        OverallEntryPoint overallEntryPoint = generate.getOverallEntryPoint();
+
+        JavaClassSource generated = overallEntryPoint.getManagedSubjectBuildlerGenerated();
+
+//        String actual = generated.toString();
+//        assertThat(actual).contains("collections()).that");
+//        assertThat(actual).contains("maps()).that");
+//        assertThat(actual).contains("strings()).that");
+
+        String expected = loadFileToString("expected/ManagedSubjectBuilder.java.txt");
+        Truth.assertAbout(JavaClassSourceSubject.javaClassSources())
+                .that(generated)
+                .hasSourceText()
+                .ignoringTrailingWhiteSpace()
+                .equalTo(expected);
+    }
 
     private String loadFileToString(String expectedFileName) throws IOException {
         return Resources.toString(Resources.getResource(expectedFileName), Charset.defaultCharset());

@@ -128,4 +128,34 @@ public class GeneratedAssertionTests {
         ManagedTruth.assertThat(emp).hasStartedAt().isGreaterThan(Instant.MIN);
     }
 
+    @Test
+    public void withMessageAboutChain() {
+        var employee = TestModelUtils.createEmployee();
+        ManagedTruth.assertWithMessage("Must not be a boss")
+                .about(MyEmployeeSubject.myEmployees())
+                .that(employee)
+                .isNotBoss();
+
+        Assertions.assertThatThrownBy(() ->
+                ManagedTruth.assertWithMessage("Acts like a boss")
+                        .about(MyEmployeeSubject.myEmployees())
+                        .that(employee)
+                        .isBoss()
+        ).hasMessageContaining("Acts like a boss");
+    }
+
+//    @Test
+//    public void withMessageChain() {
+//        var employee = TestModelUtils.createEmployee();
+//        ManagedTruth.assertWithMessage("Must not be a boss")
+//                .that(employee)
+//                .isNotBoss();
+//
+//        Assertions.assertThatThrownBy(() ->
+//                ManagedTruth.assertWithMessage("Acts like a boss")
+//                        .that(employee)
+//                        .isBoss()
+//        ).hasMessageContaining("Acts like a boss");
+//    }
+
 }

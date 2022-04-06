@@ -10,6 +10,7 @@ import org.jboss.forge.roaster.Roaster;
 import org.jboss.forge.roaster.model.Method;
 import org.jboss.forge.roaster.model.source.Import;
 import org.jboss.forge.roaster.model.source.JavaClassSource;
+import org.jboss.forge.roaster.model.source.JavaSource;
 import org.jboss.forge.roaster.model.source.MethodSource;
 
 import java.util.Comparator;
@@ -17,6 +18,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
+
+import static io.stubbs.truth.generator.internal.AssertionEntryPointGenerator.ASSERT_WITH_MESSAGE;
 
 /**
  * Creates a single convenience `ManagedTruth` class, which contains all the `assertThat` entrypoint methods.
@@ -36,7 +39,9 @@ public class OverallEntryPoint {
     private final AssertionEntryPointGenerator aepg = new AssertionEntryPointGenerator();
     private final BuiltInSubjectTypeStore builtInSubjectTypeStore = new BuiltInSubjectTypeStore();
     @Getter
-    private JavaClassSource generated;
+    private JavaClassSource overallEntryPointGenerated;
+    @Getter
+    private JavaClassSource managedSubjectBuildlerGenerated;
 
     public OverallEntryPoint(String packageForOverall) {
         if (StringUtils.isBlank(packageForOverall))
@@ -46,17 +51,39 @@ public class OverallEntryPoint {
         this.threeSystemChildSubjects = new TreeSet<>(Comparator.comparing(javaClassSource -> javaClassSource.getClassUnderTest().getCanonicalName()));
     }
 
+    public void create() {
+        createManagedSubjectBuilder();
+        createOverallAccessPoints();
+    }
+
+    private void createManagedSubjectBuilder() {
+        JavaClassSource managedSubjectBuilder = Roaster.create(JavaClassSource.class);
+        managedSubjectBuilder.setName("ManagedSubjectBuilder");
+        managedSubjectBuilder.getJavaDoc().addTagValue("see", "{@link StandardSubjectBuilder}");
+        managedSubjectBuilder.setPublic().setPackage(packageName);
+
+        for (var ts : threeSystemChildSubjects) {
+            addThatForSubject(managedSubjectBuilder, ts);
+        }
+
+        this.managedSubjectBuildlerGenerated = managedSubjectBuilder;
+
+        Utils.writeToDisk(managedSubjectBuilder);
+    }
+
     /**
      * Having collected together all the access points, creates one large class filled with access points to all of
      * them.
      * <p>
      * The overall access will throw an error if any middle classes don't correctly extend their parent.
      */
-    public void createOverallAccessPoints() {
+    protected void createOverallAccessPoints() {
         JavaClassSource overallAccess = Roaster.create(JavaClassSource.class);
         overallAccess.setName("ManagedTruth");
         overallAccess.getJavaDoc().setText("Single point of access for all managed Subjects.");
         overallAccess.setPublic().setPackage(packageName);
+
+        aepg.addWithMessage(overallAccess);
 
         addChildEntryPoints(overallAccess);
 
@@ -66,7 +93,33 @@ public class OverallEntryPoint {
 
         Utils.writeToDisk(overallAccess);
 
-        this.generated = overallAccess;
+        this.overallEntryPointGenerated = overallAccess;
+    }
+
+    /**
+     * @see com.google.common.truth.StandardSubjectBuilder#that
+     */
+    private <T> void addThatForSubject(JavaClassSource overallAccess, ThreeSystem<T> ts) {
+        //   public final LongSubject that(@Nullable Long actual) {
+        //    return new LongSubject(metadata(), actual);
+        //  }
+        MethodSource<JavaClassSource> that = overallAccess.addMethod()
+                .setName("that")
+                .setPublic();
+
+        //
+        that.addParameter(ts.classUnderTest, "actual");
+
+        //
+        JavaSource<?> subject = ts.getChild().getEnclosingType();
+        String subjectCanonicalName = subject.getCanonicalName();
+        that.setReturnType(subjectCanonicalName);
+
+        //
+        that.setBody("return new " + subjectCanonicalName + "(metadata(), actual);");
+
+        //
+        that.getJavaDoc().addTagValue("see", "{@link " + subjectCanonicalName + "}");
     }
 
     private void addChildEntryPoints(JavaClassSource overallAccess) {
@@ -75,8 +128,8 @@ public class OverallEntryPoint {
             var child = ts.getChild();
 
             List<MethodSource<JavaClassSource>> methods = child.getMethods();
-            for (Method m : methods) {
-                if (!m.isConstructor())
+            for (Method<?, ?> m : methods) {
+                if (!m.isConstructor() && !m.getName().equals(ASSERT_WITH_MESSAGE))
                     overallAccess.addMethod(m);
             }
             // this seems like overkill, but at least in the child style case, there's very few imports - even

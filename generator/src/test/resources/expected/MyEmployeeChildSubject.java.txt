@@ -39,4 +39,16 @@ public class MyEmployeeChildSubject extends MyEmployeeSubject {
 	public static MyEmployeeSubject assertTruth(io.stubbs.truth.generator.testModel.MyEmployee actual) {
 		return assertThat(actual);
 	}
+	/**
+	 * see {@link Truth#assertWithMessage}
+	 */
+	static public ManagedSubjectBuilder assertWithMessage(java.lang.String messageToPrepend) {
+		return Truth.assert_().withMessage(messageToPrepend);
+	}
+	/**
+	 * see {@link Truth#assertWithMessage}
+	 */
+	static public ManagedSubjectBuilder assertWithMessage(java.lang.String format, java.lang.Object[] args) {
+		return Truth.assert_().withMessage(format, args);
+	}
 }

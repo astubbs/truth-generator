@@ -1,7 +1,6 @@
 package io.stubbs.truth.generator.internal;
 
 import com.google.common.base.Joiner;
-import com.google.common.truth.StandardSubjectBuilder;
 import com.google.common.truth.Subject;
 import com.google.common.truth.Truth;
 import org.jboss.forge.roaster.model.source.JavaClassSource;
@@ -9,6 +8,8 @@ import org.jboss.forge.roaster.model.source.JavaDocSource;
 import org.jboss.forge.roaster.model.source.MethodSource;
 
 public class AssertionEntryPointGenerator {
+
+    public static final String ASSERT_WITH_MESSAGE = "assertWithMessage";
 
     protected <T> MethodSource<JavaClassSource> addFactoryAccessor(Class<T> source, JavaClassSource javaClass, String sourceName) {
         String factoryName = Utils.createFactoryName(source);
@@ -99,10 +100,10 @@ public class AssertionEntryPointGenerator {
 
     private void addWithMessage(JavaClassSource javaClass, boolean withArgs) {
         MethodSource<JavaClassSource> with = javaClass.addMethod()
-                .setName("assertWithMessage")
+                .setName(ASSERT_WITH_MESSAGE)
                 .setStatic(true)
                 .setPublic()
-                .setReturnType(StandardSubjectBuilder.class);
+                .setReturnType("ManagedSubjectBuilder");
 
         //
         if (withArgs) {
@@ -124,7 +125,7 @@ public class AssertionEntryPointGenerator {
 
         //
         var javaDoc = with.getJavaDoc();
-        javaDoc.addTagValue("see", "Truth#assertWithMessage");
+        javaDoc.addTagValue("see", "{@link Truth#assertWithMessage}");
     }
 
 //

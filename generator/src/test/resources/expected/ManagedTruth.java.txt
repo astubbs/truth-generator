@@ -90,6 +90,18 @@ import static io.stubbs.truth.generator.subjects.MyMapSubject.*;
  */
 public class ManagedTruth {
 	/**
+	 * see {@link Truth#assertWithMessage}
+	 */
+	static public ManagedSubjectBuilder assertWithMessage(java.lang.String messageToPrepend) {
+		return Truth.assert_().withMessage(messageToPrepend);
+	}
+	/**
+	 * see {@link Truth#assertWithMessage}
+	 */
+	static public ManagedSubjectBuilder assertWithMessage(java.lang.String format, java.lang.Object[] args) {
+		return Truth.assert_().withMessage(format, args);
+	}
+	/**
 	 * Entry point for {@link IdCard} assertions.
 	 */
 	public static IdCardSubject assertThat(io.stubbs.truth.generator.testModel.IdCard actual) {

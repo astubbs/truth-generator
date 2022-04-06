@@ -219,7 +219,7 @@ public class TruthGeneratorTest {
         var generated = tg.generate(ss).getAll();
 
         assertThat(generated).containsKey(NonBeanLegacy.class);
-        ThreeSystem actual = generated.get(NonBeanLegacy.class);
+        ThreeSystem<?> actual = generated.get(NonBeanLegacy.class);
         assertThat(actual)
                 .hasParent().hasGenerated().hasMethods()
                 .comparingElementsUsing(methodHasName)

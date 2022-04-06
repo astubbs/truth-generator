@@ -14,6 +14,7 @@ import uk.co.jemos.podam.api.PodamFactoryImpl;
 
 import java.io.File;
 import java.time.Instant;
+import java.util.List;
 import java.util.Optional;
 
 import static com.google.common.truth.Truth.assertThat;
@@ -150,7 +151,7 @@ public class GeneratedAssertionTests {
                 .isNotBoss();
 
         Assertions.assertThatThrownBy(() -> {
-            ManagedTruth.assertWithMessage("Should be a %s", "boss's boss")
+            ManagedTruth.assertWithMessage("Should be a %s", List.of("boss's boss"))
                     .that(employee)
                     .isBoss();
         }).hasMessageContaining("Should be a boss's boss");

@@ -1,5 +1,6 @@
 package io.stubbs.truth.generator.internal;
 import io.stubbs.truth.generator.internal.ManagedSubjectBuilder;
+import java.util.List;
 import io.stubbs.truth.generator.testModel.IdCardSubject;
 import com.google.common.truth.FailureMetadata;
 import static io.stubbs.truth.generator.testModel.IdCardSubject.*;
@@ -100,8 +101,8 @@ public class ManagedTruth {
 	/**
 	 * see {@link Truth#assertWithMessage}
 	 */
-	static public ManagedSubjectBuilder assertWithMessage(java.lang.String format, java.lang.Object[] args) {
-		return new ManagedSubjectBuilder(Truth.assertWithMessage(format, args));
+	static public ManagedSubjectBuilder assertWithMessage(java.lang.String format, List args) {
+		return new ManagedSubjectBuilder(Truth.assertWithMessage(format, args.toArray()));
 	}
 	/**
 	 * Entry point for {@link IdCard} assertions.

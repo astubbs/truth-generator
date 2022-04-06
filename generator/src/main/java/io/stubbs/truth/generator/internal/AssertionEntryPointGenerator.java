@@ -9,6 +9,7 @@ import org.jboss.forge.roaster.model.source.JavaClassSource;
 import org.jboss.forge.roaster.model.source.JavaDocSource;
 import org.jboss.forge.roaster.model.source.MethodSource;
 
+import java.util.List;
 import java.util.Optional;
 
 public class AssertionEntryPointGenerator {
@@ -120,7 +121,11 @@ public class AssertionEntryPointGenerator {
         //
         if (withArgs) {
             with.addParameter(String.class, "format");
-            with.addParameter(Object[].class, "args");
+            // todo Roaster doesn't support var args? (add javdoc to generated method to explain issue)
+            //            var o = new Object[]{};
+            //            Class<? extends Object[]> aClass = o.getClass();
+            //            with.addParameter("Object...", "args");
+            with.addParameter(List.class, "args");
         } else {
             with.addParameter(String.class, "messageToPrepend");
         }
@@ -134,7 +139,7 @@ public class AssertionEntryPointGenerator {
 
             //
             if (withArgs) {
-                with.setBody("return Truth.assertWithMessage(format, args).about(" + factoryName + "());");
+                with.setBody("return Truth.assertWithMessage(format, args.toArray()).about(" + factoryName + "());");
             } else {
                 with.setBody("return Truth.assertWithMessage(messageToPrepend).about(" + factoryName + "());");
             }
@@ -148,7 +153,7 @@ public class AssertionEntryPointGenerator {
 
             //
             if (withArgs) {
-                with.setBody("return new ManagedSubjectBuilder(Truth.assertWithMessage(format, args));");
+                with.setBody("return new ManagedSubjectBuilder(Truth.assertWithMessage(format, args.toArray()));");
             } else {
                 with.setBody("return new ManagedSubjectBuilder(ManagedTruth.assertWithMessage(messageToPrepend));");
             }

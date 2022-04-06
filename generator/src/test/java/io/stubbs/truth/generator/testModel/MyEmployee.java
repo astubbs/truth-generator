@@ -105,6 +105,9 @@ public class MyEmployee extends Person<String> {
 //            '}';
 //  }
 
+    public void varArgs(Object... objects) {
+    }
+
     public enum State {
         EMPLOLYED, PREVIOUSLY_EMPLOYED, NEVER_EMPLOYED, IS_A_BOSS
     }

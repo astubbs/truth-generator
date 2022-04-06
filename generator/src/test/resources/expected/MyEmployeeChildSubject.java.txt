@@ -6,6 +6,7 @@ import com.google.common.truth.Truth;
 import io.stubbs.truth.generator.internal.ManagedSubjectBuilder;
 import io.stubbs.truth.generator.internal.ManagedTruth;
 import com.google.common.truth.SimpleSubjectBuilder;
+import java.util.List;
 import javax.annotation.processing.Generated;
 /**
  * Entry point for assertions for @{MyEmployee}. Import the static accessor
@@ -53,7 +54,7 @@ public class MyEmployeeChildSubject extends MyEmployeeSubject {
 	 * see {@link Truth#assertWithMessage}
 	 */
 	static public SimpleSubjectBuilder<MyEmployeeSubject, MyEmployee> assertWithMessage(java.lang.String format,
-			java.lang.Object[] args) {
-		return Truth.assertWithMessage(format, args).about(myEmployees());
+			List args) {
+		return Truth.assertWithMessage(format, args.toArray()).about(myEmployees());
 	}
 }

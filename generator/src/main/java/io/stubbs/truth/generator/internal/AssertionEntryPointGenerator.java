@@ -1,6 +1,7 @@
 package io.stubbs.truth.generator.internal;
 
 import com.google.common.base.Joiner;
+import com.google.common.truth.StandardSubjectBuilder;
 import com.google.common.truth.Subject;
 import com.google.common.truth.Truth;
 import org.jboss.forge.roaster.model.source.JavaClassSource;
@@ -90,4 +91,73 @@ public class AssertionEntryPointGenerator {
                     .addTagValue("@see", "#assertThat");
         }
     }
+
+    public void addWithMessage(JavaClassSource javaClass) {
+        addWithMessage(javaClass, false);
+        addWithMessage(javaClass, true);
+    }
+
+    private void addWithMessage(JavaClassSource javaClass, boolean withArgs) {
+        MethodSource<JavaClassSource> with = javaClass.addMethod()
+                .setName("assertWithMessage")
+                .setStatic(true)
+                .setPublic()
+                .setReturnType(StandardSubjectBuilder.class);
+
+        //
+        if (withArgs) {
+            with.addParameter(String.class, "format");
+            with.addParameter(Object[].class, "args");
+        } else {
+            with.addParameter(String.class, "messageToPrepend");
+        }
+
+        //
+        StringBuilder body = new StringBuilder("return Truth.assert_().withMessage(");
+        if (withArgs) {
+            body.append("format, args");
+        } else {
+            body.append("messageToPrepend");
+        }
+        body.append(");");
+        with.setBody(body.toString());
+
+        //
+        var javaDoc = with.getJavaDoc();
+        javaDoc.addTagValue("see", "Truth#assertWithMessage");
+    }
+
+//
+//    /**
+//     * Begins an assertion that, if it fails, will prepend the given message to the failure message.
+//     *
+//     * <p>This method is a shortcut for {@code assert_().withMessage(...)}.
+//     *
+//     * <p>To set a message when using a custom subject, use {@code assertWithMessage(...).}{@link
+//     * StandardSubjectBuilder#about about(...)}, as discussed in <a href="https://truth.dev/faq#java8">this FAQ
+//     * entry</a>.
+//     */
+//    public static StandardSubjectBuilder assertWithMessage(String messageToPrepend) {
+//        return assert_().withMessage(messageToPrepend);
+//    }
+//
+//    /**
+//     * Begins an assertion that, if it fails, will prepend the given message to the failure message.
+//     *
+//     * <p><b>Note:</b> the arguments will be substituted into the format template using {@link
+//     * com.google.common.base.Strings#lenientFormat Strings.lenientFormat}. Note this only supports the {@code %s}
+//     * specifier.
+//     *
+//     * <p>This method is a shortcut for {@code assert_().withMessage(...)}.
+//     *
+//     * <p>To set a message when using a custom subject, use {@code assertWithMessage(...).}{@link
+//     * StandardSubjectBuilder#about about(...)}, as discussed in <a href="https://truth.dev/faq#java8">this FAQ
+//     * entry</a>.
+//     *
+//     * @throws IllegalArgumentException if the number of placeholders in the format string does not equal the number of
+//     *                                  given arguments
+//     */
+//    public static StandardSubjectBuilder assertWithMessage(String format, Object... args) {
+//        return assert_().withMessage(format, args);
+//    }
 }

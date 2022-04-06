@@ -295,6 +295,8 @@ public class SkeletonGenerator implements SkeletonGeneratorAPI {
         MethodSource<JavaClassSource> assertThat = aepg.addAssertThat(source, javaClass, factoryMethod, factoryContainerQualifiedName);
 
         aepg.addAssertTruth(source, javaClass, assertThat);
+
+        aepg.addWithMessage(javaClass);
     }
 
     private void addGeneratedMarker(final JavaClassSource javaClass) {

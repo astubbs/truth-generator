@@ -155,7 +155,7 @@ public class AssertionEntryPointGenerator {
             if (withArgs) {
                 with.setBody("return new ManagedSubjectBuilder(Truth.assertWithMessage(format, args.toArray()));");
             } else {
-                with.setBody("return new ManagedSubjectBuilder(ManagedTruth.assertWithMessage(messageToPrepend));");
+                with.setBody("return new ManagedSubjectBuilder(Truth.assertWithMessage(messageToPrepend));");
             }
             with.setReturnType("ManagedSubjectBuilder");
         }

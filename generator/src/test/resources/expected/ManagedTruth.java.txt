@@ -96,7 +96,7 @@ public class ManagedTruth {
 	 * see {@link Truth#assertWithMessage}
 	 */
 	static public ManagedSubjectBuilder assertWithMessage(java.lang.String messageToPrepend) {
-		return new ManagedSubjectBuilder(ManagedTruth.assertWithMessage(messageToPrepend));
+		return new ManagedSubjectBuilder(Truth.assertWithMessage(messageToPrepend));
 	}
 	/**
 	 * see {@link Truth#assertWithMessage}

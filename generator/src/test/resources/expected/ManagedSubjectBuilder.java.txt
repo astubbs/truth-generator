@@ -1,243 +1,239 @@
 package io.stubbs.truth.generator.internal;
+import com.google.common.truth.StandardSubjectBuilder;
 import io.stubbs.truth.generator.testModel.IdCard;
-import io.stubbs.truth.generator.testModel.IdCardChildSubject;
+import io.stubbs.truth.generator.testModel.IdCardSubject;
 import io.stubbs.truth.generator.testModel.IdCard.SecurityType;
-import io.stubbs.truth.generator.testModel.SecurityTypeChildSubject;
+import io.stubbs.truth.generator.testModel.SecurityTypeSubject;
 import io.stubbs.truth.generator.testModel.IdCard.SecurityType.Type;
-import io.stubbs.truth.generator.testModel.TypeChildSubject;
+import io.stubbs.truth.generator.testModel.TypeSubject;
 import io.stubbs.truth.generator.testModel.MyEmployee;
-import io.stubbs.truth.generator.testModel.MyEmployeeChildSubject;
+import io.stubbs.truth.generator.testModel.MyEmployeeSubject;
 import io.stubbs.truth.generator.testModel.MyEmployee.State;
-import io.stubbs.truth.generator.testModel.StateChildSubject;
+import io.stubbs.truth.generator.testModel.StateSubject;
 import io.stubbs.truth.generator.testModel.Person;
-import io.stubbs.truth.generator.testModel.PersonChildSubject;
+import io.stubbs.truth.generator.testModel.PersonSubject;
 import java.time.DayOfWeek;
-import io.stubbs.truth.generator.internal.autoShaded.java.time.DayOfWeekChildSubject;
+import io.stubbs.truth.generator.internal.autoShaded.java.time.DayOfWeekSubject;
 import java.time.Instant;
-import io.stubbs.truth.generator.internal.autoShaded.java.time.InstantChildSubject;
+import io.stubbs.truth.generator.internal.autoShaded.java.time.InstantSubject;
 import java.time.LocalDate;
-import io.stubbs.truth.generator.internal.autoShaded.java.time.LocalDateChildSubject;
+import io.stubbs.truth.generator.internal.autoShaded.java.time.LocalDateSubject;
 import java.time.LocalDateTime;
-import io.stubbs.truth.generator.internal.autoShaded.java.time.LocalDateTimeChildSubject;
+import io.stubbs.truth.generator.internal.autoShaded.java.time.LocalDateTimeSubject;
 import java.time.LocalTime;
-import io.stubbs.truth.generator.internal.autoShaded.java.time.LocalTimeChildSubject;
+import io.stubbs.truth.generator.internal.autoShaded.java.time.LocalTimeSubject;
 import java.time.Month;
-import io.stubbs.truth.generator.internal.autoShaded.java.time.MonthChildSubject;
+import io.stubbs.truth.generator.internal.autoShaded.java.time.MonthSubject;
 import java.time.OffsetDateTime;
-import io.stubbs.truth.generator.internal.autoShaded.java.time.OffsetDateTimeChildSubject;
+import io.stubbs.truth.generator.internal.autoShaded.java.time.OffsetDateTimeSubject;
 import java.time.OffsetTime;
-import io.stubbs.truth.generator.internal.autoShaded.java.time.OffsetTimeChildSubject;
+import io.stubbs.truth.generator.internal.autoShaded.java.time.OffsetTimeSubject;
 import java.time.ZoneId;
-import io.stubbs.truth.generator.internal.autoShaded.java.time.ZoneIdChildSubject;
+import io.stubbs.truth.generator.internal.autoShaded.java.time.ZoneIdSubject;
 import java.time.ZoneOffset;
-import io.stubbs.truth.generator.internal.autoShaded.java.time.ZoneOffsetChildSubject;
+import io.stubbs.truth.generator.internal.autoShaded.java.time.ZoneOffsetSubject;
 import java.time.ZonedDateTime;
-import io.stubbs.truth.generator.internal.autoShaded.java.time.ZonedDateTimeChildSubject;
+import io.stubbs.truth.generator.internal.autoShaded.java.time.ZonedDateTimeSubject;
 import java.time.chrono.ChronoLocalDate;
-import io.stubbs.truth.generator.internal.autoShaded.java.time.chrono.ChronoLocalDateChildSubject;
+import io.stubbs.truth.generator.internal.autoShaded.java.time.chrono.ChronoLocalDateSubject;
 import java.time.chrono.ChronoLocalDateTime;
-import io.stubbs.truth.generator.internal.autoShaded.java.time.chrono.ChronoLocalDateTimeChildSubject;
+import io.stubbs.truth.generator.internal.autoShaded.java.time.chrono.ChronoLocalDateTimeSubject;
 import java.time.chrono.Chronology;
-import io.stubbs.truth.generator.internal.autoShaded.java.time.chrono.ChronologyChildSubject;
+import io.stubbs.truth.generator.internal.autoShaded.java.time.chrono.ChronologySubject;
 import java.time.chrono.Era;
-import io.stubbs.truth.generator.internal.autoShaded.java.time.chrono.EraChildSubject;
+import io.stubbs.truth.generator.internal.autoShaded.java.time.chrono.EraSubject;
 import java.time.chrono.IsoChronology;
-import io.stubbs.truth.generator.internal.autoShaded.java.time.chrono.IsoChronologyChildSubject;
+import io.stubbs.truth.generator.internal.autoShaded.java.time.chrono.IsoChronologySubject;
 import java.time.chrono.IsoEra;
-import io.stubbs.truth.generator.internal.autoShaded.java.time.chrono.IsoEraChildSubject;
+import io.stubbs.truth.generator.internal.autoShaded.java.time.chrono.IsoEraSubject;
 import java.time.zone.ZoneRules;
-import io.stubbs.truth.generator.internal.autoShaded.java.time.zone.ZoneRulesChildSubject;
+import io.stubbs.truth.generator.internal.autoShaded.java.time.zone.ZoneRulesSubject;
 import java.util.Optional;
-import io.stubbs.truth.generator.internal.autoShaded.java.util.OptionalChildSubject;
+import io.stubbs.truth.generator.internal.autoShaded.java.util.OptionalSubject;
 import java.util.UUID;
-import io.stubbs.truth.generator.internal.autoShaded.java.util.UUIDChildSubject;
+import io.stubbs.truth.generator.internal.autoShaded.java.util.UUIDSubject;
 /**
  * see {@link StandardSubjectBuilder}
  */
 public class ManagedSubjectBuilder {
-	/**
-	 * see {@link io.stubbs.truth.generator.testModel.IdCardChildSubject}
-	 */
-	public IdCardChildSubject that(IdCard actual) {
-		return new io.stubbs.truth.generator.testModel.IdCardChildSubject(metadata(), actual);
+	StandardSubjectBuilder standardSubjectBuilder;
+	ManagedSubjectBuilder(com.google.common.truth.StandardSubjectBuilder standardSubjectBuilder) {
+		this.standardSubjectBuilder = standardSubjectBuilder;
 	}
 	/**
-	 * see {@link io.stubbs.truth.generator.testModel.SecurityTypeChildSubject}
+	 * see {@link io.stubbs.truth.generator.testModel.IdCardSubject}
 	 */
-	public SecurityTypeChildSubject that(SecurityType actual) {
-		return new io.stubbs.truth.generator.testModel.SecurityTypeChildSubject(metadata(), actual);
+	public IdCardSubject that(IdCard actual) {
+		return standardSubjectBuilder.about(idCards()).that(actual);
 	}
 	/**
-	 * see {@link io.stubbs.truth.generator.testModel.TypeChildSubject}
+	 * see {@link io.stubbs.truth.generator.testModel.SecurityTypeSubject}
 	 */
-	public TypeChildSubject that(Type actual) {
-		return new io.stubbs.truth.generator.testModel.TypeChildSubject(metadata(), actual);
+	public SecurityTypeSubject that(SecurityType actual) {
+		return standardSubjectBuilder.about(securityTypes()).that(actual);
 	}
 	/**
-	 * see {@link io.stubbs.truth.generator.testModel.MyEmployeeChildSubject}
+	 * see {@link io.stubbs.truth.generator.testModel.TypeSubject}
 	 */
-	public MyEmployeeChildSubject that(MyEmployee actual) {
-		return new io.stubbs.truth.generator.testModel.MyEmployeeChildSubject(metadata(), actual);
+	public TypeSubject that(Type actual) {
+		return standardSubjectBuilder.about(types()).that(actual);
 	}
 	/**
-	 * see {@link io.stubbs.truth.generator.testModel.StateChildSubject}
+	 * see {@link io.stubbs.truth.generator.testModel.MyEmployeeSubject}
 	 */
-	public StateChildSubject that(State actual) {
-		return new io.stubbs.truth.generator.testModel.StateChildSubject(metadata(), actual);
+	public MyEmployeeSubject that(MyEmployee actual) {
+		return standardSubjectBuilder.about(myEmployees()).that(actual);
 	}
 	/**
-	 * see {@link io.stubbs.truth.generator.testModel.PersonChildSubject}
+	 * see {@link io.stubbs.truth.generator.testModel.StateSubject}
 	 */
-	public PersonChildSubject that(Person actual) {
-		return new io.stubbs.truth.generator.testModel.PersonChildSubject(metadata(), actual);
+	public StateSubject that(State actual) {
+		return standardSubjectBuilder.about(states()).that(actual);
 	}
 	/**
-	 * see
-	 * {@link io.stubbs.truth.generator.internal.autoShaded.java.time.DayOfWeekChildSubject}
+	 * see {@link io.stubbs.truth.generator.testModel.PersonSubject}
 	 */
-	public DayOfWeekChildSubject that(DayOfWeek actual) {
-		return new io.stubbs.truth.generator.internal.autoShaded.java.time.DayOfWeekChildSubject(metadata(), actual);
+	public PersonSubject that(Person actual) {
+		return standardSubjectBuilder.about(persons()).that(actual);
 	}
 	/**
 	 * see
-	 * {@link io.stubbs.truth.generator.internal.autoShaded.java.time.InstantChildSubject}
+	 * {@link io.stubbs.truth.generator.internal.autoShaded.java.time.DayOfWeekSubject}
 	 */
-	public InstantChildSubject that(Instant actual) {
-		return new io.stubbs.truth.generator.internal.autoShaded.java.time.InstantChildSubject(metadata(), actual);
+	public DayOfWeekSubject that(DayOfWeek actual) {
+		return standardSubjectBuilder.about(dayOfWeeks()).that(actual);
 	}
 	/**
 	 * see
-	 * {@link io.stubbs.truth.generator.internal.autoShaded.java.time.LocalDateChildSubject}
+	 * {@link io.stubbs.truth.generator.internal.autoShaded.java.time.InstantSubject}
 	 */
-	public LocalDateChildSubject that(LocalDate actual) {
-		return new io.stubbs.truth.generator.internal.autoShaded.java.time.LocalDateChildSubject(metadata(), actual);
+	public InstantSubject that(Instant actual) {
+		return standardSubjectBuilder.about(instants()).that(actual);
 	}
 	/**
 	 * see
-	 * {@link io.stubbs.truth.generator.internal.autoShaded.java.time.LocalDateTimeChildSubject}
+	 * {@link io.stubbs.truth.generator.internal.autoShaded.java.time.LocalDateSubject}
 	 */
-	public LocalDateTimeChildSubject that(LocalDateTime actual) {
-		return new io.stubbs.truth.generator.internal.autoShaded.java.time.LocalDateTimeChildSubject(metadata(),
-				actual);
+	public LocalDateSubject that(LocalDate actual) {
+		return standardSubjectBuilder.about(localDates()).that(actual);
 	}
 	/**
 	 * see
-	 * {@link io.stubbs.truth.generator.internal.autoShaded.java.time.LocalTimeChildSubject}
+	 * {@link io.stubbs.truth.generator.internal.autoShaded.java.time.LocalDateTimeSubject}
 	 */
-	public LocalTimeChildSubject that(LocalTime actual) {
-		return new io.stubbs.truth.generator.internal.autoShaded.java.time.LocalTimeChildSubject(metadata(), actual);
+	public LocalDateTimeSubject that(LocalDateTime actual) {
+		return standardSubjectBuilder.about(localDateTimes()).that(actual);
 	}
 	/**
 	 * see
-	 * {@link io.stubbs.truth.generator.internal.autoShaded.java.time.MonthChildSubject}
+	 * {@link io.stubbs.truth.generator.internal.autoShaded.java.time.LocalTimeSubject}
 	 */
-	public MonthChildSubject that(Month actual) {
-		return new io.stubbs.truth.generator.internal.autoShaded.java.time.MonthChildSubject(metadata(), actual);
+	public LocalTimeSubject that(LocalTime actual) {
+		return standardSubjectBuilder.about(localTimes()).that(actual);
 	}
 	/**
 	 * see
-	 * {@link io.stubbs.truth.generator.internal.autoShaded.java.time.OffsetDateTimeChildSubject}
+	 * {@link io.stubbs.truth.generator.internal.autoShaded.java.time.MonthSubject}
 	 */
-	public OffsetDateTimeChildSubject that(OffsetDateTime actual) {
-		return new io.stubbs.truth.generator.internal.autoShaded.java.time.OffsetDateTimeChildSubject(metadata(),
-				actual);
+	public MonthSubject that(Month actual) {
+		return standardSubjectBuilder.about(months()).that(actual);
 	}
 	/**
 	 * see
-	 * {@link io.stubbs.truth.generator.internal.autoShaded.java.time.OffsetTimeChildSubject}
+	 * {@link io.stubbs.truth.generator.internal.autoShaded.java.time.OffsetDateTimeSubject}
 	 */
-	public OffsetTimeChildSubject that(OffsetTime actual) {
-		return new io.stubbs.truth.generator.internal.autoShaded.java.time.OffsetTimeChildSubject(metadata(), actual);
+	public OffsetDateTimeSubject that(OffsetDateTime actual) {
+		return standardSubjectBuilder.about(offsetDateTimes()).that(actual);
 	}
 	/**
 	 * see
-	 * {@link io.stubbs.truth.generator.internal.autoShaded.java.time.ZoneIdChildSubject}
+	 * {@link io.stubbs.truth.generator.internal.autoShaded.java.time.OffsetTimeSubject}
 	 */
-	public ZoneIdChildSubject that(ZoneId actual) {
-		return new io.stubbs.truth.generator.internal.autoShaded.java.time.ZoneIdChildSubject(metadata(), actual);
+	public OffsetTimeSubject that(OffsetTime actual) {
+		return standardSubjectBuilder.about(offsetTimes()).that(actual);
 	}
 	/**
 	 * see
-	 * {@link io.stubbs.truth.generator.internal.autoShaded.java.time.ZoneOffsetChildSubject}
+	 * {@link io.stubbs.truth.generator.internal.autoShaded.java.time.ZoneIdSubject}
 	 */
-	public ZoneOffsetChildSubject that(ZoneOffset actual) {
-		return new io.stubbs.truth.generator.internal.autoShaded.java.time.ZoneOffsetChildSubject(metadata(), actual);
+	public ZoneIdSubject that(ZoneId actual) {
+		return standardSubjectBuilder.about(zoneIds()).that(actual);
 	}
 	/**
 	 * see
-	 * {@link io.stubbs.truth.generator.internal.autoShaded.java.time.ZonedDateTimeChildSubject}
+	 * {@link io.stubbs.truth.generator.internal.autoShaded.java.time.ZoneOffsetSubject}
 	 */
-	public ZonedDateTimeChildSubject that(ZonedDateTime actual) {
-		return new io.stubbs.truth.generator.internal.autoShaded.java.time.ZonedDateTimeChildSubject(metadata(),
-				actual);
+	public ZoneOffsetSubject that(ZoneOffset actual) {
+		return standardSubjectBuilder.about(zoneOffsets()).that(actual);
 	}
 	/**
 	 * see
-	 * {@link io.stubbs.truth.generator.internal.autoShaded.java.time.chrono.ChronoLocalDateChildSubject}
+	 * {@link io.stubbs.truth.generator.internal.autoShaded.java.time.ZonedDateTimeSubject}
 	 */
-	public ChronoLocalDateChildSubject that(ChronoLocalDate actual) {
-		return new io.stubbs.truth.generator.internal.autoShaded.java.time.chrono.ChronoLocalDateChildSubject(
-				metadata(), actual);
+	public ZonedDateTimeSubject that(ZonedDateTime actual) {
+		return standardSubjectBuilder.about(zonedDateTimes()).that(actual);
 	}
 	/**
 	 * see
-	 * {@link io.stubbs.truth.generator.internal.autoShaded.java.time.chrono.ChronoLocalDateTimeChildSubject}
+	 * {@link io.stubbs.truth.generator.internal.autoShaded.java.time.chrono.ChronoLocalDateSubject}
 	 */
-	public ChronoLocalDateTimeChildSubject that(ChronoLocalDateTime actual) {
-		return new io.stubbs.truth.generator.internal.autoShaded.java.time.chrono.ChronoLocalDateTimeChildSubject(
-				metadata(), actual);
+	public ChronoLocalDateSubject that(ChronoLocalDate actual) {
+		return standardSubjectBuilder.about(chronoLocalDates()).that(actual);
 	}
 	/**
 	 * see
-	 * {@link io.stubbs.truth.generator.internal.autoShaded.java.time.chrono.ChronologyChildSubject}
+	 * {@link io.stubbs.truth.generator.internal.autoShaded.java.time.chrono.ChronoLocalDateTimeSubject}
 	 */
-	public ChronologyChildSubject that(Chronology actual) {
-		return new io.stubbs.truth.generator.internal.autoShaded.java.time.chrono.ChronologyChildSubject(metadata(),
-				actual);
+	public ChronoLocalDateTimeSubject that(ChronoLocalDateTime actual) {
+		return standardSubjectBuilder.about(chronoLocalDateTimes()).that(actual);
 	}
 	/**
 	 * see
-	 * {@link io.stubbs.truth.generator.internal.autoShaded.java.time.chrono.EraChildSubject}
+	 * {@link io.stubbs.truth.generator.internal.autoShaded.java.time.chrono.ChronologySubject}
 	 */
-	public EraChildSubject that(Era actual) {
-		return new io.stubbs.truth.generator.internal.autoShaded.java.time.chrono.EraChildSubject(metadata(), actual);
+	public ChronologySubject that(Chronology actual) {
+		return standardSubjectBuilder.about(chronologies()).that(actual);
 	}
 	/**
 	 * see
-	 * {@link io.stubbs.truth.generator.internal.autoShaded.java.time.chrono.IsoChronologyChildSubject}
+	 * {@link io.stubbs.truth.generator.internal.autoShaded.java.time.chrono.EraSubject}
 	 */
-	public IsoChronologyChildSubject that(IsoChronology actual) {
-		return new io.stubbs.truth.generator.internal.autoShaded.java.time.chrono.IsoChronologyChildSubject(metadata(),
-				actual);
+	public EraSubject that(Era actual) {
+		return standardSubjectBuilder.about(eras()).that(actual);
 	}
 	/**
 	 * see
-	 * {@link io.stubbs.truth.generator.internal.autoShaded.java.time.chrono.IsoEraChildSubject}
+	 * {@link io.stubbs.truth.generator.internal.autoShaded.java.time.chrono.IsoChronologySubject}
 	 */
-	public IsoEraChildSubject that(IsoEra actual) {
-		return new io.stubbs.truth.generator.internal.autoShaded.java.time.chrono.IsoEraChildSubject(metadata(),
-				actual);
+	public IsoChronologySubject that(IsoChronology actual) {
+		return standardSubjectBuilder.about(isoChronologies()).that(actual);
 	}
 	/**
 	 * see
-	 * {@link io.stubbs.truth.generator.internal.autoShaded.java.time.zone.ZoneRulesChildSubject}
+	 * {@link io.stubbs.truth.generator.internal.autoShaded.java.time.chrono.IsoEraSubject}
 	 */
-	public ZoneRulesChildSubject that(ZoneRules actual) {
-		return new io.stubbs.truth.generator.internal.autoShaded.java.time.zone.ZoneRulesChildSubject(metadata(),
-				actual);
+	public IsoEraSubject that(IsoEra actual) {
+		return standardSubjectBuilder.about(isoEras()).that(actual);
 	}
 	/**
 	 * see
-	 * {@link io.stubbs.truth.generator.internal.autoShaded.java.util.OptionalChildSubject}
+	 * {@link io.stubbs.truth.generator.internal.autoShaded.java.time.zone.ZoneRulesSubject}
 	 */
-	public OptionalChildSubject that(Optional actual) {
-		return new io.stubbs.truth.generator.internal.autoShaded.java.util.OptionalChildSubject(metadata(), actual);
+	public ZoneRulesSubject that(ZoneRules actual) {
+		return standardSubjectBuilder.about(zoneRuleses()).that(actual);
 	}
 	/**
 	 * see
-	 * {@link io.stubbs.truth.generator.internal.autoShaded.java.util.UUIDChildSubject}
+	 * {@link io.stubbs.truth.generator.internal.autoShaded.java.util.OptionalSubject}
 	 */
-	public UUIDChildSubject that(UUID actual) {
-		return new io.stubbs.truth.generator.internal.autoShaded.java.util.UUIDChildSubject(metadata(), actual);
+	public OptionalSubject that(Optional actual) {
+		return standardSubjectBuilder.about(optionals()).that(actual);
+	}
+	/**
+	 * see
+	 * {@link io.stubbs.truth.generator.internal.autoShaded.java.util.UUIDSubject}
+	 */
+	public UUIDSubject that(UUID actual) {
+		return standardSubjectBuilder.about(uUIDs()).that(actual);
 	}
 }

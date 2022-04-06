@@ -1,5 +1,6 @@
 package io.stubbs.truth.generator.internal;
 
+import com.google.common.truth.StandardSubjectBuilder;
 import com.google.common.truth.Subject;
 import io.stubbs.truth.generator.GeneratorException;
 import io.stubbs.truth.generator.internal.model.ThreeSystem;
@@ -10,7 +11,6 @@ import org.jboss.forge.roaster.Roaster;
 import org.jboss.forge.roaster.model.Method;
 import org.jboss.forge.roaster.model.source.Import;
 import org.jboss.forge.roaster.model.source.JavaClassSource;
-import org.jboss.forge.roaster.model.source.JavaSource;
 import org.jboss.forge.roaster.model.source.MethodSource;
 
 import java.util.Comparator;
@@ -57,10 +57,25 @@ public class OverallEntryPoint {
     }
 
     private void createManagedSubjectBuilder() {
-        JavaClassSource managedSubjectBuilder = Roaster.create(JavaClassSource.class);
-        managedSubjectBuilder.setName("ManagedSubjectBuilder");
-        managedSubjectBuilder.getJavaDoc().addTagValue("see", "{@link StandardSubjectBuilder}");
-        managedSubjectBuilder.setPublic().setPackage(packageName);
+        JavaClassSource managedSubjectBuilder = Roaster.create(JavaClassSource.class)
+                .setName("ManagedSubjectBuilder")
+                .setPublic()
+                .setPackage(packageName);
+
+        managedSubjectBuilder.getJavaDoc()
+                .addTagValue("see", "{@link StandardSubjectBuilder}");
+
+        //
+        managedSubjectBuilder.addField()
+                .setName("standardSubjectBuilder")
+                .setType(StandardSubjectBuilder.class);
+
+        //
+        managedSubjectBuilder.addMethod()
+                .setConstructor(true)
+                .setBody("this.standardSubjectBuilder = standardSubjectBuilder;")
+                .addParameter(StandardSubjectBuilder.class, "standardSubjectBuilder");
+
 
         for (var ts : threeSystemChildSubjects) {
             addThatForSubject(managedSubjectBuilder, ts);
@@ -103,6 +118,11 @@ public class OverallEntryPoint {
         //   public final LongSubject that(@Nullable Long actual) {
         //    return new LongSubject(metadata(), actual);
         //  }
+
+//        public MyEmployeeSubject that(MyEmployee actual) {
+//            return standardSubjectBuilder.about(MyEmployeeChildSubject.myEmployees()).that(actual);
+//        }
+
         MethodSource<JavaClassSource> that = overallAccess.addMethod()
                 .setName("that")
                 .setPublic();
@@ -111,12 +131,12 @@ public class OverallEntryPoint {
         that.addParameter(ts.classUnderTest, "actual");
 
         //
-        JavaSource<?> subject = ts.getChild().getEnclosingType();
-        String subjectCanonicalName = subject.getCanonicalName();
+        String subjectCanonicalName = ts.getMiddle().getCanonicalName();
         that.setReturnType(subjectCanonicalName);
 
         //
-        that.setBody("return new " + subjectCanonicalName + "(metadata(), actual);");
+        String factoryName = ts.getMiddle().getFactoryMethod().getName();
+        that.setBody("return standardSubjectBuilder.about(" + factoryName + "()).that(actual);");
 
         //
         that.getJavaDoc().addTagValue("see", "{@link " + subjectCanonicalName + "}");

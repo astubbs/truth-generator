@@ -15,13 +15,20 @@ import org.jboss.forge.roaster.model.source.MethodSource;
 public class MiddleClass extends AClass {
     MethodSource<JavaClassSource> factoryMethod;
     Class<?> usersMiddleClass;
+    Class<?> classUnderTest;
 
-    public static MiddleClass of(Class<?> aClass) {
-        return MiddleClass.builder().usersMiddleClass(aClass).build();
+    public static MiddleClass of(Class<?> aClass, Class<?> classUnderTest) {
+        return MiddleClass.builder()
+                .usersMiddleClass(aClass)
+                .classUnderTest(classUnderTest)
+                .build();
     }
 
-    public static MiddleClass of(JavaClassSource middle, MethodSource factory) {
-        return MiddleClass.builder().generated(middle).factoryMethod(factory).build();
+    public static MiddleClass of(JavaClassSource middle, MethodSource factory, Class<?> classUnderTest) {
+        return MiddleClass.builder()
+                .generated(middle)
+                .classUnderTest(classUnderTest)
+                .factoryMethod(factory).build();
     }
 
     public String getSimpleName() {

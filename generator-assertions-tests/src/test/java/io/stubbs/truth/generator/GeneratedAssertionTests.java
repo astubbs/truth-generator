@@ -128,21 +128,19 @@ public class GeneratedAssertionTests {
         ManagedTruth.assertThat(emp).hasStartedAt().isGreaterThan(Instant.MIN);
     }
 
-//    @Test
-//    public void withMessageAboutChain() {
-//        var employee = TestModelUtils.createEmployee();
-//        ManagedTruth.assertWithMessage("Must not be a boss")
-//                .about(MyEmployeeSubject.myEmployees())
-//                .that(employee)
-//                .isNotBoss();
-//
-//        Assertions.assertThatThrownBy(() ->
-//                ManagedTruth.assertWithMessage("Acts like a boss")
-//                        .about(MyEmployeeSubject.myEmployees())
-//                        .that(employee)
-//                        .isBoss()
-//        ).hasMessageContaining("Acts like a boss");
-//    }
+    @Test
+    public void withMessageAboutChain() {
+        var employee = TestModelUtils.createEmployee();
+        MyEmployeeChildSubject.assertWithMessage("Must not be a boss")
+                .that(employee)
+                .isNotBoss();
+
+        Assertions.assertThatThrownBy(() ->
+                MyEmployeeChildSubject.assertWithMessage("Acts like a boss")
+                        .that(employee)
+                        .isBoss()
+        ).hasMessageContaining("Acts like a boss");
+    }
 
     @Test
     public void withMessageChain() {
@@ -151,11 +149,21 @@ public class GeneratedAssertionTests {
                 .that(employee)
                 .isNotBoss();
 
+        Assertions.assertThatThrownBy(() -> {
+            ManagedTruth.assertWithMessage("Should be a %s", "boss's boss")
+                    .that(employee)
+                    .isBoss();
+        }).hasMessageContaining("Should be a boss's boss");
+
         Assertions.assertThatThrownBy(() ->
                 ManagedTruth.assertWithMessage("Acts like a boss")
                         .that(employee)
                         .isBoss()
         ).hasMessageContaining("Acts like a boss");
+
+        MyEmployeeChildSubject.assertWithMessage("is not a boss")
+                .that(employee)
+                .isNotBoss();
     }
 
 }

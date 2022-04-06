@@ -28,6 +28,7 @@ public class TestModelUtils {
         MyEmployee bossEmployee = factory.manufacturePojo(MyEmployee.class)
                 .toBuilder()
                 .name("Lilan")
+                .employmentState(MyEmployee.State.EMPLOLYED)
                 .build();
         newEmployee = newEmployee
                 .boss(bossEmployee)

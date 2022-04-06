@@ -165,12 +165,7 @@ public class TruthGeneratorTest {
 
         OverallEntryPoint overallEntryPoint = generate.getOverallEntryPoint();
 
-        JavaClassSource generated = overallEntryPoint.getManagedSubjectBuildlerGenerated();
-
-//        String actual = generated.toString();
-//        assertThat(actual).contains("collections()).that");
-//        assertThat(actual).contains("maps()).that");
-//        assertThat(actual).contains("strings()).that");
+        JavaClassSource generated = overallEntryPoint.getManagedSubjectBuilderGenerated();
 
         String expected = loadFileToString("expected/ManagedSubjectBuilder.java.txt");
         Truth.assertAbout(JavaClassSourceSubject.javaClassSources())

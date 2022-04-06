@@ -41,7 +41,7 @@ public class OverallEntryPoint {
     @Getter
     private JavaClassSource overallEntryPointGenerated;
     @Getter
-    private JavaClassSource managedSubjectBuildlerGenerated;
+    private JavaClassSource managedSubjectBuilderGenerated;
 
     public OverallEntryPoint(String packageForOverall) {
         if (StringUtils.isBlank(packageForOverall))
@@ -81,47 +81,18 @@ public class OverallEntryPoint {
             addThatForSubject(managedSubjectBuilder, ts);
         }
 
-        this.managedSubjectBuildlerGenerated = managedSubjectBuilder;
+        this.managedSubjectBuilderGenerated = managedSubjectBuilder;
 
         Utils.writeToDisk(managedSubjectBuilder);
-    }
-
-    /**
-     * Having collected together all the access points, creates one large class filled with access points to all of
-     * them.
-     * <p>
-     * The overall access will throw an error if any middle classes don't correctly extend their parent.
-     */
-    protected void createOverallAccessPoints() {
-        JavaClassSource overallAccess = Roaster.create(JavaClassSource.class);
-        overallAccess.setName("ManagedTruth");
-        overallAccess.getJavaDoc().setText("Single point of access for all managed Subjects.");
-        overallAccess.setPublic().setPackage(packageName);
-
-        aepg.addWithMessage(overallAccess);
-
-        addChildEntryPoints(overallAccess);
-
-        addStaticEntryPoints(overallAccess);
-
-        copyStaticEntryPointsFromGTruthEntryPoint();
-
-        Utils.writeToDisk(overallAccess);
-
-        this.overallEntryPointGenerated = overallAccess;
     }
 
     /**
      * @see com.google.common.truth.StandardSubjectBuilder#that
      */
     private <T> void addThatForSubject(JavaClassSource overallAccess, ThreeSystem<T> ts) {
-        //   public final LongSubject that(@Nullable Long actual) {
-        //    return new LongSubject(metadata(), actual);
-        //  }
-
-//        public MyEmployeeSubject that(MyEmployee actual) {
-//            return standardSubjectBuilder.about(MyEmployeeChildSubject.myEmployees()).that(actual);
-//        }
+        //        public MyEmployeeSubject that(MyEmployee actual) {
+        //            return standardSubjectBuilder.about(MyEmployeeChildSubject.myEmployees()).that(actual);
+        //        }
 
         MethodSource<JavaClassSource> that = overallAccess.addMethod()
                 .setName("that")
@@ -135,11 +106,38 @@ public class OverallEntryPoint {
         that.setReturnType(subjectCanonicalName);
 
         //
+        String factoryEnclosing = ts.getMiddle().getCanonicalName();
         String factoryName = ts.getMiddle().getFactoryMethod().getName();
-        that.setBody("return standardSubjectBuilder.about(" + factoryName + "()).that(actual);");
+        that.setBody("return standardSubjectBuilder.about(" + factoryEnclosing + "." + factoryName + "()).that(actual);");
 
         //
         that.getJavaDoc().addTagValue("see", "{@link " + subjectCanonicalName + "}");
+    }
+
+    /**
+     * Having collected together all the access points, creates one large class filled with access points to all of
+     * them.
+     * <p>
+     * The overall access will throw an error if any middle classes don't correctly extend their parent.
+     */
+    // todo add generated marker
+    protected void createOverallAccessPoints() {
+        JavaClassSource overallAccess = Roaster.create(JavaClassSource.class);
+        overallAccess.setName("ManagedTruth");
+        overallAccess.getJavaDoc().setText("Single point of access for all managed Subjects.");
+        overallAccess.setPublic().setPackage(packageName);
+
+        aepg.addWithMessage(packageName, overallAccess);
+
+        addChildEntryPoints(overallAccess);
+
+        addStaticEntryPoints(overallAccess);
+
+        copyStaticEntryPointsFromGTruthEntryPoint();
+
+        Utils.writeToDisk(overallAccess);
+
+        this.overallEntryPointGenerated = overallAccess;
     }
 
     private void addChildEntryPoints(JavaClassSource overallAccess) {
@@ -155,13 +153,15 @@ public class OverallEntryPoint {
             // this seems like overkill, but at least in the child style case, there's very few imports - even
             // none extra at all (aside from wild card vs specific methods).
             List<Import> imports = child.getImports();
-            for (Import i : imports) {
+            for (Import anImport : imports) {
                 // roaster just throws up a NPE when this happens
                 Set<String> simpleNames = overallAccess.getImports().stream().map(Import::getSimpleName).filter(x -> !x.equals("*")).collect(Collectors.toSet());
-                if (simpleNames.contains(i.getSimpleName())) {
-                    log.debug("Expected collision of imports - not adding duplicated import {}", i);
+                if (simpleNames.contains(anImport.getSimpleName())) {
+                    log.debug("Expected collision of imports - not adding duplicated import {}", anImport);
+                } else if (overallAccess.getName().equals(anImport.getSimpleName())) {
+                    // skip
                 } else {
-                    overallAccess.addImport(i);
+                    overallAccess.addImport(anImport);
                 }
             }
         }

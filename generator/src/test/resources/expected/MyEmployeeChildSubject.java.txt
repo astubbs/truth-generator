@@ -3,6 +3,9 @@ import io.stubbs.truth.generator.testModel.MyEmployeeSubject;
 import com.google.common.truth.FailureMetadata;
 import static io.stubbs.truth.generator.testModel.MyEmployeeSubject.*;
 import com.google.common.truth.Truth;
+import io.stubbs.truth.generator.internal.ManagedSubjectBuilder;
+import io.stubbs.truth.generator.internal.ManagedTruth;
+import com.google.common.truth.SimpleSubjectBuilder;
 import javax.annotation.processing.Generated;
 /**
  * Entry point for assertions for @{MyEmployee}. Import the static accessor
@@ -28,7 +31,7 @@ public class MyEmployeeChildSubject extends MyEmployeeSubject {
 	 * Entry point for {@link MyEmployee} assertions.
 	 */
 	public static MyEmployeeSubject assertThat(io.stubbs.truth.generator.testModel.MyEmployee actual) {
-		return Truth.assertAbout(myEmployees()).that(actual);
+		return Truth.assertAbout(io.stubbs.truth.generator.testModel.MyEmployeeSubject.myEmployees()).that(actual);
 	}
 	/**
 	 * Convenience entry point for {@link MyEmployee} assertions when being mixed
@@ -42,13 +45,15 @@ public class MyEmployeeChildSubject extends MyEmployeeSubject {
 	/**
 	 * see {@link Truth#assertWithMessage}
 	 */
-	static public ManagedSubjectBuilder assertWithMessage(java.lang.String messageToPrepend) {
-		return Truth.assert_().withMessage(messageToPrepend);
+	static public SimpleSubjectBuilder<MyEmployeeSubject, MyEmployee> assertWithMessage(
+			java.lang.String messageToPrepend) {
+		return Truth.assertWithMessage(messageToPrepend).about(myEmployees());
 	}
 	/**
 	 * see {@link Truth#assertWithMessage}
 	 */
-	static public ManagedSubjectBuilder assertWithMessage(java.lang.String format, java.lang.Object[] args) {
-		return Truth.assert_().withMessage(format, args);
+	static public SimpleSubjectBuilder<MyEmployeeSubject, MyEmployee> assertWithMessage(java.lang.String format,
+			java.lang.Object[] args) {
+		return Truth.assertWithMessage(format, args).about(myEmployees());
 	}
 }

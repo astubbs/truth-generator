@@ -1,11 +1,15 @@
 package io.stubbs.truth.generator.internal;
 
 import com.google.common.base.Joiner;
+import com.google.common.truth.SimpleSubjectBuilder;
 import com.google.common.truth.Subject;
 import com.google.common.truth.Truth;
+import io.stubbs.truth.generator.internal.model.MiddleClass;
 import org.jboss.forge.roaster.model.source.JavaClassSource;
 import org.jboss.forge.roaster.model.source.JavaDocSource;
 import org.jboss.forge.roaster.model.source.MethodSource;
+
+import java.util.Optional;
 
 public class AssertionEntryPointGenerator {
 
@@ -64,11 +68,13 @@ public class AssertionEntryPointGenerator {
                     .setStatic(true)
                     .setReturnType(factoryContainerQualifiedName);
             assertThat.addParameter(source, "actual");
-            //         return assertAbout(things()).that(actual);
-            // add explicit static reference for now - see below
+
+            //
             javaClass.addImport(factoryContainerQualifiedName + ".*")
                     .setStatic(true);
-            String entryPointBody = "return Truth.assertAbout(" + factoryMethodName + "()).that(actual);";
+
+            //
+            String entryPointBody = "return Truth.assertAbout(" + factoryContainerQualifiedName + "." + factoryMethodName + "()).that(actual);";
             assertThat.setBody(entryPointBody);
             javaClass.addImport(Truth.class);
             assertThat.getJavaDoc().setText("Entry point for {@link " + source.getSimpleName() + "} assertions.");
@@ -76,34 +82,40 @@ public class AssertionEntryPointGenerator {
         }
     }
 
-    protected <T> void addAssertTruth(Class<T> source, JavaClassSource javaClass, MethodSource<JavaClassSource> assertThat) {
+    protected <T> void addAssertTruth(Class<T> classUnderTest, JavaClassSource javaClass, MethodSource<JavaClassSource> assertThat) {
         String name = "assertTruth";
-        if (!containsMethod(javaClass, name, source)) {
+        if (!containsMethod(javaClass, name, classUnderTest)) {
             // convenience entry point when being mixed with other "assertThat" assertion libraries
             MethodSource<JavaClassSource> assertTruth = javaClass.addMethod()
                     .setName(name)
                     .setPublic()
                     .setStatic(true)
                     .setReturnType(assertThat.getReturnType());
-            assertTruth.addParameter(source, "actual");
+            assertTruth.addParameter(classUnderTest, "actual");
             assertTruth.setBody("return " + assertThat.getName() + "(actual);");
-            assertTruth.getJavaDoc().setText("Convenience entry point for {@link " + source.getSimpleName() + "} assertions when being " +
+            assertTruth.getJavaDoc().setText("Convenience entry point for {@link " + classUnderTest.getSimpleName() + "} assertions when being " +
                             "mixed with other \"assertThat\" assertion libraries.")
                     .addTagValue("@see", "#assertThat");
         }
     }
 
-    public void addWithMessage(JavaClassSource javaClass) {
-        addWithMessage(javaClass, false);
-        addWithMessage(javaClass, true);
+    public void addWithMessage(String packageName, JavaClassSource overallAccess) {
+        addWithMessage(packageName, Optional.empty(), overallAccess);
     }
 
-    private void addWithMessage(JavaClassSource javaClass, boolean withArgs) {
-        MethodSource<JavaClassSource> with = javaClass.addMethod()
+    public void addWithMessage(String overallPointPackageName, Optional<MiddleClass> middleClass, JavaClassSource generating) {
+        addWithMessage(overallPointPackageName, middleClass, generating, false);
+        addWithMessage(overallPointPackageName, middleClass, generating, true);
+    }
+
+    private void addWithMessage(String overallPointPackageName, Optional<MiddleClass> middle, JavaClassSource generating, boolean withArgs) {
+        MethodSource<JavaClassSource> with = generating.addMethod()
                 .setName(ASSERT_WITH_MESSAGE)
                 .setStatic(true)
-                .setPublic()
-                .setReturnType("ManagedSubjectBuilder");
+                .setPublic();
+
+        generating.addImport(overallPointPackageName + ".ManagedSubjectBuilder");
+        generating.addImport(overallPointPackageName + ".ManagedTruth");
 
         //
         if (withArgs) {
@@ -113,52 +125,39 @@ public class AssertionEntryPointGenerator {
             with.addParameter(String.class, "messageToPrepend");
         }
 
+
         //
-        StringBuilder body = new StringBuilder("return Truth.assert_().withMessage(");
-        if (withArgs) {
-            body.append("format, args");
+        boolean isSubjectChild = middle.isPresent();
+        if (isSubjectChild) {
+            MiddleClass threeSystem = middle.get();
+            String factoryName = threeSystem.getFactoryMethod().getName();
+
+            //
+            if (withArgs) {
+                with.setBody("return Truth.assertWithMessage(format, args).about(" + factoryName + "());");
+            } else {
+                with.setBody("return Truth.assertWithMessage(messageToPrepend).about(" + factoryName + "());");
+            }
+
+            //
+            var subject = threeSystem.getSimpleName();
+            var classUnderTest = threeSystem.getClassUnderTest().getSimpleName();
+            with.setReturnType("SimpleSubjectBuilder<" + subject + ", " + classUnderTest + ">");
+            generating.addImport(SimpleSubjectBuilder.class);
         } else {
-            body.append("messageToPrepend");
+
+            //
+            if (withArgs) {
+                with.setBody("return new ManagedSubjectBuilder(Truth.assertWithMessage(format, args));");
+            } else {
+                with.setBody("return new ManagedSubjectBuilder(ManagedTruth.assertWithMessage(messageToPrepend));");
+            }
+            with.setReturnType("ManagedSubjectBuilder");
         }
-        body.append(");");
-        with.setBody(body.toString());
 
         //
         var javaDoc = with.getJavaDoc();
         javaDoc.addTagValue("see", "{@link Truth#assertWithMessage}");
     }
 
-//
-//    /**
-//     * Begins an assertion that, if it fails, will prepend the given message to the failure message.
-//     *
-//     * <p>This method is a shortcut for {@code assert_().withMessage(...)}.
-//     *
-//     * <p>To set a message when using a custom subject, use {@code assertWithMessage(...).}{@link
-//     * StandardSubjectBuilder#about about(...)}, as discussed in <a href="https://truth.dev/faq#java8">this FAQ
-//     * entry</a>.
-//     */
-//    public static StandardSubjectBuilder assertWithMessage(String messageToPrepend) {
-//        return assert_().withMessage(messageToPrepend);
-//    }
-//
-//    /**
-//     * Begins an assertion that, if it fails, will prepend the given message to the failure message.
-//     *
-//     * <p><b>Note:</b> the arguments will be substituted into the format template using {@link
-//     * com.google.common.base.Strings#lenientFormat Strings.lenientFormat}. Note this only supports the {@code %s}
-//     * specifier.
-//     *
-//     * <p>This method is a shortcut for {@code assert_().withMessage(...)}.
-//     *
-//     * <p>To set a message when using a custom subject, use {@code assertWithMessage(...).}{@link
-//     * StandardSubjectBuilder#about about(...)}, as discussed in <a href="https://truth.dev/faq#java8">this FAQ
-//     * entry</a>.
-//     *
-//     * @throws IllegalArgumentException if the number of placeholders in the format string does not equal the number of
-//     *                                  given arguments
-//     */
-//    public static StandardSubjectBuilder assertWithMessage(String format, Object... args) {
-//        return assert_().withMessage(format, args);
-//    }
 }

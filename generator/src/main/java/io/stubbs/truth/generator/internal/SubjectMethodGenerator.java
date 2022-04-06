@@ -31,6 +31,7 @@ import static org.reflections.ReflectionUtils.*;
 public class SubjectMethodGenerator extends AssertionMethodStrategy {
 
     private final BooleanStrategy booleanStrategy;
+    private final EqualityStrategy equalityStrategy = new EqualityStrategy();
     private final Set<AssertionMethodStrategy> strategies = new HashSet<>();
     private final ChainStrategy chainStrategy;
     private final JDKOverrideAnalyser bs = new JDKOverrideAnalyser(Options.get());
@@ -191,45 +192,12 @@ public class SubjectMethodGenerator extends AssertionMethodStrategy {
                 addMapStrategy(method, generated, classUnderTest);
             }
 
-            addEqualityStrategy(method, generated, classUnderTest);
+            equalityStrategy.addStrategyMaybe(context, method, generated);
         }
 
         generated.addImport(Fact.class)
                 .setStatic(true)
                 .setName(Fact.class.getCanonicalName() + ".*");
-    }
-
-    private void addEqualityStrategy(Method method, JavaClassSource generated, Class<?> classUnderTest) {
-        equalityStrategyGeneric(method, generated, false);
-        equalityStrategyGeneric(method, generated, true);
-    }
-
-    private void equalityStrategyGeneric(Method method, JavaClassSource generated, boolean positive) {
-        Class<?> returnType = method.getReturnType();
-        boolean primitive = returnType.isPrimitive();
-        String equality = primitive ? " == expected" : ".equals(expected)";
-
-        String body = "" +
-                "  if (%s(actual.%s()%s)) {\n" +
-                "    failWithActual(fact(\"expected %s %sto be equal to\", expected));\n" +
-                "  }\n";
-
-        String testPrefix = positive ? "!" : "";
-        String say = positive ? "" : "NOT ";
-        String fieldName = removeStart(method.getName(), "get");
-        body = format(body, testPrefix, method.getName(), equality, fieldName, say);
-
-        String methodName = "has" + capitalize(fieldName) + capitalize(say.toLowerCase()).trim() + "EqualTo";
-        MethodSource<JavaClassSource> newMethod = generated.addMethod();
-        newMethod.setName(methodName)
-                .setReturnTypeVoid()
-                .setBody(body)
-                .setPublic();
-        newMethod.addParameter(returnType, "expected");
-
-        newMethod.getJavaDoc().setText("Simple check for equality for all fields.");
-
-        copyThrownExceptions(method, newMethod);
     }
 
     private void addMapStrategy(Method method, JavaClassSource generated, Class<?> classUnderTest) {
@@ -343,9 +311,9 @@ public class SubjectMethodGenerator extends AssertionMethodStrategy {
          * a new generated Subject
          */
         @Getter
-        final ThreeSystem generated;
+        final ThreeSystem<?> generated;
 
-        ClassOrGenerated(final Class<? extends Subject> clazz, final ThreeSystem generated) {
+        ClassOrGenerated(final Class<? extends Subject> clazz, final ThreeSystem<?> generated) {
             this.clazz = clazz;
             this.generated = generated;
         }
@@ -355,6 +323,7 @@ public class SubjectMethodGenerator extends AssertionMethodStrategy {
         }
 
         static Optional<ClassOrGenerated> ofClass(Optional<Class<? extends Subject>> clazz) {
+            //noinspection OptionalIsPresent java 8
             if (clazz.isPresent())
                 return of(new ClassOrGenerated(clazz.get(), null));
             else return empty();

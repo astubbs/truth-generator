@@ -185,10 +185,6 @@ public class SkeletonGenerator implements SkeletonGeneratorAPI {
         return child;
     }
 
-//    private <T> void registerManagedClass(Class<T> sourceClass, JavaClassSource gengeratedClass) {
-//        managedSubjects.add(new ManagedClassSet(sourceClass, gengeratedClass));
-//    }
-
     private <T> ParentClass createParent(Class<T> clazzUnderTest) {
         JavaClassSource parent = Roaster.create(JavaClassSource.class);
         String sourceName = clazzUnderTest.getSimpleName();

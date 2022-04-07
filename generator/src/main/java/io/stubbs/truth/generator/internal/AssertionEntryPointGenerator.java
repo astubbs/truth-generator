@@ -12,6 +12,9 @@ import org.jboss.forge.roaster.model.source.MethodSource;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * @author Antony Stubbs
+ */
 public class AssertionEntryPointGenerator {
 
     public static final String ASSERT_WITH_MESSAGE = "assertWithMessage";

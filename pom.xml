@@ -300,7 +300,21 @@
                 <plugin>
                     <groupId>io.stubbs.truth</groupId>
                     <artifactId>truth-generator-maven-plugin</artifactId>
-                    <version>${project.version}</version>
+                    <version>0.1-SNAPSHOT</version>
+                    <configuration>
+                        <cleanTargetDir>true</cleanTargetDir>
+                        <useHas>false</useHas>
+                        <useGetterForLegacyClasses>true</useGetterForLegacyClasses>
+                        <entryPointClassPackage>io.stubbs.truth</entryPointClassPackage>
+                    </configuration>
+                    <executions>
+                        <execution>
+                            <phase>generate-test-sources</phase>
+                            <goals>
+                                <goal>generate</goal>
+                            </goals>
+                        </execution>
+                    </executions>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
@@ -370,6 +384,5 @@
             </plugins>
         </pluginManagement>
     </build>
-
 
 </project>

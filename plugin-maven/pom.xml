@@ -81,6 +81,18 @@
 
     <build>
         <plugins>
+            <!-- can't boot strap the plugin module? maven insists on using a matching version ? -->
+            <!--            <plugin>-->
+            <!--                <groupId>io.stubbs.truth</groupId>-->
+            <!--                <artifactId>truth-generator-maven-plugin</artifactId>-->
+            <!--                &lt;!&ndash; this gets overridden to the current module version &ndash;&gt;-->
+            <!--                <version>0.1-SNAPSHOT</version>-->
+            <!--                <configuration>-->
+            <!--                    <packages>-->
+            <!--                        <package>io.stubbs.truth.generator.plugin</package>-->
+            <!--                    </packages>-->
+            <!--                </configuration>-->
+            <!--            </plugin>-->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-plugin-plugin</artifactId>
@@ -88,6 +100,7 @@
                 <configuration>
                     <!-- <goalPrefix>maven-archetype-plugin</goalPrefix> -->
                     <skipErrorNoDescriptorsFound>true</skipErrorNoDescriptorsFound>
+                    <!-- TODO change to truth-generator? maven warns "truth" is unexpected -->
                     <goalPrefix>truth</goalPrefix>
                 </configuration>
                 <!--                <executions>-->

@@ -14,4 +14,17 @@
 
     <artifactId>truth-generator-api</artifactId>
 
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>io.stubbs.truth</groupId>
+                <artifactId>truth-generator-maven-plugin</artifactId>
+                <configuration>
+                    <packages>
+                        <package>io.stubbs.truth.generator.subjects</package>
+                    </packages>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 </project>

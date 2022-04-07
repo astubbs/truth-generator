@@ -79,7 +79,7 @@ public class TruthGenerator implements TruthGeneratorAPI {
 
         //
         addTests(subjectsSystems);
-        overallEntryPoint.createOverallAccessPoints();
+        overallEntryPoint.create();
     }
 
     private Set<ThreeSystem<?>> generateSkeletonsFromPackages(Set<String> modelPackages, OverallEntryPoint overallEntryPoint, SourceClassSets ss) {
@@ -210,7 +210,7 @@ public class TruthGenerator implements TruthGeneratorAPI {
         addTests(union);
 
         // create overall entry point
-        packageForEntryPoint.createOverallAccessPoints();
+        packageForEntryPoint.create();
         results.overallEntryPoint(packageForEntryPoint);
 
         Map<Class<?>, ThreeSystem<?>> all = union.stream().collect(Collectors.toMap(ThreeSystem::getClassUnderTest, x -> x));

@@ -55,6 +55,10 @@ public class TruthGeneratorTest {
     public static final Path testOutputDirectory = Paths.get("").resolve("target").toAbsolutePath();
     Correspondence<MethodSource<?>, String> methodHasName = transforming(MethodSource::getName, "has name of");
 
+    static {
+        GeneratedMarker.setClock(MutableClock.epochUTC());
+    }
+
     /**
      * Base test that compares with expected generated code for test model. Brute force test.
      */
@@ -64,7 +68,7 @@ public class TruthGeneratorTest {
         // todo replace with @TempDir
         TruthGenerator truthGenerator = TruthGeneratorAPI.create(testOutputDirectory, Options.builder().useHasInsteadOfGet(true).build());
 
-        SkeletonGenerator.setClock(MutableClock.epochUTC());
+        GeneratedMarker.setClock(MutableClock.epochUTC());
 
         //
         truthGenerator.registerStandardSubjectExtension(String.class, MyStringSubject.class);
@@ -136,7 +140,7 @@ public class TruthGeneratorTest {
 
         OverallEntryPoint overallEntryPoint = generate.getOverallEntryPoint();
 
-        JavaClassSource generated = overallEntryPoint.getGenerated();
+        JavaClassSource generated = overallEntryPoint.getOverallEntryPointGenerated();
 
         String actual = generated.toString();
         assertThat(actual).contains("collections()).that");
@@ -151,6 +155,29 @@ public class TruthGeneratorTest {
                 .equalTo(expected);
     }
 
+    @SneakyThrows
+    @Test
+    public void generatedManagedSubjectBuilder() {
+        TruthGenerator truthGenerator = TruthGeneratorAPI.create(testOutputDirectory, Options.builder().build());
+
+        String packageForEntryPoint = getClass().getPackage().getName();
+        SourceClassSets ss = new SourceClassSets(packageForEntryPoint);
+
+        ss.generateFrom(MyEmployee.class);
+
+        Result generate = truthGenerator.generate(ss);
+
+        OverallEntryPoint overallEntryPoint = generate.getOverallEntryPoint();
+
+        JavaClassSource generated = overallEntryPoint.getManagedSubjectBuilderGenerated();
+
+        String expected = loadFileToString("expected/ManagedSubjectBuilder.java.txt");
+        Truth.assertAbout(JavaClassSourceSubject.javaClassSources())
+                .that(generated)
+                .hasSourceText()
+                .ignoringTrailingWhiteSpace()
+                .equalTo(expected);
+    }
 
     private String loadFileToString(String expectedFileName) throws IOException {
         return Resources.toString(Resources.getResource(expectedFileName), Charset.defaultCharset());
@@ -196,7 +223,7 @@ public class TruthGeneratorTest {
         var generated = tg.generate(ss).getAll();
 
         assertThat(generated).containsKey(NonBeanLegacy.class);
-        ThreeSystem actual = generated.get(NonBeanLegacy.class);
+        ThreeSystem<?> actual = generated.get(NonBeanLegacy.class);
         assertThat(actual)
                 .hasParent().hasGenerated().hasMethods()
                 .comparingElementsUsing(methodHasName)

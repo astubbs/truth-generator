@@ -14,6 +14,7 @@ import uk.co.jemos.podam.api.PodamFactoryImpl;
 
 import java.io.File;
 import java.time.Instant;
+import java.util.List;
 import java.util.Optional;
 
 import static com.google.common.truth.Truth.assertThat;
@@ -126,6 +127,44 @@ public class GeneratedAssertionTests {
     public void instantsAreComparableSubjectsAsWell() {
         MyEmployee emp = TestModelUtils.createInstance(MyEmployee.class).toBuilder().build();
         ManagedTruth.assertThat(emp).hasStartedAt().isGreaterThan(Instant.MIN);
+    }
+
+    @Test
+    public void withMessageAboutChain() {
+        var employee = TestModelUtils.createEmployee();
+        MyEmployeeChildSubject.assertWithMessage("Must not be a boss")
+                .that(employee)
+                .isNotBoss();
+
+        Assertions.assertThatThrownBy(() ->
+                MyEmployeeChildSubject.assertWithMessage("Acts like a boss")
+                        .that(employee)
+                        .isBoss()
+        ).hasMessageContaining("Acts like a boss");
+    }
+
+    @Test
+    public void withMessageChain() {
+        var employee = TestModelUtils.createEmployee();
+        ManagedTruth.assertWithMessage("Must not be a boss")
+                .that(employee)
+                .isNotBoss();
+
+        Assertions.assertThatThrownBy(() -> {
+            ManagedTruth.assertWithMessage("Should be a %s", List.of("boss's boss"))
+                    .that(employee)
+                    .isBoss();
+        }).hasMessageContaining("Should be a boss's boss");
+
+        Assertions.assertThatThrownBy(() ->
+                ManagedTruth.assertWithMessage("Acts like a boss")
+                        .that(employee)
+                        .isBoss()
+        ).hasMessageContaining("Acts like a boss");
+
+        MyEmployeeChildSubject.assertWithMessage("is not a boss")
+                .that(employee)
+                .isNotBoss();
     }
 
 }

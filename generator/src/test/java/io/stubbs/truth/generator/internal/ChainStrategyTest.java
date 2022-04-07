@@ -24,8 +24,8 @@ import java.util.Set;
 import static com.google.common.truth.Truth.assertThat;
 
 /**
- * @see ChainStrategy
  * @author Antony Stubbs
+ * @see ChainStrategy
  */
 public class ChainStrategyTest extends StrategyTest {
 
@@ -40,8 +40,11 @@ public class ChainStrategyTest extends StrategyTest {
         JavaClassSource generated = Roaster.create(JavaClassSource.class);
 
         MyEmployee employee = TestModelUtils.createEmployee();
-        Class<? extends MyEmployee> employeeClass = employee.getClass();
-        ThreeSystem threeSystem = new ThreeSystem(employeeClass, new ParentClass(Roaster.create(JavaClassSource.class)), MiddleClass.of(employeeClass), generated);
+        Class<MyEmployee> employeeClass = MyEmployee.class;
+        ThreeSystem<MyEmployee> threeSystem = new ThreeSystem<>(employeeClass,
+                new ParentClass(Roaster.create(JavaClassSource.class)),
+                MiddleClass.of(employeeClass, employeeClass),
+                generated);
 
         //
         Method theMethod = getMethod(employeeClass, "getWeighting");

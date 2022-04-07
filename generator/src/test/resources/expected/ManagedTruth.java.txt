@@ -1,8 +1,11 @@
 package io.stubbs.truth.generator.internal;
+import io.stubbs.truth.generator.internal.ManagedSubjectBuilder;
+import java.util.List;
 import io.stubbs.truth.generator.testModel.IdCardSubject;
 import com.google.common.truth.FailureMetadata;
 import static io.stubbs.truth.generator.testModel.IdCardSubject.*;
 import com.google.common.truth.Truth;
+import com.google.common.truth.SimpleSubjectBuilder;
 import javax.annotation.processing.Generated;
 import io.stubbs.truth.generator.testModel.SecurityTypeSubject;
 import io.stubbs.truth.generator.testModel.IdCard.SecurityType;
@@ -88,12 +91,25 @@ import static io.stubbs.truth.generator.subjects.MyMapSubject.*;
 /**
  * Single point of access for all managed Subjects.
  */
+@Generated(value = "io.stubbs.truth.generator.internal.TruthGenerator", date = "1970-01-01T00:00:00Z")
 public class ManagedTruth {
+	/**
+	 * see {@link Truth#assertWithMessage}
+	 */
+	static public ManagedSubjectBuilder assertWithMessage(java.lang.String messageToPrepend) {
+		return new ManagedSubjectBuilder(Truth.assertWithMessage(messageToPrepend));
+	}
+	/**
+	 * see {@link Truth#assertWithMessage}
+	 */
+	static public ManagedSubjectBuilder assertWithMessage(java.lang.String format, List args) {
+		return new ManagedSubjectBuilder(Truth.assertWithMessage(format, args.toArray()));
+	}
 	/**
 	 * Entry point for {@link IdCard} assertions.
 	 */
 	public static IdCardSubject assertThat(io.stubbs.truth.generator.testModel.IdCard actual) {
-		return Truth.assertAbout(idCards()).that(actual);
+		return Truth.assertAbout(io.stubbs.truth.generator.testModel.IdCardSubject.idCards()).that(actual);
 	}
 	/**
 	 * Convenience entry point for {@link IdCard} assertions when being mixed with
@@ -108,7 +124,7 @@ public class ManagedTruth {
 	 * Entry point for {@link SecurityType} assertions.
 	 */
 	public static SecurityTypeSubject assertThat(io.stubbs.truth.generator.testModel.IdCard.SecurityType actual) {
-		return Truth.assertAbout(securityTypes()).that(actual);
+		return Truth.assertAbout(io.stubbs.truth.generator.testModel.SecurityTypeSubject.securityTypes()).that(actual);
 	}
 	/**
 	 * Convenience entry point for {@link SecurityType} assertions when being mixed
@@ -123,7 +139,7 @@ public class ManagedTruth {
 	 * Entry point for {@link Type} assertions.
 	 */
 	public static TypeSubject assertThat(io.stubbs.truth.generator.testModel.IdCard.SecurityType.Type actual) {
-		return Truth.assertAbout(types()).that(actual);
+		return Truth.assertAbout(io.stubbs.truth.generator.testModel.TypeSubject.types()).that(actual);
 	}
 	/**
 	 * Convenience entry point for {@link Type} assertions when being mixed with
@@ -138,7 +154,7 @@ public class ManagedTruth {
 	 * Entry point for {@link MyEmployee} assertions.
 	 */
 	public static MyEmployeeSubject assertThat(io.stubbs.truth.generator.testModel.MyEmployee actual) {
-		return Truth.assertAbout(myEmployees()).that(actual);
+		return Truth.assertAbout(io.stubbs.truth.generator.testModel.MyEmployeeSubject.myEmployees()).that(actual);
 	}
 	/**
 	 * Convenience entry point for {@link MyEmployee} assertions when being mixed
@@ -153,7 +169,7 @@ public class ManagedTruth {
 	 * Entry point for {@link State} assertions.
 	 */
 	public static StateSubject assertThat(io.stubbs.truth.generator.testModel.MyEmployee.State actual) {
-		return Truth.assertAbout(states()).that(actual);
+		return Truth.assertAbout(io.stubbs.truth.generator.testModel.StateSubject.states()).that(actual);
 	}
 	/**
 	 * Convenience entry point for {@link State} assertions when being mixed with
@@ -168,7 +184,7 @@ public class ManagedTruth {
 	 * Entry point for {@link Person} assertions.
 	 */
 	public static PersonSubject assertThat(io.stubbs.truth.generator.testModel.Person actual) {
-		return Truth.assertAbout(persons()).that(actual);
+		return Truth.assertAbout(io.stubbs.truth.generator.testModel.PersonSubject.persons()).that(actual);
 	}
 	/**
 	 * Convenience entry point for {@link Person} assertions when being mixed with
@@ -183,7 +199,8 @@ public class ManagedTruth {
 	 * Entry point for {@link DayOfWeek} assertions.
 	 */
 	public static DayOfWeekSubject assertThat(java.time.DayOfWeek actual) {
-		return Truth.assertAbout(dayOfWeeks()).that(actual);
+		return Truth.assertAbout(io.stubbs.truth.generator.internal.autoShaded.java.time.DayOfWeekSubject.dayOfWeeks())
+				.that(actual);
 	}
 	/**
 	 * Convenience entry point for {@link DayOfWeek} assertions when being mixed
@@ -198,7 +215,8 @@ public class ManagedTruth {
 	 * Entry point for {@link Instant} assertions.
 	 */
 	public static InstantSubject assertThat(java.time.Instant actual) {
-		return Truth.assertAbout(instants()).that(actual);
+		return Truth.assertAbout(io.stubbs.truth.generator.internal.autoShaded.java.time.InstantSubject.instants())
+				.that(actual);
 	}
 	/**
 	 * Convenience entry point for {@link Instant} assertions when being mixed with
@@ -213,7 +231,8 @@ public class ManagedTruth {
 	 * Entry point for {@link LocalDate} assertions.
 	 */
 	public static LocalDateSubject assertThat(java.time.LocalDate actual) {
-		return Truth.assertAbout(localDates()).that(actual);
+		return Truth.assertAbout(io.stubbs.truth.generator.internal.autoShaded.java.time.LocalDateSubject.localDates())
+				.that(actual);
 	}
 	/**
 	 * Convenience entry point for {@link LocalDate} assertions when being mixed
@@ -228,7 +247,10 @@ public class ManagedTruth {
 	 * Entry point for {@link LocalDateTime} assertions.
 	 */
 	public static LocalDateTimeSubject assertThat(java.time.LocalDateTime actual) {
-		return Truth.assertAbout(localDateTimes()).that(actual);
+		return Truth
+				.assertAbout(
+						io.stubbs.truth.generator.internal.autoShaded.java.time.LocalDateTimeSubject.localDateTimes())
+				.that(actual);
 	}
 	/**
 	 * Convenience entry point for {@link LocalDateTime} assertions when being mixed
@@ -243,7 +265,8 @@ public class ManagedTruth {
 	 * Entry point for {@link LocalTime} assertions.
 	 */
 	public static LocalTimeSubject assertThat(java.time.LocalTime actual) {
-		return Truth.assertAbout(localTimes()).that(actual);
+		return Truth.assertAbout(io.stubbs.truth.generator.internal.autoShaded.java.time.LocalTimeSubject.localTimes())
+				.that(actual);
 	}
 	/**
 	 * Convenience entry point for {@link LocalTime} assertions when being mixed
@@ -258,7 +281,8 @@ public class ManagedTruth {
 	 * Entry point for {@link Month} assertions.
 	 */
 	public static MonthSubject assertThat(java.time.Month actual) {
-		return Truth.assertAbout(months()).that(actual);
+		return Truth.assertAbout(io.stubbs.truth.generator.internal.autoShaded.java.time.MonthSubject.months())
+				.that(actual);
 	}
 	/**
 	 * Convenience entry point for {@link Month} assertions when being mixed with
@@ -273,7 +297,10 @@ public class ManagedTruth {
 	 * Entry point for {@link OffsetDateTime} assertions.
 	 */
 	public static OffsetDateTimeSubject assertThat(java.time.OffsetDateTime actual) {
-		return Truth.assertAbout(offsetDateTimes()).that(actual);
+		return Truth
+				.assertAbout(
+						io.stubbs.truth.generator.internal.autoShaded.java.time.OffsetDateTimeSubject.offsetDateTimes())
+				.that(actual);
 	}
 	/**
 	 * Convenience entry point for {@link OffsetDateTime} assertions when being
@@ -288,7 +315,9 @@ public class ManagedTruth {
 	 * Entry point for {@link OffsetTime} assertions.
 	 */
 	public static OffsetTimeSubject assertThat(java.time.OffsetTime actual) {
-		return Truth.assertAbout(offsetTimes()).that(actual);
+		return Truth
+				.assertAbout(io.stubbs.truth.generator.internal.autoShaded.java.time.OffsetTimeSubject.offsetTimes())
+				.that(actual);
 	}
 	/**
 	 * Convenience entry point for {@link OffsetTime} assertions when being mixed
@@ -303,7 +332,8 @@ public class ManagedTruth {
 	 * Entry point for {@link ZoneId} assertions.
 	 */
 	public static ZoneIdSubject assertThat(java.time.ZoneId actual) {
-		return Truth.assertAbout(zoneIds()).that(actual);
+		return Truth.assertAbout(io.stubbs.truth.generator.internal.autoShaded.java.time.ZoneIdSubject.zoneIds())
+				.that(actual);
 	}
 	/**
 	 * Convenience entry point for {@link ZoneId} assertions when being mixed with
@@ -318,7 +348,9 @@ public class ManagedTruth {
 	 * Entry point for {@link ZoneOffset} assertions.
 	 */
 	public static ZoneOffsetSubject assertThat(java.time.ZoneOffset actual) {
-		return Truth.assertAbout(zoneOffsets()).that(actual);
+		return Truth
+				.assertAbout(io.stubbs.truth.generator.internal.autoShaded.java.time.ZoneOffsetSubject.zoneOffsets())
+				.that(actual);
 	}
 	/**
 	 * Convenience entry point for {@link ZoneOffset} assertions when being mixed
@@ -333,7 +365,10 @@ public class ManagedTruth {
 	 * Entry point for {@link ZonedDateTime} assertions.
 	 */
 	public static ZonedDateTimeSubject assertThat(java.time.ZonedDateTime actual) {
-		return Truth.assertAbout(zonedDateTimes()).that(actual);
+		return Truth
+				.assertAbout(
+						io.stubbs.truth.generator.internal.autoShaded.java.time.ZonedDateTimeSubject.zonedDateTimes())
+				.that(actual);
 	}
 	/**
 	 * Convenience entry point for {@link ZonedDateTime} assertions when being mixed
@@ -348,7 +383,8 @@ public class ManagedTruth {
 	 * Entry point for {@link ChronoLocalDate} assertions.
 	 */
 	public static ChronoLocalDateSubject assertThat(java.time.chrono.ChronoLocalDate actual) {
-		return Truth.assertAbout(chronoLocalDates()).that(actual);
+		return Truth.assertAbout(io.stubbs.truth.generator.internal.autoShaded.java.time.chrono.ChronoLocalDateSubject
+				.chronoLocalDates()).that(actual);
 	}
 	/**
 	 * Convenience entry point for {@link ChronoLocalDate} assertions when being
@@ -363,7 +399,10 @@ public class ManagedTruth {
 	 * Entry point for {@link ChronoLocalDateTime} assertions.
 	 */
 	public static ChronoLocalDateTimeSubject assertThat(java.time.chrono.ChronoLocalDateTime actual) {
-		return Truth.assertAbout(chronoLocalDateTimes()).that(actual);
+		return Truth
+				.assertAbout(io.stubbs.truth.generator.internal.autoShaded.java.time.chrono.ChronoLocalDateTimeSubject
+						.chronoLocalDateTimes())
+				.that(actual);
 	}
 	/**
 	 * Convenience entry point for {@link ChronoLocalDateTime} assertions when being
@@ -378,7 +417,10 @@ public class ManagedTruth {
 	 * Entry point for {@link Chronology} assertions.
 	 */
 	public static ChronologySubject assertThat(java.time.chrono.Chronology actual) {
-		return Truth.assertAbout(chronologies()).that(actual);
+		return Truth
+				.assertAbout(
+						io.stubbs.truth.generator.internal.autoShaded.java.time.chrono.ChronologySubject.chronologies())
+				.that(actual);
 	}
 	/**
 	 * Convenience entry point for {@link Chronology} assertions when being mixed
@@ -393,7 +435,8 @@ public class ManagedTruth {
 	 * Entry point for {@link Era} assertions.
 	 */
 	public static EraSubject assertThat(java.time.chrono.Era actual) {
-		return Truth.assertAbout(eras()).that(actual);
+		return Truth.assertAbout(io.stubbs.truth.generator.internal.autoShaded.java.time.chrono.EraSubject.eras())
+				.that(actual);
 	}
 	/**
 	 * Convenience entry point for {@link Era} assertions when being mixed with
@@ -408,7 +451,9 @@ public class ManagedTruth {
 	 * Entry point for {@link IsoChronology} assertions.
 	 */
 	public static IsoChronologySubject assertThat(java.time.chrono.IsoChronology actual) {
-		return Truth.assertAbout(isoChronologies()).that(actual);
+		return Truth.assertAbout(
+				io.stubbs.truth.generator.internal.autoShaded.java.time.chrono.IsoChronologySubject.isoChronologies())
+				.that(actual);
 	}
 	/**
 	 * Convenience entry point for {@link IsoChronology} assertions when being mixed
@@ -423,7 +468,8 @@ public class ManagedTruth {
 	 * Entry point for {@link IsoEra} assertions.
 	 */
 	public static IsoEraSubject assertThat(java.time.chrono.IsoEra actual) {
-		return Truth.assertAbout(isoEras()).that(actual);
+		return Truth.assertAbout(io.stubbs.truth.generator.internal.autoShaded.java.time.chrono.IsoEraSubject.isoEras())
+				.that(actual);
 	}
 	/**
 	 * Convenience entry point for {@link IsoEra} assertions when being mixed with
@@ -438,7 +484,10 @@ public class ManagedTruth {
 	 * Entry point for {@link ZoneRules} assertions.
 	 */
 	public static ZoneRulesSubject assertThat(java.time.zone.ZoneRules actual) {
-		return Truth.assertAbout(zoneRuleses()).that(actual);
+		return Truth
+				.assertAbout(
+						io.stubbs.truth.generator.internal.autoShaded.java.time.zone.ZoneRulesSubject.zoneRuleses())
+				.that(actual);
 	}
 	/**
 	 * Convenience entry point for {@link ZoneRules} assertions when being mixed
@@ -453,7 +502,8 @@ public class ManagedTruth {
 	 * Entry point for {@link Optional} assertions.
 	 */
 	public static OptionalSubject assertThat(java.util.Optional actual) {
-		return Truth.assertAbout(optionals()).that(actual);
+		return Truth.assertAbout(io.stubbs.truth.generator.internal.autoShaded.java.util.OptionalSubject.optionals())
+				.that(actual);
 	}
 	/**
 	 * Convenience entry point for {@link Optional} assertions when being mixed with
@@ -468,7 +518,8 @@ public class ManagedTruth {
 	 * Entry point for {@link UUID} assertions.
 	 */
 	public static UUIDSubject assertThat(java.util.UUID actual) {
-		return Truth.assertAbout(uUIDs()).that(actual);
+		return Truth.assertAbout(io.stubbs.truth.generator.internal.autoShaded.java.util.UUIDSubject.uUIDs())
+				.that(actual);
 	}
 	/**
 	 * Convenience entry point for {@link UUID} assertions when being mixed with
@@ -483,7 +534,7 @@ public class ManagedTruth {
 	 * Entry point for {@link String} assertions.
 	 */
 	public static MyStringSubject assertThat(java.lang.String actual) {
-		return Truth.assertAbout(strings()).that(actual);
+		return Truth.assertAbout(io.stubbs.truth.generator.subjects.MyStringSubject.strings()).that(actual);
 	}
 	/**
 	 * Convenience entry point for {@link String} assertions when being mixed with
@@ -498,7 +549,7 @@ public class ManagedTruth {
 	 * Entry point for {@link Collection} assertions.
 	 */
 	public static MyCollectionSubject assertThat(Collection actual) {
-		return Truth.assertAbout(collections()).that(actual);
+		return Truth.assertAbout(io.stubbs.truth.generator.subjects.MyCollectionSubject.collections()).that(actual);
 	}
 	/**
 	 * Convenience entry point for {@link Collection} assertions when being mixed
@@ -513,7 +564,7 @@ public class ManagedTruth {
 	 * Entry point for {@link Map} assertions.
 	 */
 	public static MyMapSubject assertThat(Map actual) {
-		return Truth.assertAbout(maps()).that(actual);
+		return Truth.assertAbout(io.stubbs.truth.generator.subjects.MyMapSubject.maps()).that(actual);
 	}
 	/**
 	 * Convenience entry point for {@link Map} assertions when being mixed with

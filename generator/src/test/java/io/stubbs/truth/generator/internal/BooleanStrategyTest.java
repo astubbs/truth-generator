@@ -18,7 +18,7 @@ public class BooleanStrategyTest extends StrategyTest {
         Method isEmployedWrapped = TestModelUtils.findMethodWithNoParamsJReflect(employeeClass, "isDueToBeGivenAPromotionNextCycle");
         String noun = strat.buildNoun(isEmployedWrapped);
         //         check("isAllowedMoreRecords() 'is allowed more records'").that(actual.isAllowedMoreRecords()).isTrue();
-        assertThat(noun).contains("'due to be given a promotion next cycle' (`DueToBeGivenAPromotionNextCycle`)");
+        assertThat(noun).contains("'due to be given a promotion next cycle' (`isDueToBeGivenAPromotionNextCycle`)");
     }
 
 }

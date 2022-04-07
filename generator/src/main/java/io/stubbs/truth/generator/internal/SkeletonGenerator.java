@@ -36,8 +36,6 @@ public class SkeletonGenerator implements SkeletonGeneratorAPI {
      * For testing. Used to force generating of middle class, even if it's detected.
      */
     public static boolean forceMiddleGenerate;
-    @Setter
-    private static Clock clock = Clock.systemUTC();
     private final OverallEntryPoint overallEntryPoint;
     private final BuiltInSubjectTypeStore subjectTypeStore;
     private Optional<String> targetPackageName;
@@ -75,7 +73,7 @@ public class SkeletonGenerator implements SkeletonGeneratorAPI {
         // make child - client code entry point
         JavaClassSource child = createChild(parent, usersMiddleClass.getName(), source, factoryMethodName);
 
-        MiddleClass middleClass = MiddleClass.of(usersMiddleClass);
+        MiddleClass middleClass = MiddleClass.of(usersMiddleClass, source);
 
         return of(new ThreeSystem<>(source, parent, middleClass, child));
     }
@@ -102,52 +100,7 @@ public class SkeletonGenerator implements SkeletonGeneratorAPI {
         return of(new ThreeSystem<>(clazzUnderTest, parent, middle, child));
     }
 
-    private MiddleClass createMiddleUserTemplate(JavaClassSource parent, Class source) {
-        String middleClassName = getSubjectName(source.getSimpleName());
-
-        Optional<Class<?>> compiledMiddleClass = middleExists(parent, middleClassName, source);
-        if (compiledMiddleClass.isPresent()) {
-            logger.atInfo().log("Skipping middle class Template creation as class already exists: %s", middleClassName);
-            return MiddleClass.of(compiledMiddleClass.get());
-        }
-
-        JavaClassSource middle = Roaster.create(JavaClassSource.class);
-        middle.setName(middleClassName);
-        middle.setPackage(parent.getPackage());
-        middle.extendSuperType(parent);
-        JavaDocSource<JavaClassSource> jd = middle.getJavaDoc();
-        jd.setText("Optionally move this class into source control, and add your custom assertions here.\n\n" +
-                "<p>If the system detects this class already exists, it won't attempt to generate a new one. Note that " +
-                "if the base skeleton of this class ever changes, you won't automatically get it updated.");
-        jd.addTagValue("@see", source.getSimpleName());
-        jd.addTagValue("@see", parent.getName());
-
-        addConstructor(source, middle, false);
-
-        middle.addAnnotation(UserManagedTruth.class).setClassValue(source);
-
-        MethodSource factory = aepg.addFactoryAccessor(source, middle, source.getSimpleName());
-
-        addGeneratedMarker(middle);
-
-        Utils.writeToDisk(middle, targetPackageName);
-        return MiddleClass.of(middle, factory);
-    }
-
-    private Optional<Class<?>> middleExists(JavaClassSource parent, String middleClassName, Class source) {
-        if (forceMiddleGenerate)
-            return empty();
-
-        try {
-            // load from annotated classes instead using Reflections?
-            String fullName = parent.getPackage() + "." + middleClassName;
-            Class<?> aClass = Class.forName(fullName);
-            return of(aClass);
-        } catch (ClassNotFoundException e) {
-            return empty();
-        }
-    }
-
+    //    todo @Deprecated ?
     @Override
     public <T> String combinedSystem(Class<T> clazzUnderTest) {
         JavaClassSource javaClass = Roaster.create(JavaClassSource.class);
@@ -173,7 +126,7 @@ public class SkeletonGenerator implements SkeletonGeneratorAPI {
 
         MethodSource<JavaClassSource> factory = aepg.addFactoryAccessor(clazzUnderTest, javaClass, sourceName);
 
-        addAccessPoints(clazzUnderTest, javaClass, factory.getName(), javaClass.getQualifiedName());
+        aepg.addWithMessage(overallEntryPoint.getPackageName(), javaClass);
 
         // todo add static import for Truth.assertAbout somehow?
 //        Import anImport = javaClass.addImport(Truth.class);
@@ -185,9 +138,52 @@ public class SkeletonGenerator implements SkeletonGeneratorAPI {
         return classSource;
     }
 
-//    private <T> void registerManagedClass(Class<T> sourceClass, JavaClassSource gengeratedClass) {
-//        managedSubjects.add(new ManagedClassSet(sourceClass, gengeratedClass));
-//    }
+    private Optional<Class<?>> middleExists(JavaClassSource parent, String middleClassName, Class source) {
+        if (forceMiddleGenerate)
+            return empty();
+
+        try {
+            // load from annotated classes instead using Reflections?
+            String fullName = parent.getPackage() + "." + middleClassName;
+            Class<?> aClass = Class.forName(fullName);
+            return of(aClass);
+        } catch (ClassNotFoundException e) {
+            return empty();
+        }
+    }
+
+    private JavaClassSource createChild(ParentClass parent,
+                                        String usersMiddleClassName,
+                                        Class<?> classUnderTest,
+                                        String factoryMethodName) {
+        // todo if middle doesn't extend parent, warn
+
+        JavaClassSource child = Roaster.create(JavaClassSource.class);
+        child.setName(getSubjectName(classUnderTest.getSimpleName() + "Child"));
+        child.setPackage(parent.getGenerated().getPackage());
+        JavaDocSource<JavaClassSource> javaDoc = child.getJavaDoc();
+        javaDoc.setText("Entry point for assertions for @{" + classUnderTest.getSimpleName() + "}. Import the static accessor methods from this class and use them.\n" +
+                "Combines the generated code from {@" + parent.getGenerated().getName() + "}and the user code from {@" + usersMiddleClassName + "}.");
+        javaDoc.addTagValue("@see", classUnderTest.getName());
+        javaDoc.addTagValue("@see", usersMiddleClassName);
+        javaDoc.addTagValue("@see", parent.getGenerated().getName());
+
+        middle.makeChildExtend(child);
+
+        MethodSource<JavaClassSource> constructor = addConstructor(classUnderTest, child, false);
+        constructor.getJavaDoc().setText("This constructor should not be used, instead see the parent's.")
+                .addTagValue("@see", usersMiddleClassName);
+        constructor.setPrivate();
+
+        addAccessPoints(child, classUnderTest);
+
+        aepg.addWithMessage(overallEntryPoint.getPackageName(), of(middle), child);
+
+        GeneratedMarker.addGeneratedMarker(child);
+
+        Utils.writeToDisk(child, targetPackageName);
+        return child;
+    }
 
     private <T> ParentClass createParent(Class<T> clazzUnderTest) {
         JavaClassSource parent = Roaster.create(JavaClassSource.class);
@@ -207,35 +203,14 @@ public class SkeletonGenerator implements SkeletonGeneratorAPI {
         return new ParentClass(parent);
     }
 
-    private JavaClassSource createChild(ParentClass parent,
-                                        String usersMiddleClassName,
-                                        Class<?> source,
-                                        String factoryMethodName) {
-        // todo if middle doesn't extend parent, warn
+    private void addAccessPoints(JavaClassSource javaClass, Class<?> classUnderTest) {
+        String factoryContainerQualifiedName = middle.getCanonicalName();
+        MethodSource<JavaClassSource> assertThat = aepg.addAssertThat(classUnderTest,
+                javaClass,
+                middle.getFactoryMethod().getName(),
+                factoryContainerQualifiedName);
 
-        JavaClassSource child = Roaster.create(JavaClassSource.class);
-        child.setName(getSubjectName(source.getSimpleName() + "Child"));
-        child.setPackage(parent.getGenerated().getPackage());
-        JavaDocSource<JavaClassSource> javaDoc = child.getJavaDoc();
-        javaDoc.setText("Entry point for assertions for @{" + source.getSimpleName() + "}. Import the static accessor methods from this class and use them.\n" +
-                "Combines the generated code from {@" + parent.getGenerated().getName() + "}and the user code from {@" + usersMiddleClassName + "}.");
-        javaDoc.addTagValue("@see", source.getName());
-        javaDoc.addTagValue("@see", usersMiddleClassName);
-        javaDoc.addTagValue("@see", parent.getGenerated().getName());
-
-        middle.makeChildExtend(child);
-
-        MethodSource<JavaClassSource> constructor = addConstructor(source, child, false);
-        constructor.getJavaDoc().setText("This constructor should not be used, instead see the parent's.")
-                .addTagValue("@see", usersMiddleClassName);
-        constructor.setPrivate();
-
-        addAccessPoints(source, child, factoryMethodName, middle.getCanonicalName());
-
-        addGeneratedMarker(child);
-
-        Utils.writeToDisk(child, targetPackageName);
-        return child;
+        aepg.addAssertTruth(classUnderTest, javaClass, assertThat);
     }
 
     private String getSubjectName(final String sourceName) {
@@ -289,31 +264,36 @@ public class SkeletonGenerator implements SkeletonGeneratorAPI {
         return null;
     }
 
-    private <T> void addAccessPoints(Class<T> source, JavaClassSource javaClass,
-                                     String factoryMethod,
-                                     String factoryContainerQualifiedName) {
-        MethodSource<JavaClassSource> assertThat = aepg.addAssertThat(source, javaClass, factoryMethod, factoryContainerQualifiedName);
+    private MiddleClass createMiddleUserTemplate(JavaClassSource parent, Class<?> classUnderTest) {
+        String middleClassName = getSubjectName(classUnderTest.getSimpleName());
 
-        aepg.addAssertTruth(source, javaClass, assertThat);
-    }
-
-    private void addGeneratedMarker(final JavaClassSource javaClass) {
-        AnnotationSource<JavaClassSource> generated;
-        if (Options.get().isCompilationTargetLowerThanNine()) {
-            generated = javaClass.addAnnotation(javax.annotation.Generated.class);
-        } else {
-            // requires java 9
-            // annotate generated
-            // @javax.annotation.Generated(value="")
-            // only in @since 1.9, so can't add it programmatically
-            generated = javaClass.addAnnotation(javax.annotation.processing.Generated.class);
-            // Can't add it without the value param, see https://github.com/forge/roaster/issues/201
+        Optional<Class<?>> compiledMiddleClass = middleExists(parent, middleClassName, classUnderTest);
+        if (compiledMiddleClass.isPresent()) {
+            logger.atInfo().log("Skipping middle class Template creation as class already exists: %s", middleClassName);
+            return MiddleClass.of(compiledMiddleClass.get(), classUnderTest);
         }
 
-        generated.setStringValue("value", TruthGenerator.class.getCanonicalName());
-        generated.setStringValue("date", clock.instant().toString());
+        JavaClassSource middle = Roaster.create(JavaClassSource.class);
+        middle.setName(middleClassName);
+        middle.setPackage(parent.getPackage());
+        middle.extendSuperType(parent);
+        JavaDocSource<JavaClassSource> jd = middle.getJavaDoc();
+        jd.setText("Optionally move this class into source control, and add your custom assertions here.\n\n" +
+                "<p>If the system detects this class already exists, it won't attempt to generate a new one. Note that " +
+                "if the base skeleton of this class ever changes, you won't automatically get it updated.");
+        jd.addTagValue("@see", classUnderTest.getSimpleName());
+        jd.addTagValue("@see", parent.getName());
 
-        //generated.setStringValue("comments", "?")
+        addConstructor(classUnderTest, middle, false);
+
+        middle.addAnnotation(UserManagedTruth.class).setClassValue(classUnderTest);
+
+        MethodSource factory = aepg.addFactoryAccessor(classUnderTest, middle, classUnderTest.getSimpleName());
+
+        GeneratedMarker.addGeneratedMarker(middle);
+
+        Utils.writeToDisk(middle, targetPackageName);
+        return MiddleClass.of(middle, factory, classUnderTest);
     }
 
     private void addPackageSuperAndAnnotation(final Class<?> clazzUnderTest, JavaClassSource javaClass, String packageName) {
@@ -323,7 +303,7 @@ public class SkeletonGenerator implements SkeletonGeneratorAPI {
         addClassExtension(clazzUnderTest, javaClass);
 
         //
-        addGeneratedMarker(javaClass);
+        GeneratedMarker.addGeneratedMarker(javaClass);
     }
 
     private void addClassExtension(final Class<?> clazzUnderTest, JavaClassSource javaClass) {

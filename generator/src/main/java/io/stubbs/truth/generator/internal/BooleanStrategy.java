@@ -69,7 +69,7 @@ public class BooleanStrategy extends AssertionMethodStrategy {
 
         noun = StreamEx.of(camels)
                 .map(String::toLowerCase)
-                .joining(" ", "'", "'") + " (`" + noun + "`)";
+                .joining(" ", "'", "'") + " (`" + method.getName() + "`)";
 
         return noun;
     }

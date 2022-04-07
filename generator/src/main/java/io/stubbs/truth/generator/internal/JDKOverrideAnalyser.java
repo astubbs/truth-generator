@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Validate;
 import org.eclipse.jdt.internal.compiler.util.CtSym;
 import org.eclipse.jdt.internal.compiler.util.JRTUtil;
 
@@ -21,6 +22,7 @@ import java.nio.file.Path;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Properties;
 import java.util.stream.Stream;
 
 import static io.stubbs.truth.generator.internal.Utils.msg;
@@ -42,15 +44,19 @@ public class JDKOverrideAnalyser {
 
     private static final CtSym ctSym;
 
+    private static final String CT_SYM_FILENAME = "ct.sym";
 
     static {
-        Path javaHome = Path.of(System.getenv("JAVA_HOME"));
+        String javaHomeEnv = System.getProperty("java.home");
+        Validate.notNull(javaHomeEnv, "JAVA_HOME not found in environment, cannot load %s file.", CT_SYM_FILENAME);
+
+        Path javaHome = Path.of(javaHomeEnv);
 
         if (!(javaHome.toFile().exists() && javaHome.toFile().isDirectory())) {
-            throw new TruthGeneratorRuntimeException(msg("Cannot look up JAVA_HOME env variable. Found {}, and it either doesn't exist or isn't a directory", javaHome));
+            throw new TruthGeneratorRuntimeException(msg("Cannot look up JAVA_HOME env variable. Found {}, but it either doesn't exist or isn't a directory", javaHome));
         }
 
-        Path ctsymPath = javaHome.resolve("lib").resolve("ct.sym");
+        Path ctsymPath = javaHome.resolve("lib").resolve(CT_SYM_FILENAME);
         log.debug("Using {} as home for ct.sym located at {} which exists? {}", javaHome, ctsymPath, ctsymPath.toFile().exists());
 
         try {

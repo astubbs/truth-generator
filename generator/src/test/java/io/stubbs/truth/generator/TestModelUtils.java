@@ -23,13 +23,17 @@ public class TestModelUtils {
     static private final PodamFactory factory = new PodamFactoryImpl();
 
     public static MyEmployee createEmployee() {
-        MyEmployee.MyEmployeeBuilder<?, ?> employee = factory.manufacturePojo(MyEmployee.class).toBuilder();
-        employee.anniversary(ZonedDateTime.now().withYear(1983));
-        MyEmployee boss = factory.manufacturePojo(MyEmployee.class).toBuilder().name("Lilan").build();
-        employee = employee
-                .boss(boss)
+        MyEmployee.MyEmployeeBuilder<?, ?> newEmployee = factory.manufacturePojo(MyEmployee.class).toBuilder();
+        newEmployee.anniversary(ZonedDateTime.now().withYear(1983));
+        MyEmployee bossEmployee = factory.manufacturePojo(MyEmployee.class)
+                .toBuilder()
+                .name("Lilan")
+                .employmentState(MyEmployee.State.EMPLOLYED)
+                .build();
+        newEmployee = newEmployee
+                .boss(bossEmployee)
                 .card(createCard());
-        return employee.build();
+        return newEmployee.build();
     }
 
     public static IdCard createCard() {

@@ -7,6 +7,9 @@ import org.jboss.forge.roaster.model.source.JavaClassSource;
 
 import java.time.Clock;
 
+/**
+ * @author Antony Stubbs
+ */
 @UtilityClass
 public class GeneratedMarker {
 

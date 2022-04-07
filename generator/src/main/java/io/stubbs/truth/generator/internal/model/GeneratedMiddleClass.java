@@ -14,7 +14,7 @@ import org.jboss.forge.roaster.model.source.MethodSource;
 @EqualsAndHashCode(callSuper = true)
 @FieldDefaults(makeFinal = true, level = AccessLevel.PRIVATE)
 @ToString
-public class GeneratedMiddleClass<T> extends MiddleClass<T> implements AClass {
+public class GeneratedMiddleClass<T> extends MiddleClass<T> implements AGeneratedClass {
 
     JavaClassSource generated;
 

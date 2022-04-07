@@ -1,6 +1,6 @@
 package io.stubbs.truth.generator.internal.model;
 
-import io.stubbs.truth.generator.internal.model.AClass.AGeneratedClassImpl;
+import io.stubbs.truth.generator.internal.model.AGeneratedClass.AGeneratedClassImpl;
 import lombok.Value;
 import org.jboss.forge.roaster.model.source.JavaClassSource;
 

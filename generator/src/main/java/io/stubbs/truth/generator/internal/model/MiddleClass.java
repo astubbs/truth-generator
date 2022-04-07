@@ -1,52 +1,28 @@
 package io.stubbs.truth.generator.internal.model;
 
-import lombok.EqualsAndHashCode;
-import lombok.Value;
-import lombok.experimental.SuperBuilder;
+import lombok.*;
+import lombok.experimental.FieldDefaults;
 import org.jboss.forge.roaster.model.source.JavaClassSource;
-import org.jboss.forge.roaster.model.source.MethodSource;
 
 /**
- * @author Antony Stubbs
+ * TODO rename to "ManagedSubjectClass"?
  */
-@EqualsAndHashCode(callSuper = true)
-@Value
-@SuperBuilder
-public class MiddleClass extends AClass {
-    MethodSource<JavaClassSource> factoryMethod;
-    Class<?> usersMiddleClass;
-    Class<?> classUnderTest;
+@FieldDefaults(makeFinal = true, level = AccessLevel.PRIVATE)
+@ToString
+@EqualsAndHashCode
+@RequiredArgsConstructor
+public abstract class MiddleClass<T> {
 
-    public static MiddleClass of(Class<?> aClass, Class<?> classUnderTest) {
-        return MiddleClass.builder()
-                .usersMiddleClass(aClass)
-                .classUnderTest(classUnderTest)
-                .build();
-    }
+    @Getter
+    Class<T> classUnderTest;
 
-    public static MiddleClass of(JavaClassSource middle, MethodSource factory, Class<?> classUnderTest) {
-        return MiddleClass.builder()
-                .generated(middle)
-                .classUnderTest(classUnderTest)
-                .factoryMethod(factory).build();
-    }
+    public abstract String getSimpleName();
 
-    public String getSimpleName() {
-        return (usersMiddleClass == null)
-                ? super.generated.getName()
-                : usersMiddleClass.getName();
-    }
+    public abstract void makeChildExtend(JavaClassSource child);
 
-    public void makeChildExtend(JavaClassSource child) {
-        if (usersMiddleClass == null)
-            child.extendSuperType(generated);
-        else
-            child.extendSuperType(usersMiddleClass);
-    }
+    public abstract String getCanonicalName();
 
-    public String getCanonicalName() {
-        return (usersMiddleClass == null)
-                ? super.generated.getCanonicalName()
-                : usersMiddleClass.getCanonicalName();
-    }
+    public abstract String getFactoryMethodName();
+
+    public abstract String getPackage();
 }

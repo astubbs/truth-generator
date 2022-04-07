@@ -2,7 +2,13 @@ package io.stubbs.truth.generator.internal.modelSubjectChickens;
 
 import com.google.common.truth.FailureMetadata;
 import io.stubbs.truth.generator.UserManagedTruth;
+import io.stubbs.truth.generator.internal.TruthGeneratorRuntimeException;
+import io.stubbs.truth.generator.internal.model.GeneratedMiddleClass;
+import io.stubbs.truth.generator.internal.model.MiddleClass;
 import io.stubbs.truth.generator.internal.model.ThreeSystem;
+import io.stubbs.truth.generator.internal.model.UserSuppliedMiddleClass;
+import io.stubbs.truth.generator.shaded.org.jboss.forge.roaster.model.sourceChickens.JavaClassSourceSubject;
+import org.jboss.forge.roaster.model.source.JavaClassSource;
 
 import javax.annotation.processing.Generated;
 
@@ -38,7 +44,18 @@ public class ThreeSystemSubject extends ThreeSystemParentSubject {
     }
 
     public void hasMiddleSource(String expected) {
-        hasMiddle().hasGenerated().hasSourceText().ignoringTrailingWhiteSpace().equalTo(expected);
+        MiddleClass middle = actual.getMiddle();
+        if (GeneratedMiddleClass.class.isAssignableFrom(middle.getClass())) {
+            JavaClassSource generated = ((GeneratedMiddleClass) middle).getGenerated();
+            check(".getMiddle().getGenerated()")
+                    .about(JavaClassSourceSubject.javaClassSources())
+                    .that(generated)
+                    .hasSourceText()
+                    .ignoringTrailingWhiteSpace()
+                    .equalTo(expected);
+        } else {
+            throw new TruthGeneratorRuntimeException("Not a generated class");
+        }
     }
 
     public void hasChildSource(String expected) {

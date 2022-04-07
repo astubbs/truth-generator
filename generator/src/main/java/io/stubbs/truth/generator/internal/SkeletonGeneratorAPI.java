@@ -1,5 +1,6 @@
 package io.stubbs.truth.generator.internal;
 
+import com.google.common.truth.Subject;
 import io.stubbs.truth.generator.TruthGeneratorAPI;
 import io.stubbs.truth.generator.internal.model.ThreeSystem;
 
@@ -35,7 +36,7 @@ public interface SkeletonGeneratorAPI {
      *
      * @return
      */
-    <T> Optional<ThreeSystem<T>> threeLayerSystem(Class<T> source, Class<T> usersMiddleClass) throws FileNotFoundException;
+    <T> Optional<ThreeSystem<T>> threeLayerSystem(Class<T> source, Class<? extends Subject> usersMiddleClass) throws FileNotFoundException;
 
     /**
      * Create the place holder middle class, for optional copying into source code

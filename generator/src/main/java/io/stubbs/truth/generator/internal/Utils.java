@@ -124,7 +124,10 @@ public class Utils {
         }
         Optional<Method> first = factoryMethods.stream().findFirst();
         if (first.isEmpty()) {
-            throw new TruthGeneratorRuntimeException(msg("Subject {} is missing {}.", subjectClass, SubjectFactoryMethod.class));
+            throw new TruthGeneratorRuntimeException(msg("Subject {} is missing {} annotation on it's factory method. See {} for details.",
+                    subjectClass,
+                    SubjectFactoryMethod.class.getSimpleName(),
+                    SubjectFactoryMethod.class.getSimpleName()));
         }
         return first.get();
     }

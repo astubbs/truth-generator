@@ -8,9 +8,8 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Maker for the {@link SkeletonGeneratorAPI#threeLayerSystem)} which instructs the system that this class is the user
+ * Maker for the {@code SkeletonGeneratorAPI#threeLayerSystem)} which instructs the system that this class is the user
  * managed middle class.
- * <p>
  * <p>
  * Useful for detecting with it already exists, instead of relaying on class name matching. And good for discovering the
  * class under test.

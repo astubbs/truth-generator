@@ -83,6 +83,8 @@ public class OverallEntryPoint {
 
         this.managedSubjectBuilderGenerated = managedSubjectBuilder;
 
+        GeneratedMarker.addGeneratedMarker(managedSubjectBuilder);
+
         Utils.writeToDisk(managedSubjectBuilder);
     }
 
@@ -120,7 +122,6 @@ public class OverallEntryPoint {
      * <p>
      * The overall access will throw an error if any middle classes don't correctly extend their parent.
      */
-    // todo add generated marker
     protected void createOverallAccessPoints() {
         JavaClassSource overallAccess = Roaster.create(JavaClassSource.class);
         overallAccess.setName("ManagedTruth");
@@ -134,6 +135,8 @@ public class OverallEntryPoint {
         addStaticEntryPoints(overallAccess);
 
         copyStaticEntryPointsFromGTruthEntryPoint();
+
+        GeneratedMarker.addGeneratedMarker(overallAccess);
 
         Utils.writeToDisk(overallAccess);
 

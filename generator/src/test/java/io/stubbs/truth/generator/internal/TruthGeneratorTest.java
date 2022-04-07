@@ -55,6 +55,10 @@ public class TruthGeneratorTest {
     public static final Path testOutputDirectory = Paths.get("").resolve("target").toAbsolutePath();
     Correspondence<MethodSource<?>, String> methodHasName = transforming(MethodSource::getName, "has name of");
 
+    static {
+        GeneratedMarker.setClock(MutableClock.epochUTC());
+    }
+
     /**
      * Base test that compares with expected generated code for test model. Brute force test.
      */
@@ -64,7 +68,7 @@ public class TruthGeneratorTest {
         // todo replace with @TempDir
         TruthGenerator truthGenerator = TruthGeneratorAPI.create(testOutputDirectory, Options.builder().useHasInsteadOfGet(true).build());
 
-        SkeletonGenerator.setClock(MutableClock.epochUTC());
+        GeneratedMarker.setClock(MutableClock.epochUTC());
 
         //
         truthGenerator.registerStandardSubjectExtension(String.class, MyStringSubject.class);

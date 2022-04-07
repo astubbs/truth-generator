@@ -52,9 +52,11 @@ import java.util.Optional;
 import io.stubbs.truth.generator.internal.autoShaded.java.util.OptionalSubject;
 import java.util.UUID;
 import io.stubbs.truth.generator.internal.autoShaded.java.util.UUIDSubject;
+import javax.annotation.processing.Generated;
 /**
  * see {@link StandardSubjectBuilder}
  */
+@Generated(value = "io.stubbs.truth.generator.internal.TruthGenerator", date = "1970-01-01T00:00:00Z")
 public class ManagedSubjectBuilder {
 	StandardSubjectBuilder standardSubjectBuilder;
 	ManagedSubjectBuilder(com.google.common.truth.StandardSubjectBuilder standardSubjectBuilder) {

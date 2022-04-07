@@ -36,8 +36,6 @@ public class SkeletonGenerator implements SkeletonGeneratorAPI {
      * For testing. Used to force generating of middle class, even if it's detected.
      */
     public static boolean forceMiddleGenerate;
-    @Setter
-    private static Clock clock = Clock.systemUTC();
     private final OverallEntryPoint overallEntryPoint;
     private final BuiltInSubjectTypeStore subjectTypeStore;
     private Optional<String> targetPackageName;
@@ -181,7 +179,7 @@ public class SkeletonGenerator implements SkeletonGeneratorAPI {
 
         aepg.addWithMessage(overallEntryPoint.getPackageName(), of(middle), child);
 
-        addGeneratedMarker(child);
+        GeneratedMarker.addGeneratedMarker(child);
 
         Utils.writeToDisk(child, targetPackageName);
         return child;
@@ -296,29 +294,10 @@ public class SkeletonGenerator implements SkeletonGeneratorAPI {
 
         MethodSource factory = aepg.addFactoryAccessor(classUnderTest, middle, classUnderTest.getSimpleName());
 
-        addGeneratedMarker(middle);
+        GeneratedMarker.addGeneratedMarker(middle);
 
         Utils.writeToDisk(middle, targetPackageName);
         return MiddleClass.of(middle, factory, classUnderTest);
-    }
-
-    private void addGeneratedMarker(final JavaClassSource javaClass) {
-        AnnotationSource<JavaClassSource> generated;
-        if (Options.get().isCompilationTargetLowerThanNine()) {
-            generated = javaClass.addAnnotation(javax.annotation.Generated.class);
-        } else {
-            // requires java 9
-            // annotate generated
-            // @javax.annotation.Generated(value="")
-            // only in @since 1.9, so can't add it programmatically
-            generated = javaClass.addAnnotation(javax.annotation.processing.Generated.class);
-            // Can't add it without the value param, see https://github.com/forge/roaster/issues/201
-        }
-
-        generated.setStringValue("value", TruthGenerator.class.getCanonicalName());
-        generated.setStringValue("date", clock.instant().toString());
-
-        //generated.setStringValue("comments", "?")
     }
 
     private void addPackageSuperAndAnnotation(final Class<?> clazzUnderTest, JavaClassSource javaClass, String packageName) {
@@ -328,7 +307,7 @@ public class SkeletonGenerator implements SkeletonGeneratorAPI {
         addClassExtension(clazzUnderTest, javaClass);
 
         //
-        addGeneratedMarker(javaClass);
+        GeneratedMarker.addGeneratedMarker(javaClass);
     }
 
     private void addClassExtension(final Class<?> clazzUnderTest, JavaClassSource javaClass) {

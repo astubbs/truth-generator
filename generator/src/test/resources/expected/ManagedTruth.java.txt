@@ -91,6 +91,7 @@ import static io.stubbs.truth.generator.subjects.MyMapSubject.*;
 /**
  * Single point of access for all managed Subjects.
  */
+@Generated(value = "io.stubbs.truth.generator.internal.TruthGenerator", date = "1970-01-01T00:00:00Z")
 public class ManagedTruth {
 	/**
 	 * see {@link Truth#assertWithMessage}

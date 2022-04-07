@@ -2,16 +2,12 @@ package io.stubbs.truth.generator.internal;
 
 import com.google.common.truth.Truth8;
 import io.stubbs.truth.generator.TestModelUtils;
-import io.stubbs.truth.generator.internal.model.MiddleClass;
-import io.stubbs.truth.generator.internal.model.ParentClass;
 import io.stubbs.truth.generator.internal.model.ThreeSystem;
 import io.stubbs.truth.generator.internal.modelSubjectChickens.ThreeSystemChildSubject;
 import io.stubbs.truth.generator.testModel.MyEmployee;
 import io.stubbs.truth.generator.testModel.Project;
 import lombok.Data;
 import org.apache.commons.lang3.StringUtils;
-import org.jboss.forge.roaster.Roaster;
-import org.jboss.forge.roaster.model.source.JavaClassSource;
 import org.junit.Test;
 
 import java.lang.reflect.Method;
@@ -37,14 +33,7 @@ public class ChainStrategyTest extends StrategyTest {
 
         ChainStrategy chainStrategy = createNewChainStrategy();
 
-        JavaClassSource generated = Roaster.create(JavaClassSource.class);
-
-        MyEmployee employee = TestModelUtils.createEmployee();
-        Class<MyEmployee> employeeClass = MyEmployee.class;
-        ThreeSystem<MyEmployee> threeSystem = new ThreeSystem<>(employeeClass,
-                new ParentClass(Roaster.create(JavaClassSource.class)),
-                MiddleClass.of(employeeClass, employeeClass),
-                generated);
+        var threeSystem = TestModelUtils.createThreeSystem();
 
         //
         Method theMethod = getMethod(employeeClass, "getWeighting");

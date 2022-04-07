@@ -2,6 +2,7 @@ package io.stubbs.truth.generator.internal.modelSubjectChickens;
 
 import com.google.common.truth.FailureMetadata;
 import io.stubbs.truth.generator.UserManagedTruth;
+import io.stubbs.truth.generator.internal.model.GeneratedMiddleClass;
 import io.stubbs.truth.generator.internal.model.MiddleClass;
 import io.stubbs.truth.generator.testModel.MyEmployee;
 
@@ -35,7 +36,7 @@ public class MiddleClassSubject extends MiddleClassParentSubject {
     }
 
     public void withSamePackageAs(Class<MyEmployee> expected) {
-        String actualPackage = actual.getGenerated().getPackage();
+        String actualPackage = actual.getPackage();
         check("getPackage()").that(actualPackage).isEqualTo(expected.getPackage().getName());
     }
 

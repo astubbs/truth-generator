@@ -4,17 +4,13 @@ import com.google.common.flogger.FluentLogger;
 import com.google.common.truth.FailureMetadata;
 import com.google.common.truth.Subject;
 import io.stubbs.truth.generator.UserManagedTruth;
-import io.stubbs.truth.generator.internal.model.MiddleClass;
-import io.stubbs.truth.generator.internal.model.ParentClass;
-import io.stubbs.truth.generator.internal.model.ThreeSystem;
+import io.stubbs.truth.generator.internal.model.*;
 import lombok.Setter;
 import org.jboss.forge.roaster.Roaster;
-import org.jboss.forge.roaster.model.source.AnnotationSource;
 import org.jboss.forge.roaster.model.source.JavaClassSource;
 import org.jboss.forge.roaster.model.source.JavaDocSource;
 import org.jboss.forge.roaster.model.source.MethodSource;
 
-import java.time.Clock;
 import java.util.Optional;
 
 import static java.util.Optional.empty;
@@ -58,24 +54,24 @@ public class SkeletonGenerator implements SkeletonGeneratorAPI {
     }
 
     /**
-     * @return if possible, a {@link ThreeSystem} using an already existing {@link MiddleClass}
+     * @return if possible, a {@link ThreeSystem} using an already existing {@link GeneratedMiddleClass}
      */
     @Override
-    public <T> Optional<ThreeSystem<T>> threeLayerSystem(Class<T> source, Class<T> usersMiddleClass) {
-        if (SourceChecking.checkSource(source, empty()))
+    public <T> Optional<ThreeSystem<T>> threeLayerSystem(Class<T> classUnderTest, Class<? extends Subject> usersMiddleClass) {
+        if (SourceChecking.checkSource(classUnderTest, empty()))
             return empty();
 
         // make parent - boilerplate access
-        ParentClass parent = createParent(source);
+        ParentClass parent = createParent(classUnderTest);
 
-        String factoryMethodName = Utils.createFactoryName(source);
+        String factoryMethodName = Utils.createFactoryName(classUnderTest);
 
         // make child - client code entry point
-        JavaClassSource child = createChild(parent, usersMiddleClass.getName(), source, factoryMethodName);
+        JavaClassSource child = createChild(parent, usersMiddleClass.getName(), classUnderTest, factoryMethodName);
 
-        MiddleClass middleClass = MiddleClass.of(usersMiddleClass, source);
+        var middleClass = new UserSuppliedMiddleClass(usersMiddleClass, classUnderTest);
 
-        return of(new ThreeSystem<>(source, parent, middleClass, child));
+        return of(new ThreeSystem<>(classUnderTest, parent, middleClass, child));
     }
 
     @Override
@@ -91,7 +87,7 @@ public class SkeletonGenerator implements SkeletonGeneratorAPI {
         ParentClass parent = createParent(clazzUnderTest);
         this.parent = parent;
 
-        MiddleClass middle = createMiddleUserTemplate(parent.getGenerated(), clazzUnderTest);
+        MiddleClass middle = createMiddleUserTemplateClass(parent.getGenerated(), clazzUnderTest);
         this.middle = middle;
 
         String factoryName = Utils.createFactoryName(clazzUnderTest);
@@ -138,15 +134,21 @@ public class SkeletonGenerator implements SkeletonGeneratorAPI {
         return classSource;
     }
 
-    private Optional<Class<?>> middleExists(JavaClassSource parent, String middleClassName, Class source) {
+    private <T> Optional<Class<? extends Subject>> findCompiledMiddleIfExists(JavaClassSource parent, String middleClassName, Class<T> classUnderTest) {
         if (forceMiddleGenerate)
             return empty();
 
         try {
-            // load from annotated classes instead using Reflections?
+            // todo load from annotated classes instead using Reflections? see UserSuppliedMiddleClass
             String fullName = parent.getPackage() + "." + middleClassName;
-            Class<?> aClass = Class.forName(fullName);
-            return of(aClass);
+            Class<?> rawClass = Class.forName(fullName);
+            if (Subject.class.isAssignableFrom(rawClass)) {
+                //noinspection unchecked - checked in if condition
+                Class<? extends Subject> aClass = (Class<? extends Subject>) rawClass;
+                return of(aClass);
+            } else {
+                throw new TruthGeneratorRuntimeException("User detected middle class doesn't extend Subject");
+            }
         } catch (ClassNotFoundException e) {
             return empty();
         }
@@ -200,6 +202,7 @@ public class SkeletonGenerator implements SkeletonGeneratorAPI {
         addConstructor(clazzUnderTest, parent, true);
 
         Utils.writeToDisk(parent, targetPackageName);
+
         return new ParentClass(parent);
     }
 
@@ -207,7 +210,7 @@ public class SkeletonGenerator implements SkeletonGeneratorAPI {
         String factoryContainerQualifiedName = middle.getCanonicalName();
         MethodSource<JavaClassSource> assertThat = aepg.addAssertThat(classUnderTest,
                 javaClass,
-                middle.getFactoryMethod().getName(),
+                middle.getFactoryMethodName(),
                 factoryContainerQualifiedName);
 
         aepg.addAssertTruth(classUnderTest, javaClass, assertThat);
@@ -264,13 +267,13 @@ public class SkeletonGenerator implements SkeletonGeneratorAPI {
         return null;
     }
 
-    private MiddleClass createMiddleUserTemplate(JavaClassSource parent, Class<?> classUnderTest) {
+    private <T> MiddleClass createMiddleUserTemplateClass(JavaClassSource parent, Class<T> classUnderTest) {
         String middleClassName = getSubjectName(classUnderTest.getSimpleName());
 
-        Optional<Class<?>> compiledMiddleClass = middleExists(parent, middleClassName, classUnderTest);
+        Optional<Class<? extends Subject>> compiledMiddleClass = findCompiledMiddleIfExists(parent, middleClassName, classUnderTest);
         if (compiledMiddleClass.isPresent()) {
             logger.atInfo().log("Skipping middle class Template creation as class already exists: %s", middleClassName);
-            return MiddleClass.of(compiledMiddleClass.get(), classUnderTest);
+            return new UserSuppliedMiddleClass(compiledMiddleClass.get(), classUnderTest);
         }
 
         JavaClassSource middle = Roaster.create(JavaClassSource.class);
@@ -293,7 +296,7 @@ public class SkeletonGenerator implements SkeletonGeneratorAPI {
         GeneratedMarker.addGeneratedMarker(middle);
 
         Utils.writeToDisk(middle, targetPackageName);
-        return MiddleClass.of(middle, factory, classUnderTest);
+        return new GeneratedMiddleClass(middle, factory, classUnderTest);
     }
 
     private void addPackageSuperAndAnnotation(final Class<?> clazzUnderTest, JavaClassSource javaClass, String packageName) {

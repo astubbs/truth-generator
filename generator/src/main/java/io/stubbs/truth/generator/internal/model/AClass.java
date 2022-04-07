@@ -8,9 +8,20 @@ import org.jboss.forge.roaster.model.source.JavaClassSource;
 /**
  * @author Antony Stubbs
  */
-@Getter
-@RequiredArgsConstructor
-@SuperBuilder
-public class AClass {
-    protected final JavaClassSource generated;
+public interface AClass {
+
+    JavaClassSource getGenerated();
+
+    @Getter
+    @RequiredArgsConstructor
+    @SuperBuilder
+    class AGeneratedClassImpl implements AClass {
+
+        protected final JavaClassSource generated;
+
+        @Override
+        public JavaClassSource getGenerated() {
+            return generated;
+        }
+    }
 }

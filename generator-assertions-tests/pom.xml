@@ -76,6 +76,12 @@
             <scope>test</scope>
         </dependency>
         <dependency>
+            <!-- Transitive dependency of truth-generator:test-jar -->
+            <groupId>io.stubbs.truth</groupId>
+            <artifactId>truth-generator</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
             <groupId>io.stubbs.truth</groupId>
             <artifactId>truth-generator</artifactId>
             <type>test-jar</type>

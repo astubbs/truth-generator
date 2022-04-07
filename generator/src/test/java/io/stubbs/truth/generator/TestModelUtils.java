@@ -1,7 +1,12 @@
 package io.stubbs.truth.generator;
 
+import io.stubbs.truth.generator.internal.model.GeneratedMiddleClass;
+import io.stubbs.truth.generator.internal.model.ParentClass;
+import io.stubbs.truth.generator.internal.model.ThreeSystem;
 import io.stubbs.truth.generator.testModel.IdCard;
 import io.stubbs.truth.generator.testModel.MyEmployee;
+import lombok.experimental.UtilityClass;
+import org.jboss.forge.roaster.Roaster;
 import org.jboss.forge.roaster.model.source.JavaClassSource;
 import org.jboss.forge.roaster.model.source.MethodSource;
 import uk.co.jemos.podam.api.PodamFactory;
@@ -19,21 +24,26 @@ import static java.util.stream.Collectors.toList;
 /**
  * @author Antony Stubbs
  */
+@UtilityClass
 public class TestModelUtils {
-    static private final PodamFactory factory = new PodamFactoryImpl();
+
+    private static final PodamFactory factory = new PodamFactoryImpl();
 
     public static MyEmployee createEmployee() {
-        MyEmployee.MyEmployeeBuilder<?, ?> newEmployee = factory.manufacturePojo(MyEmployee.class).toBuilder();
-        newEmployee.anniversary(ZonedDateTime.now().withYear(1983));
-        MyEmployee bossEmployee = factory.manufacturePojo(MyEmployee.class)
+        MyEmployee employeesBoss = factory.manufacturePojo(MyEmployee.class)
                 .toBuilder()
-                .name("Lilan")
-                .employmentState(MyEmployee.State.EMPLOLYED)
+                .name("boss-employee")
+                .employmentState(MyEmployee.State.IS_A_BOSS)
                 .build();
-        newEmployee = newEmployee
-                .boss(bossEmployee)
+
+        var nonBossEmployee = factory.manufacturePojo(MyEmployee.class).toBuilder()
+                .anniversary(ZonedDateTime.now().withYear(1983))
+                .employmentState(MyEmployee.State.EMPLOLYED)
+                .name("employee-one (not a boss)")
+                .boss(employeesBoss)
                 .card(createCard());
-        return newEmployee.build();
+
+        return nonBossEmployee.build();
     }
 
     public static IdCard createCard() {
@@ -59,6 +69,16 @@ public class TestModelUtils {
 
     public static <T> Method findMethodWithNoParamsJReflect(Class<T> classType, String methodName) {
         return Arrays.stream(classType.getMethods()).filter(x -> x.getName().equals(methodName)).findFirst().get();
+    }
+
+    public static ThreeSystem<MyEmployee> createThreeSystem() {
+        var employeeClass = MyEmployee.class;
+        var parent = new ParentClass(Roaster.create(JavaClassSource.class));
+        var middleGen = Roaster.create(JavaClassSource.class);
+        var factoryMethod = middleGen.addMethod();
+        var middle = new GeneratedMiddleClass<>(middleGen, factoryMethod, employeeClass);
+        var childGen = Roaster.create(JavaClassSource.class);
+        return new ThreeSystem<>(employeeClass, parent, middle, childGen);
     }
 
 }

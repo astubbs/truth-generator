@@ -109,7 +109,7 @@ public class OverallEntryPoint {
 
         //
         String factoryEnclosing = ts.getMiddle().getCanonicalName();
-        String factoryName = ts.getMiddle().getFactoryMethod().getName();
+        String factoryName = ts.getMiddle().getFactoryMethodName();
         that.setBody("return standardSubjectBuilder.about(" + factoryEnclosing + "." + factoryName + "()).that(actual);");
 
         //

@@ -1,5 +1,6 @@
 package io.stubbs.truth.generator.internal.model;
 
+import io.stubbs.truth.generator.internal.model.AClass.AGeneratedClassImpl;
 import lombok.Value;
 import org.jboss.forge.roaster.model.source.JavaClassSource;
 
@@ -7,7 +8,7 @@ import org.jboss.forge.roaster.model.source.JavaClassSource;
  * @author Antony Stubbs
  */
 @Value
-public class ParentClass extends AClass {
+public class ParentClass extends AGeneratedClassImpl {
     public ParentClass(JavaClassSource generated) {
         super(generated);
     }

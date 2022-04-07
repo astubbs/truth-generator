@@ -4,6 +4,7 @@ import com.google.common.base.Joiner;
 import com.google.common.truth.SimpleSubjectBuilder;
 import com.google.common.truth.Subject;
 import com.google.common.truth.Truth;
+import io.stubbs.truth.generator.SubjectFactoryMethod;
 import io.stubbs.truth.generator.internal.model.MiddleClass;
 import org.jboss.forge.roaster.model.source.JavaClassSource;
 import org.jboss.forge.roaster.model.source.JavaDocSource;
@@ -35,6 +36,7 @@ public class AssertionEntryPointGenerator {
                     .setBody("return " + javaClass.getName() + "::new;");
             JavaDocSource<MethodSource<JavaClassSource>> factoryDocs = factory.getJavaDoc();
             factoryDocs.setText("Returns an assertion builder for a {@link " + sourceName + "} class.");
+            var annotation = factory.addAnnotation(SubjectFactoryMethod.class);
             return factory;
         }
     }
@@ -138,7 +140,7 @@ public class AssertionEntryPointGenerator {
         boolean isSubjectChild = middle.isPresent();
         if (isSubjectChild) {
             MiddleClass threeSystem = middle.get();
-            String factoryName = threeSystem.getFactoryMethod().getName();
+            String factoryName = threeSystem.getFactoryMethodName();
 
             //
             if (withArgs) {

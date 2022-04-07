@@ -711,7 +711,7 @@ public class MyEmployeeParentSubject extends Subject {
 	 */
 	public void isBoss() {
 		if (!actual.isBoss()) {
-			failWithActual(simpleFact("expected to be 'boss' (`Boss`)"));
+			failWithActual(simpleFact("expected to be 'boss' (`isBoss`)"));
 		}
 	}
 	/**
@@ -719,7 +719,7 @@ public class MyEmployeeParentSubject extends Subject {
 	 */
 	public void isNotBoss() {
 		if (actual.isBoss()) {
-			failWithActual(simpleFact("expected NOT to be 'boss' (`Boss`)"));
+			failWithActual(simpleFact("expected NOT to be 'boss' (`isBoss`)"));
 		}
 	}
 	/**
@@ -728,7 +728,7 @@ public class MyEmployeeParentSubject extends Subject {
 	public void isDueToBeGivenAPromotionNextCycle() {
 		if (!actual.isDueToBeGivenAPromotionNextCycle()) {
 			failWithActual(simpleFact(
-					"expected to be 'due to be given a promotion next cycle' (`DueToBeGivenAPromotionNextCycle`)"));
+					"expected to be 'due to be given a promotion next cycle' (`isDueToBeGivenAPromotionNextCycle`)"));
 		}
 	}
 	/**
@@ -737,7 +737,7 @@ public class MyEmployeeParentSubject extends Subject {
 	public void isNotDueToBeGivenAPromotionNextCycle() {
 		if (actual.isDueToBeGivenAPromotionNextCycle()) {
 			failWithActual(simpleFact(
-					"expected NOT to be 'due to be given a promotion next cycle' (`DueToBeGivenAPromotionNextCycle`)"));
+					"expected NOT to be 'due to be given a promotion next cycle' (`isDueToBeGivenAPromotionNextCycle`)"));
 		}
 	}
 	/**
@@ -745,7 +745,7 @@ public class MyEmployeeParentSubject extends Subject {
 	 */
 	public void isEmployed() {
 		if (!actual.isEmployed()) {
-			failWithActual(simpleFact("expected to be 'employed' (`Employed`)"));
+			failWithActual(simpleFact("expected to be 'employed' (`isEmployed`)"));
 		}
 	}
 	/**
@@ -753,7 +753,7 @@ public class MyEmployeeParentSubject extends Subject {
 	 */
 	public void isNotEmployed() {
 		if (actual.isEmployed()) {
-			failWithActual(simpleFact("expected NOT to be 'employed' (`Employed`)"));
+			failWithActual(simpleFact("expected NOT to be 'employed' (`isEmployed`)"));
 		}
 	}
 	/**
@@ -761,7 +761,7 @@ public class MyEmployeeParentSubject extends Subject {
 	 */
 	public void isEmployedWrapped() {
 		if (!actual.isEmployedWrapped()) {
-			failWithActual(simpleFact("expected to be 'employed wrapped' (`EmployedWrapped`)"));
+			failWithActual(simpleFact("expected to be 'employed wrapped' (`isEmployedWrapped`)"));
 		}
 	}
 	/**
@@ -769,7 +769,7 @@ public class MyEmployeeParentSubject extends Subject {
 	 */
 	public void isNotEmployedWrapped() {
 		if (actual.isEmployedWrapped()) {
-			failWithActual(simpleFact("expected NOT to be 'employed wrapped' (`EmployedWrapped`)"));
+			failWithActual(simpleFact("expected NOT to be 'employed wrapped' (`isEmployedWrapped`)"));
 		}
 	}
 	/**
@@ -777,7 +777,7 @@ public class MyEmployeeParentSubject extends Subject {
 	 */
 	public void isTestBooleanIsFalse() {
 		if (!actual.isTestBooleanIsFalse()) {
-			failWithActual(simpleFact("expected to be 'test boolean is false' (`TestBooleanIsFalse`)"));
+			failWithActual(simpleFact("expected to be 'test boolean is false' (`isTestBooleanIsFalse`)"));
 		}
 	}
 	/**
@@ -785,7 +785,7 @@ public class MyEmployeeParentSubject extends Subject {
 	 */
 	public void isNotTestBooleanIsFalse() {
 		if (actual.isTestBooleanIsFalse()) {
-			failWithActual(simpleFact("expected NOT to be 'test boolean is false' (`TestBooleanIsFalse`)"));
+			failWithActual(simpleFact("expected NOT to be 'test boolean is false' (`isTestBooleanIsFalse`)"));
 		}
 	}
 	/**

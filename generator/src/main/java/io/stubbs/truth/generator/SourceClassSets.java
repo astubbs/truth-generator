@@ -3,6 +3,7 @@ package io.stubbs.truth.generator;
 import com.google.common.collect.ImmutableListMultimap;
 import com.google.common.collect.Multimaps;
 import io.stubbs.truth.generator.internal.ClassUtils;
+import io.stubbs.truth.generator.internal.RecursiveClassDiscovery;
 import lombok.Getter;
 import lombok.Value;
 
@@ -59,6 +60,13 @@ public class SourceClassSets {
      * todo docs
      */
     private Set<Class<?>> classSetCache;
+
+    /**
+     * Classes referenced by specified classes, which haven't been set explicitly (i.e. recursive graph feature)
+     *
+     * @see RecursiveClassDiscovery
+     */
+    private Set<Class<?>> referencedNotSpecifiedClasses;
 
     /**
      * Use the package of the parameter as the base package;
@@ -137,22 +145,18 @@ public class SourceClassSets {
     }
 
     public void generateFrom(ClassLoader loader, String... classes) {
-        Class[] as = stream(classes).map(x -> {
+        Class<?>[] as = stream(classes).map(x -> {
             try {
                 return loader.loadClass(x);
             } catch (ClassNotFoundException e) {
                 throw new GeneratorException("Cannot find class asked to generate from: " + x, e);
             }
-        }).collect(Collectors.toList()).toArray(new Class[0]);
+        }).toArray(Class[]::new);
         generateFrom(as);
     }
 
     public void generateFrom(Class<?>... classes) {
         this.simpleClasses.addAll(stream(classes).collect(toSet()));
-    }
-
-    public void generateFromReferenced(Class<?>... classes) {
-        this.referencedClasses.addAll(stream(classes).collect(toSet()));
     }
 
     // todo docs
@@ -161,7 +165,7 @@ public class SourceClassSets {
         getAllClasses(); // update class set cache
         var missing = clazzes.stream()
                 .filter(x -> !classSetCache.contains(x)).collect(toSet());
-        missing.forEach(this::generateFrom);
+        missing.forEach(this::generateFromReferencedNotSpecified);
         return (Set<Class<?>>) missing;
     }
 
@@ -170,6 +174,7 @@ public class SourceClassSets {
         Set<Class<?>> union = new HashSet<>();
         union.addAll(getSimpleClasses());
         union.addAll(getLegacyBeans());
+        union.addAll(getReferencedNotSpecifiedClasses());
 
         Set<Class<?>> collect = getTargetPackageAndClasses().stream().flatMap(x ->
                 stream(x.classes)
@@ -186,6 +191,10 @@ public class SourceClassSets {
         // todo need more elegant solution than this
         this.classSetCache = union;
         return union;
+    }
+
+    public void generateFromReferencedNotSpecified(Class<?>... classes) {
+        referencedNotSpecifiedClasses.addAll(stream(classes).collect(toSet()));
     }
 
     // todo shouldn't be public?

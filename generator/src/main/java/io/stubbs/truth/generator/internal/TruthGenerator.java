@@ -181,18 +181,18 @@ public class TruthGenerator implements TruthGeneratorAPI {
         Set<ThreeSystem<?>> fromExplicitClasses = generateSkeletons(ss.getSimpleClasses(), targetPackageName, packageForEntryPoint);
 
         // legacy classes
-        Set<ThreeSystem<?>> legacyClasses = generateSkeletons(ss.getLegacyBeans(), targetPackageName, packageForEntryPoint);
-        legacyClasses.forEach(x -> x.setLegacyMode(true));
+        Set<ThreeSystem<?>> fromLegacyClasses = generateSkeletons(ss.getLegacyBeans(), targetPackageName, packageForEntryPoint);
+        fromLegacyClasses.forEach(x -> x.setLegacyMode(true));
 
         // legacy classes with custom package destination
         Set<SourceClassSets.TargetPackageAndClasses> legacyTargetPackageAndClasses = ss.getLegacyTargetPackageAndClasses();
-        Set<ThreeSystem<?>> legacyPackageSet = legacyTargetPackageAndClasses.stream().flatMap(
+        Set<ThreeSystem<?>> fromLegacyPackageSet = legacyTargetPackageAndClasses.stream().flatMap(
                 x -> {
                     Set<Class<?>> collect = stream(x.getClasses()).collect(toSet());
                     return generateSkeletons(collect, Optional.of(x.getTargetPackageName()), packageForEntryPoint).stream();
                 }
         ).collect(toSet());
-        legacyPackageSet.forEach(x -> x.setLegacyMode(true));
+        fromLegacyPackageSet.forEach(x -> x.setLegacyMode(true));
 
 
         // add tests
@@ -200,13 +200,13 @@ public class TruthGenerator implements TruthGeneratorAPI {
         union.addAll(fromPackage);
         union.addAll(setStream);
         union.addAll(fromExplicitClasses);
-        union.addAll(legacyClasses);
-        union.addAll(legacyPackageSet);
+        union.addAll(fromLegacyClasses);
+        union.addAll(fromLegacyPackageSet);
 
         if (union.isEmpty())
             logger.atWarning().log("Nothing generated. Check your settings.");
 
-//        union.removeIf(union.con);
+        union.removeIf(x -> false);
 
         //
         addTests(union);

@@ -82,55 +82,6 @@ public class TruthGenerator implements TruthGeneratorAPI {
         overallEntryPoint.create();
     }
 
-    private Set<ThreeSystem<?>> generateSkeletonsFromPackages(Set<String> modelPackages, OverallEntryPoint overallEntryPoint, SourceClassSets ss) {
-        Set<Class<?>> allTypes = classUtils.collectSourceClasses(ss, modelPackages.toArray(new String[0]));
-        return generateSkeletons(allTypes, Optional.empty(), overallEntryPoint);
-    }
-
-    private void addTests(final Set<ThreeSystem<?>> allTypes) {
-        SubjectMethodGenerator tg = new SubjectMethodGenerator(allTypes, builtInStore);
-        tg.addTests(allTypes);
-    }
-
-    private Set<ThreeSystem<?>> generateSkeletons(Set<Class<?>> classes, Optional<String> targetPackageName,
-                                                  OverallEntryPoint overallEntryPoint) {
-        int sizeBeforeFilter = classes.size();
-        classes = filterSubjects(classes, sizeBeforeFilter);
-
-        Set<ThreeSystem<?>> subjectsSystems = new HashSet<>();
-        for (Class<?> clazz : classes) {
-            SkeletonGenerator skeletonGenerator = new SkeletonGenerator(targetPackageName, overallEntryPoint, builtInStore);
-            var threeSystem = skeletonGenerator.threeLayerSystem(clazz);
-            if (threeSystem.isPresent()) {
-                ThreeSystem<?> ts = threeSystem.get();
-                subjectsSystems.add(ts);
-                overallEntryPoint.add(ts);
-            }
-        }
-        return subjectsSystems;
-    }
-
-    private Set<Class<?>> filterSubjects(Set<Class<?>> classes, int sizeBeforeFilter) {
-        // filter existing subjects from inbound set
-        classes = classes.stream().filter(x -> !Subject.class.isAssignableFrom(x)).collect(toSet());
-        logger.at(Level.FINE).log("Removed %s Subjects from inbound", classes.size() - sizeBeforeFilter);
-        return classes;
-    }
-
-    @Override
-    public void generateFromPackagesOf(Class<?>... classes) {
-        Optional<Class<?>> first = stream(classes).findFirst();
-        if (first.isEmpty()) throw new IllegalArgumentException("Must provide at least one Class");
-        SourceClassSets ss = new SourceClassSets(first.get().getPackage().getName());
-        ss.generateAllFoundInPackagesOf(classes);
-        generate(ss);
-    }
-
-    @Override
-    public void combinedSystem(final SourceClassSets ss) {
-        throw new IllegalStateException(); // todo - remove?
-    }
-
     @Override
     public Result generate(SourceClassSets ss) {
         RecursiveClassDiscovery rc = new RecursiveClassDiscovery();
@@ -155,15 +106,13 @@ public class TruthGenerator implements TruthGeneratorAPI {
             }
         }
 
-        // from packages
-        Set<String> packages = ss.getSimplePackages();
-
         OverallEntryPoint packageForEntryPoint = new OverallEntryPoint(ss.getPackageForEntryPoint());
 
+        // from packages
+        Set<String> packages = ss.getSimplePackageNames();
         // skeletons generation is independent and should be able to be done in parallel
         Set<ThreeSystem<?>> fromPackage = packages.parallelStream().flatMap(
-                aPackage ->
-                        generateSkeletonsFromPackages(of(aPackage), packageForEntryPoint, ss).stream()
+                aPackage -> generateSkeletonsFromPackages(of(aPackage), packageForEntryPoint, ss).stream()
         ).collect(toSet());
 
         // custom package destination
@@ -210,8 +159,6 @@ public class TruthGenerator implements TruthGeneratorAPI {
         if (union.isEmpty())
             logger.atWarning().log("Nothing generated. Check your settings.");
 
-//        union.removeIf(x -> false);
-
         //
         addTests(union);
 
@@ -223,6 +170,62 @@ public class TruthGenerator implements TruthGeneratorAPI {
         results.all(all);
 
         return results.build();
+    }
+
+    private void addTests(final Set<ThreeSystem<?>> allTypes) {
+        SubjectMethodGenerator tg = new SubjectMethodGenerator(allTypes, builtInStore);
+        tg.addTests(allTypes);
+    }
+
+    private Set<ThreeSystem<?>> generateSkeletons(Set<Class<?>> classes, Optional<String> targetPackageName,
+                                                  OverallEntryPoint overallEntryPoint) {
+        int sizeBeforeFilter = classes.size();
+        classes = filterSubjects(classes, sizeBeforeFilter);
+
+        Set<ThreeSystem<?>> subjectsSystems = new HashSet<>();
+        for (Class<?> clazz : classes) {
+            SkeletonGenerator skeletonGenerator = new SkeletonGenerator(targetPackageName, overallEntryPoint, builtInStore);
+            var threeSystem = skeletonGenerator.threeLayerSystem(clazz);
+            if (threeSystem.isPresent()) {
+                ThreeSystem<?> ts = threeSystem.get();
+                subjectsSystems.add(ts);
+                overallEntryPoint.add(ts);
+            }
+        }
+        return subjectsSystems;
+    }
+
+    private Set<Class<?>> filterSubjects(Set<Class<?>> classes, int sizeBeforeFilter) {
+        // filter existing subjects from inbound set
+        classes = classes.stream().filter(x -> !Subject.class.isAssignableFrom(x)).collect(toSet());
+        logger.at(Level.FINE).log("Removed %s Subjects from inbound", classes.size() - sizeBeforeFilter);
+        return classes;
+    }
+
+    @Override
+    public void generateFromPackagesOf(Class<?>... classes) {
+        Optional<Class<?>> first = stream(classes).findFirst();
+        if (first.isEmpty()) throw new IllegalArgumentException("Must provide at least one Class");
+        SourceClassSets ss = new SourceClassSets(first.get().getPackage().getName());
+        ss.generateAllFoundInPackagesOf(classes);
+        generate(ss);
+    }
+
+    @Override
+    public void combinedSystem(final SourceClassSets ss) {
+        throw new IllegalStateException(); // todo - remove?
+    }
+
+    private Set<ThreeSystem<?>> generateSkeletonsFromPackages(Set<String> packagesToScan, OverallEntryPoint overallEntryPoint, SourceClassSets ss) {
+        Set<Class<?>> distinctTypesFoundInPackages = classUtils.collectSourceClasses(ss, packagesToScan.toArray(new String[0]));
+
+        // filter out already added
+        if (ss != null) {
+            var alreadyAdded = ss.getAllSpecifiedClasses();
+            distinctTypesFoundInPackages.removeAll(alreadyAdded);
+        }
+
+        return generateSkeletons(distinctTypesFoundInPackages, Optional.empty(), overallEntryPoint);
     }
 
     @Override

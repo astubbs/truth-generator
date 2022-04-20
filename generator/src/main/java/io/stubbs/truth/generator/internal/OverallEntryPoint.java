@@ -101,7 +101,7 @@ public class OverallEntryPoint {
                 .setPublic();
 
         //
-        that.addParameter(ts.classUnderTest, "actual");
+        that.addParameter(ts.getClassUnderTest(), "actual");
 
         //
         String subjectCanonicalName = ts.getMiddle().getCanonicalName();

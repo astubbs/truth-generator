@@ -3,12 +3,14 @@ package io.stubbs.truth.generator.internal;
 import io.stubbs.truth.generator.SourceClassSets;
 import io.stubbs.truth.generator.TruthGeneratorAPI;
 import io.stubbs.truth.generator.internal.model.ThreeSystem;
-import io.stubbs.truth.generator.testModel.MyEmployee;
 import org.junit.Test;
 
 import static com.google.common.truth.Truth.assertThat;
 import static io.stubbs.truth.generator.internal.TruthGeneratorTest.TEST_OUTPUT_DIRECTORY;
 
+/**
+ * @see SourceClassSets
+ */
 public class SourceClassSetsTests {
 
     /**
@@ -27,8 +29,8 @@ public class SourceClassSetsTests {
         // the test
         var allGeneratedSystems = tg.generate(ss).getAll();
 
-        // will crash already if didn't work
-        assertThat(allGeneratedSystems).containsKey(MyEmployee.class);
+        // will have crashed already if the fix didn't work
+        assertThat(allGeneratedSystems).containsKey(ThreeSystem.class);
     }
 
 }

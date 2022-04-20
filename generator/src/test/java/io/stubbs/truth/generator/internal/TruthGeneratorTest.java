@@ -99,7 +99,7 @@ public class TruthGeneratorTest {
         Map<Class<?>, ThreeSystem<?>> generated = generate.getAll();
 
         assertThat(generated.size()).isAtLeast(classes.size());
-        Set<? extends Class<?>> generatedSourceClasses = generated.values().stream().map(x -> x.classUnderTest).collect(Collectors.toSet());
+        Set<? extends Class<?>> generatedSourceClasses = generated.values().stream().map(x -> x.getClassUnderTest()).collect(Collectors.toSet());
         assertThat(generatedSourceClasses).containsAtLeast(UUID.class, ZonedDateTime.class, MyEmployee.class, MyEmployee.State.class);
 
         //

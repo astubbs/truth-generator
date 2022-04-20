@@ -34,7 +34,7 @@ public class SourceClassSets {
      * todo docs
      */
     //todo rename
-    private final Set<String> simplePackages = new HashSet<>();
+    private final Set<String> simplePackageNames = new HashSet<>();
 
     /**
      * todo docs
@@ -91,16 +91,16 @@ public class SourceClassSets {
 
     public void generateAllFoundInPackagesOf(Class<?>... classes) {
         Set<String> collect = stream(classes).map(x -> x.getPackage().getName()).collect(toSet());
-        simplePackages.addAll(collect);
+        simplePackageNames.addAll(collect);
     }
 
     public void generateAllFoundInPackages(Package... packages) {
         Set<String> collect = stream(packages).map(Package::getName).collect(toSet());
-        simplePackages.addAll(collect);
+        simplePackageNames.addAll(collect);
     }
 
     public void generateAllFoundInPackages(String... packageNames) {
-        simplePackages.addAll(stream(packageNames).collect(toSet()));
+        simplePackageNames.addAll(stream(packageNames).collect(toSet()));
     }
 
     /**
@@ -169,23 +169,18 @@ public class SourceClassSets {
         return (Set<Class<?>>) missing;
     }
 
+    /**
+     * Includes classes found in specified packages
+     */
     // todo shouldn't be public?
     public Set<Class<?>> getAllClasses() {
-        Set<Class<?>> union = new HashSet<>();
-        union.addAll(getSimpleClasses());
-        union.addAll(getLegacyBeans());
+        Set<Class<?>> union = getAllSpecifiedClasses();
+
         union.addAll(getReferencedNotSpecifiedClasses());
-
-        Set<Class<?>> collect = getTargetPackageAndClasses().stream().flatMap(x ->
-                stream(x.classes)
-        ).collect(toSet());
-        union.addAll(collect);
-
-        union.addAll(getLegacyTargetPackageAndClasses().stream().flatMap(x -> stream(x.classes)).collect(toSet()));
 
         ClassUtils classUtils = new ClassUtils();
         classUtils.addClassLoaders(this.loaders);
-        union.addAll(getSimplePackages().stream().flatMap(
+        union.addAll(getSimplePackageNames().stream().flatMap(
                 x -> classUtils.collectSourceClasses(null, x).stream()).collect(toSet()));
 
         // todo need more elegant solution than this
@@ -193,7 +188,27 @@ public class SourceClassSets {
         return union;
     }
 
+    public Set<Class<?>> getAllSpecifiedClasses() {
+        Set<Class<?>> union = new HashSet<>();
+        union.addAll(getSimpleClasses());
+        union.addAll(getLegacyBeans());
+
+        Set<Class<?>> collect = getTargetPackageAndClasses().stream().flatMap(x ->
+                stream(x.classes)
+        ).collect(toSet());
+        union.addAll(collect);
+
+        union.addAll(getLegacyTargetPackageAndClasses().stream().flatMap(x -> stream(x.classes)).collect(toSet()));
+        return union;
+    }
+
     public void generateFromReferencedNotSpecified(Class<?>... classes) {
+        Set<Class<?>> allClasses = getAllSpecifiedClasses();
+        stream(classes).forEach(x -> {
+            if (!allClasses.contains(x)) {
+                referencedNotSpecifiedClasses.add(x);
+            }
+        });
         referencedNotSpecifiedClasses.addAll(stream(classes).collect(toSet()));
     }
 

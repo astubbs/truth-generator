@@ -9,16 +9,15 @@ import static com.google.common.truth.Truth.assertThat;
 import static io.stubbs.truth.generator.internal.TruthGeneratorTest.TEST_OUTPUT_DIRECTORY;
 
 /**
+ * Where there are duplicate entries of classes in the target sets
+ *
  * @see SourceClassSets
  */
 public class SourceClassSetsTests {
 
-    /**
-     * Where there are duplicate entries of classes in the target sets
-     */
     // todo use bootstrapped ResultSubject
     @Test
-    public void duplicates() {
+    public void duplicatesClassInSpecifiedPackage() {
         TruthGenerator tg = TruthGeneratorAPI.createDefaultOptions(TEST_OUTPUT_DIRECTORY);
         SourceClassSets ss = new SourceClassSets(SourceClassSets.class);
 
@@ -32,5 +31,23 @@ public class SourceClassSetsTests {
         // will have crashed already if the fix didn't work
         assertThat(allGeneratedSystems).containsKey(ThreeSystem.class);
     }
+
+    @Test
+    public void duplicatesPackageAndSubPackage() {
+        TruthGenerator tg = TruthGeneratorAPI.createDefaultOptions(TEST_OUTPUT_DIRECTORY);
+        SourceClassSets ss = new SourceClassSets(SourceClassSets.class);
+
+        // the issue
+        ss.generateFrom(ThreeSystem.class);
+        ss.generateAllFoundInPackages("io.stubbs.truth.generator",
+                "io.stubbs.truth.generator.subjects");
+
+        // the test
+        var allGeneratedSystems = tg.generate(ss).getAll();
+
+        // will have crashed already if the fix didn't work
+        assertThat(allGeneratedSystems).containsKey(ThreeSystem.class);
+    }
+
 
 }

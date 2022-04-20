@@ -6,11 +6,9 @@ import io.stubbs.truth.generator.internal.ClassUtils;
 import io.stubbs.truth.generator.internal.RecursiveClassDiscovery;
 import lombok.Getter;
 import lombok.Value;
+import lombok.extern.slf4j.Slf4j;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static java.util.Arrays.asList;
@@ -22,6 +20,7 @@ import static java.util.stream.Collectors.toSet;
  *
  * @author Antony Stubbs
  */
+@Slf4j
 @Getter
 public class SourceClassSets {
 
@@ -100,7 +99,17 @@ public class SourceClassSets {
     }
 
     public void generateAllFoundInPackages(String... packageNames) {
-        simplePackageNames.addAll(stream(packageNames).collect(toSet()));
+        // filter sub packages
+        stream(packageNames).forEach(packageToAdd -> {
+            Optional<String> matchingSuperPackage = simplePackageNames.stream()
+                    .filter(packageToAdd::startsWith)
+                    .findAny();
+            if (matchingSuperPackage.isEmpty()) {
+                simplePackageNames.add(packageToAdd);
+            } else {
+                log.info("Skipping package {}, is it is a sub package of {} which is already added", packageToAdd, matchingSuperPackage.get());
+            }
+        });
     }
 
     /**

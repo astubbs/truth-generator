@@ -49,6 +49,7 @@ import static java.util.Optional.of;
 /**
  * @author Antony Stubbs
  */
+// todo split full text comparisons into separate test class
 // todo fix method naming
 @RunWith(JUnit4.class)
 public class TruthGeneratorTest {
@@ -234,27 +235,28 @@ public class TruthGeneratorTest {
     /**
      * Given a single class or classes, generate subjects for all references classes in any nested return values
      */
+    // todo use bootstrapped ResultSubject
     @Test
     public void recursive_generation() {
         TruthGenerator tg = TruthGeneratorAPI.createDefaultOptions(testOutputDirectory);
-        var generate = tg.generate(MyEmployee.class).getAll();
+        var allGeneratedSystems = tg.generate(MyEmployee.class).getAll();
 
         //
-        assertThat(generate).containsKey(MyEmployee.class);
-        assertThat(generate).containsKey(IdCard.class);
-        assertThat(generate).containsKey(MyEmployee.State.class);
+        assertThat(allGeneratedSystems).containsKey(MyEmployee.class);
+        assertThat(allGeneratedSystems).containsKey(IdCard.class);
+        assertThat(allGeneratedSystems).containsKey(MyEmployee.State.class);
 
         // lost in the generics
-        assertThat(generate).doesNotContainKey(Project.class);
+        assertThat(allGeneratedSystems).doesNotContainKey(Project.class);
 
         //
-        assertThat(generate).containsKey(UUID.class);
-        assertThat(generate).containsKey(ZonedDateTime.class);
-        assertThat(generate).containsKey(DayOfWeek.class);
+        assertThat(allGeneratedSystems).containsKey(UUID.class);
+        assertThat(allGeneratedSystems).containsKey(ZonedDateTime.class);
+        assertThat(allGeneratedSystems).containsKey(DayOfWeek.class);
 
         // recursive subjects that shouldn't be included
-        assertThat(generate).doesNotContainKey(Spliterator.class);
-        assertThat(generate).doesNotContainKey(Stream.class);
+        assertThat(allGeneratedSystems).doesNotContainKey(Spliterator.class);
+        assertThat(allGeneratedSystems).doesNotContainKey(Stream.class);
     }
 
     /**

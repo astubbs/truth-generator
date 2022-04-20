@@ -180,6 +180,9 @@ public class TruthGenerator implements TruthGeneratorAPI {
         Optional<String> targetPackageName = Optional.empty();
         Set<ThreeSystem<?>> fromExplicitClasses = generateSkeletons(ss.getSimpleClasses(), targetPackageName, packageForEntryPoint);
 
+        // recursive discovery
+        Set<ThreeSystem<?>> fromRecursion = generateSkeletons(ss.getReferencedNotSpecifiedClasses(), targetPackageName, packageForEntryPoint);
+
         // legacy classes
         Set<ThreeSystem<?>> fromLegacyClasses = generateSkeletons(ss.getLegacyBeans(), targetPackageName, packageForEntryPoint);
         fromLegacyClasses.forEach(x -> x.setLegacyMode(true));
@@ -200,13 +203,14 @@ public class TruthGenerator implements TruthGeneratorAPI {
         union.addAll(fromPackage);
         union.addAll(setStream);
         union.addAll(fromExplicitClasses);
+        union.addAll(fromRecursion);
         union.addAll(fromLegacyClasses);
         union.addAll(fromLegacyPackageSet);
 
         if (union.isEmpty())
             logger.atWarning().log("Nothing generated. Check your settings.");
 
-        union.removeIf(x -> false);
+//        union.removeIf(x -> false);
 
         //
         addTests(union);

@@ -161,7 +161,7 @@ public class TruthGenerator implements TruthGeneratorAPI {
         OverallEntryPoint packageForEntryPoint = new OverallEntryPoint(ss.getPackageForEntryPoint());
 
         // skeletons generation is independent and should be able to be done in parallel
-        Set<ThreeSystem<?>> skeletons = packages.parallelStream().flatMap(
+        Set<ThreeSystem<?>> fromPackage = packages.parallelStream().flatMap(
                 aPackage ->
                         generateSkeletonsFromPackages(of(aPackage), packageForEntryPoint, ss).stream()
         ).collect(toSet());
@@ -178,7 +178,7 @@ public class TruthGenerator implements TruthGeneratorAPI {
         // straight up classes
         // TODO support overriding target package
         Optional<String> targetPackageName = Optional.empty();
-        Set<ThreeSystem<?>> simpleClasses = generateSkeletons(ss.getSimpleClasses(), targetPackageName, packageForEntryPoint);
+        Set<ThreeSystem<?>> fromExplicitClasses = generateSkeletons(ss.getSimpleClasses(), targetPackageName, packageForEntryPoint);
 
         // legacy classes
         Set<ThreeSystem<?>> legacyClasses = generateSkeletons(ss.getLegacyBeans(), targetPackageName, packageForEntryPoint);
@@ -197,14 +197,16 @@ public class TruthGenerator implements TruthGeneratorAPI {
 
         // add tests
         Set<ThreeSystem<?>> union = new HashSet<>();
-        union.addAll(skeletons);
+        union.addAll(fromPackage);
         union.addAll(setStream);
-        union.addAll(simpleClasses);
+        union.addAll(fromExplicitClasses);
         union.addAll(legacyClasses);
         union.addAll(legacyPackageSet);
 
         if (union.isEmpty())
             logger.atWarning().log("Nothing generated. Check your settings.");
+
+//        union.removeIf(union.con);
 
         //
         addTests(union);

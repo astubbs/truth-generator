@@ -30,33 +30,33 @@ public class SourceClassSets {
     private final List<ClassLoader> loaders = new ArrayList<>();
 
     /**
-     *
+     * todo docs
      */
     //todo rename
     private final Set<String> simplePackages = new HashSet<>();
 
     /**
-     *
+     * todo docs
      */
     private final Set<Class<?>> simpleClasses = new HashSet<>();
 
     /**
-     *
+     * todo docs
      */
     private final Set<TargetPackageAndClasses> targetPackageAndClasses = new HashSet<>();
 
     /**
-     *
+     * todo docs
      */
     private final Set<Class<?>> legacyBeans = new HashSet<>();
 
     /**
-     *
+     * todo docs
      */
     private final Set<TargetPackageAndClasses> legacyTargetPackageAndClasses = new HashSet<>();
 
     /**
-     *
+     * todo docs
      */
     private Set<Class<?>> classSetCache;
 
@@ -149,6 +149,10 @@ public class SourceClassSets {
 
     public void generateFrom(Class<?>... classes) {
         this.simpleClasses.addAll(stream(classes).collect(toSet()));
+    }
+
+    public void generateFromReferenced(Class<?>... classes) {
+        this.referencedClasses.addAll(stream(classes).collect(toSet()));
     }
 
     // todo docs

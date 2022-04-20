@@ -49,6 +49,7 @@ import static java.util.Optional.of;
 /**
  * @author Antony Stubbs
  */
+// todo fix method naming
 @RunWith(JUnit4.class)
 public class TruthGeneratorTest {
 

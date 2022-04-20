@@ -66,7 +66,7 @@ public class SourceClassSets {
      *
      * @see RecursiveClassDiscovery
      */
-    private Set<Class<?>> referencedNotSpecifiedClasses;
+    private final Set<Class<?>> referencedNotSpecifiedClasses = new HashSet<>();
 
     /**
      * Use the package of the parameter as the base package;

@@ -8,6 +8,8 @@ import org.jboss.forge.roaster.model.source.JavaClassSource;
 
 import java.util.Optional;
 
+import static io.stubbs.truth.generator.internal.TruthGeneratorTest.TEST_OUTPUT_DIRECTORY;
+
 /**
  * @author Antony Stubbs
  */
@@ -15,7 +17,7 @@ public abstract class StrategyTest {
 
     static {
         Options.setDefaultInstance();
-        Utils.setOutputBase(TruthGeneratorGeneratedSourceTest.TEST_OUTPUT_DIRECTORY);
+        Utils.setOutputBase(TEST_OUTPUT_DIRECTORY);
     }
 
     JavaClassSource generated = Roaster.create(JavaClassSource.class);

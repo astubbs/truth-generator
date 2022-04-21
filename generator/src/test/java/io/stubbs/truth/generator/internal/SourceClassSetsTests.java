@@ -7,7 +7,7 @@ import io.stubbs.truth.generator.internal.model.ThreeSystem;
 import org.junit.Test;
 
 import static io.stubbs.truth.ManagedTruth.assertThat;
-import static io.stubbs.truth.generator.internal.TruthGeneratorGeneratedSourceTest.TEST_OUTPUT_DIRECTORY;
+import static io.stubbs.truth.generator.internal.TruthGeneratorTest.TEST_OUTPUT_DIRECTORY;
 
 /**
  * Where there are duplicate entries of classes in the target sets

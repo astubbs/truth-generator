@@ -8,7 +8,7 @@ import io.stubbs.truth.generator.subjects.MyMapSubject;
 import io.stubbs.truth.generator.testModel.MyEmployee;
 import io.stubbs.truth.generator.testModel.Project;
 import lombok.extern.slf4j.Slf4j;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.lang.reflect.Method;
 import java.util.List;

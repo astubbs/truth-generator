@@ -101,6 +101,8 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
         <flogger.version>0.7.4</flogger.version>
+        <junit.version>5.8.2</junit.version>
+
     </properties>
 
     <dependencies>
@@ -111,6 +113,7 @@
             <scope>compile</scope>
         </dependency>
         <dependency>
+            <!-- Used to generate Java 8 chains for users that use them -->
             <groupId>com.google.truth.extensions</groupId>
             <artifactId>truth-java8-extension</artifactId>
             <scope>compile</scope>
@@ -122,6 +125,18 @@
         </dependency>
 
         <!-- Test-->
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-api</artifactId>
+            <scope>test</scope>
+            <version>${junit.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-engine</artifactId>
+            <scope>test</scope>
+            <version>${junit.version}</version>
+        </dependency>
         <dependency>
             <groupId>org.assertj</groupId>
             <artifactId>assertj-core</artifactId>

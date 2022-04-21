@@ -6,7 +6,7 @@ import io.stubbs.truth.generator.subjects.MyStringSubject;
 import io.stubbs.truth.generator.testModel.MyEmployee;
 import io.stubbs.truth.generator.testModel.MyEmployeeSubject;
 import io.stubbs.truth.tests.ManagedTruth;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.List;

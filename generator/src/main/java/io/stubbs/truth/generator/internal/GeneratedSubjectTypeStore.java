@@ -1,6 +1,5 @@
 package io.stubbs.truth.generator.internal;
 
-import com.google.common.flogger.FluentLogger;
 import com.google.common.truth.ObjectArraySubject;
 import com.google.common.truth.Subject;
 import io.stubbs.truth.generator.internal.model.ThreeSystem;
@@ -32,8 +31,6 @@ import static org.apache.commons.lang3.StringUtils.capitalize;
  */
 @Slf4j
 public class GeneratedSubjectTypeStore {
-
-    private static final FluentLogger logger = FluentLogger.forEnclosingClass();
 
     private final Map<String, ThreeSystem<?>> generatedSubjects;
 

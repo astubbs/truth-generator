@@ -15,7 +15,7 @@ public abstract class StrategyTest {
 
     static {
         Options.setDefaultInstance();
-        Utils.setOutputBase(TruthGeneratorTest.TEST_OUTPUT_DIRECTORY);
+        Utils.setOutputBase(TruthGeneratorGeneratedSourceTest.TEST_OUTPUT_DIRECTORY);
     }
 
     JavaClassSource generated = Roaster.create(JavaClassSource.class);

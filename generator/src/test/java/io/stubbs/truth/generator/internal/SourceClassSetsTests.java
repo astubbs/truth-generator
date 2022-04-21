@@ -6,16 +6,16 @@ import io.stubbs.truth.generator.internal.model.ThreeSystem;
 import org.junit.Test;
 
 import static com.google.common.truth.Truth.assertThat;
-import static io.stubbs.truth.generator.internal.TruthGeneratorTest.TEST_OUTPUT_DIRECTORY;
+import static io.stubbs.truth.generator.internal.TruthGeneratorGeneratedSourceTest.TEST_OUTPUT_DIRECTORY;
 
 /**
  * Where there are duplicate entries of classes in the target sets
  *
  * @see SourceClassSets
  */
+// todo use bootstrapped ResultSubject
 public class SourceClassSetsTests {
 
-    // todo use bootstrapped ResultSubject
     @Test
     public void duplicatesClassInSpecifiedPackage() {
         TruthGenerator tg = TruthGeneratorAPI.createDefaultOptions(TEST_OUTPUT_DIRECTORY);

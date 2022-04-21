@@ -1,6 +1,6 @@
 package io.stubbs.truth.generator;
 
-import io.stubbs.truth.generator.internal.TruthGeneratorTest;
+import io.stubbs.truth.generator.internal.TruthGeneratorGeneratedSourceTest;
 import io.stubbs.truth.generator.testModel.MyEmployee;
 import io.stubbs.truth.generator.testModel.MyEmployeeChildSubject;
 import io.stubbs.truth.generator.testModel.MyEmployeeSubject;
@@ -23,7 +23,7 @@ import static com.google.common.truth.Truth.assertThat;
 /**
  * Uses output from packages completed tests run from the generator module.
  *
- * @see TruthGeneratorTest#fullGeneratedCode
+ * @see TruthGeneratorGeneratedSourceTest#fullGeneratedCode
  */
 public class GeneratedAssertionTests {
 
@@ -56,7 +56,7 @@ public class GeneratedAssertionTests {
     }
 
     /**
-     * @see TruthGeneratorTest#test_legacy_mode
+     * @see TruthGeneratorGeneratedSourceTest#test_legacy_mode
      */
     @Test
     public void test_legacy_mode() {

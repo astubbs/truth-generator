@@ -5,14 +5,11 @@ import lombok.Getter;
 import lombok.Setter;
 import org.jboss.forge.roaster.model.source.JavaClassSource;
 
-import java.util.HashSet;
-import java.util.Set;
-
 /**
  * @author Antony Stubbs
  */
 @Getter
-//@EqualsAndHashCode(onlyExplicitlyIncluded = true)
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class ThreeSystem<T> {
 
     @EqualsAndHashCode.Include
@@ -50,7 +47,5 @@ public class ThreeSystem<T> {
         String subjectPackage = parent.getGenerated().getPackage();
         return underTestPackage.getName().contains(subjectPackage);
     }
-
-    Set<ThreeSystem<?>> union = new HashSet<>();
 
 }

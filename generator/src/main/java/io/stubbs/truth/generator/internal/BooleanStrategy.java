@@ -36,7 +36,7 @@ public class BooleanStrategy extends AssertionMethodStrategy {
                 "    failWithActual(simpleFact(\"expected %sto be %s\"));\n" +
                 "  }\n";
 
-        String noun = buildNoun(method);
+        String noun = buildNoun(method, positive);
 
         body = format(body, testPrefix, method.getName(), say, noun);
 
@@ -62,14 +62,16 @@ public class BooleanStrategy extends AssertionMethodStrategy {
         }
     }
 
-    protected String buildNoun(Method method) {
+    protected String buildNoun(Method method, boolean positive) {
         String noun = StringUtils.remove(method.getName(), "is");
 
         String[] camels = StringUtils.splitByCharacterTypeCamelCase(noun);
 
+        String expected = positive ? "TRUE" : "FALSE";
+
         noun = StreamEx.of(camels)
                 .map(String::toLowerCase)
-                .joining(" ", "'", "'") + " (`" + method.getName() + "`)";
+                .joining(" ", "'", "'") + " (`" + method.getName() + "` should be " + expected + ")";
 
         return noun;
     }

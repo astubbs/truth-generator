@@ -92,7 +92,7 @@ public class GeneratedAssertionTests {
     }
 
     @Test
-    public void boolean_methods() {
+    public void booleanMethods() {
         MyEmployee emp = TestModelUtils.createInstance(MyEmployee.class)
                 // not sure how or why, but PODAM is always setting our FALSE test boolean to true, so... ->
                 .toBuilder().testBooleanIsFalse(false).build();
@@ -110,6 +110,7 @@ public class GeneratedAssertionTests {
         {
             MyEmployee build = emp.toBuilder().employmentState(MyEmployee.State.IS_A_BOSS).build();
             MyEmployeeChildSubject.assertThat(build).isBoss();
+            MyEmployeeChildSubject.assertThat(build).isNotDueToBeGivenAPromotionNextCycle();
         }
     }
 

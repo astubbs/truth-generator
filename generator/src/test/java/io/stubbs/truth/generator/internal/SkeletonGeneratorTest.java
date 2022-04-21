@@ -8,7 +8,7 @@ import org.junit.Test;
 
 import java.time.Instant;
 
-import static io.stubbs.truth.generator.internal.TruthGeneratorTest.testOutputDirectory;
+import static io.stubbs.truth.generator.internal.TruthGeneratorGeneratedSourceTest.TEST_OUTPUT_DIRECTORY;
 import static io.stubbs.truth.generator.internal.modelSubjectChickens.ThreeSystemChildSubject.assertThat;
 
 /**
@@ -19,7 +19,7 @@ public class SkeletonGeneratorTest {
 
     @Test
     public void dynamicExtensionsDirect() {
-        TruthGenerator tg = TruthGeneratorAPI.createDefaultOptions(testOutputDirectory);
+        TruthGenerator tg = TruthGeneratorAPI.createDefaultOptions(TEST_OUTPUT_DIRECTORY);
         SourceClassSets ss = new SourceClassSets(getClass().getPackage().getName());
         ss.generateFrom(Instant.class);
         var generate = tg.generate(ss).getAll();
@@ -29,7 +29,7 @@ public class SkeletonGeneratorTest {
 
     @Test
     public void dynamicExtensionIndirect() {
-        TruthGenerator tg = TruthGeneratorAPI.createDefaultOptions(testOutputDirectory);
+        TruthGenerator tg = TruthGeneratorAPI.createDefaultOptions(TEST_OUTPUT_DIRECTORY);
         SourceClassSets ss = new SourceClassSets(getClass().getPackage().getName());
         ss.generateFrom(MyEmployee.class);
         var generate = tg.generate(ss).getAll();

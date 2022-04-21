@@ -103,7 +103,7 @@ public class SubjectMethodGenerator extends AssertionMethodStrategy {
         union.addAll(issers);
         union.addAll(legacy);
 
-        return removeForJdkTarget(system.classUnderTest, removeOverridden(union));
+        return removeForJdkTarget(system.getClassUnderTest(), removeOverridden(union));
 //    return removeOverridden(union);
     }
 
@@ -308,13 +308,13 @@ public class SubjectMethodGenerator extends AssertionMethodStrategy {
     }
 
     public void addTests(final Set<ThreeSystem<?>> allTypes) {
-        for (ThreeSystem system : allTypes) {
+        for (ThreeSystem<?> system : allTypes) {
             addTests(system);
         }
 
         // only serialise results, when all have finished - useful for debugging
-        for (ThreeSystem c : allTypes) {
-            Utils.writeToDisk(c.parent.getGenerated());
+        for (ThreeSystem<?> c : allTypes) {
+            Utils.writeToDisk(c.getParent().getGenerated());
         }
     }
 
@@ -362,14 +362,14 @@ public class SubjectMethodGenerator extends AssertionMethodStrategy {
 
         String getSubjectSimpleName() {
             if (clazz == null)
-                return this.generated.middle.getSimpleName();
+                return this.generated.getMiddle().getSimpleName();
             else
                 return clazz.getSimpleName();
         }
 
         String getSubjectQualifiedName() {
             if (clazz == null)
-                return this.generated.middle.getCanonicalName();
+                return this.generated.getMiddle().getCanonicalName();
             else
                 return clazz.getCanonicalName();
         }
@@ -383,7 +383,7 @@ public class SubjectMethodGenerator extends AssertionMethodStrategy {
         }
 
         public String getFactoryContainerName() {
-            return (isGenerated()) ? generated.middle.getCanonicalName() : clazz.getCanonicalName();
+            return (isGenerated()) ? generated.getMiddle().getCanonicalName() : clazz.getCanonicalName();
         }
 
         public boolean isGenerated() {

@@ -30,12 +30,10 @@ public class TruthGenerator implements TruthGeneratorAPI {
     private final Path testOutputDir;
     private final Options options;
     private final ClassUtils classUtils = new ClassUtils();
-
+    private final BuiltInSubjectTypeStore builtInStore;
     @Setter
     @Getter
     private Optional<String> entryPoint = Optional.empty();
-
-    private final BuiltInSubjectTypeStore builtInStore;
 
     public TruthGenerator(Path testOutputDirectory, Options options) {
         Options.setInstance(options);
@@ -82,9 +80,16 @@ public class TruthGenerator implements TruthGeneratorAPI {
         overallEntryPoint.create();
     }
 
-    private Set<ThreeSystem<?>> generateSkeletonsFromPackages(Set<String> modelPackages, OverallEntryPoint overallEntryPoint, SourceClassSets ss) {
-        Set<Class<?>> allTypes = classUtils.collectSourceClasses(ss, modelPackages.toArray(new String[0]));
-        return generateSkeletons(allTypes, Optional.empty(), overallEntryPoint);
+    private Set<ThreeSystem<?>> generateSkeletonsFromPackages(Set<String> packagesToScan, OverallEntryPoint overallEntryPoint, SourceClassSets ss) {
+        Set<Class<?>> distinctTypesFoundInPackages = classUtils.collectSourceClasses(ss, packagesToScan.toArray(new String[0]));
+
+        // filter out already added
+        if (ss != null) {
+            var alreadyAdded = ss.getAllSpecifiedClasses();
+            distinctTypesFoundInPackages.removeAll(alreadyAdded);
+        }
+
+        return generateSkeletons(distinctTypesFoundInPackages, Optional.empty(), overallEntryPoint);
     }
 
     private void addTests(final Set<ThreeSystem<?>> allTypes) {
@@ -155,15 +160,13 @@ public class TruthGenerator implements TruthGeneratorAPI {
             }
         }
 
-        // from packages
-        Set<String> packages = ss.getSimplePackages();
-
         OverallEntryPoint packageForEntryPoint = new OverallEntryPoint(ss.getPackageForEntryPoint());
 
+        // from packages
+        Set<String> packages = ss.getSimplePackageNames();
         // skeletons generation is independent and should be able to be done in parallel
-        Set<ThreeSystem<?>> skeletons = packages.parallelStream().flatMap(
-                aPackage ->
-                        generateSkeletonsFromPackages(of(aPackage), packageForEntryPoint, ss).stream()
+        Set<ThreeSystem<?>> fromPackage = packages.parallelStream().flatMap(
+                aPackage -> generateSkeletonsFromPackages(of(aPackage), packageForEntryPoint, ss).stream()
         ).collect(toSet());
 
         // custom package destination
@@ -178,30 +181,34 @@ public class TruthGenerator implements TruthGeneratorAPI {
         // straight up classes
         // TODO support overriding target package
         Optional<String> targetPackageName = Optional.empty();
-        Set<ThreeSystem<?>> simpleClasses = generateSkeletons(ss.getSimpleClasses(), targetPackageName, packageForEntryPoint);
+        Set<ThreeSystem<?>> fromExplicitClasses = generateSkeletons(ss.getSimpleClasses(), targetPackageName, packageForEntryPoint);
+
+        // recursive discovery
+        Set<ThreeSystem<?>> fromRecursion = generateSkeletons(ss.getReferencedNotSpecifiedClasses(), targetPackageName, packageForEntryPoint);
 
         // legacy classes
-        Set<ThreeSystem<?>> legacyClasses = generateSkeletons(ss.getLegacyBeans(), targetPackageName, packageForEntryPoint);
-        legacyClasses.forEach(x -> x.setLegacyMode(true));
+        Set<ThreeSystem<?>> fromLegacyClasses = generateSkeletons(ss.getLegacyBeans(), targetPackageName, packageForEntryPoint);
+        fromLegacyClasses.forEach(x -> x.setLegacyMode(true));
 
         // legacy classes with custom package destination
         Set<SourceClassSets.TargetPackageAndClasses> legacyTargetPackageAndClasses = ss.getLegacyTargetPackageAndClasses();
-        Set<ThreeSystem<?>> legacyPackageSet = legacyTargetPackageAndClasses.stream().flatMap(
+        Set<ThreeSystem<?>> fromLegacyPackageSet = legacyTargetPackageAndClasses.stream().flatMap(
                 x -> {
                     Set<Class<?>> collect = stream(x.getClasses()).collect(toSet());
                     return generateSkeletons(collect, Optional.of(x.getTargetPackageName()), packageForEntryPoint).stream();
                 }
         ).collect(toSet());
-        legacyPackageSet.forEach(x -> x.setLegacyMode(true));
+        fromLegacyPackageSet.forEach(x -> x.setLegacyMode(true));
 
 
         // add tests
         Set<ThreeSystem<?>> union = new HashSet<>();
-        union.addAll(skeletons);
+        union.addAll(fromPackage);
         union.addAll(setStream);
-        union.addAll(simpleClasses);
-        union.addAll(legacyClasses);
-        union.addAll(legacyPackageSet);
+        union.addAll(fromExplicitClasses);
+        union.addAll(fromRecursion);
+        union.addAll(fromLegacyClasses);
+        union.addAll(fromLegacyPackageSet);
 
         if (union.isEmpty())
             logger.atWarning().log("Nothing generated. Check your settings.");
@@ -239,4 +246,5 @@ public class TruthGenerator implements TruthGeneratorAPI {
     public void registerStandardSubjectExtension(Class<?> targetType, Class<? extends Subject> subjectExtensionClass) {
         builtInStore.registerStandardSubjectExtension(targetType, subjectExtensionClass);
     }
+
 }

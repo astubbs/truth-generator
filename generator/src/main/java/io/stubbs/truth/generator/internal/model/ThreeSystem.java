@@ -1,5 +1,6 @@
 package io.stubbs.truth.generator.internal.model;
 
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import org.jboss.forge.roaster.model.source.JavaClassSource;
@@ -8,12 +9,14 @@ import org.jboss.forge.roaster.model.source.JavaClassSource;
  * @author Antony Stubbs
  */
 @Getter
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class ThreeSystem<T> {
 
-    public Class<T> classUnderTest;
-    public ParentClass parent;
-    public MiddleClass middle;
-    public JavaClassSource child;
+    @EqualsAndHashCode.Include
+    protected Class<T> classUnderTest;
+    protected ParentClass parent;
+    protected MiddleClass middle;
+    protected JavaClassSource child;
     @Setter
     boolean legacyMode = false;
 

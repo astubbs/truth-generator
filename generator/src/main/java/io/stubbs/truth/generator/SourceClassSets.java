@@ -3,13 +3,12 @@ package io.stubbs.truth.generator;
 import com.google.common.collect.ImmutableListMultimap;
 import com.google.common.collect.Multimaps;
 import io.stubbs.truth.generator.internal.ClassUtils;
+import io.stubbs.truth.generator.internal.RecursiveClassDiscovery;
 import lombok.Getter;
 import lombok.Value;
+import lombok.extern.slf4j.Slf4j;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static java.util.Arrays.asList;
@@ -21,6 +20,7 @@ import static java.util.stream.Collectors.toSet;
  *
  * @author Antony Stubbs
  */
+@Slf4j
 @Getter
 public class SourceClassSets {
 
@@ -30,35 +30,42 @@ public class SourceClassSets {
     private final List<ClassLoader> loaders = new ArrayList<>();
 
     /**
-     *
+     * todo docs
      */
     //todo rename
-    private final Set<String> simplePackages = new HashSet<>();
+    private final Set<String> simplePackageNames = new HashSet<>();
 
     /**
-     *
+     * todo docs
      */
     private final Set<Class<?>> simpleClasses = new HashSet<>();
 
     /**
-     *
+     * todo docs
      */
     private final Set<TargetPackageAndClasses> targetPackageAndClasses = new HashSet<>();
 
     /**
-     *
+     * todo docs
      */
     private final Set<Class<?>> legacyBeans = new HashSet<>();
 
     /**
-     *
+     * todo docs
      */
     private final Set<TargetPackageAndClasses> legacyTargetPackageAndClasses = new HashSet<>();
 
     /**
-     *
+     * todo docs
      */
     private Set<Class<?>> classSetCache;
+
+    /**
+     * Classes referenced by specified classes, which haven't been set explicitly (i.e. recursive graph feature)
+     *
+     * @see RecursiveClassDiscovery
+     */
+    private final Set<Class<?>> referencedNotSpecifiedClasses = new HashSet<>();
 
     /**
      * Use the package of the parameter as the base package;
@@ -83,16 +90,26 @@ public class SourceClassSets {
 
     public void generateAllFoundInPackagesOf(Class<?>... classes) {
         Set<String> collect = stream(classes).map(x -> x.getPackage().getName()).collect(toSet());
-        simplePackages.addAll(collect);
+        simplePackageNames.addAll(collect);
     }
 
     public void generateAllFoundInPackages(Package... packages) {
         Set<String> collect = stream(packages).map(Package::getName).collect(toSet());
-        simplePackages.addAll(collect);
+        simplePackageNames.addAll(collect);
     }
 
     public void generateAllFoundInPackages(String... packageNames) {
-        simplePackages.addAll(stream(packageNames).collect(toSet()));
+        // filter sub packages
+        stream(packageNames).forEach(packageToAdd -> {
+            Optional<String> matchingSuperPackage = simplePackageNames.stream()
+                    .filter(packageToAdd::startsWith)
+                    .findAny();
+            if (matchingSuperPackage.isEmpty()) {
+                simplePackageNames.add(packageToAdd);
+            } else {
+                log.info("Skipping package {}, is it is a sub package of {} which is already added", packageToAdd, matchingSuperPackage.get());
+            }
+        });
     }
 
     /**
@@ -137,13 +154,13 @@ public class SourceClassSets {
     }
 
     public void generateFrom(ClassLoader loader, String... classes) {
-        Class[] as = stream(classes).map(x -> {
+        Class<?>[] as = stream(classes).map(x -> {
             try {
                 return loader.loadClass(x);
             } catch (ClassNotFoundException e) {
                 throw new GeneratorException("Cannot find class asked to generate from: " + x, e);
             }
-        }).collect(Collectors.toList()).toArray(new Class[0]);
+        }).toArray(Class[]::new);
         generateFrom(as);
     }
 
@@ -157,12 +174,30 @@ public class SourceClassSets {
         getAllClasses(); // update class set cache
         var missing = clazzes.stream()
                 .filter(x -> !classSetCache.contains(x)).collect(toSet());
-        missing.forEach(this::generateFrom);
+        missing.forEach(this::generateFromReferencedNotSpecified);
         return (Set<Class<?>>) missing;
     }
 
+    /**
+     * Includes classes found in specified packages
+     */
     // todo shouldn't be public?
     public Set<Class<?>> getAllClasses() {
+        Set<Class<?>> union = getAllSpecifiedClasses();
+
+        union.addAll(getReferencedNotSpecifiedClasses());
+
+        ClassUtils classUtils = new ClassUtils();
+        classUtils.addClassLoaders(this.loaders);
+        union.addAll(getSimplePackageNames().stream().flatMap(
+                x -> classUtils.collectSourceClasses(null, x).stream()).collect(toSet()));
+
+        // todo need more elegant solution than this
+        this.classSetCache = union;
+        return union;
+    }
+
+    public Set<Class<?>> getAllSpecifiedClasses() {
         Set<Class<?>> union = new HashSet<>();
         union.addAll(getSimpleClasses());
         union.addAll(getLegacyBeans());
@@ -173,15 +208,17 @@ public class SourceClassSets {
         union.addAll(collect);
 
         union.addAll(getLegacyTargetPackageAndClasses().stream().flatMap(x -> stream(x.classes)).collect(toSet()));
-
-        ClassUtils classUtils = new ClassUtils();
-        classUtils.addClassLoaders(this.loaders);
-        union.addAll(getSimplePackages().stream().flatMap(
-                x -> classUtils.collectSourceClasses(null, x).stream()).collect(toSet()));
-
-        // todo need more elegant solution than this
-        this.classSetCache = union;
         return union;
+    }
+
+    public void generateFromReferencedNotSpecified(Class<?>... classes) {
+        Set<Class<?>> allClasses = getAllSpecifiedClasses();
+        stream(classes).forEach(x -> {
+            if (!allClasses.contains(x)) {
+                referencedNotSpecifiedClasses.add(x);
+            }
+        });
+        referencedNotSpecifiedClasses.addAll(stream(classes).collect(toSet()));
     }
 
     // todo shouldn't be public?

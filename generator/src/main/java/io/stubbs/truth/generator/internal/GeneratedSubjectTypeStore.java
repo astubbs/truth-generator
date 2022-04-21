@@ -48,7 +48,7 @@ public class GeneratedSubjectTypeStore {
     }
 
     public GeneratedSubjectTypeStore(Set<? extends ThreeSystem<?>> allTypes, BuiltInSubjectTypeStore builtInSubjectTypeStore) {
-        this.generatedSubjects = allTypes.stream().collect(Collectors.toMap(x -> x.classUnderTest.getName(), x -> x));
+        this.generatedSubjects = allTypes.stream().collect(Collectors.toMap(x -> x.getClassUnderTest().getName(), x -> x));
         this.builtInSubjectTypeStore = builtInSubjectTypeStore;
     }
 
@@ -131,7 +131,7 @@ public class GeneratedSubjectTypeStore {
     }
 
     public ResolvedPair resolveSubjectForOptionals(final ThreeSystem<?> threeSystem, Method method) {
-        Class<?> classUnderTest = threeSystem.classUnderTest;
+        Class<?> classUnderTest = threeSystem.getClassUnderTest();
         Class<?> rawReturnType = method.getReturnType();
         Type genericReturnTypeRaw = method.getGenericReturnType();
 

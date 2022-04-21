@@ -2,7 +2,6 @@ package io.stubbs.truth.generator.internal;
 
 import com.google.common.truth.Correspondence;
 import com.google.common.truth.ObjectArraySubject;
-import com.google.common.truth.Truth;
 import io.stubbs.truth.ManagedTruth;
 import io.stubbs.truth.generator.SourceClassSets;
 import io.stubbs.truth.generator.TestModelUtils;
@@ -22,6 +21,8 @@ import org.jboss.forge.roaster.model.source.MethodSource;
 import org.jboss.forge.roaster.model.source.ParameterSource;
 import org.junit.Test;
 
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.time.DayOfWeek;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
@@ -35,7 +36,6 @@ import java.util.stream.Stream;
 import static com.google.common.truth.Correspondence.from;
 import static com.google.common.truth.Correspondence.transforming;
 import static com.google.common.truth.Truth.assertThat;
-import static io.stubbs.truth.generator.internal.TruthGeneratorGeneratedSourceTest.TEST_OUTPUT_DIRECTORY;
 import static java.util.Optional.of;
 
 public class TruthGeneratorTest {

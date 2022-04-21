@@ -1,7 +1,6 @@
 package io.stubbs.truth.generator.internal;
 
 import com.google.common.truth.IntegerSubject;
-import com.google.common.truth.OptionalSubject;
 import com.google.common.truth.Subject;
 import com.google.common.truth.Truth8;
 import io.stubbs.truth.generator.TestModelUtils;
@@ -107,7 +106,7 @@ public class OptionalUnwrapChainForGenericTypeArgsTest {
     public void wildCardTypeDirectUpperBoundGeneric() {
         var resolvedPair = testResolution(Person.class, "getMyWildcardTypeWithLowerAndUpperBoundsGeneric", Optional.class);
         Truth8.assertThat(resolvedPair.getSubject()).isPresent();
-        assertThat(resolvedPair.getSubject().get().getClazz()).isEqualTo(OptionalSubject.class);
+        assertThat(resolvedPair.getSubject().get().getClazz()).isEqualTo(io.stubbs.truth.autoShaded.java.util.OptionalSubject.class);
     }
 
 
@@ -118,7 +117,7 @@ public class OptionalUnwrapChainForGenericTypeArgsTest {
     public void wildCardTypeFromSubtypeUpperBoundGeneric() {
         var resolvedPair = testResolution(MyEmployee.class, "getMyWildcardTypeWithLowerAndUpperBoundsGeneric", Optional.class);
         Truth8.assertThat(resolvedPair.getSubject()).isPresent();
-        assertThat(resolvedPair.getSubject().get().getClazz()).isEqualTo(OptionalSubject.class);
+        assertThat(resolvedPair.getSubject().get().getClazz()).isEqualTo(io.stubbs.truth.autoShaded.java.util.OptionalSubject.class);
     }
 
     /**
@@ -128,7 +127,7 @@ public class OptionalUnwrapChainForGenericTypeArgsTest {
     public void wildCardTypeDirectUpperBoundIdCard() {
         var resolvedPair = testResolution(Person.class, "getMyWildcardTypeWithLowerAndUpperBoundsIdCard", Optional.class);
         Truth8.assertThat(resolvedPair.getSubject()).isPresent();
-        assertThat(resolvedPair.getSubject().get().getClazz()).isEqualTo(OptionalSubject.class);
+        assertThat(resolvedPair.getSubject().get().getClazz()).isEqualTo(io.stubbs.truth.autoShaded.java.util.OptionalSubject.class);
     }
 
 
@@ -139,7 +138,7 @@ public class OptionalUnwrapChainForGenericTypeArgsTest {
     public void wildCardTypeFromSubtypeUpperBoundIdCard() {
         var resolvedPair = testResolution(MyEmployee.class, "getMyWildcardTypeWithLowerAndUpperBoundsIdCard", Optional.class);
         Truth8.assertThat(resolvedPair.getSubject()).isPresent();
-        assertThat(resolvedPair.getSubject().get().getClazz()).isEqualTo(OptionalSubject.class);
+        assertThat(resolvedPair.getSubject().get().getClazz()).isEqualTo(io.stubbs.truth.autoShaded.java.util.OptionalSubject.class);
     }
 
 

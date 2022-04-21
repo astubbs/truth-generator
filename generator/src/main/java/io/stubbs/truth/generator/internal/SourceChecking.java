@@ -1,6 +1,6 @@
 package io.stubbs.truth.generator.internal;
 
-import com.google.common.flogger.FluentLogger;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.reflections.ReflectionUtils;
 
@@ -8,14 +8,12 @@ import java.lang.module.ModuleDescriptor;
 import java.util.Arrays;
 import java.util.Optional;
 import java.util.Set;
-import java.util.logging.Level;
 
 /**
  * @author Antony Stubbs
  */
+@Slf4j
 public class SourceChecking {
-
-    private static final FluentLogger logger = FluentLogger.forEnclosingClass();
 
     static boolean checkSource(Class<?> source, Optional<String> targetPackage) {
         if (isAnonymous(source))
@@ -27,15 +25,12 @@ public class SourceChecking {
         if (isTestClass(source))
             return true;
 
-        if (BuiltInSubjectTypeStore.getNativeTypes().contains(source))
-            return true;
-
-        return false;
+        return BuiltInSubjectTypeStore.getNativeTypes().contains(source);
     }
 
     private static boolean isAnonymous(Class<?> source) {
         if (source.isAnonymousClass()) {
-            logger.at(Level.FINE).log("Skipping anonymous class %s", source);
+            log.debug("Skipping anonymous class %s", source);
             return true;
         }
         return false;
@@ -44,7 +39,7 @@ public class SourceChecking {
     private static boolean isBuilder(Class<?> source) {
         String simpleName = source.getSimpleName();
         if (simpleName.contains("Builder")) {
-            logger.at(Level.FINE).log("Skipping builder class %s", source);
+            log.debug("Skipping builder class %s", source);
             return true;
         }
         return false;
@@ -61,7 +56,7 @@ public class SourceChecking {
         boolean nameEndsInTest = source.getSimpleName().endsWith("Test");
         boolean isIndeed = hasTestAnnotatedMethod || nameEndsInTest;
         if (isIndeed) {
-            logger.at(Level.FINE).log("Skipping a test class %s", source);
+            log.debug("Skipping a test class %s", source);
         }
         return isIndeed;
     }

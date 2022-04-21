@@ -30,12 +30,10 @@ public class TruthGenerator implements TruthGeneratorAPI {
     private final Path testOutputDir;
     private final Options options;
     private final ClassUtils classUtils = new ClassUtils();
-
+    private final BuiltInSubjectTypeStore builtInStore;
     @Setter
     @Getter
     private Optional<String> entryPoint = Optional.empty();
-
-    private final BuiltInSubjectTypeStore builtInStore;
 
     public TruthGenerator(Path testOutputDirectory, Options options) {
         Options.setInstance(options);
@@ -80,6 +78,20 @@ public class TruthGenerator implements TruthGeneratorAPI {
         //
         addTests(subjectsSystems);
         overallEntryPoint.create();
+    }
+
+    @Override
+    public void generateFromPackagesOf(Class<?>... classes) {
+        Optional<Class<?>> first = stream(classes).findFirst();
+        if (first.isEmpty()) throw new IllegalArgumentException("Must provide at least one Class");
+        SourceClassSets ss = new SourceClassSets(first.get().getPackage().getName());
+        ss.generateAllFoundInPackagesOf(classes);
+        generate(ss);
+    }
+
+    @Override
+    public void combinedSystem(final SourceClassSets ss) {
+        throw new IllegalStateException(); // todo - remove?
     }
 
     @Override
@@ -172,6 +184,39 @@ public class TruthGenerator implements TruthGeneratorAPI {
         return results.build();
     }
 
+    @Override
+    public Result generate(Set<Class<?>> classes) {
+        Utils.requireNotEmpty(classes);
+        String entrypointPackage = (this.entryPoint.isPresent())
+                ? entryPoint.get()
+                : createEntrypointPackage(classes);
+        SourceClassSets ss = new SourceClassSets(entrypointPackage);
+        ss.generateFrom(classes);
+        return generate(ss);
+    }
+
+    @Override
+    public Result generate(Class<?>... classes) {
+        return generate(stream(classes).collect(toSet()));
+    }
+
+    @Override
+    public void registerStandardSubjectExtension(Class<?> targetType, Class<? extends Subject> subjectExtensionClass) {
+        builtInStore.registerStandardSubjectExtension(targetType, subjectExtensionClass);
+    }
+
+    private Set<ThreeSystem<?>> generateSkeletonsFromPackages(Set<String> packagesToScan, OverallEntryPoint overallEntryPoint, SourceClassSets ss) {
+        Set<Class<?>> distinctTypesFoundInPackages = classUtils.collectSourceClasses(ss, packagesToScan.toArray(new String[0]));
+
+        // filter out already added
+        if (ss != null) {
+            var alreadyAdded = ss.getAllSpecifiedClasses();
+            distinctTypesFoundInPackages.removeAll(alreadyAdded);
+        }
+
+        return generateSkeletons(distinctTypesFoundInPackages, Optional.empty(), overallEntryPoint);
+    }
+
     private void addTests(final Set<ThreeSystem<?>> allTypes) {
         SubjectMethodGenerator tg = new SubjectMethodGenerator(allTypes, builtInStore);
         tg.addTests(allTypes);
@@ -200,52 +245,5 @@ public class TruthGenerator implements TruthGeneratorAPI {
         classes = classes.stream().filter(x -> !Subject.class.isAssignableFrom(x)).collect(toSet());
         logger.at(Level.FINE).log("Removed %s Subjects from inbound", classes.size() - sizeBeforeFilter);
         return classes;
-    }
-
-    @Override
-    public void generateFromPackagesOf(Class<?>... classes) {
-        Optional<Class<?>> first = stream(classes).findFirst();
-        if (first.isEmpty()) throw new IllegalArgumentException("Must provide at least one Class");
-        SourceClassSets ss = new SourceClassSets(first.get().getPackage().getName());
-        ss.generateAllFoundInPackagesOf(classes);
-        generate(ss);
-    }
-
-    @Override
-    public void combinedSystem(final SourceClassSets ss) {
-        throw new IllegalStateException(); // todo - remove?
-    }
-
-    private Set<ThreeSystem<?>> generateSkeletonsFromPackages(Set<String> packagesToScan, OverallEntryPoint overallEntryPoint, SourceClassSets ss) {
-        Set<Class<?>> distinctTypesFoundInPackages = classUtils.collectSourceClasses(ss, packagesToScan.toArray(new String[0]));
-
-        // filter out already added
-        if (ss != null) {
-            var alreadyAdded = ss.getAllSpecifiedClasses();
-            distinctTypesFoundInPackages.removeAll(alreadyAdded);
-        }
-
-        return generateSkeletons(distinctTypesFoundInPackages, Optional.empty(), overallEntryPoint);
-    }
-
-    @Override
-    public Result generate(Set<Class<?>> classes) {
-        Utils.requireNotEmpty(classes);
-        String entrypointPackage = (this.entryPoint.isPresent())
-                ? entryPoint.get()
-                : createEntrypointPackage(classes);
-        SourceClassSets ss = new SourceClassSets(entrypointPackage);
-        ss.generateFrom(classes);
-        return generate(ss);
-    }
-
-    @Override
-    public Result generate(Class<?>... classes) {
-        return generate(stream(classes).collect(toSet()));
-    }
-
-    @Override
-    public void registerStandardSubjectExtension(Class<?> targetType, Class<? extends Subject> subjectExtensionClass) {
-        builtInStore.registerStandardSubjectExtension(targetType, subjectExtensionClass);
     }
 }

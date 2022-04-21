@@ -9,7 +9,7 @@ import io.stubbs.truth.generator.testing.legacy.NonBeanLegacyChildSubject;
 import io.stubbs.truth.generator.testing.legacy.NonBeanLegacySubject;
 import io.stubbs.truth.tests.ManagedTruth;
 import org.assertj.core.api.Assertions;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import uk.co.jemos.podam.api.PodamFactoryImpl;
 
 import java.io.File;

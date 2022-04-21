@@ -1,7 +1,7 @@
 package io.stubbs.truth.generator.internal;
 
 import io.stubbs.truth.generator.TestModelUtils;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.lang.reflect.Method;
 

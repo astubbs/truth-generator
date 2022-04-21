@@ -10,7 +10,7 @@ import org.apache.maven.plugin.testing.MojoRule;
 import org.apache.maven.project.MavenProject;
 import org.junit.Before;
 import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.nio.file.Path;
@@ -22,8 +22,7 @@ import java.util.stream.Collectors;
 import static com.google.common.truth.Truth.assertThat;
 import static io.stubbs.truth.generator.shaded.java.io.FileChildSubject.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+
 
 /**
  * @author Antony Stubbs
@@ -31,7 +30,7 @@ import static org.junit.Assert.assertTrue;
  */
 public class GeneratorMojoTest {
 
-    @Rule
+    @Rule // todo remove to get rid of junit4
     public MojoRule rule = new MojoRule();
 
     File projectToTestBaseDir = new File("target/test-classes/project-to-test/");
@@ -52,14 +51,14 @@ public class GeneratorMojoTest {
 
     @Test
     public void overall() throws Exception {
-        assertNotNull(projectToTestBaseDir);
-        assertTrue(projectToTestBaseDir.exists());
+        assertThat(projectToTestBaseDir).isNotNull();
+        assertThat(projectToTestBaseDir.exists()).isTrue();
 
         Path generatorBaseDir = projectToTestBaseDir.toPath().resolve("target/generated-test-sources/truth-assertions-managed/");
 
         // instantiation
         GeneratorMojo generatorMojo = (GeneratorMojo) rule.lookupConfiguredMojo(projectToTestBaseDir, "generate");
-        assertNotNull(generatorMojo);
+        assertThat(generatorMojo).isNotNull();
 
         List<Plugin> plugins = generatorMojo.getProject().getBuildPlugins();
         assertThat(plugins.stream().map(Plugin::getKey).collect(Collectors.toList())).contains("io.stubbs.truth:truth-generator-maven-plugin");

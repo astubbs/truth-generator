@@ -1,6 +1,6 @@
 package io.stubbs.truth.generator;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * @author Antony Stubbs

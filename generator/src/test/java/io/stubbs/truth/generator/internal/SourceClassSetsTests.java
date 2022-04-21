@@ -4,7 +4,7 @@ import io.stubbs.truth.generator.SourceClassSets;
 import io.stubbs.truth.generator.TruthGeneratorAPI;
 import io.stubbs.truth.generator.internal.model.Result;
 import io.stubbs.truth.generator.internal.model.ThreeSystem;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static io.stubbs.truth.ManagedTruth.assertThat;
 import static io.stubbs.truth.generator.internal.TruthGeneratorTest.TEST_OUTPUT_DIRECTORY;
@@ -14,10 +14,10 @@ import static io.stubbs.truth.generator.internal.TruthGeneratorTest.TEST_OUTPUT_
  *
  * @see SourceClassSets
  */
-public class SourceClassSetsTests {
+class SourceClassSetsTests {
 
     @Test
-    public void duplicatesClassInSpecifiedPackage() {
+    void duplicatesClassInSpecifiedPackage() {
         TruthGenerator tg = TruthGeneratorAPI.createDefaultOptions(TEST_OUTPUT_DIRECTORY);
         SourceClassSets ss = new SourceClassSets(SourceClassSets.class);
 
@@ -33,7 +33,7 @@ public class SourceClassSetsTests {
     }
 
     @Test
-    public void duplicatesPackageAndSubPackage() {
+    void duplicatesPackageAndSubPackage() {
         TruthGenerator tg = TruthGeneratorAPI.createDefaultOptions(TEST_OUTPUT_DIRECTORY);
         SourceClassSets ss = new SourceClassSets(SourceClassSets.class);
 

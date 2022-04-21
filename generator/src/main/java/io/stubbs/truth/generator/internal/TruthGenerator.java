@@ -1,6 +1,5 @@
 package io.stubbs.truth.generator.internal;
 
-import com.google.common.flogger.FluentLogger;
 import com.google.common.truth.Subject;
 import io.stubbs.truth.generator.SourceClassSets;
 import io.stubbs.truth.generator.TruthGeneratorAPI;
@@ -13,7 +12,6 @@ import one.util.streamex.StreamEx;
 
 import java.nio.file.Path;
 import java.util.*;
-import java.util.logging.Level;
 import java.util.stream.Collectors;
 
 import static java.util.Arrays.stream;
@@ -26,7 +24,6 @@ import static java.util.stream.Collectors.toSet;
 @Slf4j
 public class TruthGenerator implements TruthGeneratorAPI {
 
-    private static final FluentLogger logger = FluentLogger.forEnclosingClass();
     private final Path testOutputDir;
     private final Options options;
     private final ClassUtils classUtils = new ClassUtils();
@@ -130,7 +127,7 @@ public class TruthGenerator implements TruthGeneratorAPI {
             return !isASubject && !alreadyExists;
         }).collect(toSet());
 
-        logger.at(Level.FINE).log("Removed %s Subjects from inbound", classes.size() - filtered.size());
+        log.debug("Removed %s Subjects from inbound", classes.size() - filtered.size());
         return classes;
     }
 
@@ -164,11 +161,10 @@ public class TruthGenerator implements TruthGeneratorAPI {
             Set<Class<?>> missing = rc.findReferencedNotIncluded(ss);
             if (!missing.isEmpty()) {
                 results.referencedNotBuild(missing);
-                logger.at(Level.WARNING)
-                        .log("Some referenced classes in the tree are not in the list of Subjects to be generated. " +
-                                "Consider using automatic recursive generation, or add the missing classes. " +
-                                "Otherwise your experience will be limited in places." +
-                                "Missing classes %s", missing);
+                log.debug("Some referenced classes in the tree are not in the list of Subjects to be generated. " +
+                        "Consider using automatic recursive generation, or add the missing classes. " +
+                        "Otherwise your experience will be limited in places." +
+                        "Missing classes %s", missing);
             }
         }
 
@@ -223,7 +219,7 @@ public class TruthGenerator implements TruthGeneratorAPI {
         union.addAll(fromLegacyPackageSet);
 
         if (union.isEmpty())
-            logger.atWarning().log("Nothing generated. Check your settings.");
+            log.warn("Nothing generated. Check your settings.");
 
         //
         addTests(union);

@@ -43,12 +43,6 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <!-- Used to generate Java 8 chains for users that use them -->
-            <groupId>com.google.truth.extensions</groupId>
-            <artifactId>truth-java8-extension</artifactId>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
             <groupId>commons-io</groupId>
             <artifactId>commons-io</artifactId>
         </dependency>
@@ -79,10 +73,6 @@
         <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.google.flogger</groupId>
-            <artifactId>flogger</artifactId>
         </dependency>
         <dependency>
             <groupId>org.projectlombok</groupId>
@@ -135,10 +125,6 @@
         </dependency>
 
         <!-- Test -->
-        <dependency>
-            <groupId>com.google.flogger</groupId>
-            <artifactId>flogger-slf4j-backend</artifactId>
-        </dependency>
     </dependencies>
 
     <build>

@@ -14,9 +14,7 @@ import io.stubbs.truth.generator.testModel.MyEmployee;
 import io.stubbs.truth.generator.testModel.Project;
 import lombok.SneakyThrows;
 import org.jboss.forge.roaster.model.source.JavaClassSource;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
+import org.junit.jupiter.api.Test;
 import org.threeten.extra.MutableClock;
 
 import java.io.IOException;
@@ -37,7 +35,6 @@ import static io.stubbs.truth.generator.internal.modelSubjectChickens.ThreeSyste
 /**
  * @author Antony Stubbs
  */
-@RunWith(JUnit4.class)
 public class TruthGeneratorGeneratedSourceTest {
 
     static {

@@ -100,7 +100,8 @@
         <maven.version>3.8.5</maven.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
-        <flogger.version>0.7.4</flogger.version>
+        <junit.version>5.8.2</junit.version>
+
     </properties>
 
     <dependencies>
@@ -111,6 +112,7 @@
             <scope>compile</scope>
         </dependency>
         <dependency>
+            <!-- Used to generate Java 8 chains for users that use them -->
             <groupId>com.google.truth.extensions</groupId>
             <artifactId>truth-java8-extension</artifactId>
             <scope>compile</scope>
@@ -122,6 +124,18 @@
         </dependency>
 
         <!-- Test-->
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-api</artifactId>
+            <scope>test</scope>
+            <version>${junit.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-engine</artifactId>
+            <scope>test</scope>
+            <version>${junit.version}</version>
+        </dependency>
         <dependency>
             <groupId>org.assertj</groupId>
             <artifactId>assertj-core</artifactId>
@@ -216,31 +230,6 @@
                 <version>31.1-jre</version>
             </dependency>
             <dependency>
-                <groupId>com.google.flogger</groupId>
-                <artifactId>flogger</artifactId>
-                <version>${flogger.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.google.flogger</groupId>
-                <artifactId>flogger-slf4j-backend</artifactId>
-                <version>${flogger.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.google.flogger</groupId>
-                <artifactId>flogger-system-backend</artifactId>
-                <version>${flogger.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.google.flogger</groupId>
-                <artifactId>flogger-maven-backend</artifactId>
-                <version>${flogger.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.google.flogger</groupId>
-                <artifactId>flogger-log4j2-backend</artifactId>
-                <version>${flogger.version}</version>
-            </dependency>
-            <dependency>
                 <groupId>org.projectlombok</groupId>
                 <artifactId>lombok</artifactId>
                 <version>1.18.22</version>
@@ -271,6 +260,46 @@
             </extension>
         </extensions>
         <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-enforcer-plugin</artifactId>
+                <version>3.0.0</version>
+                <dependencies>
+                    <dependency>
+                        <groupId>de.skuzzle.enforcer</groupId>
+                        <artifactId>restrict-imports-enforcer-rule</artifactId>
+                        <version>2.0.0</version>
+                    </dependency>
+                </dependencies>
+                <executions>
+                    <execution>
+                        <id>check-logging-imports</id> <!-- put an explanatory ID here -->
+                        <phase>process-sources</phase>
+                        <goals>
+                            <goal>enforce</goal>
+                        </goals>
+                        <configuration>
+                            <rules>
+                                <RestrictImports>
+                                    <!-- Define an explanatory reason why these imports are prohibited -->
+                                    <reason>Use SLF4j for logging</reason>
+                                    <!-- Specify a single pattern to be banned -->
+                                    <bannedImport>java.util.logging.**</bannedImport>
+                                </RestrictImports>
+
+                                <!-- You could have another rule instance here for restricting further imports -->
+                                <RestrictImports>
+                                    <!-- Define an explanatory reason why these imports are prohibited -->
+                                    <reason>Use JUnit 5</reason>
+                                    <!-- Specify a single pattern to be banned -->
+                                    <bannedImport>org.junit.**</bannedImport>
+                                    <allowedImport>org.junit.jupiter.**</allowedImport>
+                                </RestrictImports>
+                            </rules>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>

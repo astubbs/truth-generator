@@ -19,7 +19,7 @@ import org.jboss.forge.roaster.model.Type;
 import org.jboss.forge.roaster.model.source.JavaClassSource;
 import org.jboss.forge.roaster.model.source.MethodSource;
 import org.jboss.forge.roaster.model.source.ParameterSource;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;

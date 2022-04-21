@@ -1,6 +1,5 @@
 package io.stubbs.truth.generator.internal;
 
-import com.google.common.flogger.FluentLogger;
 import com.google.common.truth.BooleanSubject;
 import io.stubbs.truth.generator.internal.model.ThreeSystem;
 import lombok.RequiredArgsConstructor;
@@ -13,7 +12,6 @@ import java.lang.reflect.Method;
 
 import static io.stubbs.truth.generator.internal.Utils.msg;
 import static java.lang.String.format;
-import static java.util.logging.Level.WARNING;
 import static org.apache.commons.lang3.StringUtils.capitalize;
 import static org.apache.commons.lang3.StringUtils.removeStart;
 
@@ -24,8 +22,6 @@ import static org.apache.commons.lang3.StringUtils.removeStart;
 @RequiredArgsConstructor
 @Slf4j
 public class ChainStrategy extends AssertionMethodStrategy {
-
-    private static final FluentLogger logger = FluentLogger.forEnclosingClass();
 
     private final Options options = Options.get();
 
@@ -48,7 +44,7 @@ public class ChainStrategy extends AssertionMethodStrategy {
 
         // no subject to chain
         if (subjectForType.isEmpty()) {
-            logger.at(WARNING).log("Cant find subject for " + resolvedPair);
+            log.warn("Cant find subject for " + resolvedPair);
             return null;
         }
 

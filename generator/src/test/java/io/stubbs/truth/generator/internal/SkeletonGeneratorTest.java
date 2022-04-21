@@ -4,7 +4,7 @@ import io.stubbs.truth.generator.SourceClassSets;
 import io.stubbs.truth.generator.TruthGeneratorAPI;
 import io.stubbs.truth.generator.internal.model.ThreeSystem;
 import io.stubbs.truth.generator.testModel.MyEmployee;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.time.Instant;
 

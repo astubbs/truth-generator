@@ -1,11 +1,11 @@
 package io.stubbs.truth.generator.internal;
 
-import com.google.common.flogger.FluentLogger;
 import com.google.common.truth.FailureMetadata;
 import com.google.common.truth.Subject;
 import io.stubbs.truth.generator.UserManagedTruth;
 import io.stubbs.truth.generator.internal.model.*;
 import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 import org.jboss.forge.roaster.Roaster;
 import org.jboss.forge.roaster.model.source.JavaClassSource;
 import org.jboss.forge.roaster.model.source.JavaDocSource;
@@ -23,9 +23,9 @@ import static java.util.Optional.of;
  * @author Antony Stubbs
  * @see SubjectMethodGenerator
  */
+@Slf4j
 public class SkeletonGenerator implements SkeletonGeneratorAPI {
 
-    private static final FluentLogger logger = FluentLogger.forEnclosingClass();
     private static final String BACKUP_PACKAGE = "io.stubbs.common.truth.extension.generator";
 
     /**
@@ -272,7 +272,7 @@ public class SkeletonGenerator implements SkeletonGeneratorAPI {
 
         Optional<Class<? extends Subject>> compiledMiddleClass = findCompiledMiddleIfExists(parent, middleClassName, classUnderTest);
         if (compiledMiddleClass.isPresent()) {
-            logger.atInfo().log("Skipping middle class Template creation as class already exists: %s", middleClassName);
+            log.info("Skipping middle class Template creation as class already exists: %s", middleClassName);
             return new UserSuppliedMiddleClass(compiledMiddleClass.get(), classUnderTest);
         }
 

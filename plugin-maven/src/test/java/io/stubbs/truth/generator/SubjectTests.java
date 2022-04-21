@@ -1,9 +1,7 @@
 package io.stubbs.truth.generator;
 
-import com.google.common.truth.Truth;
-import io.stubbs.truth.generator.internal.model.Result;
 import io.stubbs.truth.generator.plugin.GeneratorMojo;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.nio.file.Path;

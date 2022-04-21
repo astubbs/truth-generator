@@ -6,8 +6,8 @@ import javassist.bytecode.MethodInfo;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import one.util.streamex.StreamEx;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.lang.reflect.Method;
 import java.net.http.HttpRequest;
@@ -31,7 +31,7 @@ public class JDKOverrideAnalyserTest {
 
     JDKOverrideAnalyser jdkOverrideAnalyser;
 
-    @Before
+    @BeforeEach
     public void setup() {
         jdkOverrideAnalyser = new JDKOverrideAnalyser(Options.builder().build());
     }

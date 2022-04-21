@@ -91,6 +91,9 @@
     <properties>
         <project.name.root>Truth Subject Generator</project.name.root>
 
+        <!-- Typically on version behind current -->
+        <truth-plugin.bootstrap.version>0.1-SNAPSHOT</truth-plugin.bootstrap.version>
+
         <version.roaster>2.24.0.Final</version.roaster>
         <version.truth>1.1.3</version.truth>
 
@@ -300,7 +303,7 @@
                 <plugin>
                     <groupId>io.stubbs.truth</groupId>
                     <artifactId>truth-generator-maven-plugin</artifactId>
-                    <version>0.1-SNAPSHOT</version>
+                    <version>${truth-plugin.bootstrap.version}</version>
                     <configuration>
                         <cleanTargetDir>true</cleanTargetDir>
                         <useHas>false</useHas>

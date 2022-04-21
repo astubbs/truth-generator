@@ -79,7 +79,7 @@ public class TruthGenerator implements TruthGeneratorAPI {
         addTests(subjectsSystems);
         overallEntryPoint.create();
     }
-
+//as
     private Set<ThreeSystem<?>> generateSkeletonsFromPackages(Set<String> packagesToScan, OverallEntryPoint overallEntryPoint, SourceClassSets ss) {
         Set<Class<?>> distinctTypesFoundInPackages = classUtils.collectSourceClasses(ss, packagesToScan.toArray(new String[0]));
 

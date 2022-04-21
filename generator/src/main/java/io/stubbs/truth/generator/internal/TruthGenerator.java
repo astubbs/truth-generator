@@ -80,6 +80,43 @@ public class TruthGenerator implements TruthGeneratorAPI {
         overallEntryPoint.create();
     }
 
+    private Set<ThreeSystem<?>> generateSkeletonsFromPackages(Set<String> packagesToScan, OverallEntryPoint overallEntryPoint, SourceClassSets ss) {
+        Set<Class<?>> distinctTypesFoundInPackages = classUtils.collectSourceClasses(ss, packagesToScan.toArray(new String[0]));
+
+        // filter out already added
+        if (ss != null) {
+            var alreadyAdded = ss.getAllSpecifiedClasses();
+            distinctTypesFoundInPackages.removeAll(alreadyAdded);
+        }
+
+        return generateSkeletons(distinctTypesFoundInPackages, Optional.empty(), overallEntryPoint);
+    }
+
+    private Set<ThreeSystem<?>> generateSkeletons(Set<Class<?>> classes, Optional<String> targetPackageName,
+                                                  OverallEntryPoint overallEntryPoint) {
+        int sizeBeforeFilter = classes.size();
+        classes = filterSubjects(classes, sizeBeforeFilter);
+
+        Set<ThreeSystem<?>> subjectsSystems = new HashSet<>();
+        for (Class<?> clazz : classes) {
+            SkeletonGenerator skeletonGenerator = new SkeletonGenerator(targetPackageName, overallEntryPoint, builtInStore);
+            var threeSystem = skeletonGenerator.threeLayerSystem(clazz);
+            if (threeSystem.isPresent()) {
+                ThreeSystem<?> ts = threeSystem.get();
+                subjectsSystems.add(ts);
+                overallEntryPoint.add(ts);
+            }
+        }
+        return subjectsSystems;
+    }
+
+    private Set<Class<?>> filterSubjects(Set<Class<?>> classes, int sizeBeforeFilter) {
+        // filter existing subjects from inbound set
+        classes = classes.stream().filter(x -> !Subject.class.isAssignableFrom(x)).collect(toSet());
+        logger.at(Level.FINE).log("Removed %s Subjects from inbound", classes.size() - sizeBeforeFilter);
+        return classes;
+    }
+
     @Override
     public void generateFromPackagesOf(Class<?>... classes) {
         Optional<Class<?>> first = stream(classes).findFirst();
@@ -205,45 +242,9 @@ public class TruthGenerator implements TruthGeneratorAPI {
         builtInStore.registerStandardSubjectExtension(targetType, subjectExtensionClass);
     }
 
-    private Set<ThreeSystem<?>> generateSkeletonsFromPackages(Set<String> packagesToScan, OverallEntryPoint overallEntryPoint, SourceClassSets ss) {
-        Set<Class<?>> distinctTypesFoundInPackages = classUtils.collectSourceClasses(ss, packagesToScan.toArray(new String[0]));
-
-        // filter out already added
-        if (ss != null) {
-            var alreadyAdded = ss.getAllSpecifiedClasses();
-            distinctTypesFoundInPackages.removeAll(alreadyAdded);
-        }
-
-        return generateSkeletons(distinctTypesFoundInPackages, Optional.empty(), overallEntryPoint);
-    }
-
     private void addTests(final Set<ThreeSystem<?>> allTypes) {
         SubjectMethodGenerator tg = new SubjectMethodGenerator(allTypes, builtInStore);
         tg.addTests(allTypes);
     }
 
-    private Set<ThreeSystem<?>> generateSkeletons(Set<Class<?>> classes, Optional<String> targetPackageName,
-                                                  OverallEntryPoint overallEntryPoint) {
-        int sizeBeforeFilter = classes.size();
-        classes = filterSubjects(classes, sizeBeforeFilter);
-
-        Set<ThreeSystem<?>> subjectsSystems = new HashSet<>();
-        for (Class<?> clazz : classes) {
-            SkeletonGenerator skeletonGenerator = new SkeletonGenerator(targetPackageName, overallEntryPoint, builtInStore);
-            var threeSystem = skeletonGenerator.threeLayerSystem(clazz);
-            if (threeSystem.isPresent()) {
-                ThreeSystem<?> ts = threeSystem.get();
-                subjectsSystems.add(ts);
-                overallEntryPoint.add(ts);
-            }
-        }
-        return subjectsSystems;
-    }
-
-    private Set<Class<?>> filterSubjects(Set<Class<?>> classes, int sizeBeforeFilter) {
-        // filter existing subjects from inbound set
-        classes = classes.stream().filter(x -> !Subject.class.isAssignableFrom(x)).collect(toSet());
-        logger.at(Level.FINE).log("Removed %s Subjects from inbound", classes.size() - sizeBeforeFilter);
-        return classes;
-    }
 }

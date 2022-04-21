@@ -92,6 +92,11 @@ public class TruthGenerator implements TruthGeneratorAPI {
         return generateSkeletons(distinctTypesFoundInPackages, Optional.empty(), overallEntryPoint);
     }
 
+    private void addTests(final Set<ThreeSystem<?>> allTypes) {
+        SubjectMethodGenerator tg = new SubjectMethodGenerator(allTypes, builtInStore);
+        tg.addTests(allTypes);
+    }
+
     private Set<ThreeSystem<?>> generateSkeletons(Set<Class<?>> classes, Optional<String> targetPackageName,
                                                   OverallEntryPoint overallEntryPoint) {
         int sizeBeforeFilter = classes.size();
@@ -240,11 +245,6 @@ public class TruthGenerator implements TruthGeneratorAPI {
     @Override
     public void registerStandardSubjectExtension(Class<?> targetType, Class<? extends Subject> subjectExtensionClass) {
         builtInStore.registerStandardSubjectExtension(targetType, subjectExtensionClass);
-    }
-
-    private void addTests(final Set<ThreeSystem<?>> allTypes) {
-        SubjectMethodGenerator tg = new SubjectMethodGenerator(allTypes, builtInStore);
-        tg.addTests(allTypes);
     }
 
 }

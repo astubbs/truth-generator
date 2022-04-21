@@ -2,18 +2,18 @@ package io.stubbs.truth.generator.internal;
 
 import io.stubbs.truth.generator.SourceClassSets;
 import io.stubbs.truth.generator.TruthGeneratorAPI;
+import io.stubbs.truth.generator.internal.model.Result;
 import io.stubbs.truth.generator.internal.model.ThreeSystem;
 import org.junit.Test;
 
-import static com.google.common.truth.Truth.assertThat;
-import static io.stubbs.truth.generator.internal.TruthGeneratorGeneratedSourceTest.TEST_OUTPUT_DIRECTORY;
+import static io.stubbs.truth.ManagedTruth.assertThat;
+import static io.stubbs.truth.generator.internal.TruthGeneratorTest.TEST_OUTPUT_DIRECTORY;
 
 /**
  * Where there are duplicate entries of classes in the target sets
  *
  * @see SourceClassSets
  */
-// todo use bootstrapped ResultSubject
 public class SourceClassSetsTests {
 
     @Test
@@ -26,10 +26,10 @@ public class SourceClassSetsTests {
         ss.generateAllFoundInPackagesOf(ThreeSystem.class);
 
         // the test
-        var allGeneratedSystems = tg.generate(ss).getAll();
+        Result generate = tg.generate(ss);
 
         // will have crashed already if the fix didn't work
-        assertThat(allGeneratedSystems).containsKey(ThreeSystem.class);
+        assertThat(generate).getAll().containsKey(ThreeSystem.class);
     }
 
     @Test

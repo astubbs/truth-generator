@@ -2,6 +2,7 @@ package io.stubbs.truth.generator.internal;
 
 import com.google.common.truth.Correspondence;
 import com.google.common.truth.ObjectArraySubject;
+import io.stubbs.truth.ManagedTruth;
 import io.stubbs.truth.generator.SourceClassSets;
 import io.stubbs.truth.generator.TestModelUtils;
 import io.stubbs.truth.generator.TruthGeneratorAPI;
@@ -20,6 +21,8 @@ import org.jboss.forge.roaster.model.source.MethodSource;
 import org.jboss.forge.roaster.model.source.ParameterSource;
 import org.junit.Test;
 
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.time.DayOfWeek;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
@@ -33,10 +36,15 @@ import java.util.stream.Stream;
 import static com.google.common.truth.Correspondence.from;
 import static com.google.common.truth.Correspondence.transforming;
 import static com.google.common.truth.Truth.assertThat;
-import static io.stubbs.truth.generator.internal.TruthGeneratorGeneratedSourceTest.TEST_OUTPUT_DIRECTORY;
 import static java.util.Optional.of;
 
 public class TruthGeneratorTest {
+
+    /**
+     * Used as a target to output all generated data during test suite. In order to not clash with bootstrapped
+     * generated output from the plugin running as part of the BUILD.
+     */
+    public static final Path TEST_OUTPUT_DIRECTORY = Paths.get("").resolve("target").resolve("tmp-test-output").toAbsolutePath();
 
     Correspondence<MethodSource<?>, String> methodHasName = transforming(MethodSource::getName, "has name of");
 
@@ -90,28 +98,28 @@ public class TruthGeneratorTest {
     /**
      * Given a single class or classes, generate subjects for all references classes in any nested return values
      */
-    // todo use bootstrapped ResultSubject
     @Test
     public void recursiveGeneration() {
         TruthGenerator tg = TruthGeneratorAPI.createDefaultOptions(TEST_OUTPUT_DIRECTORY);
-        var allGeneratedSystems = tg.generate(MyEmployee.class).getAll();
+        var allGeneratedSystems = tg.generate(MyEmployee.class);
 
         //
-        assertThat(allGeneratedSystems).containsKey(MyEmployee.class);
-        assertThat(allGeneratedSystems).containsKey(IdCard.class);
-        assertThat(allGeneratedSystems).containsKey(MyEmployee.State.class);
+        var assertGeneratedSet = ManagedTruth.assertThat(allGeneratedSystems).getAll();
+        assertGeneratedSet.containsKey(MyEmployee.class);
+        assertGeneratedSet.containsKey(IdCard.class);
+        assertGeneratedSet.containsKey(MyEmployee.State.class);
 
         // lost in the generics
-        assertThat(allGeneratedSystems).doesNotContainKey(Project.class);
+        assertGeneratedSet.doesNotContainKey(Project.class);
 
         //
-        assertThat(allGeneratedSystems).containsKey(UUID.class);
-        assertThat(allGeneratedSystems).containsKey(ZonedDateTime.class);
-        assertThat(allGeneratedSystems).containsKey(DayOfWeek.class);
+        assertGeneratedSet.containsKey(UUID.class);
+        assertGeneratedSet.containsKey(ZonedDateTime.class);
+        assertGeneratedSet.containsKey(DayOfWeek.class);
 
         // recursive subjects that shouldn't be included
-        assertThat(allGeneratedSystems).doesNotContainKey(Spliterator.class);
-        assertThat(allGeneratedSystems).doesNotContainKey(Stream.class);
+        assertGeneratedSet.doesNotContainKey(Spliterator.class);
+        assertGeneratedSet.doesNotContainKey(Stream.class);
     }
 
     /**

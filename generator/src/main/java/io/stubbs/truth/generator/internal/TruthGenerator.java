@@ -99,8 +99,7 @@ public class TruthGenerator implements TruthGeneratorAPI {
 
     private Set<ThreeSystem<?>> generateSkeletons(Set<Class<?>> classes, Optional<String> targetPackageName,
                                                   OverallEntryPoint overallEntryPoint) {
-        int sizeBeforeFilter = classes.size();
-        classes = filterSubjects(classes, sizeBeforeFilter);
+        classes = filterSubjects(classes);
 
         Set<ThreeSystem<?>> subjectsSystems = new HashSet<>();
         for (Class<?> clazz : classes) {
@@ -115,10 +114,23 @@ public class TruthGenerator implements TruthGeneratorAPI {
         return subjectsSystems;
     }
 
-    private Set<Class<?>> filterSubjects(Set<Class<?>> classes, int sizeBeforeFilter) {
-        // filter existing subjects from inbound set
-        classes = classes.stream().filter(x -> !Subject.class.isAssignableFrom(x)).collect(toSet());
-        logger.at(Level.FINE).log("Removed %s Subjects from inbound", classes.size() - sizeBeforeFilter);
+    private Set<Class<?>> filterSubjects(Set<Class<?>> classes) {
+        Set<Class<?>> filtered = classes.stream().filter(x -> {
+            // filter existing subjects from inbound set
+            boolean isASubject = Subject.class.isAssignableFrom(x);
+
+            // filter out classes where an exact canonical match is already visible - this affects some runtime environments such as IDEA
+            boolean alreadyExists = false;
+            try {
+                Class.forName(x.getCanonicalName() + "Subject");
+                alreadyExists = true;
+            } catch (ClassNotFoundException e) {
+                // ignore
+            }
+            return !isASubject && !alreadyExists;
+        }).collect(toSet());
+
+        logger.at(Level.FINE).log("Removed %s Subjects from inbound", classes.size() - filtered.size());
         return classes;
     }
 

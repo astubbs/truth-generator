@@ -21,8 +21,6 @@ import org.threeten.extra.MutableClock;
 
 import java.io.IOException;
 import java.nio.charset.Charset;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.chrono.Chronology;
@@ -33,16 +31,14 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 import static com.google.common.truth.Truth.assertThat;
+import static io.stubbs.truth.generator.internal.TruthGeneratorTest.TEST_OUTPUT_DIRECTORY;
 import static io.stubbs.truth.generator.internal.modelSubjectChickens.ThreeSystemChildSubject.assertThat;
 
 /**
  * @author Antony Stubbs
  */
-// todo fix method naming
 @RunWith(JUnit4.class)
 public class TruthGeneratorGeneratedSourceTest {
-
-    public static final Path TEST_OUTPUT_DIRECTORY = Paths.get("").resolve("target").toAbsolutePath();
 
     static {
         GeneratedMarker.setClock(MutableClock.epochUTC());

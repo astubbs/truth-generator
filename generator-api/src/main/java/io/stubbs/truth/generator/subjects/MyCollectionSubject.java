@@ -64,7 +64,7 @@ public class MyCollectionSubject extends IterableSubject {
                     return name && noParams && returnTypeIsNumberLike;
                 })
                 .findFirst();
-        if (size.isEmpty())
+        if (!size.isPresent())
             throw new AssertionException("No method called 'size' with zero args returning int exists in " + aClass);
         else {
             Method sizeMethod = size.get();

@@ -25,22 +25,25 @@ public class GeneratedMarker {
      * @see Options#releaseTarget
      */
     public void addGeneratedMarker(final JavaClassSource javaClass) {
-        AnnotationSource<JavaClassSource> generated;
-        if (Options.get().isCompilationTargetLowerThanNine()) {
-            generated = javaClass.addAnnotation(javax.annotation.Generated.class);
-        } else {
-            // requires java 9
-            // annotate generated
-            // @javax.annotation.Generated(value="")
-            // only in @since 1.9, so can't add it programmatically
-            generated = javaClass.addAnnotation(javax.annotation.processing.Generated.class);
-            // Can't add it without the value param, see https://github.com/forge/roaster/issues/201
-        }
+        AnnotationSource<JavaClassSource> generated = addAnnotationVersion(javaClass);
 
         generated.setStringValue("value", TruthGenerator.class.getCanonicalName());
         generated.setStringValue("date", clock.instant().toString());
 
         //generated.setStringValue("comments", "?")
+    }
+
+    private AnnotationSource<JavaClassSource> addAnnotationVersion(JavaClassSource javaClass) {
+        if (Options.get().isCompilationTargetLowerThanNine()) {
+            return javaClass.addAnnotation(javax.annotation.Generated.class);
+        } else {
+            // requires java 9
+            // annotate generated
+            // @javax.annotation.Generated(value="")
+            // only in @since 1.9, so can't add it programmatically
+            return javaClass.addAnnotation(javax.annotation.processing.Generated.class);
+            // Can't add it without the value param, see https://github.com/forge/roaster/issues/201
+        }
     }
 
 }

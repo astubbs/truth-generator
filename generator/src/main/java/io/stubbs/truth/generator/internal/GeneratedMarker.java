@@ -34,7 +34,8 @@ public class GeneratedMarker {
     }
 
     private AnnotationSource<JavaClassSource> addAnnotationVersion(JavaClassSource javaClass) {
-        if (Options.get().isCompilationTargetLowerThanNine()) {
+        boolean useOldAnnotationVersion = Options.get().isCompilationTargetLowerThanNine();
+        if (useOldAnnotationVersion) {
             return javaClass.addAnnotation(javax.annotation.Generated.class);
         } else {
             // requires java 9

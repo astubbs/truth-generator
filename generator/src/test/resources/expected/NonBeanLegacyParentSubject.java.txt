@@ -1,0 +1,85 @@
+package io.stubbs.truth.generator.testing.legacy;
+
+import com.google.common.truth.Subject;
+import javax.annotation.processing.Generated;
+import com.google.common.truth.FailureMetadata;
+import static com.google.common.truth.Fact.*;
+import com.google.common.truth.IntegerSubject;
+import static io.stubbs.truth.generator.subjects.MyStringSubject.strings;
+import io.stubbs.truth.generator.subjects.MyStringSubject;
+
+/**
+ * Truth Subject for the {@link NonBeanLegacy}.
+ *
+ * Note that this class is generated / managed, and will change over time. So
+ * any changes you might make will be overwritten.
+ *
+ * @see NonBeanLegacy
+ * @see NonBeanLegacySubject
+ * @see NonBeanLegacyChildSubject
+ */
+@Generated(value = "io.stubbs.truth.generator.internal.TruthGenerator", date = "1970-01-01T00:00:00Z")
+public class NonBeanLegacyParentSubject extends Subject {
+
+	protected final NonBeanLegacy actual;
+
+	protected NonBeanLegacyParentSubject(FailureMetadata failureMetadata,
+			io.stubbs.truth.generator.testing.legacy.NonBeanLegacy actual) {
+		super(failureMetadata, actual);
+		this.actual = actual;
+	}
+
+	/**
+	 * Returns the Subject for the given field type, so you can chain on other
+	 * assertions.
+	 */
+	public IntegerSubject hasAge() {
+		isNotNull();
+		return check("age()").that(actual.age());
+	}
+
+	/**
+	 * Simple check for equality for all fields.
+	 */
+	public void hasAgeNotEqualTo(int expected) {
+		if ((actual.age() == expected)) {
+			failWithActual(fact("expected age NOT to be equal to", expected));
+		}
+	}
+
+	/**
+	 * Simple check for equality for all fields.
+	 */
+	public void hasAgeEqualTo(int expected) {
+		if (!(actual.age() == expected)) {
+			failWithActual(fact("expected age to be equal to", expected));
+		}
+	}
+
+	/**
+	 * Returns the Subject for the given field type, so you can chain on other
+	 * assertions.
+	 */
+	public MyStringSubject hasName() {
+		isNotNull();
+		return check("name()").about(strings()).that(actual.name());
+	}
+
+	/**
+	 * Simple check for equality for all fields.
+	 */
+	public void hasNameNotEqualTo(java.lang.String expected) {
+		if ((actual.name().equals(expected))) {
+			failWithActual(fact("expected name NOT to be equal to", expected));
+		}
+	}
+
+	/**
+	 * Simple check for equality for all fields.
+	 */
+	public void hasNameEqualTo(java.lang.String expected) {
+		if (!(actual.name().equals(expected))) {
+			failWithActual(fact("expected name to be equal to", expected));
+		}
+	}
+}

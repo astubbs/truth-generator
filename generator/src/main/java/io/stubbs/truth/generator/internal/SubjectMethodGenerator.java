@@ -138,8 +138,9 @@ public class SubjectMethodGenerator extends AssertionMethodStrategy {
         predicatesCollect.add(not(withModifier(PRIVATE)));
         predicatesCollect.add(not(withModifier(PROTECTED)));
         predicatesCollect.add(withParametersCount(0));
-        Predicate<Method> exceptVoidReturn = (not(method -> method.getReturnType().equals(Void.class)));
-        predicatesCollect.add(exceptVoidReturn);
+
+//        Predicate<Method> exceptVoidReturn = (not(method -> method.getReturnType().equals(Void.class)));
+//        predicatesCollect.add(exceptVoidReturn);
 
         Predicate<? super Method>[] predicates = predicatesCollect.toArray(new Predicate[0]);
         Set<Method> filteredMethods = getAllMethods(classUnderTest, predicates);

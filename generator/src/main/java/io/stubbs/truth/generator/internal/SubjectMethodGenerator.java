@@ -135,10 +135,6 @@ public class SubjectMethodGenerator extends AssertionMethodStrategy {
         predicatesCollect.add(not(withModifier(PRIVATE)));
         predicatesCollect.add(not(withModifier(PROTECTED)));
         predicatesCollect.add(withParametersCount(0));
-//
-//        Optional<Method> allMethods = getAllMethods(classUnderTest).stream().filter(x -> x.getName().contains("Void")).collect(Collectors.toList()).stream().findFirst();
-//        final Optional<? extends Class<?>> aClass = allMethods.map(x -> x.getReturnType());
-//        final Class<Void> voidClass = void.class;
 
         // filter out anything that returns nothing (pure side effect methods)
         Predicate<Method> exceptVoidReturn = (not(method -> method.getReturnType().equals(void.class)));

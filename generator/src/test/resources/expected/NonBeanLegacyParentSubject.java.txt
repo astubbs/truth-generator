@@ -3,8 +3,8 @@ package io.stubbs.truth.generator.testing.legacy;
 import com.google.common.truth.Subject;
 import javax.annotation.processing.Generated;
 import com.google.common.truth.FailureMetadata;
-import static com.google.common.truth.Fact.*;
 import com.google.common.truth.IntegerSubject;
+import static com.google.common.truth.Fact.*;
 import static io.stubbs.truth.generator.subjects.MyStringSubject.strings;
 import io.stubbs.truth.generator.subjects.MyStringSubject;
 

@@ -97,10 +97,8 @@ public class SubjectMethodGenerator extends AssertionMethodStrategy {
         Predicate<Method> exceptSetters = not(withPrefix("set"));
         Predicate<Method> exceptToers = not(withPrefix("to"));
 
-        var legacy = (legacyMode) ? getMethods(classUnderTest,
-                exceptSetters,
-                exceptToers
-        )
+        var legacy = (legacyMode)
+                ? getMethods(classUnderTest, exceptSetters, exceptToers)
                 : Set.<Method>of();
 
         union.addAll(getters);
@@ -108,7 +106,6 @@ public class SubjectMethodGenerator extends AssertionMethodStrategy {
         union.addAll(legacy);
 
         return removeForJdkTarget(system.getClassUnderTest(), removeOverridden(union));
-//    return removeOverridden(union);
     }
 
     private Collection<Method> removeForJdkTarget(Class<?> clazz, Collection<Method> methods) {
@@ -138,9 +135,14 @@ public class SubjectMethodGenerator extends AssertionMethodStrategy {
         predicatesCollect.add(not(withModifier(PRIVATE)));
         predicatesCollect.add(not(withModifier(PROTECTED)));
         predicatesCollect.add(withParametersCount(0));
+//
+//        Optional<Method> allMethods = getAllMethods(classUnderTest).stream().filter(x -> x.getName().contains("Void")).collect(Collectors.toList()).stream().findFirst();
+//        final Optional<? extends Class<?>> aClass = allMethods.map(x -> x.getReturnType());
+//        final Class<Void> voidClass = void.class;
 
-//        Predicate<Method> exceptVoidReturn = (not(method -> method.getReturnType().equals(Void.class)));
-//        predicatesCollect.add(exceptVoidReturn);
+        // filter out anything that returns nothing (pure side effect methods)
+        Predicate<Method> exceptVoidReturn = (not(method -> method.getReturnType().equals(void.class)));
+        predicatesCollect.add(exceptVoidReturn);
 
         Predicate<? super Method>[] predicates = predicatesCollect.toArray(new Predicate[0]);
         Set<Method> filteredMethods = getAllMethods(classUnderTest, predicates);

@@ -6,7 +6,6 @@ import io.stubbs.truth.generator.internal.model.ThreeSystem;
 import lombok.Getter;
 import org.jboss.forge.roaster.model.source.JavaClassSource;
 import org.jboss.forge.roaster.model.source.MethodSource;
-import org.reflections.ReflectionUtils;
 
 import java.lang.reflect.Member;
 import java.lang.reflect.Method;
@@ -97,7 +96,12 @@ public class SubjectMethodGenerator extends AssertionMethodStrategy {
         // also get all other methods, regardless of their prefix
         Predicate<Method> exceptSetters = not(withPrefix("set"));
         Predicate<Method> exceptToers = not(withPrefix("to"));
-        var legacy = (legacyMode) ? getMethods(classUnderTest, exceptSetters, exceptToers) : Set.<Method>of();
+
+        var legacy = (legacyMode) ? getMethods(classUnderTest,
+                exceptSetters,
+                exceptToers
+        )
+                : Set.<Method>of();
 
         union.addAll(getters);
         union.addAll(issers);
@@ -123,21 +127,23 @@ public class SubjectMethodGenerator extends AssertionMethodStrategy {
         }
     }
 
-    private Collection<Method> getMethods(Class<?> classUnderTest, Predicate<Method>... prefix) {
+    private Collection<Method> getMethods(Class<?> classUnderTest, Predicate<Method>... rawPredicates) {
         // if shaded, can't access package private methods
         boolean isShaded = context.isShaded();
-        Predicate<Method> skip = (ignore) -> true;
+        Predicate<Method> skip = ignore -> true;
         Predicate<Method> shadedPredicate = (isShaded) ? withModifier(PUBLIC) : skip;
 
-        List<Predicate<? super Method>> predicatesCollect = Arrays.stream(prefix).collect(Collectors.toList());
+        List<Predicate<? super Method>> predicatesCollect = Arrays.stream(rawPredicates).collect(Collectors.toList());
         predicatesCollect.add(shadedPredicate);
         predicatesCollect.add(not(withModifier(PRIVATE)));
         predicatesCollect.add(not(withModifier(PROTECTED)));
         predicatesCollect.add(withParametersCount(0));
+        Predicate<Method> exceptVoidReturn = (not(method -> method.getReturnType().equals(Void.class)));
+        predicatesCollect.add(exceptVoidReturn);
 
         Predicate<? super Method>[] predicates = predicatesCollect.toArray(new Predicate[0]);
-        return removeForJdkTarget(classUnderTest, ReflectionUtils.getAllMethods(classUnderTest, predicates));
-//    return ReflectionUtils.getAllMethods(classUnderTest, predicates);
+        Set<Method> filteredMethods = getAllMethods(classUnderTest, predicates);
+        return removeForJdkTarget(classUnderTest, filteredMethods);
     }
 
     private Collection<Method> removeOverridden(final Collection<Method> getters) {

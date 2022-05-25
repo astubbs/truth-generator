@@ -17,7 +17,6 @@ import java.util.logging.Level;
 import java.util.stream.Collectors;
 
 import static java.util.Arrays.stream;
-import static java.util.Set.of;
 import static java.util.stream.Collectors.toSet;
 
 /**
@@ -166,9 +165,10 @@ public class TruthGenerator implements TruthGeneratorAPI {
         // from packages
         Set<String> packages = ss.getSimplePackageNames();
         // skeletons generation is independent and should be able to be done in parallel
-        Set<ThreeSystem<?>> fromPackage = packages.parallelStream().flatMap(
-                aPackage -> generateSkeletonsFromPackages(of(aPackage), packageForEntryPoint, ss).stream()
-        ).collect(toSet());
+//        Set<ThreeSystem<?>> fromPackage = packages.parallelStream().flatMap(
+//                aPackage -> generateSkeletonsFromPackages(packageForEntryPoint, ss).stream()
+//        ).collect(toSet());
+        Set<ThreeSystem<?>> fromPackage = generateSkeletonsFromPackages(packageForEntryPoint, ss);
 
         // custom package destination
         Set<SourceClassSets.TargetPackageAndClasses> targetPackageAndClasses = ss.getTargetPackageAndClasses();

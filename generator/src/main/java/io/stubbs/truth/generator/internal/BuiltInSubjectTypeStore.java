@@ -84,14 +84,14 @@ public class BuiltInSubjectTypeStore {
     @Getter(AccessLevel.PRIVATE)
     private final SortedMap<Class<?>, Class<? extends Subject>> subjectExtensions = new TreeMap<>(Comparator.comparing(Class::getCanonicalName));
 
-    private final ClassUtils classUtils = new ClassUtils();
+    private final ReflectionUtils reflectionUtils = new ReflectionUtils();
 
     public BuiltInSubjectTypeStore() {
         autoRegisterStandardSubjectExtension();
     }
 
     protected void autoRegisterStandardSubjectExtension() {
-        Set<Class<?>> nativeExtensions = classUtils.findNativeExtensions("io.stubbs");
+        Set<Class<?>> nativeExtensions = reflectionUtils.findNativeExtensions();
         for (Class<?> nativeExtension : nativeExtensions) {
 
             if (!Subject.class.isAssignableFrom(nativeExtension)) {

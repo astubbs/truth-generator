@@ -29,7 +29,7 @@ public class TruthGenerator implements TruthGeneratorAPI {
     private static final FluentLogger logger = FluentLogger.forEnclosingClass();
     private final Path testOutputDir;
     private final Options options;
-    private final ClassUtils classUtils = new ClassUtils();
+    private final ReflectionUtils reflectionUtils = new ReflectionUtils();
     private final BuiltInSubjectTypeStore builtInStore;
     @Setter
     @Getter
@@ -81,7 +81,7 @@ public class TruthGenerator implements TruthGeneratorAPI {
     }
 
     private Set<ThreeSystem<?>> generateSkeletonsFromPackages(Set<String> packagesToScan, OverallEntryPoint overallEntryPoint, SourceClassSets ss) {
-        Set<Class<?>> distinctTypesFoundInPackages = classUtils.collectSourceClasses(ss, packagesToScan.toArray(new String[0]));
+        Set<Class<?>> distinctTypesFoundInPackages = reflectionUtils.collectSourceClasses(ss, packagesToScan.toArray(new String[0]));
 
         // filter out already added
         if (ss != null) {

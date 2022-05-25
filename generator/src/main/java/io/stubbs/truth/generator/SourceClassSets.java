@@ -2,8 +2,8 @@ package io.stubbs.truth.generator;
 
 import com.google.common.collect.ImmutableListMultimap;
 import com.google.common.collect.Multimaps;
-import io.stubbs.truth.generator.internal.ClassUtils;
 import io.stubbs.truth.generator.internal.RecursiveClassDiscovery;
+import io.stubbs.truth.generator.internal.ReflectionUtils;
 import lombok.Getter;
 import lombok.Value;
 import lombok.extern.slf4j.Slf4j;
@@ -187,10 +187,11 @@ public class SourceClassSets {
 
         union.addAll(getReferencedNotSpecifiedClasses());
 
-        ClassUtils classUtils = new ClassUtils();
-        classUtils.addClassLoaders(this.loaders);
+//        ClassUtils classUtils = new ClassUtils(null, null);
+        ReflectionUtils reflectionUtils = new ReflectionUtils(this, null);
+//        classUtils.addClassLoaders(this.loaders);
         union.addAll(getSimplePackageNames().stream().flatMap(
-                x -> classUtils.collectSourceClasses(null, x).stream()).collect(toSet()));
+                x -> reflectionUtils.collectSourceClasses(null, x).stream()).collect(toSet()));
 
         // todo need more elegant solution than this
         this.classSetCache = union;

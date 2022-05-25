@@ -27,7 +27,6 @@ public class SkeletonGenerator implements SkeletonGeneratorAPI {
 
     private static final FluentLogger logger = FluentLogger.forEnclosingClass();
     private static final String BACKUP_PACKAGE = "io.stubbs.common.truth.extension.generator";
-    private final ClassUtils classUtils = new ClassUtils();
 
     /**
      * For testing. Used to force generating of middle class, even if it's detected.
@@ -41,12 +40,15 @@ public class SkeletonGenerator implements SkeletonGeneratorAPI {
     @Setter
     private boolean legacyMode = false;
 
+    private final ReflectionUtils reflectionUtils;
+
     private final AssertionEntryPointGenerator aepg = new AssertionEntryPointGenerator();
 
     public SkeletonGenerator(Optional<String> targetPackageName, OverallEntryPoint overallEntryPoint, BuiltInSubjectTypeStore subjectTypeStore) {
         this.targetPackageName = targetPackageName;
         this.overallEntryPoint = overallEntryPoint;
         this.subjectTypeStore = subjectTypeStore;
+        this.reflectionUtils = new ReflectionUtils(null, null);
     }
 
     @Override
@@ -88,7 +90,7 @@ public class SkeletonGenerator implements SkeletonGeneratorAPI {
         ParentClass parent = createParent(clazzUnderTest);
         this.parent = parent;
 
-        var userMiddle = classUtils.tryGetUserManagedMiddle(clazzUnderTest);
+        var userMiddle = reflectionUtils.tryGetUserManagedMiddle(clazzUnderTest);
 //        MiddleClass middle = createMiddleUserTemplateClass(parent.getGenerated(), clazzUnderTest);
         MiddleClass<T> newMiddle = userMiddle
                 .orElseGet(() -> createMiddleUserTemplateClass(parent.getGenerated(), clazzUnderTest));
@@ -284,12 +286,14 @@ public class SkeletonGenerator implements SkeletonGeneratorAPI {
         middle.setName(middleClassName);
         middle.setPackage(parent.getPackage());
         middle.extendSuperType(parent);
+        middle.implementInterface(UserSuppliedMiddleClass.class);
         JavaDocSource<JavaClassSource> jd = middle.getJavaDoc();
         jd.setText("Optionally move this class into source control, and add your custom assertions here.\n\n" +
                 "<p>If the system detects this class already exists, it won't attempt to generate a new one. Note that " +
                 "if the base skeleton of this class ever changes, you won't automatically get it updated.");
         jd.addTagValue("@see", classUnderTest.getSimpleName());
         jd.addTagValue("@see", parent.getName());
+        jd.addTagValue("@see", classUnderTest.getSimpleName() + "ChildSubject");
 
         addConstructor(classUnderTest, middle, false);
 

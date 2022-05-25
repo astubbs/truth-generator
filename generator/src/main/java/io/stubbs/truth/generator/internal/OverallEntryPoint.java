@@ -37,18 +37,19 @@ public class OverallEntryPoint {
     @Getter
     private final String packageName;
     private final AssertionEntryPointGenerator aepg = new AssertionEntryPointGenerator();
-    private final BuiltInSubjectTypeStore builtInSubjectTypeStore = new BuiltInSubjectTypeStore();
+    private final BuiltInSubjectTypeStore builtInSubjectTypeStore;
     @Getter
     private JavaClassSource overallEntryPointGenerated;
     @Getter
     private JavaClassSource managedSubjectBuilderGenerated;
 
-    public OverallEntryPoint(String packageForOverall) {
+    public OverallEntryPoint(String packageForOverall, BuiltInSubjectTypeStore builtInSubjectTypeStore) {
         if (StringUtils.isBlank(packageForOverall))
             throw new GeneratorException("Package for managed entrypoint cannot be blank");
 
         this.packageName = packageForOverall;
         this.threeSystemChildSubjects = new TreeSet<>(Comparator.comparing(javaClassSource -> javaClassSource.getClassUnderTest().getCanonicalName()));
+        this.builtInSubjectTypeStore = builtInSubjectTypeStore;
     }
 
     public void create() {

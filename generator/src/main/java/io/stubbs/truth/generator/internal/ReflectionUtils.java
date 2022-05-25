@@ -13,7 +13,6 @@ import org.reflections.scanners.Scanners;
 import org.reflections.util.ConfigurationBuilder;
 import org.reflections.util.FilterBuilder;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -23,12 +22,12 @@ import java.util.stream.Collectors;
 public class ReflectionUtils {
 
     // todo not used?
-    private List<ClassLoader> loaders = new ArrayList<>();
+//    private List<ClassLoader> loaders = new ArrayList<>();
     private Reflections reflections;
 
-    public ReflectionUtils(SourceClassSets ss, String... modelPackages) {
-        this.loaders = ss.getLoaders();
-        setupReflections(ss, modelPackages);
+    public ReflectionUtils(List<ClassLoader> loaders, String... modelPackages) {
+//        this.loaders = ss.getLoaders();
+        setupReflections(loaders, modelPackages);
     }
 
     public Set<Class<?>> findNativeExtensions() {
@@ -58,7 +57,7 @@ public class ReflectionUtils {
         return allTypes;
     }
 
-    private void setupReflections(SourceClassSets ss, String[] modelPackages) {
+    private void setupReflections(List<ClassLoader> loaders, String[] modelPackages) {
         String modelPackage = modelPackages[0];
         ConfigurationBuilder build = new ConfigurationBuilder()
                 .forPackages(modelPackages)
@@ -68,25 +67,21 @@ public class ReflectionUtils {
                 .setExpandSuperTypes(true);
 
         // todo smelly
-        // attach class loaders
-        if (ss != null) {
-            List<ClassLoader> loaders = ss.getLoaders();
-
+        {
             for (ClassLoader loader : loaders) {
                 build.addClassLoaders(loader);
             }
-
             ClassLoader[] loadersArray = loaders.toArray(new ClassLoader[0]);
+            // shouldn't need to specify loaders twice?
             build = build.forPackage(modelPackage, loadersArray);
         }
 
         this.reflections = new Reflections(build);
     }
 
-    public void addClassLoaders(List<ClassLoader> loaders) {
-        this.loaders.addAll(loaders);
-    }
-
+//    public void addClassLoaders(List<ClassLoader> loaders) {
+//        this.loaders.addAll(loaders);
+//    }
 
     public <T> Optional<MiddleClass<T>> tryGetUserManagedMiddle(final Class<T> clazzUnderTest) {
         var classStreamInt = reflections.getSubTypesOf(UserManagedMiddleSubject.class).stream()

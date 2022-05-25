@@ -29,7 +29,7 @@ public class TruthGenerator implements TruthGeneratorAPI {
     private static final FluentLogger logger = FluentLogger.forEnclosingClass();
     private final Path testOutputDir;
     private final Options options;
-    private final ReflectionUtils reflectionUtils = new ReflectionUtils();
+    private final ReflectionUtils reflectionUtils;
     private final BuiltInSubjectTypeStore builtInStore;
     @Setter
     @Getter
@@ -40,7 +40,8 @@ public class TruthGenerator implements TruthGeneratorAPI {
         this.options = options;
         this.testOutputDir = testOutputDirectory;
         Utils.setOutputBase(this.testOutputDir);
-        this.builtInStore = new BuiltInSubjectTypeStore();
+        reflectionUtils = new ReflectionUtils();
+        this.builtInStore = new BuiltInSubjectTypeStore(reflectionUtils);
     }
 
     /**
@@ -72,7 +73,7 @@ public class TruthGenerator implements TruthGeneratorAPI {
         // just take the first for now
         // todo createEntryPointForPackages(modelPackages)
         String[] packageNameForOverall = modelPackages;
-        OverallEntryPoint overallEntryPoint = new OverallEntryPoint(packageNameForOverall[0]);
+        OverallEntryPoint overallEntryPoint = new OverallEntryPoint(packageNameForOverall[0], builtInStore);
         Set<ThreeSystem<?>> subjectsSystems = generateSkeletonsFromPackages(stream(modelPackages).collect(toSet()), overallEntryPoint, null);
 
         //
@@ -146,7 +147,7 @@ public class TruthGenerator implements TruthGeneratorAPI {
             var reduce = StreamEx.of(referencedBuilt)
                     .sorted(Comparator.comparing(Class::toString))
                     .joining("\n", "\n", "");
-            log.info("Added classes not explicitly configured: {}", !referencedBuilt.isEmpty() ? reduce : "none");
+            log.info("Added classes not explicitly configured: {}", referencedBuilt.isEmpty() ? "none" : reduce);
             results.referencedBuilt(referencedBuilt);
         } else {
             Set<Class<?>> missing = rc.findReferencedNotIncluded(ss);
@@ -160,7 +161,7 @@ public class TruthGenerator implements TruthGeneratorAPI {
             }
         }
 
-        OverallEntryPoint packageForEntryPoint = new OverallEntryPoint(ss.getPackageForEntryPoint());
+        OverallEntryPoint packageForEntryPoint = new OverallEntryPoint(ss.getPackageForEntryPoint(), builtInStore);
 
         // from packages
         Set<String> packages = ss.getSimplePackageNames();

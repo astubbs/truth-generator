@@ -84,9 +84,10 @@ public class BuiltInSubjectTypeStore {
     @Getter(AccessLevel.PRIVATE)
     private final SortedMap<Class<?>, Class<? extends Subject>> subjectExtensions = new TreeMap<>(Comparator.comparing(Class::getCanonicalName));
 
-    private final ReflectionUtils reflectionUtils = new ReflectionUtils();
+    private final ReflectionUtils reflectionUtils;
 
-    public BuiltInSubjectTypeStore() {
+    public BuiltInSubjectTypeStore(ReflectionUtils reflectionUtils) {
+        this.reflectionUtils = reflectionUtils;
         autoRegisterStandardSubjectExtension();
     }
 

@@ -40,8 +40,8 @@ public class GeneratedSubjectTypeStore {
     /**
      * Useful for testing - a store with no generated skeleton types
      */
-    protected GeneratedSubjectTypeStore() {
-        this(Set.of(), new BuiltInSubjectTypeStore());
+    protected GeneratedSubjectTypeStore(BuiltInSubjectTypeStore builtInSubjectTypeStore) {
+        this(Set.of(), builtInSubjectTypeStore);
     }
 
     public GeneratedSubjectTypeStore(Set<? extends ThreeSystem<?>> allTypes, BuiltInSubjectTypeStore builtInSubjectTypeStore) {

@@ -188,10 +188,11 @@ public class SourceClassSets {
         union.addAll(getReferencedNotSpecifiedClasses());
 
 //        ClassUtils classUtils = new ClassUtils(null, null);
-        ReflectionUtils reflectionUtils = new ReflectionUtils(this, null);
+        ReflectionUtils reflectionUtils = new ReflectionUtils(getLoaders(), getSimplePackageNames());
 //        classUtils.addClassLoaders(this.loaders);
-        union.addAll(getSimplePackageNames().stream().flatMap(
-                x -> reflectionUtils.collectSourceClasses(null, x).stream()).collect(toSet()));
+//        union.addAll(getSimplePackageNames().stream().flatMap(
+//                x -> reflectionUtils.collectSourceClasses(x).stream()).collect(toSet()));
+        union.addAll(reflectionUtils.collectSourceClasses());
 
         // todo need more elegant solution than this
         this.classSetCache = union;

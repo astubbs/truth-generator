@@ -16,12 +16,12 @@ import java.util.Set;
 // TODO clean up
 public interface TruthGeneratorAPI {
 
-    static TruthGenerator createDefaultOptions(Path testOutputDirectory) {
-        return new TruthGenerator(testOutputDirectory, Options.builder().build());
+    static TruthGenerator createDefaultOptions(Path testOutputDirectory, SourceClassSets ss) {
+        return new TruthGenerator(testOutputDirectory, Options.builder().build(), ss);
     }
 
-    static TruthGenerator create(Path testOutputDirectory, Options options) {
-        return new TruthGenerator(testOutputDirectory, options);
+    static TruthGenerator create(Path testOutputDirectory, Options options, SourceClassSets ss) {
+        return new TruthGenerator(testOutputDirectory, options, ss);
     }
 
     /**

@@ -2,7 +2,6 @@ package io.stubbs.truth.generator.internal;
 
 import com.google.common.truth.Subject;
 import io.stubbs.truth.generator.BaseSubjectExtension;
-import io.stubbs.truth.generator.SourceClassSets;
 import io.stubbs.truth.generator.UserManagedMiddleSubject;
 import io.stubbs.truth.generator.UserManagedTruth;
 import io.stubbs.truth.generator.internal.model.MiddleClass;
@@ -25,7 +24,7 @@ public class ReflectionUtils {
 //    private List<ClassLoader> loaders = new ArrayList<>();
     private Reflections reflections;
 
-    public ReflectionUtils(List<ClassLoader> loaders, String... modelPackages) {
+    public ReflectionUtils(List<ClassLoader> loaders, Set<String> modelPackages) {
 //        this.loaders = ss.getLoaders();
         setupReflections(loaders, modelPackages);
     }
@@ -44,7 +43,7 @@ public class ReflectionUtils {
         return reflections.getTypesAnnotatedWith(BaseSubjectExtension.class);
     }
 
-    public Set<Class<?>> collectSourceClasses(SourceClassSets ss, String... modelPackages) {
+    public Set<Class<?>> collectSourceClasses() {
         // https://github.com/ronmamo/reflections/issues/126
         Set<Class<? extends Enum>> subTypesOfEnums = reflections.getSubTypesOf(Enum.class);
 
@@ -57,11 +56,13 @@ public class ReflectionUtils {
         return allTypes;
     }
 
-    private void setupReflections(List<ClassLoader> loaders, String[] modelPackages) {
-        String modelPackage = modelPackages[0];
+    private void setupReflections(List<ClassLoader> loaders, Set<String> modelPackages) {
+        // todo big smell - introduce config item to specify places to look for things
+        String modelPackage = modelPackages.stream().findFirst().get();
         ConfigurationBuilder build = new ConfigurationBuilder()
-                .forPackages(modelPackages)
-                .filterInputsBy(new FilterBuilder().includePackage(modelPackage)) // TODO test different packages work?
+                .forPackages(modelPackages.toArray(new String[0]))
+                // TODO test different packages work?
+                .filterInputsBy(new FilterBuilder().includePackage(modelPackage))
                 // don't exclude Object sub types - don't filter out anything
                 .setScanners(Scanners.SubTypes.filterResultsBy(s -> true))
                 .setExpandSuperTypes(true);

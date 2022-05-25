@@ -1,7 +1,6 @@
 package io.stubbs.truth.generator.plugin;
 
 import io.stubbs.truth.generator.SourceClassSets;
-import io.stubbs.truth.generator.TruthGeneratorAPI;
 import io.stubbs.truth.generator.internal.Options;
 import io.stubbs.truth.generator.internal.TruthGenerator;
 import io.stubbs.truth.generator.internal.Utils;
@@ -191,11 +190,8 @@ public class GeneratorMojo extends AbstractMojo {
 
     @SneakyThrows
     private Map<Class<?>, ThreeSystem<?>> runGenerator() {
-        Options options = buildOptions();
-        TruthGenerator tg = TruthGeneratorAPI.create(getOutputPath(), options);
 
         Optional<String> entryPointClassPackage = ofNullable(this.entryPointClassPackage);
-        tg.setEntryPoint(entryPointClassPackage);
 
         SourceClassSets ss = new SourceClassSets(getEntryPointClassPackage());
 
@@ -207,6 +203,10 @@ public class GeneratorMojo extends AbstractMojo {
         ss.generateFromNonBean(projectClassLoader, legacyClasses);
         ss.generateAllFoundInPackages(getPackages());
 
+//        TruthGenerator tg = TruthGeneratorAPI.create(getOutputPath(), options);
+        Options options = buildOptions();
+        TruthGenerator tg = new TruthGenerator(getOutputPath(), options, ss);
+        tg.setEntryPoint(entryPointClassPackage);
         Result generate = tg.generate(ss);
         Map<Class<?>, ThreeSystem<?>> generated = generate.getAll();
 

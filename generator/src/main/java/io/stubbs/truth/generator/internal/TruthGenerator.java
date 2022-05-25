@@ -35,12 +35,12 @@ public class TruthGenerator implements TruthGeneratorAPI {
     @Getter
     private Optional<String> entryPoint = Optional.empty();
 
-    public TruthGenerator(Path testOutputDirectory, Options options) {
+    public TruthGenerator(Path testOutputDirectory, Options options, SourceClassSets ss) {
         Options.setInstance(options);
         this.options = options;
         this.testOutputDir = testOutputDirectory;
         Utils.setOutputBase(this.testOutputDir);
-        reflectionUtils = new ReflectionUtils();
+        reflectionUtils = new ReflectionUtils(ss.getLoaders(), ss.getSimplePackageNames());
         this.builtInStore = new BuiltInSubjectTypeStore(reflectionUtils);
     }
 
@@ -74,15 +74,15 @@ public class TruthGenerator implements TruthGeneratorAPI {
         // todo createEntryPointForPackages(modelPackages)
         String[] packageNameForOverall = modelPackages;
         OverallEntryPoint overallEntryPoint = new OverallEntryPoint(packageNameForOverall[0], builtInStore);
-        Set<ThreeSystem<?>> subjectsSystems = generateSkeletonsFromPackages(stream(modelPackages).collect(toSet()), overallEntryPoint, null);
+        Set<ThreeSystem<?>> subjectsSystems = generateSkeletonsFromPackages(overallEntryPoint, null);
 
         //
         addTests(subjectsSystems);
         overallEntryPoint.create();
     }
 
-    private Set<ThreeSystem<?>> generateSkeletonsFromPackages(Set<String> packagesToScan, OverallEntryPoint overallEntryPoint, SourceClassSets ss) {
-        Set<Class<?>> distinctTypesFoundInPackages = reflectionUtils.collectSourceClasses(ss, packagesToScan.toArray(new String[0]));
+    private Set<ThreeSystem<?>> generateSkeletonsFromPackages(OverallEntryPoint overallEntryPoint, SourceClassSets ss) {
+        Set<Class<?>> distinctTypesFoundInPackages = reflectionUtils.collectSourceClasses();
 
         // filter out already added
         if (ss != null) {

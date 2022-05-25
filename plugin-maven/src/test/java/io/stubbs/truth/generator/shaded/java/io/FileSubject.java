@@ -1,6 +1,7 @@
 package io.stubbs.truth.generator.shaded.java.io;
 
 import com.google.common.truth.FailureMetadata;
+import io.stubbs.truth.generator.UserManagedMiddleSubject;
 import io.stubbs.truth.generator.UserManagedTruth;
 
 import javax.annotation.processing.Generated;
@@ -15,10 +16,11 @@ import java.io.File;
  *
  * @see File
  * @see FileParentSubject
+ * @see FileChildSubject
  */
 @UserManagedTruth(value = File.class)
 @Generated("truth-generator")
-public class FileSubject extends FileParentSubject {
+public class FileSubject extends FileParentSubject implements UserManagedMiddleSubject<File> {
 
     /**
      * Returns an assertion builder for a {@link File} class.

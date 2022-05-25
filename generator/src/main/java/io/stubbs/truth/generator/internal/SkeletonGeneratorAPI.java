@@ -39,7 +39,7 @@ public interface SkeletonGeneratorAPI {
     <T> Optional<ThreeSystem<T>> threeLayerSystem(Class<T> source, Class<? extends Subject> usersMiddleClass) throws FileNotFoundException;
 
     /**
-     * Create the place holder middle class, for optional copying into source code
+     * Create the placeholder middle class, for optional copying into source code
      *
      * @return null if for some reason the class isn't supported
      * @see #threeLayerSystem(Class, Class)

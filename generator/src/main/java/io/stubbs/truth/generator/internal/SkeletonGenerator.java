@@ -27,6 +27,7 @@ public class SkeletonGenerator implements SkeletonGeneratorAPI {
 
     private static final FluentLogger logger = FluentLogger.forEnclosingClass();
     private static final String BACKUP_PACKAGE = "io.stubbs.common.truth.extension.generator";
+    private final ClassUtils classUtils = new ClassUtils();
 
     /**
      * For testing. Used to force generating of middle class, even if it's detected.
@@ -35,7 +36,7 @@ public class SkeletonGenerator implements SkeletonGeneratorAPI {
     private final OverallEntryPoint overallEntryPoint;
     private final BuiltInSubjectTypeStore subjectTypeStore;
     private Optional<String> targetPackageName;
-    private MiddleClass middle;
+    private MiddleClass<?> middle;
     private ParentClass parent;
     @Setter
     private boolean legacyMode = false;
@@ -87,8 +88,11 @@ public class SkeletonGenerator implements SkeletonGeneratorAPI {
         ParentClass parent = createParent(clazzUnderTest);
         this.parent = parent;
 
-        MiddleClass middle = createMiddleUserTemplateClass(parent.getGenerated(), clazzUnderTest);
-        this.middle = middle;
+        var userMiddle = classUtils.tryGetUserManagedMiddle(clazzUnderTest);
+//        MiddleClass middle = createMiddleUserTemplateClass(parent.getGenerated(), clazzUnderTest);
+        MiddleClass<T> newMiddle = userMiddle
+                .orElseGet(() -> createMiddleUserTemplateClass(parent.getGenerated(), clazzUnderTest));
+        this.middle = newMiddle;
 
         String factoryName = Utils.createFactoryName(clazzUnderTest);
         JavaClassSource child = createChild(parent, middle.getSimpleName(), clazzUnderTest, factoryName);
@@ -267,7 +271,7 @@ public class SkeletonGenerator implements SkeletonGeneratorAPI {
         return null;
     }
 
-    private <T> MiddleClass createMiddleUserTemplateClass(JavaClassSource parent, Class<T> classUnderTest) {
+    private <T> MiddleClass<T> createMiddleUserTemplateClass(JavaClassSource parent, Class<T> classUnderTest) {
         String middleClassName = getSubjectName(classUnderTest.getSimpleName());
 
         Optional<Class<? extends Subject>> compiledMiddleClass = findCompiledMiddleIfExists(parent, middleClassName, classUnderTest);

@@ -1,11 +1,13 @@
 package io.stubbs.truth.generator.internal.model;
 
-import com.google.common.truth.Subject;
+import io.stubbs.truth.generator.UserManagedMiddleSubject;
 import io.stubbs.truth.generator.UserManagedTruth;
 import io.stubbs.truth.generator.internal.Utils;
-import lombok.*;
+import lombok.AccessLevel;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.ToString;
 import lombok.experimental.FieldDefaults;
-import lombok.experimental.SuperBuilder;
 import org.jboss.forge.roaster.model.source.JavaClassSource;
 
 import java.lang.reflect.Method;
@@ -21,9 +23,9 @@ public class UserSuppliedMiddleClass<T> extends MiddleClass<T> {
     Method factoryMethod;
 
     @Getter
-    Class<?> usersMiddleClass;
+    Class<? extends UserManagedMiddleSubject<T>> usersMiddleClass;
 
-    public UserSuppliedMiddleClass(final Class<? extends Subject> usersMiddleClass, final Class<T> underTest) {
+    public UserSuppliedMiddleClass(final Class<? extends UserManagedMiddleSubject<T>> usersMiddleClass, final Class<T> underTest) {
         super(underTest);
         this.usersMiddleClass = usersMiddleClass;
         this.factoryMethod = Utils.findFactoryMethod(usersMiddleClass);

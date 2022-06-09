@@ -1,6 +1,7 @@
 package io.stubbs.truth.generator.shaded.java.io;
 
 import com.google.common.truth.FailureMetadata;
+import io.stubbs.truth.generator.SubjectFactoryMethod;
 import io.stubbs.truth.generator.UserManagedMiddleSubject;
 import io.stubbs.truth.generator.UserManagedTruth;
 
@@ -25,6 +26,7 @@ public class FileSubject extends FileParentSubject implements UserManagedMiddleS
     /**
      * Returns an assertion builder for a {@link File} class.
      */
+    @SubjectFactoryMethod
     public static Factory<FileSubject, File> files() {
         return FileSubject::new;
     }

@@ -193,7 +193,7 @@ public class SourceClassSets {
     // todo docs
     // todo shouldn't be public?
     public Set<Class<?>> addIfMissing(final Set<? extends Class<?>> clazzes) {
-        getAllClasses(); // update class set cache
+        getAllEffectivelyConfiguredClasses(); // todo smelly, update class set cache
         var missing = clazzes.stream()
                 .filter(x -> !classSetCache.contains(x)).collect(toSet());
         missing.forEach(this::generateFromReferencedNotSpecified);
@@ -204,17 +204,23 @@ public class SourceClassSets {
      * Includes classes found in specified packages
      */
     // todo shouldn't be public?
-    public Set<Class<?>> getAllClasses() {
+    public Set<Class<?>> getAllEffectivelyConfiguredClasses() {
         Set<Class<?>> union = getAllSpecifiedClasses();
 
-        union.addAll(getReferencedNotSpecifiedClasses());
+        var referencedNotSpecifiedClasses = getReferencedNotSpecifiedClasses();
+        union.addAll(referencedNotSpecifiedClasses);
 
 //        ClassUtils classUtils = new ClassUtils(null, null);
 
 //        classUtils.addClassLoaders(this.loaders);
 //        union.addAll(getSimplePackageNames().stream().flatMap(
 //                x -> reflectionUtils.collectSourceClasses(x).stream()).collect(toSet()));
-        union.addAll(reflectionUtils.collectSourceClasses());
+        var collected = reflectionUtils.collectSourceClasses()
+                .stream().filter(aClass -> getSimplePackageNames().stream()
+                        .anyMatch(configuredPackage -> configuredPackage.contains(aClass.getPackage().getName())))
+                .collect(Collectors.toUnmodifiableSet());
+
+        union.addAll(collected);
 
         // todo need more elegant solution than this
         this.classSetCache = union;

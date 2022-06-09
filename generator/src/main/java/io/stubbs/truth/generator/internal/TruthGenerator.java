@@ -100,7 +100,8 @@ public class TruthGenerator implements TruthGeneratorAPI {
     }
 
     private Set<ThreeSystem<?>> generateSkeletonsFromPackages(OverallEntryPoint overallEntryPoint, SourceClassSets ss) {
-        Set<Class<?>> distinctTypesFoundInPackages = reflectionUtils.collectSourceClasses();
+        //Set<Class<?>> distinctTypesFoundInPackages = reflectionUtils.collectSourceClasses();
+        Set<Class<?>> distinctTypesFoundInPackages = reflectionUtils.findClassesInPackages(ss.getSimplePackageNames());
 
         // filter out already added
         if (ss != null) {

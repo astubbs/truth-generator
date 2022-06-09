@@ -9,10 +9,13 @@ import io.stubbs.truth.generator.internal.model.MiddleClass;
 import io.stubbs.truth.generator.internal.model.UserSuppliedMiddleClass;
 import lombok.extern.slf4j.Slf4j;
 import org.reflections.Reflections;
+import org.reflections.Store;
 import org.reflections.scanners.Scanners;
 import org.reflections.util.ConfigurationBuilder;
 import org.reflections.util.FilterBuilder;
+import org.reflections.util.QueryFunction;
 
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -20,12 +23,15 @@ import java.util.stream.Collectors;
 @Slf4j
 public class ReflectionUtils {
 
+    private final ReflectionContext context;
+
     // todo not used?
 //    private List<ClassLoader> loaders = new ArrayList<>();
     private Reflections reflections;
 
     public ReflectionUtils(ReflectionContext context) {
 //        this.loaders = ss.getLoaders();
+        this.context = context;
         setupReflections(context);
     }
 
@@ -68,6 +74,40 @@ public class ReflectionUtils {
         Set<Class<? extends Enum>> subTypesOfEnums = reflections.getSubTypesOf(Enum.class);
 
         Set<Class<?>> allTypes = reflections.getSubTypesOf(Object.class)
+                // remove Subject classes from previous runs
+                .stream().filter(x -> !Subject.class.isAssignableFrom(x))
+                .collect(Collectors.toSet());
+
+        allTypes.addAll(subTypesOfEnums);
+
+        return allTypes;
+    }
+
+    public Set<Class<?>> findClassesInPackages(Set<String> packages) {
+        final QueryFunction<Store, Map.Entry<String, Set<String>>> storeEntryQueryFunction = ctx -> {
+            final Set<Map.Entry<String, Map<String, Set<String>>>> entries = ctx.entrySet();
+
+            final Map<String, Set<String>> stringSetMap = ctx.get(Scanners.SubTypes.index());
+            final Set<Map.Entry<String, Set<String>>> collect = stringSetMap.entrySet().stream().filter(stringSetEntry -> {
+                final String key = stringSetEntry.getKey();
+                return packages.contains(key);
+            }).collect(Collectors.toSet());
+
+//            return entries.stream().filter(stringMapEntry -> {
+//                final Collection<Set<String>> values = stringMapEntry.getValue().values();
+//                return packages.contains("");
+//            }).collect(Collectors.toUnmodifiableSet());
+            return collect;
+        };
+        Set<Class<?>> allTypes = reflections.get(storeEntryQueryFunction.asClass(reflections.getConfiguration().getClassLoaders()));
+
+
+        // get's all the enum types
+        // todo filter by package
+        // https://github.com/ronmamo/reflections/issues/126
+        Set<Class<? extends Enum>> subTypesOfEnums = reflections.getSubTypesOf(Enum.class);
+
+        Set<Class<?>> allTypesOld = reflections.getSubTypesOf(Object.class)
                 // remove Subject classes from previous runs
                 .stream().filter(x -> !Subject.class.isAssignableFrom(x))
                 .collect(Collectors.toSet());

@@ -103,7 +103,7 @@ public class TruthGeneratorTest {
         assertThat(allGeneratedSystems).containsKey(IdCard.class);
         assertThat(allGeneratedSystems).containsKey(MyEmployee.State.class);
 
-        // lost in the generics
+        // Project is lost in the generics - it's on referenced by MyEmployee as a generic parameter to a list
         assertThat(allGeneratedSystems).doesNotContainKey(Project.class);
 
         //

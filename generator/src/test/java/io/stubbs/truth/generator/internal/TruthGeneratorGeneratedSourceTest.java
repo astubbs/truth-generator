@@ -2,8 +2,9 @@ package io.stubbs.truth.generator.internal;
 
 import com.google.common.io.Resources;
 import com.google.common.truth.Truth;
-import io.stubbs.truth.generator.ReflectionContext;
+import io.stubbs.truth.generator.FullContext;
 import io.stubbs.truth.generator.SourceClassSets;
+import io.stubbs.truth.generator.TestClassFactories;
 import io.stubbs.truth.generator.TruthGeneratorAPI;
 import io.stubbs.truth.generator.internal.model.Result;
 import io.stubbs.truth.generator.internal.model.ThreeSystem;
@@ -23,8 +24,6 @@ import org.threeten.extra.MutableClock;
 
 import java.io.IOException;
 import java.nio.charset.Charset;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.chrono.Chronology;
@@ -35,6 +34,7 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 import static com.google.common.truth.Truth.assertThat;
+import static io.stubbs.truth.generator.TestClassFactories.TEST_OUTPUT_DIRECTORY;
 import static io.stubbs.truth.generator.internal.modelSubjectChickens.ThreeSystemChildSubject.assertThat;
 
 /**
@@ -43,8 +43,6 @@ import static io.stubbs.truth.generator.internal.modelSubjectChickens.ThreeSyste
 // todo fix method naming
 @RunWith(JUnit4.class)
 public class TruthGeneratorGeneratedSourceTest {
-
-    public static final Path TEST_OUTPUT_DIRECTORY = Paths.get("").resolve("target").toAbsolutePath();
 
     static {
         GeneratedMarker.setClock(MutableClock.epochUTC());
@@ -64,22 +62,23 @@ public class TruthGeneratorGeneratedSourceTest {
         classes.add(Project.class);
 
 
-        String packageForEntryPoint = getClass().getPackage().getName();
-        SourceClassSets ss = new SourceClassSets(packageForEntryPoint);
+        SourceClassSets ss = TestClassFactories.newSourceClassSets();
 
         //
         SkeletonGenerator.forceMiddleGenerate = true;
         ss.generateAllFoundInPackagesOf(MyEmployee.class);
 
         // package exists in other module error - needs package target support
+        String packageForEntryPoint = getClass().getPackage().getName();
         ss.generateFrom(packageForEntryPoint, UUID.class);
         ss.generateFromShaded(ZoneId.class, ZonedDateTime.class, Chronology.class);
 
         // todo need to be able to set base package for all generated classes, kind of like shade, so you cah generate test for classes in other restricted modules
         // todo replace with @TempDir
+        FullContext fullContext = new FullContext(TEST_OUTPUT_DIRECTORY, ss.getPackageForEntryPoint());
         TruthGenerator truthGenerator = TruthGeneratorAPI.create(
                 Options.builder().useHasInsteadOfGet(true).build(),
-                new ReflectionContext(TEST_OUTPUT_DIRECTORY, ss.getPackageForEntryPoint()));
+                fullContext);
 
         //
         truthGenerator.registerStandardSubjectExtension(String.class, MyStringSubject.class);
@@ -125,10 +124,9 @@ public class TruthGeneratorGeneratedSourceTest {
     @SneakyThrows
     @Test
     public void generatedManagedEntryPoint() {
-        TruthGenerator truthGenerator = TruthGeneratorAPI.create(TEST_OUTPUT_DIRECTORY);
+        TruthGenerator truthGenerator = TestClassFactories.newTruthGenerator();
+        SourceClassSets ss = TestClassFactories.newSourceClassSets();
 
-        String packageForEntryPoint = getClass().getPackage().getName();
-        SourceClassSets ss = new SourceClassSets(packageForEntryPoint);
         ss.generateFrom(MyEmployee.class);
 
         Result generate = truthGenerator.generate(ss);
@@ -153,10 +151,9 @@ public class TruthGeneratorGeneratedSourceTest {
     @SneakyThrows
     @Test
     public void generatedManagedSubjectBuilder() {
-        TruthGenerator truthGenerator = TruthGeneratorAPI.create(TEST_OUTPUT_DIRECTORY);
+        TruthGenerator truthGenerator = TestClassFactories.newTruthGenerator();
+        SourceClassSets ss = TestClassFactories.newSourceClassSets();
 
-        String packageForEntryPoint = getClass().getPackage().getName();
-        SourceClassSets ss = new SourceClassSets(packageForEntryPoint);
         ss.generateFrom(MyEmployee.class);
 
         Result generate = truthGenerator.generate(ss);
@@ -179,17 +176,16 @@ public class TruthGeneratorGeneratedSourceTest {
         // todo need to be able to set base package for all generated classes, kind of like shade, so you can generate
         //  tests for classes in other restricted modules
         // todo replace with @TempDir
-        TruthGenerator truthGenerator = TruthGeneratorAPI.create(TEST_OUTPUT_DIRECTORY,
-                Options.builder()
-                        .useHasInsteadOfGet(true)
-                        .useGetterForLegacyClasses(true)
-                        .build());
+        Options options = Options.builder()
+                .useHasInsteadOfGet(true)
+                .useGetterForLegacyClasses(true)
+                .build();
+        TruthGenerator truthGenerator = TestClassFactories.newTruthGenerator(options);
 
         GeneratedMarker.setClock(MutableClock.epochUTC());
 
         //
-        String packageForEntryPoint = getClass().getPackage().getName();
-        SourceClassSets ss = new SourceClassSets(packageForEntryPoint);
+        SourceClassSets ss = TestClassFactories.newSourceClassSets();
         ss.generateFromNonBean(NonBeanLegacy.class);
 
         //

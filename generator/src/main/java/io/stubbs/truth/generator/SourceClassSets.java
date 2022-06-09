@@ -106,8 +106,8 @@ public class SourceClassSets {
      * <p>
      * Uses a default {@link ReflectionContext}.
      */
-    public SourceClassSets(Class<?> packageFromClass, ReflectionContext context) {
-        this(packageFromClass.getPackage().getName(), new ReflectionUtils(context));
+    public SourceClassSets(Class<?> packageFromClass, ReflectionContext reflectionUtils) {
+        this(packageFromClass.getPackage().getName(), new ReflectionUtils(reflectionUtils));
     }
 
     public void generateAllFoundInPackagesOf(Class<?>... classes) {

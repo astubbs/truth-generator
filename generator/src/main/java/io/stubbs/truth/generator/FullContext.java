@@ -1,5 +1,6 @@
 package io.stubbs.truth.generator;
 
+import lombok.EqualsAndHashCode;
 import lombok.Value;
 
 import java.nio.file.Path;
@@ -7,6 +8,7 @@ import java.util.List;
 import java.util.Set;
 
 @Value
+@EqualsAndHashCode(callSuper = true)
 public class FullContext extends ReflectionContext {
 
     /**
@@ -30,5 +32,9 @@ public class FullContext extends ReflectionContext {
         super(baseModelPackageFroScanning);
         this.testOutputDirectory = testOutputDirectory;
 
+    }
+
+    public FullContext(Path testOutputDirectory, ReflectionContext newReflectionContext) {
+        this(testOutputDirectory, newReflectionContext.getLoaders(), newReflectionContext.getBaseModelPackagesFroScanning());
     }
 }

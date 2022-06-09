@@ -1,6 +1,6 @@
 package io.stubbs.truth.generator.plugin;
 
-import io.stubbs.truth.generator.ReflectionContext;
+import io.stubbs.truth.generator.FullContext;
 import io.stubbs.truth.generator.SourceClassSets;
 import io.stubbs.truth.generator.internal.Options;
 import io.stubbs.truth.generator.internal.ReflectionUtils;
@@ -198,7 +198,7 @@ public class GeneratorMojo extends AbstractMojo {
 
         Optional<String> entryPointClassPackage = ofNullable(this.entryPointClassPackage);
 
-        ReflectionContext context = new ReflectionContext(getOutputPath(), List.of(getProjectClassLoader()), getModelPackages());
+        FullContext context = new FullContext(getOutputPath(), List.of(getProjectClassLoader()), getModelPackages());
 
         ReflectionUtils reflectionUtils = new ReflectionUtils(context);
 

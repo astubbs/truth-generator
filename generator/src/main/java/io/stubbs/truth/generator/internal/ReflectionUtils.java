@@ -48,14 +48,16 @@ public class ReflectionUtils {
 //    public Set<Class<?>> findNativeExtensions(String... modelPackages) {
 //        // TODO share Reflections instance?
 //        ConfigurationBuilder build = new ConfigurationBuilder()
-//                .forPackages(modelPackages)
-//                .filterInputsBy(new FilterBuilder().includePackage(modelPackages[0])) // TODO test different packages work?
+//                .forPackages("io.stubbs")
+//                .filterInputsBy(new FilterBuilder().includePackage("io.stubbs")) // TODO test different packages work?
 //                .setParallel(true)
 //                .setScanners(Scanners.TypesAnnotated, Scanners.SubTypes);
 //
-//        Reflections reflections = new Reflections(build);
-//
-        return reflections.getTypesAnnotatedWith(BaseSubjectExtension.class);
+//        Reflections reflectionsold = new Reflections(build);
+//        Set<Class<?>> old = reflectionsold.getTypesAnnotatedWith(BaseSubjectExtension.class);
+
+        Set<Class<?>> typesAnnotatedWith = reflections.getTypesAnnotatedWith(BaseSubjectExtension.class);
+        return typesAnnotatedWith;
     }
 
     /**
@@ -76,24 +78,25 @@ public class ReflectionUtils {
     }
 
     private void setupReflections(ReflectionContext context) {
-        // todo big smell - introduce config item to specify places to look for things
-        String modelPackage = context.getBaseModelPackagesFroScanning().stream().findFirst().get();
+        FilterBuilder filterBuilder = new FilterBuilder();
+        context.getBaseModelPackagesFroScanning().forEach(filterBuilder::includePackage);
+
         ConfigurationBuilder build = new ConfigurationBuilder()
                 .forPackages(context.getBaseModelPackagesFroScanning().toArray(new String[0]))
-                // TODO test different packages work?
-                .filterInputsBy(new FilterBuilder().includePackage(modelPackage))
-                // don't exclude Object sub types - don't filter out anything
-                .setScanners(Scanners.SubTypes.filterResultsBy(s -> true))
+                .filterInputsBy(filterBuilder)
+                .setParallel(true)
+                // don't exclude Object subtypes - don't filter out anything
+                .setScanners(Scanners.TypesAnnotated, Scanners.SubTypes.filterResultsBy(s -> true))
                 .setExpandSuperTypes(true);
 
-        // todo smelly
         {
             for (ClassLoader loader : context.getLoaders()) {
                 build.addClassLoaders(loader);
             }
-            ClassLoader[] loadersArray = context.getLoaders().toArray(new ClassLoader[0]);
-            // shouldn't need to specify loaders twice?
-            build = build.forPackage(modelPackage, loadersArray);
+//
+//            ClassLoader[] loadersArray = context.getLoaders().toArray(new ClassLoader[0]);
+//            // shouldn't need to specify loaders twice?
+//            build = build.forPackage(modelPackage, loadersArray);
         }
 
         this.reflections = new Reflections(build);

@@ -3,6 +3,7 @@ package io.stubbs.truth.generator.internal;
 import com.google.common.flogger.FluentLogger;
 import com.google.common.truth.FailureMetadata;
 import com.google.common.truth.Subject;
+import io.stubbs.truth.generator.UserManagedMiddleSubject;
 import io.stubbs.truth.generator.UserManagedTruth;
 import io.stubbs.truth.generator.internal.model.*;
 import lombok.Setter;
@@ -293,7 +294,10 @@ public class SkeletonGenerator implements SkeletonGeneratorAPI {
         middle.setName(middleClassName);
         middle.setPackage(parent.getPackage());
         middle.extendSuperType(parent);
-        middle.implementInterface(UserSuppliedMiddleClass.class);
+
+        // todo should add generic parameter here
+        middle.implementInterface(UserManagedMiddleSubject.class);
+
         JavaDocSource<JavaClassSource> jd = middle.getJavaDoc();
         jd.setText("Optionally move this class into source control, and add your custom assertions here.\n\n" +
                 "<p>If the system detects this class already exists, it won't attempt to generate a new one. Note that " +

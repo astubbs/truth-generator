@@ -34,6 +34,7 @@ public class CustomClassPathSubjectTests {
         // for reference
         MyEmployee employee = TestModelUtils.createEmployee();
         Map<String, Project> projectMap = employee.getProjectMap();
+        //
 
         {
             Method getProjectMap = TestModelUtils.findMethodWithNoParamsJReflect(MyEmployee.class, "getProjectMap");

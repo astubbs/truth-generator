@@ -127,6 +127,7 @@ public class TruthGeneratorTest {
         SourceClassSets ss = TestClassFactories.newSourceClassSets();
 
         Class<UUID> clazz = UUID.class;
+        tg.setEntryPoint(of(ss.getPackageForEntryPoint()));
         var generate = tg.generate(clazz).getAll();
 
         //

@@ -299,7 +299,8 @@
                 <plugin>
                     <groupId>io.stubbs.truth</groupId>
                     <artifactId>truth-generator-maven-plugin</artifactId>
-                    <version>${project.version}</version>
+                    <!-- User previous version property or? -->
+                    <version>0.1</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>

@@ -172,9 +172,11 @@ public class ChainStrategyTest extends StrategyTest {
         assertThat(source.toString()).contains("that((Instant)actual.getStartedAt().get()");
     }
 
+    /**
+     * A test input class which declares a field of generic type, but is missing its generics parameters
+     */
     @Data
-    static
-    class BadGenerics {
+    static class BadGenerics {
         @SuppressWarnings("rawtypes")
         Optional genericsMissing;
     }

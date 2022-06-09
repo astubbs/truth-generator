@@ -24,19 +24,19 @@ public class TestClassFactories {
         return new GeneratedSubjectTypeStore(Set.of(), new BuiltInSubjectTypeStore(TestClassFactories.newReflectionContext()));
     }
 
-    public static ReflectionContext newReflectionContext() {
-        // needs Google truth package too?
-        return new ReflectionContext(BASE_TEST_PACKAGE);
-    }
-
     public static SourceClassSets newSourceClassSets() {
         // needs Google truth package too?
-        String targetPackage = TestClassFactories.class.getPackageName();
-        return newSourceClassSets(targetPackage);
+        String packageForEntryPoint = TestClassFactories.class.getPackageName();
+        return newSourceClassSets(packageForEntryPoint);
     }
 
-    public static SourceClassSets newSourceClassSets(String targetPackage) {
-        return new SourceClassSets(targetPackage, newReflectionContext());
+    public static SourceClassSets newSourceClassSets(String packageForEntryPoint) {
+        return new SourceClassSets(packageForEntryPoint, newReflectionContext());
+    }
+
+    public static ReflectionContext newReflectionContext() {
+        // needs Google truth package too?
+        return new ReflectionContext(Set.of(BASE_TEST_PACKAGE, "com.google.truth"));
     }
 
     public static TruthGenerator newTruthGenerator() {

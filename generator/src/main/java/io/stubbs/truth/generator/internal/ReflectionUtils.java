@@ -127,10 +127,11 @@ public class ReflectionUtils {
 
     private void setupReflections(ReflectionContext context) {
         FilterBuilder filterBuilder = new FilterBuilder();
-        context.getBaseModelPackagesFroScanning().forEach(filterBuilder::includePackage);
+        var basePackages = context.getBaseModelPackagesFroScanning();
+        basePackages.forEach(filterBuilder::includePackage);
 
         ConfigurationBuilder build = new ConfigurationBuilder()
-                .forPackages(context.getBaseModelPackagesFroScanning().toArray(new String[0]))
+                .forPackages(basePackages.toArray(new String[0]))
                 .filterInputsBy(filterBuilder)
                 .setParallel(true)
                 // don't exclude Object subtypes - don't filter out anything
@@ -138,13 +139,15 @@ public class ReflectionUtils {
                 .setExpandSuperTypes(false);
 
         {
+            // this approach doesn't work? - try removing and testing with PC
             for (ClassLoader loader : context.getLoaders()) {
                 build.addClassLoaders(loader);
             }
-//
-//            ClassLoader[] loadersArray = context.getLoaders().toArray(new ClassLoader[0]);
-//            // shouldn't need to specify loaders twice?
-//            build = build.forPackage(modelPackage, loadersArray);
+
+            // is this duplicate approach required? correct?
+            ClassLoader[] loadersArray = context.getLoaders().toArray(new ClassLoader[0]);
+            // shouldn't need to specify loaders twice?
+            basePackages.forEach(modelPackage -> build.forPackage(modelPackage, loadersArray));
         }
 
         this.reflections = new Reflections(build);

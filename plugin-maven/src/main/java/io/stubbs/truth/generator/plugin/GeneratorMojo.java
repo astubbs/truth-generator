@@ -198,7 +198,7 @@ public class GeneratorMojo extends AbstractMojo {
 
         Optional<String> entryPointClassPackage = ofNullable(this.entryPointClassPackage);
 
-        FullContext context = new FullContext(getOutputPath(), List.of(getProjectClassLoader()), getModelPackages());
+        FullContext context = new FullContext(getOutputPath(), List.of(getProjectClassLoader()), getBaseModelPackagesForScanning());
 
         ReflectionUtils reflectionUtils = new ReflectionUtils(context);
 
@@ -218,8 +218,14 @@ public class GeneratorMojo extends AbstractMojo {
         return generated;
     }
 
-    private Set<String> getModelPackages() {
-        return new HashSet<>(Arrays.asList(getPackages()));
+    private Set<String> getBaseModelPackagesForScanning() {
+        var classSourcePackages = Arrays.asList(getPackages());
+        if (classSourcePackages.isEmpty()) {
+            // just in case
+            final String fallBackToEntryPoint = getEntryPointClassPackage();
+            return Set.of(fallBackToEntryPoint);
+        } else
+            return new HashSet<>(classSourcePackages);
     }
 
     private void addOutputPathsToBuild() {

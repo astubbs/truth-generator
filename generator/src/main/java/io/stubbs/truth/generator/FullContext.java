@@ -18,13 +18,13 @@ public class FullContext extends ReflectionContext {
      */
     Path testOutputDirectory;
 
-    public FullContext(Path testOutputDirectory, List<ClassLoader> loaders, Set<String> baseModelPackagesFroScanning) {
-        super(loaders, baseModelPackagesFroScanning);
+    public FullContext(Path testOutputDirectory, List<ClassLoader> loaders, Set<String> baseModelPackagesForScanning) {
+        super(loaders, baseModelPackagesForScanning);
         this.testOutputDirectory = testOutputDirectory;
     }
 
-    public FullContext(Path testOutputDirectory, Set<String> baseModelPackagesFroScanning) {
-        super(baseModelPackagesFroScanning);
+    public FullContext(Path testOutputDirectory, Set<String> baseModelPackagesForScanning) {
+        super(baseModelPackagesForScanning);
         this.testOutputDirectory = testOutputDirectory;
     }
 

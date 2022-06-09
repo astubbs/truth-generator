@@ -18,7 +18,7 @@ public class TestClassFactories {
 
     public static final Path TEST_OUTPUT_DIRECTORY = Paths.get("").resolve("target").toAbsolutePath();
 
-    public static final String BASE_TEST_PACKAGE = "io.stubbs";
+    public static final String BASE_TEST_PACKAGE = "io.stubbs.truth.generator";
 
     public static GeneratedSubjectTypeStore newGeneratedSubjectTypeStore() {
         return new GeneratedSubjectTypeStore(Set.of(), newBuiltInSubjectTypeStore());
@@ -35,7 +35,7 @@ public class TestClassFactories {
     }
 
     public static SourceClassSets newSourceClassSets(String packageForEntryPoint) {
-        return new SourceClassSets(packageForEntryPoint, newReflectionContext());
+        return new SourceClassSets(BASE_TEST_PACKAGE + packageForEntryPoint, newReflectionContext());
     }
 
     public static ReflectionContext newReflectionContext() {

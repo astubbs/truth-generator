@@ -1,9 +1,13 @@
 package io.stubbs.truth.generator;
 
-import lombok.*;
+import lombok.AccessLevel;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.ToString;
 import lombok.experimental.FieldDefaults;
 
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -15,9 +19,13 @@ import java.util.Set;
 @Getter
 @ToString
 @EqualsAndHashCode
-@AllArgsConstructor
+//@AllArgsConstructor
 @FieldDefaults(makeFinal = true, level = AccessLevel.PRIVATE)
 public class ReflectionContext {
+
+    public static final String BASE_TG_SUBJECTS_PACKAGE = "io.stubbs.truth.generator.subjects";
+    public static final String GOOGLE_TRUTH_SUBJECTS_PACKAGE = "com.google.truth";
+
 
     /**
      * Special class loaders (used by the plugin)
@@ -31,17 +39,24 @@ public class ReflectionContext {
      */
     Set<String> baseModelPackagesFroScanning;
 
+    public ReflectionContext(List<ClassLoader> loaders, Set<String> baseModelPackagesFroScanning) {
+        this.loaders = loaders;
+        // todo copy?
+        this.baseModelPackagesFroScanning = new HashSet<>(baseModelPackagesFroScanning);
+        var systemPackages = Set.of(BASE_TG_SUBJECTS_PACKAGE, GOOGLE_TRUTH_SUBJECTS_PACKAGE);
+        this.baseModelPackagesFroScanning.addAll(systemPackages);
+    }
+
     /**
      * A Default context with no special class loaders, or package restrictions - useful for testing.
      */
     public ReflectionContext(Set<String> baseModelPackagesFroScanning) {
-        this.loaders = Collections.emptyList();
-        this.baseModelPackagesFroScanning = baseModelPackagesFroScanning;
-
+        this(Collections.emptyList(), baseModelPackagesFroScanning);
     }
 
     public ReflectionContext(String baseModelPackageFroScanning) {
         this(Set.of(baseModelPackageFroScanning));
     }
+
 }
 

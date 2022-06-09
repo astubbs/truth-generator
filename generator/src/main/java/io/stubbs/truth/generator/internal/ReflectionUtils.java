@@ -33,8 +33,8 @@ public class ReflectionUtils {
      * Reflection utils with no special class loaders, or specific model packages to restrict scanning to. Useful for
      * running outside of MOJO (maven plugin) contexts, e.g. tests.
      */
-    public ReflectionUtils() {
-        setupReflections(new Context());
+    public ReflectionUtils(Set<String> baseModelPackagesFroScanning) {
+        setupReflections(new Context(baseModelPackagesFroScanning));
     }
 
     /**
@@ -77,9 +77,9 @@ public class ReflectionUtils {
 
     private void setupReflections(Context context) {
         // todo big smell - introduce config item to specify places to look for things
-        String modelPackage = context.getModelPackages().stream().findFirst().get();
+        String modelPackage = context.getBaseModelPackagesFroScanning().stream().findFirst().get();
         ConfigurationBuilder build = new ConfigurationBuilder()
-                .forPackages(context.getModelPackages().toArray(new String[0]))
+                .forPackages(context.getBaseModelPackagesFroScanning().toArray(new String[0]))
                 // TODO test different packages work?
                 .filterInputsBy(new FilterBuilder().includePackage(modelPackage))
                 // don't exclude Object sub types - don't filter out anything

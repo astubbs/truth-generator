@@ -5,11 +5,10 @@ import io.stubbs.truth.generator.internal.Options;
 import io.stubbs.truth.generator.internal.TruthGenerator;
 import io.stubbs.truth.generator.internal.model.Result;
 
-import java.nio.file.Path;
 import java.util.Set;
 
 /**
- * Entry point API for Truth Generator
+ * Some convenience shorthand methods, useful for use outside of Mojo and for testing.
  *
  * @author Antony Stubbs
  * @see TruthGenerator
@@ -17,33 +16,33 @@ import java.util.Set;
 // TODO clean up
 public interface TruthGeneratorAPI {
 
-    /**
-     * Default {@link Context}.
-     */
-    static TruthGenerator create(Path testOutputDirectory) {
-        return new TruthGenerator(testOutputDirectory);
+//    /**
+//     * Default {@link Context}.
+//     */
+//    static TruthGenerator create(Path testOutputDirectory) {
+//        return new TruthGenerator(testOutputDirectory);
+//    }
+
+//    /**
+//     * Default {@link Context}.
+//     */
+//    static TruthGenerator create(Path testOutputDirectory, Options options, Set<String> baseModelPackagesFroScanning) {
+//        return create(testOutputDirectory, options, new Context(baseModelPackagesFroScanning));
+//    }
+
+//    /**
+//     * Default {@link Context}.
+//     */
+//    static TruthGenerator createDefaultOptions(Path testOutputDirectory, Set<String> baseModelPackagesFroScanning) {
+//        return new TruthGenerator(testOutputDirectory, Options.builder().build(), new Context(baseModelPackagesFroScanning));
+//    }
+
+    static TruthGenerator createDefaultOptions(Context context) {
+        return new TruthGenerator(Options.builder().build(), context);
     }
 
-    /**
-     * Default {@link Context}.
-     */
-    static TruthGenerator create(Path testOutputDirectory, Options options) {
-        return create(testOutputDirectory, options, new Context());
-    }
-
-    /**
-     * Default {@link Context}.
-     */
-    static TruthGenerator createDefaultOptions(Path testOutputDirectory) {
-        return new TruthGenerator(testOutputDirectory, Options.builder().build(), new Context());
-    }
-
-    static TruthGenerator createDefaultOptions(Path testOutputDirectory, Context context) {
-        return new TruthGenerator(testOutputDirectory, Options.builder().build(), context);
-    }
-
-    static TruthGenerator create(Path testOutputDirectory, Options options, Context context) {
-        return new TruthGenerator(testOutputDirectory, options, context);
+    static TruthGenerator create(Options options, Context context) {
+        return new TruthGenerator(options, context);
     }
 
     /**

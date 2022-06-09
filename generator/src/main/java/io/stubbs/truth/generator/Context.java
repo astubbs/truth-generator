@@ -3,33 +3,50 @@ package io.stubbs.truth.generator;
 import lombok.AllArgsConstructor;
 import lombok.Value;
 
+import java.nio.file.Path;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
 /**
- * todo docs
+ * Holds the context in which the generator is executing - namely special class loaders (used by the plugin) and base
+ * model packages which should be scanned.
  */
 @AllArgsConstructor
 @Value
 public class Context {
 
     /**
-     * todo docs
+     * Base path of test output directory - used for writing our generated subjects into subdirectories of
+     * <p>
+     * Can be though of as the OUTPUT side of the system.
+     */
+    Path testOutputDirectory;
+
+    /**
+     * Special class loaders (used by the plugin)
      */
     List<ClassLoader> loaders;
 
     /**
-     * todo docs
+     * Base model packages which should be scanned.
+     * <p>
+     * Can be though of as the INPUT side of the system.
      */
-    //todo rename
-    Set<String> modelPackages;
+    Set<String> baseModelPackagesFroScanning;
 
     /**
      * A Default context with no special class loaders, or package restrictions - useful for testing.
      */
-    public Context() {
+    public Context(Path testOutputDirectory, Set<String> baseModelPackagesFroScanning) {
+        this.testOutputDirectory = testOutputDirectory;
         this.loaders = Collections.emptyList();
-        this.modelPackages = Collections.emptySet();
+//        this.baseModelPackagesFroScanning = Collections.emptySet();
+        this.baseModelPackagesFroScanning = baseModelPackagesFroScanning;
+
+    }
+
+    public Context(Path testOutputDirectory, String baseModelPackageFroScanning) {
+        this(testOutputDirectory, Set.of(baseModelPackageFroScanning));
     }
 }

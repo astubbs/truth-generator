@@ -27,7 +27,7 @@ public class Utils {
     public static final String DIR_TRUTH_ASSERTIONS_TEMPLATES = "truth-assertions-templates";
 
     // todo remove static
-    private static java.nio.file.Path testOutputDir;
+    private static Path testOutputDir;
 
     public static String writeToDisk(JavaClassSource javaClass) {
         return writeToDisk(javaClass, Optional.empty());
@@ -108,7 +108,7 @@ public class Utils {
         }
     }
 
-    public static void setOutputBase(java.nio.file.Path testOutputDir) {
+    public static void setOutputBase(Path testOutputDir) {
         Utils.testOutputDir = testOutputDir;
     }
 

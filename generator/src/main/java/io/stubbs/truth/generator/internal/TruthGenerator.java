@@ -38,10 +38,10 @@ public class TruthGenerator implements TruthGeneratorAPI {
     @Getter
     private Optional<String> entryPoint = Optional.empty();
 
-    public TruthGenerator(Path testOutputDirectory, Options options, Context context) {
+    public TruthGenerator(Options options, Context context) {
         Options.setInstance(options);
         this.options = options;
-        this.testOutputDir = testOutputDirectory;
+        this.testOutputDir = context.getTestOutputDirectory();
         Utils.setOutputBase(this.testOutputDir);
         this.reflectionUtils = new ReflectionUtils(context);
         this.builtInStore = new BuiltInSubjectTypeStore(this.reflectionUtils);
@@ -50,8 +50,8 @@ public class TruthGenerator implements TruthGeneratorAPI {
     /**
      * Default options and no restricted context or special class loaders.
      */
-    public TruthGenerator(Path testOutputDirectory) {
-        this(testOutputDirectory, Options.builder().build(), new Context());
+    public TruthGenerator(Path testOutputDirectory, Set<String> baseModelPackagesFroScanning) {
+        this(Options.builder().build(), new Context(testOutputDirectory, baseModelPackagesFroScanning));
     }
 
     /**

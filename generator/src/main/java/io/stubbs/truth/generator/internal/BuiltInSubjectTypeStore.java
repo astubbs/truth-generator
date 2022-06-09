@@ -91,8 +91,8 @@ public class BuiltInSubjectTypeStore {
         autoRegisterStandardSubjectExtension();
     }
 
-    public BuiltInSubjectTypeStore() {
-        this.reflectionUtils = new ReflectionUtils();
+    public BuiltInSubjectTypeStore(Set<String> baseModelPackagesFroScanning) {
+        this.reflectionUtils = new ReflectionUtils(baseModelPackagesFroScanning);
         autoRegisterStandardSubjectExtension();
     }
 

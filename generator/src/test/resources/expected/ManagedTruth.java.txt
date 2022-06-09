@@ -1,12 +1,15 @@
 package io.stubbs.truth.generator.internal;
 import io.stubbs.truth.generator.internal.ManagedSubjectBuilder;
 import java.util.List;
-import io.stubbs.truth.generator.testModel.IdCardSubject;
+import io.stubbs.truth.generator.example.MakeSubject;
 import com.google.common.truth.FailureMetadata;
-import static io.stubbs.truth.generator.testModel.IdCardSubject.*;
+import io.stubbs.truth.generator.example.Car.Make;
+import static io.stubbs.truth.generator.example.MakeSubject.*;
 import com.google.common.truth.Truth;
 import com.google.common.truth.SimpleSubjectBuilder;
 import javax.annotation.processing.Generated;
+import io.stubbs.truth.generator.testModel.IdCardSubject;
+import static io.stubbs.truth.generator.testModel.IdCardSubject.*;
 import io.stubbs.truth.generator.testModel.SecurityTypeSubject;
 import io.stubbs.truth.generator.testModel.IdCard.SecurityType;
 import static io.stubbs.truth.generator.testModel.SecurityTypeSubject.*;
@@ -104,6 +107,21 @@ public class ManagedTruth {
 	 */
 	static public ManagedSubjectBuilder assertWithMessage(java.lang.String format, List args) {
 		return new ManagedSubjectBuilder(Truth.assertWithMessage(format, args.toArray()));
+	}
+	/**
+	 * Entry point for {@link Make} assertions.
+	 */
+	public static MakeSubject assertThat(io.stubbs.truth.generator.example.Car.Make actual) {
+		return Truth.assertAbout(io.stubbs.truth.generator.example.MakeSubject.makes()).that(actual);
+	}
+	/**
+	 * Convenience entry point for {@link Make} assertions when being mixed with
+	 * other "assertThat" assertion libraries.
+	 *
+	 * @see #assertThat
+	 */
+	public static MakeSubject assertTruth(io.stubbs.truth.generator.example.Car.Make actual) {
+		return assertThat(actual);
 	}
 	/**
 	 * Entry point for {@link IdCard} assertions.

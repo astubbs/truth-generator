@@ -125,7 +125,7 @@ public class TruthGeneratorGeneratedSourceTest {
     @Test
     public void generatedManagedEntryPoint() {
         TruthGenerator truthGenerator = TestClassFactories.newTruthGenerator();
-        SourceClassSets ss = TestClassFactories.newSourceClassSets();
+        SourceClassSets ss = TestClassFactories.newSourceClassSets(this);
 
         ss.generateFrom(MyEmployee.class);
 
@@ -152,7 +152,7 @@ public class TruthGeneratorGeneratedSourceTest {
     @Test
     public void generatedManagedSubjectBuilder() {
         TruthGenerator truthGenerator = TestClassFactories.newTruthGenerator();
-        SourceClassSets ss = TestClassFactories.newSourceClassSets();
+        SourceClassSets ss = TestClassFactories.newSourceClassSets(this);
 
         ss.generateFrom(MyEmployee.class);
 

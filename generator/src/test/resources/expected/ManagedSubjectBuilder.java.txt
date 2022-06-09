@@ -1,5 +1,7 @@
 package io.stubbs.truth.generator.internal;
 import com.google.common.truth.StandardSubjectBuilder;
+import io.stubbs.truth.generator.example.Car.Make;
+import io.stubbs.truth.generator.example.MakeSubject;
 import io.stubbs.truth.generator.testModel.IdCard;
 import io.stubbs.truth.generator.testModel.IdCardSubject;
 import io.stubbs.truth.generator.testModel.IdCard.SecurityType;
@@ -61,6 +63,12 @@ public class ManagedSubjectBuilder {
 	StandardSubjectBuilder standardSubjectBuilder;
 	ManagedSubjectBuilder(com.google.common.truth.StandardSubjectBuilder standardSubjectBuilder) {
 		this.standardSubjectBuilder = standardSubjectBuilder;
+	}
+	/**
+	 * see {@link io.stubbs.truth.generator.example.MakeSubject}
+	 */
+	public MakeSubject that(Make actual) {
+		return standardSubjectBuilder.about(io.stubbs.truth.generator.example.MakeSubject.makes()).that(actual);
 	}
 	/**
 	 * see {@link io.stubbs.truth.generator.testModel.IdCardSubject}

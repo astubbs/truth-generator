@@ -91,6 +91,11 @@ public class BuiltInSubjectTypeStore {
         autoRegisterStandardSubjectExtension();
     }
 
+    public BuiltInSubjectTypeStore() {
+        this.reflectionUtils = new ReflectionUtils();
+        autoRegisterStandardSubjectExtension();
+    }
+
     protected void autoRegisterStandardSubjectExtension() {
         Set<Class<?>> nativeExtensions = reflectionUtils.findBaseSubjectExtensions();
         for (Class<?> nativeExtension : nativeExtensions) {

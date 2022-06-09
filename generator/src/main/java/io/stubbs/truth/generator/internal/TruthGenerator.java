@@ -2,6 +2,7 @@ package io.stubbs.truth.generator.internal;
 
 import com.google.common.flogger.FluentLogger;
 import com.google.common.truth.Subject;
+import io.stubbs.truth.generator.Context;
 import io.stubbs.truth.generator.SourceClassSets;
 import io.stubbs.truth.generator.TruthGeneratorAPI;
 import io.stubbs.truth.generator.internal.model.Result;
@@ -32,17 +33,32 @@ public class TruthGenerator implements TruthGeneratorAPI {
     private final Options options;
     private final ReflectionUtils reflectionUtils;
     private final BuiltInSubjectTypeStore builtInStore;
+
     @Setter
     @Getter
     private Optional<String> entryPoint = Optional.empty();
 
-    public TruthGenerator(Path testOutputDirectory, Options options, SourceClassSets ss) {
+    public TruthGenerator(Path testOutputDirectory, Options options, Context context) {
         Options.setInstance(options);
         this.options = options;
         this.testOutputDir = testOutputDirectory;
         Utils.setOutputBase(this.testOutputDir);
-        reflectionUtils = new ReflectionUtils(ss.getLoaders(), ss.getSimplePackageNames());
-        this.builtInStore = new BuiltInSubjectTypeStore(reflectionUtils);
+        this.reflectionUtils = new ReflectionUtils(context);
+        this.builtInStore = new BuiltInSubjectTypeStore(this.reflectionUtils);
+    }
+
+    /**
+     * Default options and no restricted context or special class loaders.
+     */
+    public TruthGenerator(Path testOutputDirectory) {
+        this(testOutputDirectory, Options.builder().build(), new Context());
+    }
+
+    /**
+     * No restricted context or special class loaders.
+     */
+    public TruthGenerator(Path testOutputDirectory, Options options) {
+        this(testOutputDirectory, options, new Context());
     }
 
     /**
@@ -106,7 +122,10 @@ public class TruthGenerator implements TruthGeneratorAPI {
 
         Set<ThreeSystem<?>> subjectsSystems = new HashSet<>();
         for (Class<?> clazz : classes) {
-            SkeletonGenerator skeletonGenerator = new SkeletonGenerator(targetPackageName, overallEntryPoint, builtInStore);
+            SkeletonGenerator skeletonGenerator = new SkeletonGenerator(targetPackageName,
+                    overallEntryPoint,
+                    this.builtInStore,
+                    this.reflectionUtils);
             var threeSystem = skeletonGenerator.threeLayerSystem(clazz);
             if (threeSystem.isPresent()) {
                 ThreeSystem<?> ts = threeSystem.get();
@@ -122,20 +141,6 @@ public class TruthGenerator implements TruthGeneratorAPI {
         classes = classes.stream().filter(x -> !Subject.class.isAssignableFrom(x)).collect(toSet());
         logger.at(Level.FINE).log("Removed %s Subjects from inbound", classes.size() - sizeBeforeFilter);
         return classes;
-    }
-
-    @Override
-    public void generateFromPackagesOf(Class<?>... classes) {
-        Optional<Class<?>> first = stream(classes).findFirst();
-        if (first.isEmpty()) throw new IllegalArgumentException("Must provide at least one Class");
-        SourceClassSets ss = new SourceClassSets(first.get().getPackage().getName());
-        ss.generateAllFoundInPackagesOf(classes);
-        generate(ss);
-    }
-
-    @Override
-    public void combinedSystem(final SourceClassSets ss) {
-        throw new IllegalStateException(); // todo - remove?
     }
 
     @Override
@@ -165,7 +170,7 @@ public class TruthGenerator implements TruthGeneratorAPI {
         OverallEntryPoint packageForEntryPoint = new OverallEntryPoint(ss.getPackageForEntryPoint(), builtInStore);
 
         // from packages
-        Set<String> packages = ss.getSimplePackageNames();
+//        Set<String> packages = ss.getSimplePackageNames();
         // skeletons generation is independent and should be able to be done in parallel
 //        Set<ThreeSystem<?>> fromPackage = packages.parallelStream().flatMap(
 //                aPackage -> generateSkeletonsFromPackages(packageForEntryPoint, ss).stream()
@@ -229,17 +234,24 @@ public class TruthGenerator implements TruthGeneratorAPI {
         return results.build();
     }
 
+
+    /**
+     * Convenience method for testing that doesn't uses a default Context - see {@link Context#Context()}.
+     */
     @Override
     public Result generate(Set<Class<?>> classes) {
         Utils.requireNotEmpty(classes);
         String entrypointPackage = (this.entryPoint.isPresent())
                 ? entryPoint.get()
                 : createEntrypointPackage(classes);
-        SourceClassSets ss = new SourceClassSets(entrypointPackage);
+        SourceClassSets ss = new SourceClassSets(entrypointPackage, new ReflectionUtils());
         ss.generateFrom(classes);
         return generate(ss);
     }
 
+    /**
+     * Convenience method for testing that doesn't uses a default Context - see {@link Context#Context()}.
+     */
     @Override
     public Result generate(Class<?>... classes) {
         return generate(stream(classes).collect(toSet()));

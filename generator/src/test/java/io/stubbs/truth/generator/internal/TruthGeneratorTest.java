@@ -71,12 +71,15 @@ public class TruthGeneratorTest {
 
     @Test
     public void testLegacyMode() {
-        SourceClassSets ss = new SourceClassSets(this.getClass().getPackage().getName() + ".legacy");
         TruthGeneratorAPI tg = TruthGeneratorAPI.create(TEST_OUTPUT_DIRECTORY, Options.builder()
                 .useHasInsteadOfGet(true)
                 .useGetterForLegacyClasses(true)
-                .build(), ss);
+                .build());
+
+        SourceClassSets ss = new SourceClassSets(this.getClass().getPackage().getName() + ".legacy");
         ss.generateFromNonBean(NonBeanLegacy.class);
+
+        //
         var generated = tg.generate(ss).getAll();
 
         assertThat(generated).containsKey(NonBeanLegacy.class);
@@ -174,7 +177,7 @@ public class TruthGeneratorTest {
     @Test
     public void getGenerics() {
         Options.OptionsBuilder recursive = Options.builder().recursive(false);// speed
-        TruthGenerator tg = TruthGeneratorAPI.create(TEST_OUTPUT_DIRECTORY, recursive.build(), new SourceClassSets(""));
+        TruthGenerator tg = new TruthGenerator(TEST_OUTPUT_DIRECTORY, recursive.build());
 
         var generate = tg.generate(MyEmployee.class).getAll();
         ThreeSystem threeSystem = generate.get(MyEmployee.class);
@@ -208,7 +211,7 @@ public class TruthGeneratorTest {
                 .recursive(false)
                 .useHasInsteadOfGet(true)
                 .build(); // speed
-        TruthGenerator tg = TruthGeneratorAPI.create(TEST_OUTPUT_DIRECTORY, recursive, new SourceClassSets(""));
+        TruthGenerator tg = new TruthGenerator(TEST_OUTPUT_DIRECTORY, recursive);
         TruthGeneratorAPI tgApi = tg;
         tg.setEntryPoint(of(this.getClass().getPackage().getName() + ".extensions"));
 

@@ -2,6 +2,7 @@ package io.stubbs.truth.generator.internal;
 
 import com.google.common.truth.Subject;
 import io.stubbs.truth.generator.BaseSubjectExtension;
+import io.stubbs.truth.generator.Context;
 import io.stubbs.truth.generator.UserManagedMiddleSubject;
 import io.stubbs.truth.generator.UserManagedTruth;
 import io.stubbs.truth.generator.internal.model.MiddleClass;
@@ -12,7 +13,6 @@ import org.reflections.scanners.Scanners;
 import org.reflections.util.ConfigurationBuilder;
 import org.reflections.util.FilterBuilder;
 
-import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -24,9 +24,17 @@ public class ReflectionUtils {
 //    private List<ClassLoader> loaders = new ArrayList<>();
     private Reflections reflections;
 
-    public ReflectionUtils(List<ClassLoader> loaders, Set<String> modelPackages) {
+    public ReflectionUtils(Context context) {
 //        this.loaders = ss.getLoaders();
-        setupReflections(loaders, modelPackages);
+        setupReflections(context);
+    }
+
+    /**
+     * Reflection utils with no special class loaders, or specific model packages to restrict scanning to. Useful for
+     * running outside of MOJO (maven plugin) contexts, e.g. tests.
+     */
+    public ReflectionUtils() {
+        setupReflections(new Context());
     }
 
     /**
@@ -50,6 +58,9 @@ public class ReflectionUtils {
         return reflections.getTypesAnnotatedWith(BaseSubjectExtension.class);
     }
 
+    /**
+     * Finds all the classes within the configured {@link Context}.
+     */
     public Set<Class<?>> collectSourceClasses() {
         // https://github.com/ronmamo/reflections/issues/126
         Set<Class<? extends Enum>> subTypesOfEnums = reflections.getSubTypesOf(Enum.class);
@@ -58,16 +69,17 @@ public class ReflectionUtils {
                 // remove Subject classes from previous runs
                 .stream().filter(x -> !Subject.class.isAssignableFrom(x))
                 .collect(Collectors.toSet());
+
         allTypes.addAll(subTypesOfEnums);
 
         return allTypes;
     }
 
-    private void setupReflections(List<ClassLoader> loaders, Set<String> modelPackages) {
+    private void setupReflections(Context context) {
         // todo big smell - introduce config item to specify places to look for things
-        String modelPackage = modelPackages.stream().findFirst().get();
+        String modelPackage = context.getModelPackages().stream().findFirst().get();
         ConfigurationBuilder build = new ConfigurationBuilder()
-                .forPackages(modelPackages.toArray(new String[0]))
+                .forPackages(context.getModelPackages().toArray(new String[0]))
                 // TODO test different packages work?
                 .filterInputsBy(new FilterBuilder().includePackage(modelPackage))
                 // don't exclude Object sub types - don't filter out anything
@@ -76,10 +88,10 @@ public class ReflectionUtils {
 
         // todo smelly
         {
-            for (ClassLoader loader : loaders) {
+            for (ClassLoader loader : context.getLoaders()) {
                 build.addClassLoaders(loader);
             }
-            ClassLoader[] loadersArray = loaders.toArray(new ClassLoader[0]);
+            ClassLoader[] loadersArray = context.getLoaders().toArray(new ClassLoader[0]);
             // shouldn't need to specify loaders twice?
             build = build.forPackage(modelPackage, loadersArray);
         }

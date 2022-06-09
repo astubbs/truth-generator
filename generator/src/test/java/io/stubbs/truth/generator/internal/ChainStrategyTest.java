@@ -48,7 +48,7 @@ public class ChainStrategyTest extends StrategyTest {
     }
 
     private ChainStrategy createNewChainStrategy() {
-        return new ChainStrategy(new GeneratedSubjectTypeStore());
+        return new ChainStrategy(new GeneratedSubjectTypeStore(builtInSubjectTypeStore));
     }
 
     private Method getMethod(Class<?> employeeClass, String contains) {

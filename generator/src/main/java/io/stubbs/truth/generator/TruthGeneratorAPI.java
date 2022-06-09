@@ -17,16 +17,33 @@ import java.util.Set;
 // TODO clean up
 public interface TruthGeneratorAPI {
 
-    static TruthGenerator create(Path testOutputDirectory, SourceClassSets ss) {
-        return createDefaultOptions(testOutputDirectory, ss);
+    /**
+     * Default {@link Context}.
+     */
+    static TruthGenerator create(Path testOutputDirectory) {
+        return new TruthGenerator(testOutputDirectory);
     }
 
-    static TruthGenerator createDefaultOptions(Path testOutputDirectory, SourceClassSets ss) {
-        return new TruthGenerator(testOutputDirectory, Options.builder().build(), ss);
+    /**
+     * Default {@link Context}.
+     */
+    static TruthGenerator create(Path testOutputDirectory, Options options) {
+        return create(testOutputDirectory, options, new Context());
     }
 
-    static TruthGenerator create(Path testOutputDirectory, Options options, SourceClassSets ss) {
-        return new TruthGenerator(testOutputDirectory, options, ss);
+    /**
+     * Default {@link Context}.
+     */
+    static TruthGenerator createDefaultOptions(Path testOutputDirectory) {
+        return new TruthGenerator(testOutputDirectory, Options.builder().build(), new Context());
+    }
+
+    static TruthGenerator createDefaultOptions(Path testOutputDirectory, Context context) {
+        return new TruthGenerator(testOutputDirectory, Options.builder().build(), context);
+    }
+
+    static TruthGenerator create(Path testOutputDirectory, Options options, Context context) {
+        return new TruthGenerator(testOutputDirectory, options, context);
     }
 
     /**
@@ -51,16 +68,6 @@ public interface TruthGeneratorAPI {
      * @param modelPackages
      */
     void generate(String... modelPackages);
-
-    /**
-     * @param classes
-     */
-    void generateFromPackagesOf(Class<?>... classes);
-
-    /**
-     * @param ss
-     */
-    void combinedSystem(SourceClassSets ss);
 
     /**
      * Use this entry point to generate for a large and differing set of source classes - which will also generate a

@@ -2,6 +2,7 @@ package io.stubbs.truth.generator.internal;
 
 import com.google.common.truth.StandardSubjectBuilder;
 import com.google.common.truth.Subject;
+import com.google.common.truth.Truth;
 import io.stubbs.truth.generator.GeneratorException;
 import io.stubbs.truth.generator.internal.model.ThreeSystem;
 import lombok.Getter;
@@ -22,7 +23,8 @@ import java.util.stream.Collectors;
 import static io.stubbs.truth.generator.internal.AssertionEntryPointGenerator.ASSERT_WITH_MESSAGE;
 
 /**
- * Creates a single convenience `ManagedTruth` class, which contains all the `assertThat` entrypoint methods.
+ * Creator of the Convenience API (named `ManagedTruth`), which contains all the `assertThat` entrypoint methods for all
+ * the managed Subjects. Same as Truth's {@link Truth} class.
  *
  * @author Antony Stubbs
  */
@@ -43,11 +45,11 @@ public class OverallEntryPoint {
     @Getter
     private JavaClassSource managedSubjectBuilderGenerated;
 
-    public OverallEntryPoint(String packageForOverall, BuiltInSubjectTypeStore builtInSubjectTypeStore) {
-        if (StringUtils.isBlank(packageForOverall))
+    public OverallEntryPoint(String targetPackage, BuiltInSubjectTypeStore builtInSubjectTypeStore) {
+        if (StringUtils.isBlank(targetPackage))
             throw new GeneratorException("Package for managed entrypoint cannot be blank");
 
-        this.packageName = packageForOverall;
+        this.packageName = targetPackage;
         this.threeSystemChildSubjects = new TreeSet<>(Comparator.comparing(javaClassSource -> javaClassSource.getClassUnderTest().getCanonicalName()));
         this.builtInSubjectTypeStore = builtInSubjectTypeStore;
     }
@@ -187,7 +189,7 @@ public class OverallEntryPoint {
      * <p>
      * TODO https://github.com/astubbs/truth-generator/issues/74
      *
-     * @see com.google.common.truth.Truth#assertThat
+     * @see Truth#assertThat
      * @see com.google.common.truth.Truth8#assertThat
      */
     private void copyStaticEntryPointsFromGTruthEntryPoint() {

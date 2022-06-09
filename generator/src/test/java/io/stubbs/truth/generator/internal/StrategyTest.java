@@ -24,7 +24,8 @@ public abstract class StrategyTest {
     BuiltInSubjectTypeStore builtInSubjectTypeStore = new BuiltInSubjectTypeStore();
 
     protected <T> ThreeSystem<T> createThreeSystem(Class<T> clazzUnderTest) {
-        SkeletonGenerator skeletonGenerator = new SkeletonGenerator(Optional.empty(), new OverallEntryPoint(getClass().getPackageName()), builtInSubjectTypeStore);
+        final OverallEntryPoint overallEntryPoint = new OverallEntryPoint(getClass().getPackageName(), builtInSubjectTypeStore);
+        SkeletonGenerator skeletonGenerator = new SkeletonGenerator(Optional.empty(), overallEntryPoint, builtInSubjectTypeStore, new ReflectionUtils());
         Optional<ThreeSystem<T>> instantThreeSystem = skeletonGenerator.threeLayerSystem(clazzUnderTest);
         return instantThreeSystem.get();
     }

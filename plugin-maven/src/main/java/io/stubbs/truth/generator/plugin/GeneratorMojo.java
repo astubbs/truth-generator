@@ -1,7 +1,9 @@
 package io.stubbs.truth.generator.plugin;
 
+import io.stubbs.truth.generator.Context;
 import io.stubbs.truth.generator.SourceClassSets;
 import io.stubbs.truth.generator.internal.Options;
+import io.stubbs.truth.generator.internal.ReflectionUtils;
 import io.stubbs.truth.generator.internal.TruthGenerator;
 import io.stubbs.truth.generator.internal.Utils;
 import io.stubbs.truth.generator.internal.model.Result;
@@ -23,10 +25,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Stream;
 
 import static java.lang.String.format;
@@ -52,6 +51,7 @@ public class GeneratorMojo extends AbstractMojo {
      */
     @Parameter(property = "project", required = true, readonly = true)
     public MavenProject project;
+
     /**
      * Package where generated assertion classes will reside.
      * <p/>
@@ -63,21 +63,25 @@ public class GeneratorMojo extends AbstractMojo {
      */
     @Parameter(defaultValue = "", property = "truth.generateAssertionsInPackage")
     public String generateAssertionsInPackage;
+
     /**
      * Flag specifying whether to clean the directory where assertions are generated. The default is false.
      */
     @Parameter(defaultValue = "false", property = "truth.cleanTargetDir")
     public boolean cleanTargetDir;
+
     /**
      * Use 'has' in generated assertion chain methods instead of 'get'.
      */
     @Parameter(defaultValue = "false", property = "truth.useHas")
     public boolean useHas;
+
     /**
      * List of packages to generate assertions for.
      */
     @Parameter(property = "truth.packages")
     public String[] packages;
+
     /**
      * List of classes to generate assertions for.
      */
@@ -94,6 +98,7 @@ public class GeneratorMojo extends AbstractMojo {
      */
     @Parameter(property = "truth.classes", defaultValue = "true")
     public boolean useGetterForLegacyClasses;
+
     /**
      * An optional package name for the Assertions' entry point class. If omitted, the package will be determined
      * heuristically from the generated assertions.
@@ -193,24 +198,28 @@ public class GeneratorMojo extends AbstractMojo {
 
         Optional<String> entryPointClassPackage = ofNullable(this.entryPointClassPackage);
 
-        SourceClassSets ss = new SourceClassSets(getEntryPointClassPackage());
+        Context context = new Context(List.of(getProjectClassLoader()), getModelPackages());
 
-        ClassLoader projectClassLoader = getProjectClassLoader();
-        ss.addClassLoader(projectClassLoader);
+        ReflectionUtils reflectionUtils = new ReflectionUtils(context);
 
-        ss.generateFrom(projectClassLoader, getClasses());
+        SourceClassSets ss = new SourceClassSets(getEntryPointClassPackage(), reflectionUtils);
+
+        ss.generateFrom(getProjectClassLoader(), getClasses());
         String[] legacyClasses = getLegacyClasses();
-        ss.generateFromNonBean(projectClassLoader, legacyClasses);
+        ss.generateFromNonBean(getProjectClassLoader(), legacyClasses);
         ss.generateAllFoundInPackages(getPackages());
 
-//        TruthGenerator tg = TruthGeneratorAPI.create(getOutputPath(), options);
         Options options = buildOptions();
-        TruthGenerator tg = new TruthGenerator(getOutputPath(), options, ss);
+        TruthGenerator tg = new TruthGenerator(getOutputPath(), options);
         tg.setEntryPoint(entryPointClassPackage);
         Result generate = tg.generate(ss);
         Map<Class<?>, ThreeSystem<?>> generated = generate.getAll();
 
         return generated;
+    }
+
+    private Set<String> getModelPackages() {
+        return new HashSet<>(Arrays.asList(getPackages()));
     }
 
     private void addOutputPathsToBuild() {

@@ -8,7 +8,10 @@ import lombok.Getter;
 import lombok.Value;
 import lombok.extern.slf4j.Slf4j;
 
-import java.util.*;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import static java.util.Arrays.asList;
@@ -26,11 +29,13 @@ public class SourceClassSets {
 
     private final String packageForEntryPoint;
 
-    @Getter
-    private final List<ClassLoader> loaders = new ArrayList<>();
+//    @Getter
+//    private final Context context;
+
+    private final ReflectionUtils reflectionUtils;
 
     /**
-     * todo docs
+     * Source packages from which to scan for classes to generate Subjects for.
      */
     //todo rename
     private final Set<String> simplePackageNames = new HashSet<>();
@@ -70,22 +75,41 @@ public class SourceClassSets {
     /**
      * Use the package of the parameter as the base package;
      */
-    public SourceClassSets(Object packageFromObject) {
-        this(packageFromObject.getClass().getPackage().getName());
+    public SourceClassSets(Object packageFromObject, ReflectionUtils reflectionUtils) {
+        this(packageFromObject.getClass().getPackage().getName(), reflectionUtils);
     }
 
     /**
      * @param packageForEntryPoint the package to put the overall access points
      */
-    public SourceClassSets(String packageForEntryPoint) {
+    public SourceClassSets(String packageForEntryPoint, ReflectionUtils reflectionUtils) {
         this.packageForEntryPoint = packageForEntryPoint;
+        this.reflectionUtils = reflectionUtils;
+    }
+
+    /**
+     * Uses a default {@link Context}.
+     *
+     * @param packageForEntryPoint the package to put the overall access points
+     */
+    public SourceClassSets(String packageForEntryPoint) {
+        this(packageForEntryPoint, new ReflectionUtils());
     }
 
     /**
      * Use the package of this class base package;
      */
+    public SourceClassSets(Class<?> packageFromClass, ReflectionUtils reflectionUtils) {
+        this(packageFromClass.getPackage().getName(), reflectionUtils);
+    }
+
+    /**
+     * Use the package of this class base package;
+     * <p>
+     * Uses a default {@link Context}.
+     */
     public SourceClassSets(Class<?> packageFromClass) {
-        this(packageFromClass.getPackage().getName());
+        this(packageFromClass.getPackage().getName(), new ReflectionUtils());
     }
 
     public void generateAllFoundInPackagesOf(Class<?>... classes) {
@@ -188,7 +212,7 @@ public class SourceClassSets {
         union.addAll(getReferencedNotSpecifiedClasses());
 
 //        ClassUtils classUtils = new ClassUtils(null, null);
-        ReflectionUtils reflectionUtils = new ReflectionUtils(getLoaders(), getSimplePackageNames());
+
 //        classUtils.addClassLoaders(this.loaders);
 //        union.addAll(getSimplePackageNames().stream().flatMap(
 //                x -> reflectionUtils.collectSourceClasses(x).stream()).collect(toSet()));
@@ -233,9 +257,9 @@ public class SourceClassSets {
                 || getLegacyTargetPackageAndClasses().stream().anyMatch(x -> asList(x.classes).contains(theClass));
     }
 
-    public void addClassLoader(ClassLoader projectClassLoader) {
-        this.loaders.add(projectClassLoader);
-    }
+//    public void addClassLoader(ClassLoader projectClassLoader) {
+//        this.loaders.add(projectClassLoader);
+//    }
 
     public void generateFromNonBean(ClassLoader loader, String[] legacyClasses) {
         if (legacyClasses == null)

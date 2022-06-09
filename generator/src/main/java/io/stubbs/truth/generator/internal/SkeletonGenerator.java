@@ -36,7 +36,11 @@ public class SkeletonGenerator implements SkeletonGeneratorAPI {
     private final BuiltInSubjectTypeStore subjectTypeStore;
     private Optional<String> targetPackageName;
     private MiddleClass<?> middle;
+
+    // todo not used?
     private ParentClass parent;
+
+    // todo not used?
     @Setter
     private boolean legacyMode = false;
 
@@ -44,11 +48,14 @@ public class SkeletonGenerator implements SkeletonGeneratorAPI {
 
     private final AssertionEntryPointGenerator aepg = new AssertionEntryPointGenerator();
 
-    public SkeletonGenerator(Optional<String> targetPackageName, OverallEntryPoint overallEntryPoint, BuiltInSubjectTypeStore subjectTypeStore) {
+    public SkeletonGenerator(Optional<String> targetPackageName,
+                             OverallEntryPoint overallEntryPoint,
+                             BuiltInSubjectTypeStore subjectTypeStore,
+                             ReflectionUtils reflectionUtils) {
         this.targetPackageName = targetPackageName;
         this.overallEntryPoint = overallEntryPoint;
         this.subjectTypeStore = subjectTypeStore;
-        this.reflectionUtils = new ReflectionUtils(null, null);
+        this.reflectionUtils = reflectionUtils;
     }
 
     @Override

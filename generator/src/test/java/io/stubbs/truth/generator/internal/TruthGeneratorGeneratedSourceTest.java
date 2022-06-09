@@ -177,7 +177,8 @@ public class TruthGeneratorGeneratedSourceTest {
         String packageForEntryPoint = getClass().getPackage().getName();
         SourceClassSets ss = new SourceClassSets(packageForEntryPoint);
 
-        // todo need to be able to set base package for all generated classes, kind of like shade, so you cah generate test for classes in other restricted modules
+        // todo need to be able to set base package for all generated classes, kind of like shade, so you can generate
+        //  tests for classes in other restricted modules
         // todo replace with @TempDir
         TruthGenerator truthGenerator = TruthGeneratorAPI.create(TEST_OUTPUT_DIRECTORY,
                 Options.builder()

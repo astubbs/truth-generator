@@ -9,9 +9,10 @@ import java.nio.file.Path;
 import java.util.Set;
 
 /**
- * TODO docs
+ * Entry point API for Truth Generator
  *
  * @author Antony Stubbs
+ * @see TruthGenerator
  */
 // TODO clean up
 public interface TruthGeneratorAPI {

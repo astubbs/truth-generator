@@ -20,6 +20,8 @@ import static java.util.Arrays.stream;
 import static java.util.stream.Collectors.toSet;
 
 /**
+ * Main engine for Truth Generator
+ *
  * @author Antony Stubbs
  */
 @Slf4j

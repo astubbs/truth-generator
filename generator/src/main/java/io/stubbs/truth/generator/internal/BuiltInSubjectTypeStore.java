@@ -92,7 +92,7 @@ public class BuiltInSubjectTypeStore {
     }
 
     protected void autoRegisterStandardSubjectExtension() {
-        Set<Class<?>> nativeExtensions = reflectionUtils.findNativeExtensions();
+        Set<Class<?>> nativeExtensions = reflectionUtils.findBaseSubjectExtensions();
         for (Class<?> nativeExtension : nativeExtensions) {
 
             if (!Subject.class.isAssignableFrom(nativeExtension)) {

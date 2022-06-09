@@ -29,7 +29,14 @@ public class ReflectionUtils {
         setupReflections(loaders, modelPackages);
     }
 
-    public Set<Class<?>> findNativeExtensions() {
+    /**
+     * Finds extensions to base Truth {@link Subject}s
+     * <p>
+     * These extensions get used in place of the base Subjects in the reference chain.
+     *
+     * @see BaseSubjectExtension
+     */
+    public Set<Class<?>> findBaseSubjectExtensions() {
 //    public Set<Class<?>> findNativeExtensions(String... modelPackages) {
 //        // TODO share Reflections instance?
 //        ConfigurationBuilder build = new ConfigurationBuilder()

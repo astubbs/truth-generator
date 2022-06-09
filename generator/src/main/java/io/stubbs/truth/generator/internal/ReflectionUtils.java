@@ -84,13 +84,15 @@ public class ReflectionUtils {
     }
 
     public Set<Class<?>> findClassesInPackages(Set<String> packages) {
+        // todo remove
         final QueryFunction<Store, Map.Entry<String, Set<String>>> storeEntryQueryFunction = ctx -> {
             final Set<Map.Entry<String, Map<String, Set<String>>>> entries = ctx.entrySet();
 
             final Map<String, Set<String>> stringSetMap = ctx.get(Scanners.SubTypes.index());
             final Set<Map.Entry<String, Set<String>>> collect = stringSetMap.entrySet().stream().filter(stringSetEntry -> {
                 final String key = stringSetEntry.getKey();
-                return packages.contains(key);
+                final boolean contains = packages.contains(key);
+                return contains;
             }).collect(Collectors.toSet());
 
 //            return entries.stream().filter(stringMapEntry -> {
@@ -99,8 +101,11 @@ public class ReflectionUtils {
 //            }).collect(Collectors.toUnmodifiableSet());
             return collect;
         };
-        Set<Class<?>> allTypes = reflections.get(storeEntryQueryFunction.asClass(reflections.getConfiguration().getClassLoaders()));
+        // todo remove
+        // is missing MyEmployee subclass
+        Set<Class<?>> collect = reflections.get(storeEntryQueryFunction.asClass(reflections.getConfiguration().getClassLoaders()));
 
+//        final Set<T> ts = reflections.get(Scanners.SubTypes.filterResultsBy(s -> true).);
 
         // get's all the enum types
         // todo filter by package
@@ -108,9 +113,12 @@ public class ReflectionUtils {
         Set<Class<? extends Enum>> subTypesOfEnums = reflections.getSubTypesOf(Enum.class);
 
         Set<Class<?>> allTypesOld = reflections.getSubTypesOf(Object.class)
+                .stream()
                 // remove Subject classes from previous runs
-                .stream().filter(x -> !Subject.class.isAssignableFrom(x))
+                .filter(x -> !Subject.class.isAssignableFrom(x))
                 .collect(Collectors.toSet());
+        // todo possible to query this directly on reflections?
+        var allTypes = allTypesOld.stream().filter(x -> packages.contains(x.getPackageName())).collect(Collectors.toSet());
 
         allTypes.addAll(subTypesOfEnums);
 
@@ -127,7 +135,7 @@ public class ReflectionUtils {
                 .setParallel(true)
                 // don't exclude Object subtypes - don't filter out anything
                 .setScanners(Scanners.TypesAnnotated, Scanners.SubTypes.filterResultsBy(s -> true))
-                .setExpandSuperTypes(true);
+                .setExpandSuperTypes(false);
 
         {
             for (ClassLoader loader : context.getLoaders()) {

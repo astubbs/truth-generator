@@ -62,7 +62,7 @@ public class TruthGeneratorGeneratedSourceTest {
         classes.add(Project.class);
 
 
-        SourceClassSets ss = TestClassFactories.newSourceClassSets();
+        SourceClassSets ss = TestClassFactories.newSourceClassSets(this);
 
         //
         SkeletonGenerator.forceMiddleGenerate = true;
@@ -75,7 +75,7 @@ public class TruthGeneratorGeneratedSourceTest {
 
         // todo need to be able to set base package for all generated classes, kind of like shade, so you cah generate test for classes in other restricted modules
         // todo replace with @TempDir
-        FullContext fullContext = new FullContext(TEST_OUTPUT_DIRECTORY, ss.getPackageForEntryPoint());
+        FullContext fullContext = new FullContext(TEST_OUTPUT_DIRECTORY, TestClassFactories.newReflectionContext());
         TruthGenerator truthGenerator = TruthGeneratorAPI.create(
                 Options.builder().useHasInsteadOfGet(true).build(),
                 fullContext);

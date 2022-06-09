@@ -1,5 +1,6 @@
 package io.stubbs.truth.generator.testModel;
 import io.stubbs.truth.generator.testModel.MyEmployeeParentSubject;
+import io.stubbs.truth.generator.UserManagedMiddleSubject;
 import com.google.common.truth.FailureMetadata;
 import io.stubbs.truth.generator.UserManagedTruth;
 import io.stubbs.truth.generator.testModel.MyEmployee;
@@ -16,10 +17,11 @@ import javax.annotation.processing.Generated;
  *
  * @see MyEmployee
  * @see MyEmployeeParentSubject
+ * @see MyEmployeeChildSubject
  */
 @UserManagedTruth(MyEmployee.class)
 @Generated(value = "io.stubbs.truth.generator.internal.TruthGenerator", date = "1970-01-01T00:00:00Z")
-public class MyEmployeeSubject extends MyEmployeeParentSubject {
+public class MyEmployeeSubject extends MyEmployeeParentSubject implements UserManagedMiddleSubject {
 	protected MyEmployeeSubject(FailureMetadata failureMetadata,
 			io.stubbs.truth.generator.testModel.MyEmployee actual) {
 		super(failureMetadata, actual);

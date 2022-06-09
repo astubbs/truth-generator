@@ -1,6 +1,5 @@
 package io.stubbs.truth.generator.internal;
 
-import io.stubbs.truth.generator.ReflectionContext;
 import io.stubbs.truth.generator.TestClassFactories;
 import io.stubbs.truth.generator.TestModelUtils;
 import io.stubbs.truth.generator.internal.model.ThreeSystem;
@@ -9,7 +8,6 @@ import org.jboss.forge.roaster.Roaster;
 import org.jboss.forge.roaster.model.source.JavaClassSource;
 
 import java.util.Optional;
-import java.util.Set;
 
 import static io.stubbs.truth.generator.TestClassFactories.TEST_OUTPUT_DIRECTORY;
 
@@ -26,17 +24,21 @@ public abstract class StrategyTest {
     JavaClassSource generated = Roaster.create(JavaClassSource.class);
     MyEmployee myEmployee = TestModelUtils.createEmployee();
     Class<? extends MyEmployee> employeeClass = myEmployee.getClass();
-    BuiltInSubjectTypeStore builtInSubjectTypeStore;
-
-    {
-        ReflectionContext context = new ReflectionContext(Set.of(getDefaultPackage()));
-        builtInSubjectTypeStore = new BuiltInSubjectTypeStore(context);
-    }
+    BuiltInSubjectTypeStore builtInSubjectTypeStore = TestClassFactories.newBuiltInSubjectTypeStore();
+//
+//    {
+//        ReflectionContext context = new ReflectionContext(Set.of(getDefaultPackage()));
+//        builtInSubjectTypeStore = TestClassFactories.
+//    }
 
     protected <T> ThreeSystem<T> createThreeSystem(Class<T> clazzUnderTest) {
+//        BuiltInSubjectTypeStore subjectTypeStore =
         final OverallEntryPoint overallEntryPoint = new OverallEntryPoint(getDefaultPackage(), builtInSubjectTypeStore);
-        SkeletonGenerator skeletonGenerator = new SkeletonGenerator(Optional.empty(), overallEntryPoint, builtInSubjectTypeStore,
-                new ReflectionUtils(TestClassFactories.newReflectionContext()));
+        SkeletonGenerator skeletonGenerator = new SkeletonGenerator(Optional.empty(),
+                overallEntryPoint,
+                builtInSubjectTypeStore,
+                new ReflectionUtils(TestClassFactories.newReflectionContext())
+        );
         Optional<ThreeSystem<T>> instantThreeSystem = skeletonGenerator.threeLayerSystem(clazzUnderTest);
         return instantThreeSystem.get();
     }

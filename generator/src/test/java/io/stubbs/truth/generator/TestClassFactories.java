@@ -21,7 +21,11 @@ public class TestClassFactories {
     public static final String BASE_TEST_PACKAGE = "io.stubbs";
 
     public static GeneratedSubjectTypeStore newGeneratedSubjectTypeStore() {
-        return new GeneratedSubjectTypeStore(Set.of(), new BuiltInSubjectTypeStore(TestClassFactories.newReflectionContext()));
+        return new GeneratedSubjectTypeStore(Set.of(), newBuiltInSubjectTypeStore());
+    }
+
+    public static BuiltInSubjectTypeStore newBuiltInSubjectTypeStore() {
+        return new BuiltInSubjectTypeStore(TestClassFactories.newReflectionContext());
     }
 
     public static SourceClassSets newSourceClassSets() {

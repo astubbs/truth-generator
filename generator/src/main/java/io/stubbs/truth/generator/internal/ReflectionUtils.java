@@ -107,20 +107,34 @@ public class ReflectionUtils {
 //    }
 
     public <T> Optional<MiddleClass<T>> tryGetUserManagedMiddle(final Class<T> clazzUnderTest) {
-        var classStreamInt = reflections.getSubTypesOf(UserManagedMiddleSubject.class).stream()
-                .filter(x -> x.isAnnotationPresent(UserManagedTruth.class))
-                .filter(x -> x.getAnnotation(UserManagedTruth.class).value().equals(clazzUnderTest))
-                .collect(Collectors.toList());
+//        var classStreamInt = this.reflections.getSubTypesOf(UserManagedMiddleSubject.class).stream()
+//                .filter(x -> x.isAnnotationPresent(UserManagedTruth.class))
+//                .filter(x -> x.getAnnotation(UserManagedTruth.class).value().equals(clazzUnderTest))
+//                .collect(Collectors.toList());
 
-        var classStream = this.reflections.getTypesAnnotatedWith(UserManagedTruth.class)
+//        UserManagedTruth annotation = UserManagedTruth.class.getAnnotatedSupercla   ss()isAnnotation(UserManagedTruth.class);
+
+//        var classes2 = this.reflections.getTypesAnnotatedWith(annotation);
+
+        var annotated =
+                this.reflections.get(Scanners.TypesAnnotated.with(UserManagedTruth.class)
+                        .asClass(reflections.getConfiguration().getClassLoaders()));
+
+//        var classes3 =
+//                this.reflections.getTypesAnnotatedWith(UserManagedTruth.class);
+
+
+        var classStream = annotated
                 .stream()
                 .filter(x -> x.getAnnotation(UserManagedTruth.class).value().equals(clazzUnderTest))
                 .collect(Collectors.toList());
+
         if (classStream.size() > 1) {
             log.warn("Found more than one {} for {}. Taking first, ignoring the rest - found: {}",
                     UserManagedTruth.class, clazzUnderTest, classStream);
         }
 
+        //noinspection unchecked
         return classStream.stream().findFirst().map(aClass ->
                 new UserSuppliedMiddleClass<T>((Class<? extends UserManagedMiddleSubject<T>>) aClass, clazzUnderTest)
         );

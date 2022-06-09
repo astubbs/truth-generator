@@ -75,7 +75,7 @@ public class TruthGeneratorTest {
                 .build();
         TruthGenerator tg = TestClassFactories.newTruthGenerator(options);
 
-        SourceClassSets ss = TestClassFactories.newSourceClassSets(".legacy");
+        SourceClassSets ss = TestClassFactories.newSourceClassSets(TestClassFactories.BASE_TEST_PACKAGE + ".legacy");
         ss.generateFromNonBean(NonBeanLegacy.class);
 
         //

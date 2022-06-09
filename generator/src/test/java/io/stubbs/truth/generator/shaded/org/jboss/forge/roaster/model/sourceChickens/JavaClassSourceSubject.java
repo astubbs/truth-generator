@@ -1,6 +1,7 @@
 package io.stubbs.truth.generator.shaded.org.jboss.forge.roaster.model.sourceChickens;
 
 import com.google.common.truth.FailureMetadata;
+import io.stubbs.truth.generator.SubjectFactoryMethod;
 import io.stubbs.truth.generator.UserManagedTruth;
 import io.stubbs.truth.generator.subjects.MyStringSubject;
 import io.stubbs.truth.generator.testModel.MyEmployee;
@@ -26,6 +27,7 @@ public class JavaClassSourceSubject extends JavaClassSourceParentSubject {
     /**
      * Returns an assertion builder for a {@link JavaClassSource} class.
      */
+    @SubjectFactoryMethod
     public static Factory<JavaClassSourceSubject, JavaClassSource> javaClassSources() {
         return JavaClassSourceSubject::new;
     }

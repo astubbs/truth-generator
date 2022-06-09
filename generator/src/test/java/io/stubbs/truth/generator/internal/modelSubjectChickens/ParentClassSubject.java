@@ -1,6 +1,7 @@
 package io.stubbs.truth.generator.internal.modelSubjectChickens;
 
 import com.google.common.truth.FailureMetadata;
+import io.stubbs.truth.generator.SubjectFactoryMethod;
 import io.stubbs.truth.generator.UserManagedTruth;
 import io.stubbs.truth.generator.internal.model.ParentClass;
 import io.stubbs.truth.generator.testModel.MyEmployee;
@@ -23,6 +24,7 @@ public class ParentClassSubject extends ParentClassParentSubject {
     /**
      * Returns an assertion builder for a {@link ParentClass} class.
      */
+    @SubjectFactoryMethod
     public static Factory<ParentClassSubject, ParentClass> parentClasses() {
         return ParentClassSubject::new;
     }

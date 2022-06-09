@@ -1,6 +1,6 @@
 package io.stubbs.truth.generator.plugin;
 
-import io.stubbs.truth.generator.Context;
+import io.stubbs.truth.generator.ReflectionContext;
 import io.stubbs.truth.generator.SourceClassSets;
 import io.stubbs.truth.generator.internal.Options;
 import io.stubbs.truth.generator.internal.ReflectionUtils;
@@ -198,7 +198,7 @@ public class GeneratorMojo extends AbstractMojo {
 
         Optional<String> entryPointClassPackage = ofNullable(this.entryPointClassPackage);
 
-        Context context = new Context(List.of(getProjectClassLoader()), getModelPackages());
+        ReflectionContext context = new ReflectionContext(getOutputPath(), List.of(getProjectClassLoader()), getModelPackages());
 
         ReflectionUtils reflectionUtils = new ReflectionUtils(context);
 
@@ -210,7 +210,7 @@ public class GeneratorMojo extends AbstractMojo {
         ss.generateAllFoundInPackages(getPackages());
 
         Options options = buildOptions();
-        TruthGenerator tg = new TruthGenerator(getOutputPath(), options);
+        TruthGenerator tg = new TruthGenerator(options, context);
         tg.setEntryPoint(entryPointClassPackage);
         Result generate = tg.generate(ss);
         Map<Class<?>, ThreeSystem<?>> generated = generate.getAll();

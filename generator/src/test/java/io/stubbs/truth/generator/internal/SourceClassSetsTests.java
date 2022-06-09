@@ -1,5 +1,6 @@
 package io.stubbs.truth.generator.internal;
 
+import io.stubbs.truth.generator.ReflectionContext;
 import io.stubbs.truth.generator.SourceClassSets;
 import io.stubbs.truth.generator.TruthGeneratorAPI;
 import io.stubbs.truth.generator.internal.model.ThreeSystem;
@@ -35,7 +36,7 @@ public class SourceClassSetsTests {
     @Test
     public void duplicatesPackageAndSubPackage() {
         TruthGenerator tg = TruthGeneratorAPI.createDefaultOptions(TEST_OUTPUT_DIRECTORY);
-        SourceClassSets ss = new SourceClassSets(SourceClassSets.class);
+        SourceClassSets ss = new SourceClassSets(SourceClassSets.class, new ReflectionContext());
 
         // the issue
         ss.generateFrom(ThreeSystem.class);

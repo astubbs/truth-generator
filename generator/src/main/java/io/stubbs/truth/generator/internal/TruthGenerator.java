@@ -2,7 +2,8 @@ package io.stubbs.truth.generator.internal;
 
 import com.google.common.flogger.FluentLogger;
 import com.google.common.truth.Subject;
-import io.stubbs.truth.generator.Context;
+import io.stubbs.truth.generator.FullContext;
+import io.stubbs.truth.generator.ReflectionContext;
 import io.stubbs.truth.generator.SourceClassSets;
 import io.stubbs.truth.generator.TruthGeneratorAPI;
 import io.stubbs.truth.generator.internal.model.Result;
@@ -38,7 +39,7 @@ public class TruthGenerator implements TruthGeneratorAPI {
     @Getter
     private Optional<String> entryPoint = Optional.empty();
 
-    public TruthGenerator(Options options, Context context) {
+    public TruthGenerator(Options options, FullContext context) {
         Options.setInstance(options);
         this.options = options;
         this.testOutputDir = context.getTestOutputDirectory();
@@ -47,19 +48,19 @@ public class TruthGenerator implements TruthGeneratorAPI {
         this.builtInStore = new BuiltInSubjectTypeStore(this.reflectionUtils);
     }
 
-    /**
-     * Default options and no restricted context or special class loaders.
-     */
-    public TruthGenerator(Path testOutputDirectory, Set<String> baseModelPackagesFroScanning) {
-        this(Options.builder().build(), new Context(testOutputDirectory, baseModelPackagesFroScanning));
-    }
-
-    /**
-     * No restricted context or special class loaders.
-     */
-    public TruthGenerator(Path testOutputDirectory, Options options) {
-        this(testOutputDirectory, options, new Context());
-    }
+//    /**
+//     * Default options and no restricted context or special class loaders.
+//     */
+//    public TruthGenerator(Path testOutputDirectory, Set<String> baseModelPackagesFroScanning) {
+//        this(Options.builder().build(), new Context(testOutputDirectory, baseModelPackagesFroScanning));
+//    }
+//
+//    /**
+//     * No restricted context or special class loaders.
+//     */
+//    public TruthGenerator(Path testOutputDirectory, Options options) {
+//        this(testOutputDirectory, options, new Context());
+//    }
 
     /**
      * todo change this to do this by finding the highest common package of all outputs
@@ -236,7 +237,7 @@ public class TruthGenerator implements TruthGeneratorAPI {
 
 
     /**
-     * Convenience method for testing that doesn't uses a default Context - see {@link Context#Context()}.
+     * Convenience method for testing that doesn't uses a default Context - see {@link ReflectionContext#Context()}.
      */
     @Override
     public Result generate(Set<Class<?>> classes) {
@@ -244,13 +245,13 @@ public class TruthGenerator implements TruthGeneratorAPI {
         String entrypointPackage = (this.entryPoint.isPresent())
                 ? entryPoint.get()
                 : createEntrypointPackage(classes);
-        SourceClassSets ss = new SourceClassSets(entrypointPackage, new ReflectionUtils());
+        SourceClassSets ss = new SourceClassSets(entrypointPackage, reflectionUtils);
         ss.generateFrom(classes);
         return generate(ss);
     }
 
     /**
-     * Convenience method for testing that doesn't uses a default Context - see {@link Context#Context()}.
+     * Convenience method for testing that doesn't uses a default Context - see {@link ReflectionContext#Context()}.
      */
     @Override
     public Result generate(Class<?>... classes) {

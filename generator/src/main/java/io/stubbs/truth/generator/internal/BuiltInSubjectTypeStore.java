@@ -4,6 +4,7 @@ import com.google.common.truth.Subject;
 import com.google.common.truth.Truth;
 import com.google.common.truth.Truth8;
 import io.stubbs.truth.generator.BaseSubjectExtension;
+import io.stubbs.truth.generator.ReflectionContext;
 import io.stubbs.truth.generator.GeneratorException;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -91,8 +92,8 @@ public class BuiltInSubjectTypeStore {
         autoRegisterStandardSubjectExtension();
     }
 
-    public BuiltInSubjectTypeStore(Set<String> baseModelPackagesFroScanning) {
-        this.reflectionUtils = new ReflectionUtils(baseModelPackagesFroScanning);
+    public BuiltInSubjectTypeStore(ReflectionContext context) {
+        this.reflectionUtils = new ReflectionUtils(context);
         autoRegisterStandardSubjectExtension();
     }
 

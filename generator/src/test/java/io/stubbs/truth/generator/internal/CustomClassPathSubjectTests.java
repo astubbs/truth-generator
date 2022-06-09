@@ -2,6 +2,7 @@ package io.stubbs.truth.generator.internal;
 
 import com.google.common.truth.Subject;
 import com.google.common.truth.Truth8;
+import io.stubbs.truth.generator.ReflectionContext;
 import io.stubbs.truth.generator.TestModelUtils;
 import io.stubbs.truth.generator.subjects.MyCollectionSubject;
 import io.stubbs.truth.generator.subjects.MyMapSubject;
@@ -20,7 +21,7 @@ import static com.google.common.truth.Truth.assertThat;
 @Slf4j
 public class CustomClassPathSubjectTests {
 
-    GeneratedSubjectTypeStore subjects = new GeneratedSubjectTypeStore(Set.of(), new BuiltInSubjectTypeStore());
+    GeneratedSubjectTypeStore subjects = new GeneratedSubjectTypeStore(Set.of(), new BuiltInSubjectTypeStore(new ReflectionContext()));
 
     /**
      * Checks that {@link Subject} subtypes are found and added to the Subject graph for inclusion into the assertion

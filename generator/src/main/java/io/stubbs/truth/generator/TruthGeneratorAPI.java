@@ -37,11 +37,11 @@ public interface TruthGeneratorAPI {
 //        return new TruthGenerator(testOutputDirectory, Options.builder().build(), new Context(baseModelPackagesFroScanning));
 //    }
 
-    static TruthGenerator createDefaultOptions(Context context) {
+    static TruthGenerator createDefaultOptions(FullContext context) {
         return new TruthGenerator(Options.builder().build(), context);
     }
 
-    static TruthGenerator create(Options options, Context context) {
+    static TruthGenerator create(Options options, FullContext context) {
         return new TruthGenerator(options, context);
     }
 

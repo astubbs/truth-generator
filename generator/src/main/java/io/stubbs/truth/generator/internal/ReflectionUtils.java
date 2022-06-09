@@ -2,7 +2,7 @@ package io.stubbs.truth.generator.internal;
 
 import com.google.common.truth.Subject;
 import io.stubbs.truth.generator.BaseSubjectExtension;
-import io.stubbs.truth.generator.Context;
+import io.stubbs.truth.generator.ReflectionContext;
 import io.stubbs.truth.generator.UserManagedMiddleSubject;
 import io.stubbs.truth.generator.UserManagedTruth;
 import io.stubbs.truth.generator.internal.model.MiddleClass;
@@ -24,18 +24,18 @@ public class ReflectionUtils {
 //    private List<ClassLoader> loaders = new ArrayList<>();
     private Reflections reflections;
 
-    public ReflectionUtils(Context context) {
+    public ReflectionUtils(ReflectionContext context) {
 //        this.loaders = ss.getLoaders();
         setupReflections(context);
     }
 
-    /**
-     * Reflection utils with no special class loaders, or specific model packages to restrict scanning to. Useful for
-     * running outside of MOJO (maven plugin) contexts, e.g. tests.
-     */
-    public ReflectionUtils(Set<String> baseModelPackagesFroScanning) {
-        setupReflections(new Context(baseModelPackagesFroScanning));
-    }
+//    /**
+//     * Reflection utils with no special class loaders, or specific model packages to restrict scanning to. Useful for
+//     * running outside of MOJO (maven plugin) contexts, e.g. tests.
+//     */
+//    public ReflectionUtils(Context ) {
+//        setupReflections(new Context(baseModelPackagesFroScanning));
+//    }
 
     /**
      * Finds extensions to base Truth {@link Subject}s
@@ -59,7 +59,7 @@ public class ReflectionUtils {
     }
 
     /**
-     * Finds all the classes within the configured {@link Context}.
+     * Finds all the classes within the configured {@link ReflectionContext}.
      */
     public Set<Class<?>> collectSourceClasses() {
         // https://github.com/ronmamo/reflections/issues/126
@@ -75,7 +75,7 @@ public class ReflectionUtils {
         return allTypes;
     }
 
-    private void setupReflections(Context context) {
+    private void setupReflections(ReflectionContext context) {
         // todo big smell - introduce config item to specify places to look for things
         String modelPackage = context.getBaseModelPackagesFroScanning().stream().findFirst().get();
         ConfigurationBuilder build = new ConfigurationBuilder()

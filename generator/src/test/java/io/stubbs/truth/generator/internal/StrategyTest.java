@@ -1,5 +1,6 @@
 package io.stubbs.truth.generator.internal;
 
+import io.stubbs.truth.generator.ReflectionContext;
 import io.stubbs.truth.generator.TestModelUtils;
 import io.stubbs.truth.generator.internal.model.ThreeSystem;
 import io.stubbs.truth.generator.testModel.MyEmployee;
@@ -22,7 +23,12 @@ public abstract class StrategyTest {
     JavaClassSource generated = Roaster.create(JavaClassSource.class);
     MyEmployee myEmployee = TestModelUtils.createEmployee();
     Class<? extends MyEmployee> employeeClass = myEmployee.getClass();
-    BuiltInSubjectTypeStore builtInSubjectTypeStore = new BuiltInSubjectTypeStore(Set.of(getDefaultPackage()));
+    BuiltInSubjectTypeStore builtInSubjectTypeStore;
+
+    {
+        ReflectionContext context = new ReflectionContext(TruthGeneratorGeneratedSourceTest.TEST_OUTPUT_DIRECTORY, Set.of(getDefaultPackage()));
+        builtInSubjectTypeStore = new BuiltInSubjectTypeStore(context);
+    }
 
     protected <T> ThreeSystem<T> createThreeSystem(Class<T> clazzUnderTest) {
         final OverallEntryPoint overallEntryPoint = new OverallEntryPoint(getDefaultPackage(), builtInSubjectTypeStore);

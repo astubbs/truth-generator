@@ -2,7 +2,7 @@ package io.stubbs.truth.generator.internal;
 
 import com.google.common.io.Resources;
 import com.google.common.truth.Truth;
-import io.stubbs.truth.generator.Context;
+import io.stubbs.truth.generator.ReflectionContext;
 import io.stubbs.truth.generator.SourceClassSets;
 import io.stubbs.truth.generator.TruthGeneratorAPI;
 import io.stubbs.truth.generator.internal.model.Result;
@@ -79,7 +79,7 @@ public class TruthGeneratorGeneratedSourceTest {
         // todo replace with @TempDir
         TruthGenerator truthGenerator = TruthGeneratorAPI.create(
                 Options.builder().useHasInsteadOfGet(true).build(),
-                new Context(TEST_OUTPUT_DIRECTORY, ss.getPackageForEntryPoint()));
+                new ReflectionContext(TEST_OUTPUT_DIRECTORY, ss.getPackageForEntryPoint()));
 
         //
         truthGenerator.registerStandardSubjectExtension(String.class, MyStringSubject.class);

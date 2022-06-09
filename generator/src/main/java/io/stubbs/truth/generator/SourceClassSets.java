@@ -73,13 +73,6 @@ public class SourceClassSets {
     private final Set<Class<?>> referencedNotSpecifiedClasses = new HashSet<>();
 
     /**
-     * Use the package of the parameter as the base package;
-     */
-    public SourceClassSets(Object packageFromObject, ReflectionUtils reflectionUtils) {
-        this(packageFromObject.getClass().getPackage().getName(), reflectionUtils);
-    }
-
-    /**
      * @param packageForEntryPoint the package to put the overall access points
      */
     public SourceClassSets(String packageForEntryPoint, ReflectionUtils reflectionUtils) {
@@ -88,12 +81,17 @@ public class SourceClassSets {
     }
 
     /**
-     * Uses a default {@link Context}.
-     *
-     * @param packageForEntryPoint the package to put the overall access points
+     * Use the package of the parameter as the base package;
      */
-    public SourceClassSets(String packageForEntryPoint) {
-        this(packageForEntryPoint, new ReflectionUtils());
+    public SourceClassSets(String packageForEntryPoint, ReflectionContext context) {
+        this(packageForEntryPoint, new ReflectionUtils(context));
+    }
+
+    /**
+     * Use the package of the parameter as the base package;
+     */
+    public SourceClassSets(Object packageFromObject, ReflectionUtils reflectionUtils) {
+        this(packageFromObject.getClass().getPackage().getName(), reflectionUtils);
     }
 
     /**
@@ -106,10 +104,10 @@ public class SourceClassSets {
     /**
      * Use the package of this class base package;
      * <p>
-     * Uses a default {@link Context}.
+     * Uses a default {@link ReflectionContext}.
      */
-    public SourceClassSets(Class<?> packageFromClass) {
-        this(packageFromClass.getPackage().getName(), new ReflectionUtils());
+    public SourceClassSets(Class<?> packageFromClass, ReflectionContext context) {
+        this(packageFromClass.getPackage().getName(), new ReflectionUtils(context));
     }
 
     public void generateAllFoundInPackagesOf(Class<?>... classes) {

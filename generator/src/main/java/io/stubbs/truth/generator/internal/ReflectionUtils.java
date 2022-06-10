@@ -174,6 +174,7 @@ public class ReflectionUtils {
                 this.reflections.get(Scanners.TypesAnnotated.with(UserManagedTruth.class)
                         .asClass(reflections.getConfiguration().getClassLoaders()));
 
+        // todo cache this on startup
         var annotated =
                 this.reflections.getTypesAnnotatedWith(UserManagedTruth.class);
 

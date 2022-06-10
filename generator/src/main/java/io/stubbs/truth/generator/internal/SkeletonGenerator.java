@@ -103,6 +103,8 @@ public class SkeletonGenerator implements SkeletonGeneratorAPI {
         final Optional<Class<? extends Subject>> compiledMiddleIfExists = findCompiledMiddleIfExists(parent.getGenerated(), middleClassName, clazzUnderTest);
 
         var userMiddle = reflectionUtils.tryGetUserManagedMiddle(clazzUnderTest);
+        final ReflectionUtils sourceCodeScanner = new SourceCodeScanner();
+        sourceCodeScanner.tryGetUserManagedMiddle(clazzUnderTest);
 
 //        MiddleClass middle = createMiddleUserTemplateClass(parent.getGenerated(), clazzUnderTest);
 

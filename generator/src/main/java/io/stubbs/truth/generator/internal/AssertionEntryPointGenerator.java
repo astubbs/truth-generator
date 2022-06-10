@@ -151,7 +151,7 @@ public class AssertionEntryPointGenerator {
 
             //
             var subject = threeSystem.getSimpleName();
-            var classUnderTest = threeSystem.getClassUnderTest().getSimpleName();
+            var classUnderTest = threeSystem.getClassUnderTestSimpleName();
             with.setReturnType("SimpleSubjectBuilder<" + subject + ", " + classUnderTest + ">");
             generating.addImport(SimpleSubjectBuilder.class);
         } else {

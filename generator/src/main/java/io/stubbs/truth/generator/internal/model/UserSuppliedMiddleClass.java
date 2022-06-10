@@ -25,10 +25,14 @@ public class UserSuppliedMiddleClass<T> extends MiddleClass<T> {
     @Getter
     Class<? extends UserManagedMiddleSubject<T>> usersMiddleClass;
 
+    @Getter
+    Class<T> classUnderTest;
+
     public UserSuppliedMiddleClass(final Class<? extends UserManagedMiddleSubject<T>> usersMiddleClass, final Class<T> underTest) {
-        super(underTest);
+        super();
         this.usersMiddleClass = usersMiddleClass;
         this.factoryMethod = Utils.findFactoryMethod(usersMiddleClass);
+        this.classUnderTest = underTest;
     }
 
     public String getSimpleName() {
@@ -50,5 +54,10 @@ public class UserSuppliedMiddleClass<T> extends MiddleClass<T> {
     @Override
     public String getPackage() {
         return usersMiddleClass.getPackageName();
+    }
+
+    @Override
+    public String getClassUnderTestSimpleName() {
+        return classUnderTest.getSimpleName();
     }
 }

@@ -16,8 +16,12 @@ import org.jboss.forge.roaster.model.source.MethodSource;
 @ToString
 public class UserSourceCodeManagedMiddleClass<T> extends RoasterMiddleClass<T> {
 
-    public UserSourceCodeManagedMiddleClass(JavaClassSource finalParse, MethodSource factory, Class<T> classUnderTest) {
-        super(finalParse, factory, classUnderTest);
+    public UserSourceCodeManagedMiddleClass(JavaClassSource finalParse, MethodSource factory) {
+        super(finalParse, factory);
     }
 
+    @Override
+    public String getClassUnderTestSimpleName() {
+        return null;
+    }
 }

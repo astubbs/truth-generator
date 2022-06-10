@@ -13,14 +13,14 @@ import org.jboss.forge.roaster.model.source.MethodSource;
 @EqualsAndHashCode(callSuper = true)
 @FieldDefaults(makeFinal = true, level = AccessLevel.PRIVATE)
 @ToString
-public class RoasterMiddleClass<T> extends MiddleClass<T> {
+public abstract class RoasterMiddleClass<T> extends MiddleClass<T> {
 
     protected JavaClassSource generated;
 
     MethodSource<JavaClassSource> factoryMethod;
 
-    public RoasterMiddleClass(JavaClassSource generated, MethodSource factory, Class<T> classUnderTest) {
-        super(classUnderTest);
+    public RoasterMiddleClass(JavaClassSource generated, MethodSource factory) {
+        super();
         this.generated = generated;
         this.factoryMethod = factory;
     }

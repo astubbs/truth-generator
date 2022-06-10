@@ -22,7 +22,7 @@ public class SourceCodeScannerTest {
         Truth8.assertThat(middle).isPresent();
         var found = middle.get();
         String canonicalName = found.getCanonicalName();
-        String underTestFound = found.getClassUnderTest().getCanonicalName();
+        String underTestFound = found.getClassUnderTestSimpleName();
         Truth.assertThat(underTestFound).isEqualTo(ThreeSystem.class.getCanonicalName());
     }
 }

@@ -1,6 +1,9 @@
 package io.stubbs.truth.generator.internal.model;
 
-import lombok.*;
+import lombok.AccessLevel;
+import lombok.EqualsAndHashCode;
+import lombok.RequiredArgsConstructor;
+import lombok.ToString;
 import lombok.experimental.FieldDefaults;
 import org.jboss.forge.roaster.model.source.JavaClassSource;
 
@@ -13,9 +16,6 @@ import org.jboss.forge.roaster.model.source.JavaClassSource;
 @RequiredArgsConstructor
 public abstract class MiddleClass<T> {
 
-    @Getter
-    Class<T> classUnderTest;
-
     public abstract String getSimpleName();
 
     public abstract void makeChildExtend(JavaClassSource child);
@@ -25,4 +25,6 @@ public abstract class MiddleClass<T> {
     public abstract String getFactoryMethodName();
 
     public abstract String getPackage();
+
+    public abstract String getClassUnderTestSimpleName();
 }

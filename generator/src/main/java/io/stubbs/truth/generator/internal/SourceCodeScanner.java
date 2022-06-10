@@ -123,31 +123,32 @@ public class SourceCodeScanner {
             return match;
         }).flatMap(annotation -> {
             String value = annotation.getStringValue("value");
-            Class<T> aClass1 = null;
+//            Class<T> aClass1 = null;
 
-            Optional<? extends Class<?>> first1 = reflectionContext.getLoaders().stream().map(classLoader -> {
-                try {
-                    return classLoader.loadClass(value);
-                } catch (ClassNotFoundException e) {
-                    e.printStackTrace();
-                    throw new TruthGeneratorRuntimeException("", e);
-                }
-            }).findFirst();
-            if (first1.isPresent()) {
-                aClass1 = (Class<T>) first1.get();
-            } else {
-
-                try {
-                    aClass1 = (Class<T>) Class.forName(value);
-                } catch (ClassNotFoundException e) {
-                    e.printStackTrace();
-                    throw new TruthGeneratorRuntimeException("", e);
-                }
-            }
-            if (aClass1.getName().equals(clazzUnderTest.getName())) {
+//            Optional<? extends Class<?>> first1 = reflectionContext.getLoaders().stream().flatMap(classLoader -> {
+//                try {
+//                    return Stream.of(classLoader.loadClass(value));
+//                } catch (ClassNotFoundException e) {
+////                    e.printStackTrace();
+////                    throw new TruthGeneratorRuntimeException("", e);
+//                    return Stream.empty();
+//                }
+//            }).findFirst();
+//            if (first1.isPresent()) {
+////                aClass1 = (Class<T>) first1.get();
+//            } else {
+//
+//                try {
+//                    aClass1 = (Class<T>) Class.forName(value);
+//                } catch (ClassNotFoundException e) {
+//                    e.printStackTrace();
+//                    throw new TruthGeneratorRuntimeException("", e);
+//                }
+//            }
+            if (value.equals(clazzUnderTest.getName())) {
                 if (first.isPresent()) {
                     MethodSource<JavaClassSource> factory = first.get();
-                    var one = new UserSourceCodeManagedMiddleClass<T>(finalParse, factory, aClass1);
+                    var one = new UserSourceCodeManagedMiddleClass<T>(finalParse, factory);
                     return Stream.of(one);
                 } else {
                     throw new TruthGeneratorRuntimeException("Missing factory");

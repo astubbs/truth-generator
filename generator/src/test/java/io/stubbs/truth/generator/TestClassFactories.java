@@ -16,7 +16,10 @@ import java.util.Set;
 @UtilityClass
 public class TestClassFactories {
 
-    public static final Path TEST_OUTPUT_DIRECTORY = Paths.get("").resolve("target").toAbsolutePath();
+    //todo needs to be pulled from maven - multiple
+    public static final Set<Path> TEST_SRC_ROOT = Set.of(Paths.get("").resolve("src").resolve("test").resolve("java").toAbsolutePath());
+
+    public static final Path TEST_OUTPUT_DIRECTORY = Paths.get("").resolve("target").resolve("generated-test-sources").toAbsolutePath();
 
     // todo move?
     public static final String BASE_TEST_PACKAGE = "io.stubbs.truth.generator";

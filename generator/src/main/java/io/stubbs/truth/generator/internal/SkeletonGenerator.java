@@ -12,7 +12,9 @@ import org.jboss.forge.roaster.model.source.JavaClassSource;
 import org.jboss.forge.roaster.model.source.JavaDocSource;
 import org.jboss.forge.roaster.model.source.MethodSource;
 
+import java.nio.file.Paths;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Stream;
 
 import static java.util.Optional.empty;
@@ -102,25 +104,37 @@ public class SkeletonGenerator implements SkeletonGeneratorAPI {
         var middleClassName = getSubjectName(clazzUnderTest.getSimpleName());
         final Optional<Class<? extends Subject>> compiledMiddleIfExists = findCompiledMiddleIfExists(parent.getGenerated(), middleClassName, clazzUnderTest);
 
-        var userMiddle = reflectionUtils.tryGetUserManagedMiddle(clazzUnderTest);
-        final ReflectionUtils sourceCodeScanner = new SourceCodeScanner();
-        sourceCodeScanner.tryGetUserManagedMiddle(clazzUnderTest);
 
-//        MiddleClass middle = createMiddleUserTemplateClass(parent.getGenerated(), clazzUnderTest);
-
-        if (userMiddle.isPresent()) {
-            this.middle = userMiddle.get();
-        } else {
-            this.middle = createMiddleUserTemplateClass(parent.getGenerated(), clazzUnderTest);
-        }
-//        UserSuppliedMiddleClass<T> newMiddle = userMiddle
-//                .orElseGet(() -> );
-//
+        resolveMiddle(clazzUnderTest, parent);
 
         String factoryName = Utils.createFactoryName(clazzUnderTest);
         JavaClassSource child = createChild(parent, middle.getSimpleName(), clazzUnderTest, factoryName);
 
         return of(new ThreeSystem<>(clazzUnderTest, parent, middle, child));
+    }
+
+    private <T> void resolveMiddle(Class<T> clazzUnderTest, ParentClass parent) {
+        var userMiddle = reflectionUtils.tryGetUserManagedMiddle(clazzUnderTest);
+
+
+        var sourceCodeScanner = new SourceCodeScanner(Set.of(new SourceCodeScanner.CPPackage("io.stubbs")), Set.of(Paths.get("").resolve("src").resolve("test").resolve("java").toAbsolutePath()));
+
+        var disced = sourceCodeScanner.tryGetUserManagedMiddle(clazzUnderTest);
+        if (disced.isPresent()) {
+            this.middle = userMiddle.get();
+        } else {
+
+//        MiddleClass middle = createMiddleUserTemplateClass(parent.getGenerated(), clazzUnderTest);
+
+            if (userMiddle.isPresent()) {
+                this.middle = userMiddle.get();
+            } else {
+                this.middle = createMiddleUserTemplateClass(parent.getGenerated(), clazzUnderTest);
+            }
+        }
+//        UserSuppliedMiddleClass<T> newMiddle = userMiddle
+//                .orElseGet(() -> );
+//
     }
 
     //    todo @Deprecated ?

@@ -114,7 +114,8 @@
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
-            <scope>provided</scope>
+            <version>1.18.24</version>
+            <scope>compile</scope>
         </dependency>
 
         <!-- Test-->

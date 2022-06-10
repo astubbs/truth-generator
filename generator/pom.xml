@@ -85,6 +85,8 @@
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
+            <version>1.18.24</version>
+            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>uk.co.jemos.podam</groupId>
@@ -143,12 +145,19 @@
             <groupId>com.google.flogger</groupId>
             <artifactId>flogger-slf4j-backend</artifactId>
         </dependency>
-<!--        not needed?-->
+        <!--        not needed?-->
         <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-core</artifactId>
             <version>4.5.1</version>
             <scope>test</scope>
+        </dependency>
+
+
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok-maven-plugin</artifactId>
+            <version>1.16.6.1</version>
         </dependency>
     </dependencies>
 
@@ -163,6 +172,14 @@
                         </goals>
                     </execution>
                 </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>16</source>
+                    <target>16</target>
+                </configuration>
             </plugin>
         </plugins>
     </build>

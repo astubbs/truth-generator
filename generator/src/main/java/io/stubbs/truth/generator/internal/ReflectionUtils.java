@@ -5,8 +5,8 @@ import io.stubbs.truth.generator.BaseSubjectExtension;
 import io.stubbs.truth.generator.ReflectionContext;
 import io.stubbs.truth.generator.UserManagedMiddleSubject;
 import io.stubbs.truth.generator.UserManagedTruth;
-import io.stubbs.truth.generator.internal.model.MiddleClass;
 import io.stubbs.truth.generator.internal.model.UserSuppliedMiddleClass;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.reflections.Reflections;
 import org.reflections.Store;
@@ -15,14 +15,17 @@ import org.reflections.util.ConfigurationBuilder;
 import org.reflections.util.FilterBuilder;
 import org.reflections.util.QueryFunction;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Slf4j
 public class ReflectionUtils {
 
+    @Getter
     private final ReflectionContext context;
 
     // todo not used?
@@ -157,7 +160,7 @@ public class ReflectionUtils {
 //        this.loaders.addAll(loaders);
 //    }
 
-    public <T> Optional<MiddleClass<T>> tryGetUserManagedMiddle(final Class<T> clazzUnderTest) {
+    public <T> Optional<UserSuppliedMiddleClass<T>> tryGetUserManagedMiddle(final Class<T> clazzUnderTest) {
 //        var classStreamInt = this.reflections.getSubTypesOf(UserManagedMiddleSubject.class).stream()
 //                .filter(x -> x.isAnnotationPresent(UserManagedTruth.class))
 //                .filter(x -> x.getAnnotation(UserManagedTruth.class).value().equals(clazzUnderTest))
@@ -167,17 +170,27 @@ public class ReflectionUtils {
 
 //        var classes2 = this.reflections.getTypesAnnotatedWith(annotation);
 
-        var annotated =
+        var annotatedOld =
                 this.reflections.get(Scanners.TypesAnnotated.with(UserManagedTruth.class)
                         .asClass(reflections.getConfiguration().getClassLoaders()));
 
-//        var classes3 =
-//                this.reflections.getTypesAnnotatedWith(UserManagedTruth.class);
+        var annotated =
+                this.reflections.getTypesAnnotatedWith(UserManagedTruth.class);
 
 
         var classStream = annotated
                 .stream()
-                .filter(x -> x.getAnnotation(UserManagedTruth.class).value().equals(clazzUnderTest))
+                .filter(x -> {
+                    final UserManagedTruth annotation = x.getAnnotation(UserManagedTruth.class);
+                    final Class<?> value = annotation.value();
+                    final ClassLoader classLoader = value.getClassLoader();
+                    final String canonicalName = value.getCanonicalName();
+
+                    final String canonicalName1 = clazzUnderTest.getCanonicalName();
+                    final ClassLoader classLoader1 = clazzUnderTest.getClassLoader();
+
+                    return canonicalName.equals(canonicalName1);
+                })
                 .collect(Collectors.toList());
 
         if (classStream.size() > 1) {
@@ -186,9 +199,44 @@ public class ReflectionUtils {
         }
 
         //noinspection unchecked
-        return classStream.stream().findFirst().map(aClass ->
-                new UserSuppliedMiddleClass<T>((Class<? extends UserManagedMiddleSubject<T>>) aClass, clazzUnderTest)
+        final Optional<Class<?>> first = classStream.stream().findFirst();
+
+//        context.getLoaders().stream().forEach(x -> x.loadClass());
+
+//        final Optional<UserSuppliedMiddleClass<T>> tUserSuppliedMiddleClass = first.map(aClass ->
+//                {
+//                    final String canonicalName = aClass.getCanonicalName();
+//                    Class<?> aClass1 = null;
+//                    try {
+//                        aClass1 = Class.forName(canonicalName);
+//                    } catch (ClassNotFoundException e) {
+//                        e.printStackTrace();
+//                    }
+//                    return new UserSuppliedMiddleClass<T>((Class<? extends UserManagedMiddleSubject<T>>) aClass1, clazzUnderTest);
+//                }
+//        );
+
+        final Optional<UserSuppliedMiddleClass<T>> tMiddleClass = first.map(aClass ->
+                {
+//                    final Class<?> aClass1 = aClass;
+                    final List<ClassLoader> loaders = context.getLoaders();
+                    final Class<?> aClass1 = loaders.stream().flatMap(classLoader -> {
+                        try {
+                            final ClassLoader classLoader1 = aClass.getClassLoader();
+                            final String canonicalName = aClass.getCanonicalName();
+                            final Class<?> t = classLoader.loadClass(canonicalName);
+                            return Stream.of(t);
+                        } catch (ClassNotFoundException e) {
+                            e.printStackTrace();
+                            return Stream.of();
+                        }
+                    }).findFirst().get();
+
+                    return new UserSuppliedMiddleClass<T>((Class<? extends UserManagedMiddleSubject<T>>) aClass1, clazzUnderTest);
+                }
         );
+
+        return tMiddleClass;
     }
 
 }

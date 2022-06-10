@@ -13,6 +13,7 @@ import org.jboss.forge.roaster.model.source.JavaDocSource;
 import org.jboss.forge.roaster.model.source.MethodSource;
 
 import java.util.Optional;
+import java.util.stream.Stream;
 
 import static java.util.Optional.empty;
 import static java.util.Optional.of;
@@ -98,11 +99,21 @@ public class SkeletonGenerator implements SkeletonGeneratorAPI {
         ParentClass parent = createParent(clazzUnderTest);
         this.parent = parent;
 
+        var middleClassName = getSubjectName(clazzUnderTest.getSimpleName());
+        final Optional<Class<? extends Subject>> compiledMiddleIfExists = findCompiledMiddleIfExists(parent.getGenerated(), middleClassName, clazzUnderTest);
+
         var userMiddle = reflectionUtils.tryGetUserManagedMiddle(clazzUnderTest);
+
 //        MiddleClass middle = createMiddleUserTemplateClass(parent.getGenerated(), clazzUnderTest);
-        MiddleClass<T> newMiddle = userMiddle
-                .orElseGet(() -> createMiddleUserTemplateClass(parent.getGenerated(), clazzUnderTest));
-        this.middle = newMiddle;
+
+        if (userMiddle.isPresent()) {
+            this.middle = userMiddle.get();
+        } else {
+            this.middle = createMiddleUserTemplateClass(parent.getGenerated(), clazzUnderTest);
+        }
+//        UserSuppliedMiddleClass<T> newMiddle = userMiddle
+//                .orElseGet(() -> );
+//
 
         String factoryName = Utils.createFactoryName(clazzUnderTest);
         JavaClassSource child = createChild(parent, middle.getSimpleName(), clazzUnderTest, factoryName);
@@ -148,6 +159,7 @@ public class SkeletonGenerator implements SkeletonGeneratorAPI {
         return classSource;
     }
 
+    @Deprecated
     private <T> Optional<Class<? extends Subject>> findCompiledMiddleIfExists(JavaClassSource parent, String middleClassName, Class<T> classUnderTest) {
         if (forceMiddleGenerate)
             return empty();
@@ -155,6 +167,14 @@ public class SkeletonGenerator implements SkeletonGeneratorAPI {
         try {
             // todo load from annotated classes instead using Reflections? see UserSuppliedMiddleClass
             String fullName = parent.getPackage() + "." + middleClassName;
+            final Optional<? extends Class<?>> any = reflectionUtils.getContext().getLoaders().stream().flatMap(classLoader -> {
+                try {
+                    return Stream.of(classLoader.loadClass(fullName));
+                } catch (ClassNotFoundException e) {
+                    e.printStackTrace();
+                    return Stream.of();
+                }
+            }).findAny();
             Class<?> rawClass = Class.forName(fullName);
             if (Subject.class.isAssignableFrom(rawClass)) {
                 //noinspection unchecked - checked in if condition
@@ -284,6 +304,7 @@ public class SkeletonGenerator implements SkeletonGeneratorAPI {
     private <T> MiddleClass<T> createMiddleUserTemplateClass(JavaClassSource parent, Class<T> classUnderTest) {
         String middleClassName = getSubjectName(classUnderTest.getSimpleName());
 
+        // todo remove this stage is redundant from annotation search
         Optional<Class<? extends Subject>> compiledMiddleClass = findCompiledMiddleIfExists(parent, middleClassName, classUnderTest);
         if (compiledMiddleClass.isPresent()) {
             logger.atInfo().log("Skipping middle class Template creation as class already exists: %s", middleClassName);

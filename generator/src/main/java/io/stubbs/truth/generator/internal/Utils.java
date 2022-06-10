@@ -116,8 +116,12 @@ public class Utils {
         return MessageFormatter.arrayFormat(s, args).getMessage();
     }
 
+    // todo move to class utils
     public static Method findFactoryMethod(Class<?> subjectClass) {
+
+
         List<Method> factoryMethods = MethodUtils.getMethodsListWithAnnotation(subjectClass, SubjectFactoryMethod.class);
+
         if (factoryMethods.size() > 1) {
             throw new TruthGeneratorRuntimeException(msg("Subject class {} has too many ({}) methods annotated with {} - there can be only one.",
                     subjectClass, factoryMethods.size(), SubjectFactoryMethod.class));

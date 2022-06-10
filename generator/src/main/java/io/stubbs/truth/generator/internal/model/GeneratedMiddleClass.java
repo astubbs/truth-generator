@@ -27,7 +27,7 @@ public class GeneratedMiddleClass<T> extends RoasterMiddleClass<T> implements AG
 
     @Override
     public JavaClassSource getGenerated() {
-        return super.generated;
+        return super.sourceCodeModel;
     }
 
     @Override

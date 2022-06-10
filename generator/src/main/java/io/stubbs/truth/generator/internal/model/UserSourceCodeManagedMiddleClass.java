@@ -5,6 +5,7 @@ import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 import lombok.experimental.FieldDefaults;
+import org.jboss.forge.roaster.model.source.AnnotationSource;
 import org.jboss.forge.roaster.model.source.JavaClassSource;
 import org.jboss.forge.roaster.model.source.MethodSource;
 
@@ -16,12 +17,14 @@ import org.jboss.forge.roaster.model.source.MethodSource;
 @ToString
 public class UserSourceCodeManagedMiddleClass<T> extends RoasterMiddleClass<T> {
 
-    public UserSourceCodeManagedMiddleClass(JavaClassSource finalParse, MethodSource factory) {
-        super(finalParse, factory);
+    public UserSourceCodeManagedMiddleClass(JavaClassSource sourceCodeModel, MethodSource factory) {
+        super(sourceCodeModel, factory);
     }
 
     @Override
     public String getClassUnderTestSimpleName() {
-        return null;
+        AnnotationSource<JavaClassSource> userManaged = super.sourceCodeModel.getAnnotation(UserManagedTruth.class);
+        String underTest = userManaged.getStringValue();
+        return underTest;
     }
 }

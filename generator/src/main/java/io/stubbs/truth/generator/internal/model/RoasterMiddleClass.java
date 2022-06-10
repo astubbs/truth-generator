@@ -15,29 +15,29 @@ import org.jboss.forge.roaster.model.source.MethodSource;
 @ToString
 public abstract class RoasterMiddleClass<T> extends MiddleClass<T> {
 
-    protected JavaClassSource generated;
+    protected JavaClassSource sourceCodeModel;
 
     MethodSource<JavaClassSource> factoryMethod;
 
-    public RoasterMiddleClass(JavaClassSource generated, MethodSource factory) {
+    public RoasterMiddleClass(JavaClassSource sourceCodeModel, MethodSource factory) {
         super();
-        this.generated = generated;
+        this.sourceCodeModel = sourceCodeModel;
         this.factoryMethod = factory;
     }
 
     @Override
     public String getSimpleName() {
-        return generated.getName();
+        return sourceCodeModel.getName();
     }
 
     @Override
     public void makeChildExtend(JavaClassSource child) {
-        child.extendSuperType(generated);
+        child.extendSuperType(sourceCodeModel);
     }
 
     @Override
     public String getCanonicalName() {
-        return generated.getCanonicalName();
+        return sourceCodeModel.getCanonicalName();
     }
 
     @Override
@@ -47,7 +47,7 @@ public abstract class RoasterMiddleClass<T> extends MiddleClass<T> {
 
     @Override
     public String getPackage() {
-        return generated.getPackage();
+        return sourceCodeModel.getPackage();
     }
 
 }

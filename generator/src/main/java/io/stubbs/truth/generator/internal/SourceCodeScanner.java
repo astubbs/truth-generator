@@ -169,7 +169,7 @@ public class SourceCodeScanner {
     }
 
     @Value
-    static
+    public static
     class CPPackage {
         String packageName;
     }

@@ -179,7 +179,7 @@ public class ReflectionUtils {
                 this.reflections.getTypesAnnotatedWith(UserManagedTruth.class);
 
 
-        var classStream = annotated
+        var matchingClasses = annotated
                 .stream()
                 .filter(x -> {
                     final UserManagedTruth annotation = x.getAnnotation(UserManagedTruth.class);
@@ -196,13 +196,11 @@ public class ReflectionUtils {
                 })
                 .collect(Collectors.toList());
 
-        if (classStream.size() > 1) {
+        if (matchingClasses.size() > 1) {
             log.warn("Found more than one {} for {}. Taking first, ignoring the rest - found: {}",
-                    UserManagedTruth.class, clazzUnderTest, classStream);
+                    UserManagedTruth.class, clazzUnderTest, matchingClasses);
         }
 
-        //noinspection unchecked
-        final Optional<Class<?>> first = classStream.stream().findFirst();
 
 //        context.getLoaders().stream().forEach(x -> x.loadClass());
 
@@ -219,27 +217,32 @@ public class ReflectionUtils {
 //                }
 //        );
 
-        final Optional<UserSuppliedMiddleClass<T>> tMiddleClass = first.map(aClass ->
-                {
-//                    final Class<?> aClass1 = aClass;
-                    final List<ClassLoader> loaders = context.getLoaders();
-                    final Class<?> aClass1 = loaders.stream().flatMap(classLoader -> {
-                        try {
-                            final ClassLoader classLoader1 = aClass.getClassLoader();
-                            final String canonicalName = aClass.getCanonicalName();
-                            final Class<?> t = classLoader.loadClass(canonicalName);
-                            return Stream.of(t);
-                        } catch (ClassNotFoundException e) {
-                            e.printStackTrace();
-                            return Stream.of();
-                        }
-                    }).findFirst().get();
-
-                    return new UserSuppliedMiddleClass<T>((Class<? extends UserManagedMiddleSubject<T>>) aClass1, clazzUnderTest);
+        final List<ClassLoader> loaders = context.getLoaders();
+        Stream<UserSuppliedMiddleClass<T>> o = matchingClasses.stream().flatMap(aClass -> {
+            Stream<? extends Class<?>> classStream1 = loaders.stream().flatMap(classLoader -> {
+                try {
+//                            ClassLoader classLoader1 = aClass.getClassLoader();
+                    String canonicalName = aClass.getCanonicalName();
+                    Class<?> t = classLoader.loadClass(canonicalName);
+                    return Stream.of(t);
+                } catch (ClassNotFoundException e) {
+//                            e.printStackTrace();
+                    return Stream.of();
                 }
-        );
+            });
 
-        return tMiddleClass;
+            Stream<UserSuppliedMiddleClass<T>> userSuppliedMiddleClassStream = classStream1
+                    //.findFirst().get();
+                    .map(aClass2 -> {
+                        UserSuppliedMiddleClass<T> tUserSuppliedMiddleClass = new UserSuppliedMiddleClass<>((Class<? extends UserManagedMiddleSubject<T>>) aClass2, clazzUnderTest);
+                        return tUserSuppliedMiddleClass;
+                    });
+
+            return userSuppliedMiddleClassStream;
+//                    return Stream.empty();
+        });
+        return o.findFirst();
+
     }
 
 }

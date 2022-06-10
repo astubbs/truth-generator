@@ -176,7 +176,7 @@ public class ChainStrategyTest extends StrategyTest {
      * A test input class which declares a field of generic type, but is missing its generics parameters
      */
     @Data
-    static class BadGenerics {
+    public static class BadGenerics {
         @SuppressWarnings("rawtypes")
         Optional genericsMissing;
     }

@@ -342,7 +342,8 @@ public class SkeletonGenerator implements SkeletonGeneratorAPI {
         middle.implementInterface(UserManagedMiddleSubject.class);
 
         JavaDocSource<JavaClassSource> jd = middle.getJavaDoc();
-        jd.setText("Optionally move this class into source control, and add your custom assertions here.\n\n" +
+        jd.setText("Main Subject for the class under test. If you want, this is where would add your custom assertion methods.\n\n" +
+                "<p>Optionally move this class into source control, and add your custom assertions here.\n\n" +
                 "<p>If the system detects this class already exists, it won't attempt to generate a new one. Note that " +
                 "if the base skeleton of this class ever changes, you won't automatically get it updated.");
         jd.addTagValue("@see", classUnderTest.getSimpleName());

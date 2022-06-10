@@ -7,6 +7,10 @@ import io.stubbs.truth.generator.testModel.MyEmployee;
 import io.stubbs.truth.generator.SubjectFactoryMethod;
 import javax.annotation.processing.Generated;
 /**
+ * Main Subject for the class under test. If you want, this is where would add
+ * your custom assertion methods.
+ *
+ * <p>
  * Optionally move this class into source control, and add your custom
  * assertions here.
  *

@@ -1,6 +1,6 @@
 package io.stubbs.truth.generator.internal.model;
 
-
+import io.stubbs.truth.generator.UserManagedTruth;
 import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
@@ -9,20 +9,15 @@ import org.jboss.forge.roaster.model.source.JavaClassSource;
 import org.jboss.forge.roaster.model.source.MethodSource;
 
 /**
- * @author Antony Stubbs
+ * @see UserManagedTruth
  */
 @EqualsAndHashCode(callSuper = true)
 @FieldDefaults(makeFinal = true, level = AccessLevel.PRIVATE)
 @ToString
-public class GeneratedMiddleClass<T> extends RoasterMiddleClass<T> implements AGeneratedClass {
+public class UserSourceCodeManagedMiddleClass<T> extends RoasterMiddleClass<T> {
 
-    public GeneratedMiddleClass(JavaClassSource generated, MethodSource factory, Class<T> classUnderTest) {
-        super(generated, factory, classUnderTest);
-    }
-
-    @Override
-    public JavaClassSource getGenerated() {
-        return super.generated;
+    public UserSourceCodeManagedMiddleClass(JavaClassSource finalParse, MethodSource factory, Class<T> classUnderTest) {
+        super(finalParse, factory, classUnderTest);
     }
 
 }

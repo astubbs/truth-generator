@@ -9,6 +9,9 @@ import java.util.Set;
 
 import static io.stubbs.truth.generator.TestClassFactories.TEST_SRC_ROOT;
 
+/**
+ * @see SourceCodeScanner
+ */
 public class SourceCodeScannerTest {
 
     @Test

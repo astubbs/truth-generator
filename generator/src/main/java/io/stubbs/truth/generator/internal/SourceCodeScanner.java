@@ -1,12 +1,17 @@
 package io.stubbs.truth.generator.internal;
 
+import io.stubbs.truth.generator.SubjectFactoryMethod;
 import io.stubbs.truth.generator.UserManagedTruth;
+import io.stubbs.truth.generator.internal.model.UserSourceCodeManagedMiddleClass;
 import lombok.SneakyThrows;
 import lombok.Value;
 import lombok.extern.slf4j.Slf4j;
 import org.jboss.forge.roaster.Roaster;
 import org.jboss.forge.roaster.model.Annotation;
 import org.jboss.forge.roaster.model.JavaType;
+import org.jboss.forge.roaster.model.impl.JavaClassImpl;
+import org.jboss.forge.roaster.model.source.JavaClassSource;
+import org.jboss.forge.roaster.model.source.MethodSource;
 
 import java.io.File;
 import java.io.IOException;
@@ -64,15 +69,19 @@ public class SourceCodeScanner {
     }
 
     private <T> Stream<UserSourceCodeManagedMiddleClass<T>> parseFile(Class<T> clazzUnderTest, Path resolve) {
-        JavaType<?> parse = null;
+        JavaType<?> raw = null;
         File file = resolve.toFile();
         try {
-            parse = Roaster.parse(file);
+            raw = Roaster.parse(file);
         } catch (IOException e) {
             log.debug("Error parsing file {}", file, e);
         }
-        boolean aClass = parse.isClass();
+        boolean aClass = raw.isClass();
 
+        if (!aClass) {
+            return Stream.empty();
+        }
+        JavaClassSource parse = (JavaClassImpl) raw;
 
         // todo can with delombok find lombok methods?
 //        lombok.Lombok.
@@ -85,6 +94,8 @@ public class SourceCodeScanner {
         String canonicalName = parse.getCanonicalName();
         List<? extends Annotation<?>> annotations = parse.getAnnotations();
 
+        Optional<MethodSource<JavaClassSource>> first = parse.getMethods().stream().filter(method -> method.hasAnnotation(SubjectFactoryMethod.class)).findFirst();
+
         JavaType<?> origin = parse.getOrigin();
 
         org.jboss.forge.roaster._shade.org.eclipse.jdt.core.dom.CompilationUnit internal = (org.jboss.forge.roaster._shade.org.eclipse.jdt.core.dom.CompilationUnit) parse.getInternal();
@@ -92,7 +103,7 @@ public class SourceCodeScanner {
         boolean threeSystemSubject = resolve.toFile().getName().contains("ThreeSystemSubject");
 
 
-        JavaType<?> finalParse = parse;
+        JavaClassSource finalParse = parse;
         /**
          * @see UserSourceCodeManagedMiddleClass#getFactoryMethodName()
          */
@@ -115,10 +126,16 @@ public class SourceCodeScanner {
                 e.printStackTrace();
             }
             if (aClass1.getName().equals(clazzUnderTest.getName())) {
-                UserSourceCodeManagedMiddleClass<T> userSourceCodeManagedMiddleClass = new UserSourceCodeManagedMiddleClass(finalParse, aClass1);
-                return Stream.of(userSourceCodeManagedMiddleClass);
+                if (first.isPresent()) {
+                    MethodSource<JavaClassSource> factory = first.get();
+                    var one = new UserSourceCodeManagedMiddleClass<T>(finalParse, factory, aClass1);
+                    return Stream.of(one);
+                } else {
+                    throw new TruthGeneratorRuntimeException("Missing factory");
+                }
+
             } else {
-                return Stream.of();
+                return Stream.empty();
             }
 //                    return new UserSuppliedMiddleClass(null, aClass1);
         });

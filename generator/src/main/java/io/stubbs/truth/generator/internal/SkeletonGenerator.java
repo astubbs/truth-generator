@@ -5,6 +5,7 @@ import com.google.common.truth.FailureMetadata;
 import com.google.common.truth.Subject;
 import io.stubbs.truth.generator.UserManagedMiddleSubject;
 import io.stubbs.truth.generator.UserManagedTruth;
+import io.stubbs.truth.generator.internal.SourceCodeScanner.CPPackage;
 import io.stubbs.truth.generator.internal.model.*;
 import lombok.Setter;
 import org.jboss.forge.roaster.Roaster;
@@ -101,10 +102,6 @@ public class SkeletonGenerator implements SkeletonGeneratorAPI {
         ParentClass parent = createParent(clazzUnderTest);
         this.parent = parent;
 
-        var middleClassName = getSubjectName(clazzUnderTest.getSimpleName());
-        final Optional<Class<? extends Subject>> compiledMiddleIfExists = findCompiledMiddleIfExists(parent.getGenerated(), middleClassName, clazzUnderTest);
-
-
         resolveMiddle(clazzUnderTest, parent);
 
         String factoryName = Utils.createFactoryName(clazzUnderTest);
@@ -114,14 +111,18 @@ public class SkeletonGenerator implements SkeletonGeneratorAPI {
     }
 
     private <T> void resolveMiddle(Class<T> clazzUnderTest, ParentClass parent) {
+        boolean longPollingMockConsumer = clazzUnderTest.getName().contains("UUID");
+        boolean consumer = clazzUnderTest.getName().contains("Consumer");
+
         var userMiddle = reflectionUtils.tryGetUserManagedMiddle(clazzUnderTest);
 
 
-        var sourceCodeScanner = new SourceCodeScanner(Set.of(new SourceCodeScanner.CPPackage("io.stubbs")), Set.of(Paths.get("").resolve("src").resolve("test").resolve("java").toAbsolutePath()));
+        var sourceCodeScanner = new SourceCodeScanner(reflectionUtils.getContext(), Set.of(new CPPackage("io.stubbs"), new CPPackage("io.confluent.parallelconsumer.truth")),
+                Set.of(Paths.get("").resolve("src").resolve("test").resolve("java").toAbsolutePath()));
 
         var disced = sourceCodeScanner.tryGetUserManagedMiddle(clazzUnderTest);
         if (disced.isPresent()) {
-            this.middle = userMiddle.get();
+            this.middle = disced.get();
         } else {
 
 //        MiddleClass middle = createMiddleUserTemplateClass(parent.getGenerated(), clazzUnderTest);
@@ -129,9 +130,15 @@ public class SkeletonGenerator implements SkeletonGeneratorAPI {
             if (userMiddle.isPresent()) {
                 this.middle = userMiddle.get();
             } else {
-                this.middle = createMiddleUserTemplateClass(parent.getGenerated(), clazzUnderTest);
+                MiddleClass<T> middleUserTemplateClass = generateMiddleUserTemplateClass(parent.getGenerated(), clazzUnderTest);
+                this.middle = middleUserTemplateClass;
             }
         }
+
+//        var middleClassName = getSubjectName(clazzUnderTest.getSimpleName());
+        // todo remove? returns null?
+//        final Optional<Class<? extends Subject>> compiledMiddleIfExists = findCompiledMiddleIfExists(parent.getGenerated(), middleClassName, clazzUnderTest);
+
 //        UserSuppliedMiddleClass<T> newMiddle = userMiddle
 //                .orElseGet(() -> );
 //
@@ -317,15 +324,15 @@ public class SkeletonGenerator implements SkeletonGeneratorAPI {
         return null;
     }
 
-    private <T> MiddleClass<T> createMiddleUserTemplateClass(JavaClassSource parent, Class<T> classUnderTest) {
+    private <T> MiddleClass<T> generateMiddleUserTemplateClass(JavaClassSource parent, Class<T> classUnderTest) {
         String middleClassName = getSubjectName(classUnderTest.getSimpleName());
 
-        // todo remove this stage is redundant from annotation search
-        Optional<Class<? extends Subject>> compiledMiddleClass = findCompiledMiddleIfExists(parent, middleClassName, classUnderTest);
-        if (compiledMiddleClass.isPresent()) {
-            logger.atInfo().log("Skipping middle class Template creation as class already exists: %s", middleClassName);
-            return new UserSuppliedMiddleClass(compiledMiddleClass.get(), classUnderTest);
-        }
+//        // todo remove this stage is redundant from annotation search
+//        Optional<Class<? extends Subject>> compiledMiddleClass = findCompiledMiddleIfExists(parent, middleClassName, classUnderTest);
+//        if (compiledMiddleClass.isPresent()) {
+//            logger.atInfo().log("Skipping middle class Template creation as class already exists: %s", middleClassName);
+//            return new UserSuppliedMiddleClass(compiledMiddleClass.get(), classUnderTest);
+//        }
 
         JavaClassSource middle = Roaster.create(JavaClassSource.class);
         middle.setName(middleClassName);

@@ -2,6 +2,7 @@ package io.stubbs.truth.generator.internal;
 
 import com.google.common.truth.Truth;
 import com.google.common.truth.Truth8;
+import io.stubbs.truth.generator.TestClassFactories;
 import io.stubbs.truth.generator.internal.model.ThreeSystem;
 import org.junit.Test;
 
@@ -16,7 +17,7 @@ public class SourceCodeScannerTest {
 
     @Test
     public void tryGetUserManagedMiddle() {
-        var scanner = new SourceCodeScanner(Set.of(new SourceCodeScanner.CPPackage("io.stubbs")), TEST_SRC_ROOT);
+        var scanner = new SourceCodeScanner(TestClassFactories.newReflectionContext(), Set.of(new SourceCodeScanner.CPPackage("io.stubbs")), TEST_SRC_ROOT);
         var middle = scanner.tryGetUserManagedMiddle(ThreeSystem.class);
         Truth8.assertThat(middle).isPresent();
         var found = middle.get();

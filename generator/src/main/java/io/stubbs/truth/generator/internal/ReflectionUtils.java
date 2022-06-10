@@ -183,6 +183,8 @@ public class ReflectionUtils {
                 .stream()
                 .filter(x -> {
                     final UserManagedTruth annotation = x.getAnnotation(UserManagedTruth.class);
+                    if (annotation == null)
+                        return false;
                     final Class<?> value = annotation.value();
                     final ClassLoader classLoader = value.getClassLoader();
                     final String canonicalName = value.getCanonicalName();

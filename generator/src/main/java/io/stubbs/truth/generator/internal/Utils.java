@@ -2,6 +2,7 @@ package io.stubbs.truth.generator.internal;
 
 import io.stubbs.truth.generator.SubjectFactoryMethod;
 import io.stubbs.truth.generator.UserManagedTruth;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.reflect.MethodUtils;
 import org.atteo.evo.inflector.English;
 import org.jboss.forge.roaster.model.source.JavaClassSource;
@@ -21,6 +22,7 @@ import static java.lang.String.format;
 /**
  * @author Antony Stubbs
  */
+@Slf4j
 public class Utils {
 
     public static final String DIR_TRUTH_ASSERTIONS_MANAGED = "truth-assertions-managed";
@@ -36,6 +38,7 @@ public class Utils {
     public static String writeToDisk(JavaClassSource javaClass, Optional<String> targetPackageName) {
         String classSource = javaClass.toString();
         Path fileName = getFileName(javaClass, targetPackageName);
+        log.info("Writing {} to {} in {}", javaClass.getCanonicalName(), targetPackageName, fileName);
         try (PrintWriter out = new PrintWriter(fileName.toFile())) {
             out.println(classSource);
         } catch (FileNotFoundException e) {

@@ -1,5 +1,6 @@
 package io.stubbs.truth.generator.internal;
 
+import io.stubbs.truth.generator.ReflectionContext;
 import io.stubbs.truth.generator.SubjectFactoryMethod;
 import io.stubbs.truth.generator.UserManagedTruth;
 import io.stubbs.truth.generator.internal.model.UserSourceCodeManagedMiddleClass;
@@ -34,9 +35,12 @@ import java.util.stream.StreamSupport;
 @Value
 public class SourceCodeScanner {
 
+    ReflectionContext reflectionContext;
+
     Set<CPPackage> sourcePackagesToScan;
 
     Set<Path> sourceFilePathRoutes;
+
 
     public <T> Optional<UserSourceCodeManagedMiddleClass<T>> tryGetUserManagedMiddle(Class<T> clazzUnderTest) {
         // for each source path
@@ -120,10 +124,25 @@ public class SourceCodeScanner {
         }).flatMap(annotation -> {
             String value = annotation.getStringValue("value");
             Class<T> aClass1 = null;
-            try {
-                aClass1 = (Class<T>) Class.forName(value);
-            } catch (ClassNotFoundException e) {
-                e.printStackTrace();
+
+            Optional<? extends Class<?>> first1 = reflectionContext.getLoaders().stream().map(classLoader -> {
+                try {
+                    return classLoader.loadClass(value);
+                } catch (ClassNotFoundException e) {
+                    e.printStackTrace();
+                    throw new TruthGeneratorRuntimeException("", e);
+                }
+            }).findFirst();
+            if (first1.isPresent()) {
+                aClass1 = (Class<T>) first1.get();
+            } else {
+
+                try {
+                    aClass1 = (Class<T>) Class.forName(value);
+                } catch (ClassNotFoundException e) {
+                    e.printStackTrace();
+                    throw new TruthGeneratorRuntimeException("", e);
+                }
             }
             if (aClass1.getName().equals(clazzUnderTest.getName())) {
                 if (first.isPresent()) {

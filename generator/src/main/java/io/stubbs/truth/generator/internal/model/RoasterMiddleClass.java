@@ -8,12 +8,14 @@ import org.jboss.forge.roaster.model.source.JavaClassSource;
 import org.jboss.forge.roaster.model.source.MethodSource;
 
 /**
+ * A {@link MiddleClass} implementation that is mapped to a {@link org.jboss.forge.roaster.Roaster} source code class.
+ *
  * @author Antony Stubbs
  */
-@EqualsAndHashCode(callSuper = true)
-@FieldDefaults(makeFinal = true, level = AccessLevel.PRIVATE)
 @ToString
-public abstract class RoasterMiddleClass<T> extends MiddleClass<T> {
+@EqualsAndHashCode
+@FieldDefaults(makeFinal = true, level = AccessLevel.PRIVATE)
+public abstract class RoasterMiddleClass<T> implements MiddleClass<T> {
 
     protected JavaClassSource sourceCodeModel;
 

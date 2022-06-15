@@ -1,9 +1,6 @@
 package io.stubbs.truth.generator;
 
-import io.stubbs.truth.generator.internal.BuiltInSubjectTypeStore;
-import io.stubbs.truth.generator.internal.GeneratedSubjectTypeStore;
-import io.stubbs.truth.generator.internal.Options;
-import io.stubbs.truth.generator.internal.TruthGenerator;
+import io.stubbs.truth.generator.internal.*;
 import lombok.experimental.UtilityClass;
 
 import java.nio.file.Path;
@@ -64,4 +61,8 @@ public class TestClassFactories {
         return TruthGeneratorAPI.create(options, newFullContext());
     }
 
+    public static SourceCodeScanner newScanner() {
+        var packages = Set.of(new SourceCodeScanner.CPPackage("io.stubbs"));
+        return new SourceCodeScanner(TestClassFactories.newReflectionContext(), packages, TEST_SRC_ROOT);
+    }
 }

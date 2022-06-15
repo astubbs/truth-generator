@@ -15,10 +15,10 @@ import java.lang.reflect.Method;
 /**
  * @see UserManagedTruth
  */
-@EqualsAndHashCode(callSuper = true)
-@FieldDefaults(makeFinal = true, level = AccessLevel.PRIVATE)
 @ToString
-public class UserSuppliedMiddleClass<T> extends MiddleClass<T> {
+@EqualsAndHashCode
+@FieldDefaults(makeFinal = true, level = AccessLevel.PRIVATE)
+public class UserSuppliedMiddleClass<T> implements MiddleClass<T> {
 
     Method factoryMethod;
 
@@ -61,3 +61,6 @@ public class UserSuppliedMiddleClass<T> extends MiddleClass<T> {
         return classUnderTest.getSimpleName();
     }
 }
+
+
+

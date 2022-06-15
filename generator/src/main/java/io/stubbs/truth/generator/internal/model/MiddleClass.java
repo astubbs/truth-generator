@@ -1,20 +1,14 @@
 package io.stubbs.truth.generator.internal.model;
 
-import lombok.AccessLevel;
-import lombok.EqualsAndHashCode;
-import lombok.RequiredArgsConstructor;
-import lombok.ToString;
-import lombok.experimental.FieldDefaults;
+import com.google.common.truth.Subject;
 import org.jboss.forge.roaster.model.source.JavaClassSource;
 
 /**
+ * A {@link Subject} implementation.
+ * <p>
  * TODO rename to "ManagedSubjectClass"?
  */
-@FieldDefaults(makeFinal = true, level = AccessLevel.PRIVATE)
-@ToString
-@EqualsAndHashCode
-@RequiredArgsConstructor
-public abstract class MiddleClass<T> {
+public interface MiddleClass<T> {
 
     public abstract String getSimpleName();
 

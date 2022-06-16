@@ -26,7 +26,6 @@ public class ReflectionContext {
     public static final String BASE_TG_SUBJECTS_PACKAGE = "io.stubbs.truth.generator.subjects";
     public static final String GOOGLE_TRUTH_SUBJECTS_PACKAGE = "com.google.truth";
 
-
     /**
      * Special class loaders (used by the plugin)
      */

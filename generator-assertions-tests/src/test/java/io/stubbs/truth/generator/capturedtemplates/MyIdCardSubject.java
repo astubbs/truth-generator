@@ -4,21 +4,16 @@ import com.google.common.truth.FailureMetadata;
 import io.stubbs.truth.generator.SubjectFactoryMethod;
 import io.stubbs.truth.generator.UserManagedMiddleSubject;
 import io.stubbs.truth.generator.UserManagedTruth;
+import io.stubbs.truth.generator.internal.model.MiddleClass;
 import io.stubbs.truth.generator.testModel.IdCard;
 import io.stubbs.truth.generator.testModel.IdCardParentSubject;
 
 import javax.annotation.processing.Generated;
 
 /**
- * Optionally move this class into source control, and add your custom assertions here.
+ * Test user managed {@link MiddleClass} to ensure it is picked up and used in the graph.
  *
- * <p>
- * If the system detects this class already exists, it won't attempt to generate a new one. Note that if the base
- * skeleton of this class ever changes, you won't automatically get it updated.
- *
- * @see IdCard
- * @see IdCardParentSubject
- * @see IdCardChildSubject
+ * @see io.stubbs.truth.generator.UserManagedSubjectsTest
  */
 @UserManagedTruth(IdCard.class)
 @Generated(value = "io.stubbs.truth.generator.internal.TruthGenerator", date = "1970-01-01T00:00:00Z")

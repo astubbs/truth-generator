@@ -38,7 +38,7 @@ public class Utils {
     public static String writeToDisk(JavaClassSource javaClass, Optional<String> targetPackageName) {
         String classSource = javaClass.toString();
         Path fileName = getFileName(javaClass, targetPackageName);
-        log.info("Writing {} to {} in {}", javaClass.getCanonicalName(), targetPackageName, fileName);
+        log.debug("Writing {} to {} in {}", javaClass.getCanonicalName(), targetPackageName, fileName);
         try (PrintWriter out = new PrintWriter(fileName.toFile())) {
             out.println(classSource);
         } catch (FileNotFoundException e) {

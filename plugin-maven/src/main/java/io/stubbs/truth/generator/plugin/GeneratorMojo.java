@@ -12,6 +12,7 @@ import lombok.Getter;
 import lombok.SneakyThrows;
 import org.apache.commons.io.FileUtils;
 import org.apache.maven.artifact.DependencyResolutionRequiredException;
+import org.apache.maven.model.Build;
 import org.apache.maven.model.Plugin;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
@@ -198,9 +199,16 @@ public class GeneratorMojo extends AbstractMojo {
 
         Optional<String> entryPointClassPackage = ofNullable(this.entryPointClassPackage);
 
-        FullContext context = new FullContext(getOutputPath(), List.of(getProjectClassLoader()), getBaseModelPackagesForScanning());
+        final Build build = getProject().getBuild();
+        final List<Path> sourcePaths = List.of(Path.of(build.getSourceDirectory()),
+                Path.of(build.getTestSourceDirectory()));
+        FullContext context = new FullContext(getOutputPath(),
+                sourcePaths,
+                List.of(getProjectClassLoader()),
+                getBaseModelPackagesForScanning());
 
         ReflectionUtils reflectionUtils = new ReflectionUtils(context);
+
 
         SourceClassSets ss = new SourceClassSets(getEntryPointClassPackage(), reflectionUtils);
 

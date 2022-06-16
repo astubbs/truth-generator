@@ -1,12 +1,13 @@
 package io.stubbs.truth.generator.internal;
 
-import io.stubbs.truth.generator.ReflectionContext;
+import io.stubbs.truth.generator.FullContext;
 import io.stubbs.truth.generator.SubjectFactoryMethod;
 import io.stubbs.truth.generator.UserManagedTruth;
 import io.stubbs.truth.generator.internal.model.UserSourceCodeManagedMiddleClass;
 import lombok.SneakyThrows;
 import lombok.Value;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.jboss.forge.roaster.Roaster;
 import org.jboss.forge.roaster.model.Annotation;
 import org.jboss.forge.roaster.model.JavaType;
@@ -35,18 +36,18 @@ import java.util.stream.StreamSupport;
 @Value
 public class SourceCodeScanner {
 
-    ReflectionContext reflectionContext;
+    FullContext reflectionContext;
 
     Set<CPPackage> sourcePackagesToScan;
 
-    Set<Path> sourceFilePathRoutes;
-
+//    Set<Path> sourceFilePathRoutes;
 
     public <T> Optional<UserSourceCodeManagedMiddleClass<T>> tryGetUserManagedMiddle(Class<T> clazzUnderTest) {
         // for each source path
-        Stream<UserSourceCodeManagedMiddleClass<T>> userSuppliedMiddleClassStream = sourceFilePathRoutes.stream().flatMap(path -> process(clazzUnderTest, path));
+        var stream = reflectionContext.getSourceRoots().stream()
+                .flatMap(path -> process(clazzUnderTest, path));
         // todo if result > 1, warn
-        return userSuppliedMiddleClassStream.findFirst();
+        return stream.findFirst();
     }
 
     private <T> Stream<UserSourceCodeManagedMiddleClass<T>> process(Class<T> clazzUnderTest, Path path) {
@@ -55,7 +56,8 @@ public class SourceCodeScanner {
 
     @SneakyThrows // todo remove
     private <T> Stream<UserSourceCodeManagedMiddleClass<T>> resolve(Class<T> clazzUnderTest, Path path, CPPackage cpPackage) {
-        var streamResolve = Arrays.stream(cpPackage.getPackageName().split(".")).map(path::resolve).findFirst();
+        final String[] packageComponents = StringUtils.split(cpPackage.getPackageName(), '.');
+        var streamResolve = Arrays.stream(packageComponents).map(path::resolve).findFirst();
         String replace = cpPackage.getPackageName().replace(".", File.separator);
         Path resolve = path.resolve(replace);
         if (resolve.toFile().exists()) {

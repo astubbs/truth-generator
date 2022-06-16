@@ -11,6 +11,8 @@ import java.util.Set;
 @EqualsAndHashCode(callSuper = true)
 public class FullContext extends ReflectionContext {
 
+    List<Path> sourceRoots;
+
     /**
      * Base path of test output directory - used for writing our generated subjects into subdirectories of
      * <p>
@@ -18,7 +20,10 @@ public class FullContext extends ReflectionContext {
      */
     Path testOutputDirectory;
 
-    public FullContext(Path testOutputDirectory, List<ClassLoader> loaders, Set<String> baseModelPackagesForScanning) {
+    public FullContext(Path testOutputDirectory,
+                       List<Path> sourcePaths,
+                       List<ClassLoader> loaders,
+                       Set<String> baseModelPackagesForScanning) {
         super(loaders, baseModelPackagesForScanning);
         this.testOutputDirectory = testOutputDirectory;
     }
@@ -31,7 +36,6 @@ public class FullContext extends ReflectionContext {
     public FullContext(Path testOutputDirectory, String baseModelPackageFroScanning) {
         super(baseModelPackageFroScanning);
         this.testOutputDirectory = testOutputDirectory;
-
     }
 
     public FullContext(Path testOutputDirectory, ReflectionContext newReflectionContext) {

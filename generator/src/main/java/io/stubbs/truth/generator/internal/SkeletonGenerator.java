@@ -116,7 +116,9 @@ public class SkeletonGenerator implements SkeletonGeneratorAPI {
 
         var userMiddle = reflectionUtils.tryGetUserManagedMiddle(clazzUnderTest);
 
-        var sourceCodeScanner = new SourceCodeScanner(reflectionUtils.getContext(), Set.of(new CPPackage("io.stubbs"), new CPPackage("io.confluent.parallelconsumer.truth")),
+        var sourceCodeScanner = new SourceCodeScanner(reflectionUtils.getContext(),
+                Set.of(new CPPackage("io.stubbs"),
+                        new CPPackage("io.confluent.parallelconsumer.truth")),
                 Set.of(Paths.get("").resolve("src").resolve("test").resolve("java").toAbsolutePath()));
 
         var disced = sourceCodeScanner.tryGetUserManagedMiddle(clazzUnderTest);

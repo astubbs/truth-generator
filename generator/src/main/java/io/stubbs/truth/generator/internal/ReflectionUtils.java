@@ -130,11 +130,12 @@ public class ReflectionUtils {
 
     private void setupReflections(ReflectionContext context) {
         FilterBuilder filterBuilder = new FilterBuilder();
-        var basePackages = context.getBaseModelPackagesFroScanning();
-        basePackages.forEach(filterBuilder::includePackage);
+        var basePackagesToScan = context.getBaseModelPackagesForReflectionScanning();
+        basePackagesToScan.forEach(filterBuilder::includePackage);
+        String[] packagesToScanArray = basePackagesToScan.toArray(new String[0]);
 
         ConfigurationBuilder build = new ConfigurationBuilder()
-                .forPackages(basePackages.toArray(new String[0]))
+                .forPackages(packagesToScanArray)
                 .filterInputsBy(filterBuilder)
                 .setParallel(true)
                 // don't exclude Object subtypes - don't filter out anything
@@ -150,7 +151,7 @@ public class ReflectionUtils {
             // is this duplicate approach required? correct?
             ClassLoader[] loadersArray = context.getLoaders().toArray(new ClassLoader[0]);
             // shouldn't need to specify loaders twice?
-            basePackages.forEach(modelPackage -> build.forPackage(modelPackage, loadersArray));
+            basePackagesToScan.forEach(modelPackage -> build.forPackage(modelPackage, loadersArray));
         }
 
         this.reflections = new Reflections(build);
@@ -160,6 +161,11 @@ public class ReflectionUtils {
 //        this.loaders.addAll(loaders);
 //    }
 
+    /**
+     * Look for compiled {@link UserManagedTruth}s for the provided Class on the classpath.
+     *
+     * @param clazzUnderTest the class to look for a {@link UserManagedTruth} for
+     */
     public <T> Optional<UserSuppliedMiddleClass<T>> tryGetUserManagedMiddle(final Class<T> clazzUnderTest) {
 //        var classStreamInt = this.reflections.getSubTypesOf(UserManagedMiddleSubject.class).stream()
 //                .filter(x -> x.isAnnotationPresent(UserManagedTruth.class))

@@ -5,7 +5,6 @@ import com.google.common.truth.FailureMetadata;
 import com.google.common.truth.Subject;
 import io.stubbs.truth.generator.UserManagedMiddleSubject;
 import io.stubbs.truth.generator.UserManagedTruth;
-import io.stubbs.truth.generator.internal.SourceCodeScanner.CPPackage;
 import io.stubbs.truth.generator.internal.model.*;
 import lombok.Setter;
 import org.jboss.forge.roaster.Roaster;
@@ -13,9 +12,7 @@ import org.jboss.forge.roaster.model.source.JavaClassSource;
 import org.jboss.forge.roaster.model.source.JavaDocSource;
 import org.jboss.forge.roaster.model.source.MethodSource;
 
-import java.nio.file.Paths;
 import java.util.Optional;
-import java.util.Set;
 import java.util.stream.Stream;
 
 import static java.util.Optional.empty;
@@ -42,6 +39,8 @@ public class SkeletonGenerator implements SkeletonGeneratorAPI {
     private Optional<String> targetPackageName;
     private MiddleClass<?> middle;
 
+    private final SourceCodeScanner sourceCodeScanner;
+
     // todo not used?
     private ParentClass parent;
 
@@ -56,11 +55,13 @@ public class SkeletonGenerator implements SkeletonGeneratorAPI {
     public SkeletonGenerator(Optional<String> targetPackageName,
                              OverallEntryPoint overallEntryPoint,
                              BuiltInSubjectTypeStore subjectTypeStore,
-                             ReflectionUtils reflectionUtils) {
+                             ReflectionUtils reflectionUtils,
+                             SourceCodeScanner sourceCodeScanner) {
         this.targetPackageName = targetPackageName;
         this.overallEntryPoint = overallEntryPoint;
         this.subjectTypeStore = subjectTypeStore;
         this.reflectionUtils = reflectionUtils;
+        this.sourceCodeScanner = sourceCodeScanner;
     }
 
     @Override
@@ -115,11 +116,6 @@ public class SkeletonGenerator implements SkeletonGeneratorAPI {
         boolean consumer = clazzUnderTest.getName().contains("Consumer");
 
         var userMiddle = reflectionUtils.tryGetUserManagedMiddle(clazzUnderTest);
-
-        var sourceCodeScanner = new SourceCodeScanner(reflectionUtils.getContext(),
-                Set.of(new CPPackage("io.stubbs"),
-                        new CPPackage("io.confluent.parallelconsumer.truth")),
-                Set.of(Paths.get("").resolve("src").resolve("test").resolve("java").toAbsolutePath()));
 
         var disced = sourceCodeScanner.tryGetUserManagedMiddle(clazzUnderTest);
         if (disced.isPresent()) {

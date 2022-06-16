@@ -34,7 +34,7 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 import static com.google.common.truth.Truth.assertThat;
-import static io.stubbs.truth.generator.TestClassFactories.TEST_OUTPUT_DIRECTORY;
+import static io.stubbs.truth.generator.TestClassFactories.newFullContext;
 import static io.stubbs.truth.generator.internal.modelSubjectChickens.ThreeSystemChildSubject.assertThat;
 
 /**
@@ -75,7 +75,7 @@ public class TruthGeneratorGeneratedSourceTest {
 
         // todo need to be able to set base package for all generated classes, kind of like shade, so you cah generate test for classes in other restricted modules
         // todo replace with @TempDir
-        FullContext fullContext = new FullContext(TEST_OUTPUT_DIRECTORY, TestClassFactories.newReflectionContext());
+        FullContext fullContext = newFullContext();
         TruthGenerator truthGenerator = TruthGeneratorAPI.create(
                 Options.builder().useHasInsteadOfGet(true).build(),
                 fullContext);

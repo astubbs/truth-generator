@@ -43,6 +43,7 @@ public class MyEmployee extends Person<String> {
 
     public MyEmployee(@Nonnull String name, long someLongAspect, @Nonnull ZonedDateTime birthday) {
         super(name, someLongAspect, birthday, Optional.of("an optional string"), "another string", Optional.empty(), Optional.empty(), Optional.empty());
+//        super(name, someLongAspect, birthday, Optional.of("an optional string"), "another string", ThingWithTypeParam.empty(), ThingWithTypeParam.empty(), ThingWithTypeParam.empty());
     }
 
     /**

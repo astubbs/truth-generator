@@ -32,18 +32,18 @@ public class ReflectionContext {
     List<ClassLoader> loaders;
 
     /**
-     * Base model packages which should be scanned.
+     * Base model packages which should be scanned via reflection.
      * <p>
      * Can be though of as the INPUT side of the system.
      */
-    Set<String> baseModelPackagesFroScanning;
+    Set<String> baseModelPackagesForReflectionScanning;
 
-    public ReflectionContext(List<ClassLoader> loaders, Set<String> baseModelPackagesFroScanning) {
+    public ReflectionContext(List<ClassLoader> loaders, Set<String> baseModelPackagesForReflectionScanning) {
         this.loaders = loaders;
         // todo copy?
-        this.baseModelPackagesFroScanning = new HashSet<>(baseModelPackagesFroScanning);
+        this.baseModelPackagesForReflectionScanning = new HashSet<>(baseModelPackagesForReflectionScanning);
         var systemPackages = Set.of(BASE_TG_SUBJECTS_PACKAGE, GOOGLE_TRUTH_SUBJECTS_PACKAGE);
-        this.baseModelPackagesFroScanning.addAll(systemPackages);
+        this.baseModelPackagesForReflectionScanning.addAll(systemPackages);
     }
 
     /**

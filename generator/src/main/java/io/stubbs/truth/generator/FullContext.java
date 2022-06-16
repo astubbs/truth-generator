@@ -20,25 +20,26 @@ public class FullContext extends ReflectionContext {
      */
     Path testOutputDirectory;
 
+    public FullContext(Path testOutputDirectory, List<Path> sourcePaths, ReflectionContext newReflectionContext) {
+        this(testOutputDirectory, sourcePaths, newReflectionContext.getLoaders(), newReflectionContext.getBaseModelPackagesForReflectionScanning());
+    }
+
+//    public FullContext(Path testOutputDirectory, Set<String> baseModelPackagesForScanning) {
+////        super(baseModelPackagesForScanning);
+////        this.testOutputDirectory = testOutputDirectory;
+//    }
+
+//    public FullContext(Path testOutputDirectory, String baseModelPackageFroScanning) {
+////        super(baseModelPackageFroScanning);
+////        this.testOutputDirectory = testOutputDirectory;
+//    }
+
     public FullContext(Path testOutputDirectory,
                        List<Path> sourcePaths,
                        List<ClassLoader> loaders,
-                       Set<String> baseModelPackagesForScanning) {
-        super(loaders, baseModelPackagesForScanning);
+                       Set<String> baseModelPackagesForReflectionScanning) {
+        super(loaders, baseModelPackagesForReflectionScanning);
         this.testOutputDirectory = testOutputDirectory;
-    }
-
-    public FullContext(Path testOutputDirectory, Set<String> baseModelPackagesForScanning) {
-        super(baseModelPackagesForScanning);
-        this.testOutputDirectory = testOutputDirectory;
-    }
-
-    public FullContext(Path testOutputDirectory, String baseModelPackageFroScanning) {
-        super(baseModelPackageFroScanning);
-        this.testOutputDirectory = testOutputDirectory;
-    }
-
-    public FullContext(Path testOutputDirectory, ReflectionContext newReflectionContext) {
-        this(testOutputDirectory, newReflectionContext.getLoaders(), newReflectionContext.getBaseModelPackagesFroScanning());
+        this.sourceRoots = sourcePaths;
     }
 }

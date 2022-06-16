@@ -6,6 +6,7 @@ import io.stubbs.truth.generator.FullContext;
 import io.stubbs.truth.generator.ReflectionContext;
 import io.stubbs.truth.generator.SourceClassSets;
 import io.stubbs.truth.generator.TruthGeneratorAPI;
+import io.stubbs.truth.generator.internal.SourceCodeScanner.CPPackage;
 import io.stubbs.truth.generator.internal.model.Result;
 import io.stubbs.truth.generator.internal.model.ThreeSystem;
 import lombok.Getter;
@@ -34,6 +35,7 @@ public class TruthGenerator implements TruthGeneratorAPI {
     private final Options options;
     private final ReflectionUtils reflectionUtils;
     private final BuiltInSubjectTypeStore builtInStore;
+    private final SourceCodeScanner sourceCodeScanner;
 
     @Setter
     @Getter
@@ -46,6 +48,15 @@ public class TruthGenerator implements TruthGeneratorAPI {
         Utils.setOutputBase(this.testOutputDir);
         this.reflectionUtils = new ReflectionUtils(context);
         this.builtInStore = new BuiltInSubjectTypeStore(this.reflectionUtils);
+
+        Set<CPPackage> cpPackages = Set.of(new CPPackage("io.stubbs"),
+                new CPPackage("io.confluent.parallelconsumer.truth"));
+
+        Set<CPPackage> sourcePackagesToScanForSubjects = context.getBaseModelPackagesForReflectionScanning().stream()
+                .distinct()
+                .map(CPPackage::new)
+                .collect(toSet());
+        this.sourceCodeScanner = new SourceCodeScanner(context, sourcePackagesToScanForSubjects);
     }
 
 //    /**
@@ -127,7 +138,8 @@ public class TruthGenerator implements TruthGeneratorAPI {
             SkeletonGenerator skeletonGenerator = new SkeletonGenerator(targetPackageName,
                     overallEntryPoint,
                     this.builtInStore,
-                    this.reflectionUtils);
+                    this.reflectionUtils,
+                    this.sourceCodeScanner);
             var threeSystem = skeletonGenerator.threeLayerSystem(clazz);
             if (threeSystem.isPresent()) {
                 ThreeSystem<?> ts = threeSystem.get();

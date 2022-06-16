@@ -1,5 +1,6 @@
 package io.stubbs.truth.generator.internal;
 
+import com.google.common.truth.Subject;
 import io.stubbs.truth.generator.FullContext;
 import io.stubbs.truth.generator.SubjectFactoryMethod;
 import io.stubbs.truth.generator.UserManagedTruth;
@@ -38,7 +39,10 @@ public class SourceCodeScanner {
 
     FullContext reflectionContext;
 
-    Set<CPPackage> sourcePackagesToScan;
+    /**
+     * Packages to look for existing {@link Subject}s in.
+     */
+    Set<CPPackage> sourcePackagesToScanForSubjects;
 
 //    Set<Path> sourceFilePathRoutes;
 
@@ -47,11 +51,12 @@ public class SourceCodeScanner {
         var stream = reflectionContext.getSourceRoots().stream()
                 .flatMap(path -> process(clazzUnderTest, path));
         // todo if result > 1, warn
-        return stream.findFirst();
+        Optional<UserSourceCodeManagedMiddleClass<T>> first = stream.findFirst();
+        return first;
     }
 
     private <T> Stream<UserSourceCodeManagedMiddleClass<T>> process(Class<T> clazzUnderTest, Path path) {
-        return sourcePackagesToScan.stream().flatMap(cpPackage -> resolve(clazzUnderTest, path, cpPackage));
+        return sourcePackagesToScanForSubjects.stream().flatMap(cpPackage -> resolve(clazzUnderTest, path, cpPackage));
     }
 
     @SneakyThrows // todo remove

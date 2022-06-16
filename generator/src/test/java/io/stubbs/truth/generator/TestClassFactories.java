@@ -5,6 +5,7 @@ import lombok.experimental.UtilityClass;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -14,7 +15,7 @@ import java.util.Set;
 public class TestClassFactories {
 
     //todo needs to be pulled from maven - multiple
-    public static final Set<Path> TEST_SRC_ROOT = Set.of(Paths.get("").resolve("src").resolve("test").resolve("java").toAbsolutePath());
+    public static final List<Path> TEST_SRC_ROOT = List.of(Paths.get("").resolve("src").resolve("test").resolve("java").toAbsolutePath());
 
     public static final Path TEST_OUTPUT_DIRECTORY = Paths.get("").resolve("target").resolve("generated-test-sources").toAbsolutePath();
 
@@ -52,17 +53,17 @@ public class TestClassFactories {
         return TruthGeneratorAPI.create(Options.builder().build(), newFullContext());
     }
 
-    public static FullContext newFullContext() {
-        // needs Google truth package too?
-        return new FullContext(TEST_OUTPUT_DIRECTORY, newReflectionContext());
+    public static SourceCodeScanner newScanner() {
+        var packages = Set.of(new SourceCodeScanner.CPPackage(BASE_TEST_PACKAGE));
+        return new SourceCodeScanner(newFullContext(), packages);
     }
 
     public static TruthGenerator newTruthGenerator(Options options) {
         return TruthGeneratorAPI.create(options, newFullContext());
     }
 
-    public static SourceCodeScanner newScanner() {
-        var packages = Set.of(new SourceCodeScanner.CPPackage("io.stubbs"));
-        return new SourceCodeScanner(TestClassFactories.newReflectionContext(), packages, TEST_SRC_ROOT);
+    public static FullContext newFullContext() {
+        // needs Google truth package too?
+        return new FullContext(TEST_OUTPUT_DIRECTORY, TEST_SRC_ROOT, newReflectionContext());
     }
 }

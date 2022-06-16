@@ -152,18 +152,18 @@
         </dependency>
     </dependencies>
 
-    <dependencyManagement>
-        <dependencies>
-            <dependency>
-                <!--https://stackoverflow.com/questions/72625637/maven-build-failed-due-to-jdt-dependencies-no-versions-available-for-org-osgi-->
-                <groupId>fr.jmini.ecentral</groupId>
-                <artifactId>eclipse-platform-dependencies</artifactId>
-                <version>4.14</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-        </dependencies>
-    </dependencyManagement>
+    <!--    <dependencyManagement>-->
+    <!--        <dependencies>-->
+    <!--            <dependency>-->
+    <!--                &lt;!&ndash;https://stackoverflow.com/questions/72625637/maven-build-failed-due-to-jdt-dependencies-no-versions-available-for-org-osgi&ndash;&gt;-->
+    <!--                <groupId>fr.jmini.ecentral</groupId>-->
+    <!--                <artifactId>eclipse-platform-dependencies</artifactId>-->
+    <!--                <version>4.14</version>-->
+    <!--                <type>pom</type>-->
+    <!--                <scope>import</scope>-->
+    <!--            </dependency>-->
+    <!--        </dependencies>-->
+    <!--    </dependencyManagement>-->
 
     <build>
         <plugins>
@@ -215,12 +215,12 @@
         </plugins>
     </build>
 
-    <repositories>
-        <repository>
-            <!--https://stackoverflow.com/questions/72625637/maven-build-failed-due-to-jdt-dependencies-no-versions-available-for-org-osgi-->
-            <id>ecentral</id>
-            <url>https://raw.githubusercontent.com/jmini/ecentral/HEAD/repo</url>
-        </repository>
-    </repositories>
+    <!--    <repositories>-->
+    <!--        <repository>-->
+    <!--            &lt;!&ndash;https://stackoverflow.com/questions/72625637/maven-build-failed-due-to-jdt-dependencies-no-versions-available-for-org-osgi&ndash;&gt;-->
+    <!--            <id>ecentral</id>-->
+    <!--            <url>https://raw.githubusercontent.com/jmini/ecentral/HEAD/repo</url>-->
+    <!--        </repository>-->
+    <!--    </repositories>-->
 
 </project>

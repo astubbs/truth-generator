@@ -9,6 +9,8 @@ import io.stubbs.truth.generator.testModel.MyEmployee;
 
 import javax.annotation.processing.Generated;
 
+import static io.stubbs.truth.generator.shaded.org.jboss.forge.roaster.model.sourceChickens.JavaClassSourceSubject.javaClassSources;
+
 /**
  * Optionally move this class into source control, and add your custom assertions here.
  *
@@ -42,6 +44,6 @@ public class ParentClassSubject extends ParentClassParentSubject {
     }
 
     public JavaClassSourceSubject hasSourceText() {
-        return null;
+        return check("getSourceText()").about(javaClassSources()).that(actual.getGenerated());
     }
 }

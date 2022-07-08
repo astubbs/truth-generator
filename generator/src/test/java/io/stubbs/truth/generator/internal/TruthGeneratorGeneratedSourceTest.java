@@ -108,15 +108,15 @@ public class TruthGeneratorGeneratedSourceTest {
 //                .hasSourceText()
 //                .ignoringTrailingWhiteSpace()
 //                .equalTo(expected); // sanity full chain
-        assertThat(threeSystemGenerated).hasParent().hasSourceText().withSourceOf(parent);
+        assertThat(threeSystemGenerated).hasParent().hasSourceText().withSourceOf().equalTo(parent);
 
 
 //        String middleSource = loadFileToString("expected/MyEmployeeSubject.java.txt");
         var middleSource = TextFile.fromResourcePath("expected/MyEmployeeSubject.java.txt");
-        assertThat(threeSystemGenerated).hasChild().withSourceOf(middleSource);
+        assertThat(threeSystemGenerated).hasMiddle().hasSourceText().withSourceOf().equalTo(middleSource);
 
         var child = TextFile.fromResourcePath("expected/MyEmployeeChildSubject.java.txt");
-        assertThat(threeSystemGenerated).hasChild().withSourceOf(child);
+        assertThat(threeSystemGenerated).hasChild().withSourceOf().equalTo(child);
 
 //        String expected2 = loadFileToString("expected/MyEmployeeChildSubject.java.txt");
 //        assertThat(threeSystemGenerated).hasChildSource(expected2);

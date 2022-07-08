@@ -1,10 +1,8 @@
 package io.stubbs.truth.generator.shaded.org.jboss.forge.roaster.model.sourceChickens;
 
-import com.google.common.io.Resources;
 import com.google.common.truth.FailureMetadata;
 import io.stubbs.truth.generator.SubjectFactoryMethod;
 import io.stubbs.truth.generator.UserManagedTruth;
-import io.stubbs.truth.generator.internal.model.TextFile;
 import io.stubbs.truth.generator.subjects.MyStringSubject;
 import io.stubbs.truth.generator.testModel.MyEmployee;
 import lombok.SneakyThrows;
@@ -12,8 +10,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.jboss.forge.roaster.model.source.JavaClassSource;
 
 import javax.annotation.processing.Generated;
-import java.net.URL;
-import java.nio.charset.Charset;
 
 // in VCS as we're still in the chicken phase of what comes first - stable maven plugin to generate this for the build before we can remove
 
@@ -45,7 +41,7 @@ public class JavaClassSourceSubject extends JavaClassSourceParentSubject {
 
     public MyStringSubject hasSourceText() {
         isNotNull();
-        return check("toString").about(MyStringSubject.strings()).that(actual.toString());
+        return check("toString()").about(MyStringSubject.strings()).that(actual.toString());
     }
 
     public void withSamePackageAs(Class<MyEmployee> expected) {
@@ -54,11 +50,12 @@ public class JavaClassSourceSubject extends JavaClassSourceParentSubject {
     }
 
     @SneakyThrows
-    public void withSourceOf(TextFile child) {
-        URL resource = Resources.getResource(child.getResourcePath());
-        String expected = Resources.toString(resource, Charset.defaultCharset());
-        log.error("Checking {}", resource);
-        hasSourceText().ignoringTrailingWhiteSpace().equalTo(expected);
+    public MyStringSubject.IgnoringWhiteSpaceComparison withSourceOf() {
+//        URL resource = Resources.getResource(child.getResourcePath());
+//        String expected = Resources.toString(resource, Charset.defaultCharset());
+//        log.error("Checking {}", resource);
+//        hasSourceText(child).ignoringTrailingWhiteSpace().equalTo(expected);
+        return hasSourceText().ignoringTrailingWhiteSpace();
     }
 
 }

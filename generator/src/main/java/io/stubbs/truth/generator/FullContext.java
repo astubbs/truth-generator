@@ -7,6 +7,9 @@ import java.nio.file.Path;
 import java.util.List;
 import java.util.Set;
 
+/**
+ * @author Antony Stubbs
+ */
 @Value
 @EqualsAndHashCode(callSuper = true)
 public class FullContext extends ReflectionContext {

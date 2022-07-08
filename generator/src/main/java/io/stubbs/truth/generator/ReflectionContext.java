@@ -15,6 +15,8 @@ import java.util.Set;
 /**
  * Holds the context in which the generator is executing - namely special class loaders (used by the plugin) and base
  * model packages which should be scanned.
+ *
+ * @author Antony Stubbs
  */
 @Getter
 @ToString

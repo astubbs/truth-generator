@@ -31,7 +31,7 @@ public class GeneratedAssertionTests {
 
     @Test
     public void filesExist() {
-        Assertions.assertThat(new File("target/generated-test-sources/truth-assertions-managed/io/stubbs/truth/tests/autoShaded/java/time/chrono/EraParentSubject.java")).exists();
+        Assertions.assertThat(new File("target/generated-test-sources/truth-assertions-managed/io/stubbs/truth/generator/integrationTests/autoShaded/java/time/chrono/EraParentSubject.java")).exists();
     }
 
     @Test

@@ -30,7 +30,6 @@ public class OptionalUnwrapChainForGenericTypeArgsTest {
 
     GeneratedSubjectTypeStore subjects = TestClassFactories.newGeneratedSubjectTypeStore();
 
-
     /**
      * @see MyEmployee#getTypeParamTest()
      */

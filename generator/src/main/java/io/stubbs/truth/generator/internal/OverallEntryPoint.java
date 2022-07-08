@@ -187,9 +187,10 @@ public class OverallEntryPoint {
         MethodSource<JavaClassSource> copy = overallAccess.addMethod();
         copy.setName(method.getName());
         copy.setReturnType(method.getReturnType());
-        copy.setStatic(method.isStatic());
-        if (method.isPublic())
+        if (method.isPublic()) {
             copy.setPublic();
+        }
+        copy.setStatic(method.isStatic());
         method.getParameters().forEach(parameter -> {
             Type<?> paramType = parameter.getType();
             String qualifiedName = paramType.getQualifiedName();
@@ -199,8 +200,10 @@ public class OverallEntryPoint {
 
         copy.setBody(method.getBody());
 
-        if (method instanceof MethodImpl impl) {
-            copy.getJavaDoc().setText(impl.getJavaDoc().getText());
+        if (method instanceof MethodImpl<?> impl) {
+            String fullText = impl.getJavaDoc().getFullText();
+            String replace = StringUtils.replace(fullText, "@see#", "@see #");
+            copy.getJavaDoc().setText(replace);
         }
     }
 

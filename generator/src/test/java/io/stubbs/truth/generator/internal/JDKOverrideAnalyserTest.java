@@ -57,6 +57,7 @@ public class JDKOverrideAnalyserTest {
     @SneakyThrows
     @Test
     public void staticMethodInSetCopyOfNotIn9andIsIn10() {
+        //todo delete
         Set<Object> objects = Set.copyOf(Set.of());
 
         {

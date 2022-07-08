@@ -260,14 +260,14 @@ public class SkeletonGenerator implements SkeletonGeneratorAPI {
         return new ParentClass(parent);
     }
 
-    private void addAccessPoints(JavaClassSource javaClass, Class<?> classUnderTest) {
+    private void addAccessPoints(JavaClassSource generatedJavaSourceCode, Class<?> classUnderTest) {
         String factoryContainerQualifiedName = middle.getCanonicalName();
         MethodSource<JavaClassSource> assertThat = aepg.addAssertThat(classUnderTest,
-                javaClass,
+                generatedJavaSourceCode,
                 middle.getFactoryMethodName(),
                 factoryContainerQualifiedName);
 
-        aepg.addAssertTruth(classUnderTest, javaClass, assertThat);
+        aepg.addAssertTruth(classUnderTest, generatedJavaSourceCode, assertThat);
     }
 
     private String getSubjectName(final String sourceName) {

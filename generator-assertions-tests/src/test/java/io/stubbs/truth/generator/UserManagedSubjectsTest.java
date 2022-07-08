@@ -3,7 +3,6 @@ package io.stubbs.truth.generator;
 import io.stubbs.truth.generator.capturedtemplates.MyIdCardSubject;
 import io.stubbs.truth.generator.testModel.IdCard;
 import io.stubbs.truth.generator.testModel.MyEmployee;
-import io.stubbs.truth.tests.ManagedTruth;
 import org.junit.Test;
 
 /**

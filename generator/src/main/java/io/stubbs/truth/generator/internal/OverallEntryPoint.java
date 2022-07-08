@@ -10,6 +10,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.jboss.forge.roaster.Roaster;
 import org.jboss.forge.roaster.model.Method;
+import org.jboss.forge.roaster.model.Type;
+import org.jboss.forge.roaster.model.impl.MethodImpl;
 import org.jboss.forge.roaster.model.source.Import;
 import org.jboss.forge.roaster.model.source.JavaClassSource;
 import org.jboss.forge.roaster.model.source.MethodSource;
@@ -151,11 +153,15 @@ public class OverallEntryPoint {
         for (var ts : threeSystemChildSubjects) {
             var child = ts.getChild();
 
+            // copy the methods
             List<MethodSource<JavaClassSource>> methods = child.getMethods();
             for (Method<?, ?> m : methods) {
-                if (!m.isConstructor() && !m.getName().equals(ASSERT_WITH_MESSAGE))
-                    overallAccess.addMethod(m);
+                if (!m.isConstructor() && !m.getName().equals(ASSERT_WITH_MESSAGE)) {
+                    copyMethodInto(m, overallAccess);
+                }
             }
+
+            // copy the imports
             // this seems like overkill, but at least in the child style case, there's very few imports - even
             // none extra at all (aside from wild card vs specific methods).
             List<Import> imports = child.getImports();
@@ -170,6 +176,31 @@ public class OverallEntryPoint {
                     overallAccess.addImport(anImport);
                 }
             }
+        }
+    }
+
+    /**
+     * Need to copy the methd one part at a time, as adding the method directly skips some steps necessary to not break
+     * things (like import collision and duplicate type name resolution).
+     */
+    private void copyMethodInto(Method<?, ?> method, JavaClassSource overallAccess) {
+        MethodSource<JavaClassSource> copy = overallAccess.addMethod();
+        copy.setName(method.getName());
+        copy.setReturnType(method.getReturnType());
+        copy.setStatic(method.isStatic());
+        if (method.isPublic())
+            copy.setPublic();
+        method.getParameters().forEach(parameter -> {
+            Type<?> paramType = parameter.getType();
+            String qualifiedName = paramType.getQualifiedName();
+            String name = parameter.getName();
+            copy.addParameter(qualifiedName, name);
+        });
+
+        copy.setBody(method.getBody());
+
+        if (method instanceof MethodImpl impl) {
+            copy.getJavaDoc().setText(impl.getJavaDoc().getText());
         }
     }
 

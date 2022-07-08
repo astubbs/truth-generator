@@ -7,7 +7,6 @@ import io.stubbs.truth.generator.testModel.MyEmployeeSubject;
 import io.stubbs.truth.generator.testing.legacy.NonBeanLegacy;
 import io.stubbs.truth.generator.testing.legacy.NonBeanLegacyChildSubject;
 import io.stubbs.truth.generator.testing.legacy.NonBeanLegacySubject;
-import io.stubbs.truth.tests.ManagedTruth;
 import org.assertj.core.api.Assertions;
 import org.junit.Test;
 import uk.co.jemos.podam.api.PodamFactoryImpl;

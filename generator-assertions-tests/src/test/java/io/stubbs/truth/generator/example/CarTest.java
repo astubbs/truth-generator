@@ -5,8 +5,9 @@ import org.junit.Test;
 import uk.co.jemos.podam.api.PodamFactory;
 import uk.co.jemos.podam.api.PodamFactoryImpl;
 
-import static io.stubbs.truth.tests.ManagedTruth.assertThat;
-
+/**
+ * @author Antony Stubbs
+ */
 public class CarTest {
 
     PodamFactory factory = new PodamFactoryImpl();

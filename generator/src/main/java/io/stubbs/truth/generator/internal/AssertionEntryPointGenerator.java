@@ -62,31 +62,31 @@ public class AssertionEntryPointGenerator {
         return factoryClass.getSimpleName() + generics;
     }
 
-    protected <T> MethodSource<JavaClassSource> addAssertThat(Class<T> source,
-                                                              JavaClassSource javaClass,
+    protected <T> MethodSource<JavaClassSource> addAssertThat(Class<T> classUnderTest,
+                                                              JavaClassSource javaSourceClassToAddTo,
                                                               String factoryMethodName,
                                                               String factoryContainerQualifiedName) {
         String methodName = "assertThat";
-        if (containsMethod(javaClass, methodName, source)) {
-            return getMethodCalled(javaClass, methodName);
+        if (containsMethod(javaSourceClassToAddTo, methodName, classUnderTest)) {
+            return getMethodCalled(javaSourceClassToAddTo, methodName);
         } else {
             // entry point
-            MethodSource<JavaClassSource> assertThat = javaClass.addMethod()
+            MethodSource<JavaClassSource> assertThat = javaSourceClassToAddTo.addMethod()
                     .setName(methodName)
                     .setPublic()
                     .setStatic(true)
                     .setReturnType(factoryContainerQualifiedName);
-            assertThat.addParameter(source, "actual");
+            assertThat.addParameter(classUnderTest, "actual");
 
             //
-            javaClass.addImport(factoryContainerQualifiedName + ".*")
+            javaSourceClassToAddTo.addImport(factoryContainerQualifiedName + ".*")
                     .setStatic(true);
 
             //
             String entryPointBody = "return Truth.assertAbout(" + factoryContainerQualifiedName + "." + factoryMethodName + "()).that(actual);";
             assertThat.setBody(entryPointBody);
-            javaClass.addImport(Truth.class);
-            assertThat.getJavaDoc().setText("Entry point for {@link " + source.getSimpleName() + "} assertions.");
+            javaSourceClassToAddTo.addImport(Truth.class);
+            assertThat.getJavaDoc().setText("Entry point for {@link " + classUnderTest.getSimpleName() + "} assertions.");
             return assertThat;
         }
     }
@@ -120,6 +120,7 @@ public class AssertionEntryPointGenerator {
     private void addWithMessage(String overallPointPackageName, Optional<MiddleClass> middle, JavaClassSource managedTruthFileSource, boolean withArgs) {
         if (middle.isPresent()) {
             String canonicalName = middle.get().getCanonicalName();
+            // todo delete
             boolean idCard = canonicalName.contains("IdCard");
             boolean idCardtw = canonicalName.contains("IdCard");
         }

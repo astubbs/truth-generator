@@ -25,7 +25,8 @@ public class SourceClassSetsTests {
         ss.generateAllFoundInPackagesOf(ThreeSystem.class);
 
         // the test
-        var allGeneratedSystems = tg.generate(ss).getAll();
+        var allGeneratedSystems = tg.generate(ss)
+                .getAll();
 
         // will have crashed already if the fix didn't work
         assertThat(allGeneratedSystems).containsKey(ThreeSystem.class);

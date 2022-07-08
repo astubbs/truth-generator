@@ -32,13 +32,14 @@ public class ChainStrategy extends AssertionMethodStrategy {
     private final GeneratedSubjectTypeStore subjects;
 
     @Override
-    public boolean addStrategyMaybe(ThreeSystem<?> threeSystem, Method method, JavaClassSource generated) {
-        addChainStrategy(threeSystem, method, generated);
+    public boolean addStrategyMaybe(ThreeSystem<?> threeSystem, Method methodBeingChained, JavaClassSource generatedSource) {
+        addChainStrategy(threeSystem, methodBeingChained, generatedSource);
         return true;
     }
 
-    public MethodSource<JavaClassSource> addChainStrategy(ThreeSystem<?> threeSystem, Method method, JavaClassSource generated) {
-        GeneratedSubjectTypeStore.ResolvedPair resolvedPair = subjects.resolveSubjectForOptionals(threeSystem, method);
+    public MethodSource<JavaClassSource> addChainStrategy(ThreeSystem<?> threeSystem, Method methodBeingChained, JavaClassSource generatedSource) {
+        // todo method needs refactoring - too long
+        GeneratedSubjectTypeStore.ResolvedPair resolvedPair = subjects.resolveSubjectForOptionals(threeSystem, methodBeingChained);
 
         var subjectForType = resolvedPair.getSubject();
         var optionalUnwrap = resolvedPair.isUnwrapped();
@@ -59,19 +60,19 @@ public class ChainStrategy extends AssertionMethodStrategy {
             return null;
         }
 
-        String nameForChainMethod = createNameForChainMethod(threeSystem, method);
-        MethodSource<JavaClassSource> has = generated.addMethod()
+        String nameForChainMethod = createNameForChainMethod(threeSystem, methodBeingChained);
+        MethodSource<JavaClassSource> has = generatedSource.addMethod()
                 .setName(nameForChainMethod)
                 .setPublic();
 
         StringBuilder body = new StringBuilder("isNotNull();\n");
 
         if (optionalUnwrap) {
-            String name = capitalize(removeStart(method.getName(), "get"));
+            String name = capitalize(removeStart(methodBeingChained.getName(), "get"));
             body.append("has").append(name).append("Present();\n");
         }
 
-        String check = format("return check(\"%s()", method.getName());
+        String check = format("return check(\"%s()", methodBeingChained.getName());
         body.append(check);
 
         if (optionalUnwrap) {
@@ -95,9 +96,9 @@ public class ChainStrategy extends AssertionMethodStrategy {
 
             // import
             String factoryContainer = subjectClass.getFactoryContainerName();
-            Import anImport = generated.addImport(factoryContainer);
+            Import anImport = generatedSource.addImport(factoryContainer);
             String name = factoryContainer + "." + aboutName;
-            anImport.setName(name) // todo better way to do static method import?
+            anImport.setName(name) // todo better way to do static methodBeingChained import?
                     .setStatic(true);
         }
 
@@ -106,15 +107,15 @@ public class ChainStrategy extends AssertionMethodStrategy {
          */
         String maybeCast = optionalUnwrap ? msg("({})", returnType.getSimpleName()) : "";
 
-        if (methodIsStatic(method)) {
+        if (methodIsStatic(methodBeingChained)) {
             body.append(format(".that(%s%s.%s()",
                     maybeCast,
-                    method.getDeclaringClass().getSimpleName(),
-                    method.getName()));
+                    methodBeingChained.getDeclaringClass().getSimpleName(),
+                    methodBeingChained.getName()));
         } else {
             body.append(format(".that(%sactual.%s()",
                     maybeCast,
-                    method.getName()));
+                    methodBeingChained.getName()));
         }
 
         if (optionalUnwrap) {
@@ -128,14 +129,14 @@ public class ChainStrategy extends AssertionMethodStrategy {
 
         has.setReturnType(subjectClass.getSubjectSimpleName());
 
-        generated.addImport(subjectClass.getSubjectQualifiedName());
-        generated.addImport(returnType);
+        generatedSource.addImport(subjectClass.getSubjectQualifiedName());
+        generatedSource.addImport(returnType);
 
         has.getJavaDoc().
 
                 setText("Returns the Subject for the given field type, so you can chain on other assertions.");
 
-        copyThrownExceptions(method, has);
+        copyThrownExceptions(methodBeingChained, has);
 
         return has;
     }

@@ -53,7 +53,7 @@ public class SubjectMethodGenerator extends AssertionMethodStrategy {
 
         //
         Class<?> classUnderTest = system.getClassUnderTest();
-        JavaClassSource generated = system.getParent().getGenerated();
+        JavaClassSource generatedParentSource = system.getParent().getGenerated();
 
         //
         {
@@ -62,7 +62,7 @@ public class SubjectMethodGenerator extends AssertionMethodStrategy {
                     .stream().sorted((o1, o2) -> Comparator.comparing(Method::getName).compare(o1, o2))
                     .collect(Collectors.toList());
             for (Method method : getters) {
-                addFieldAccessors(method, generated, classUnderTest);
+                addFieldAccessors(method, generatedParentSource, classUnderTest);
             }
         }
 
@@ -76,7 +76,7 @@ public class SubjectMethodGenerator extends AssertionMethodStrategy {
             });
             toers = removeOverridden(toers);
             for (Method method : toers) {
-                chainStrategy.addStrategyMaybe(context, method, generated);
+                chainStrategy.addStrategyMaybe(context, method, generatedParentSource);
             }
         }
     }
@@ -171,7 +171,7 @@ public class SubjectMethodGenerator extends AssertionMethodStrategy {
         return getter.getName() + Arrays.stream(getter.getParameterTypes()).map(Class::getName).collect(Collectors.toList());
     }
 
-    private void addFieldAccessors(Method method, JavaClassSource generated, Class<?> classUnderTest) {
+    private void addFieldAccessors(Method method, JavaClassSource generatedSource, Class<?> classUnderTest) {
         Class<?> returnType = generatedSubjectTypeStore.getWrappedReturnType(method);
 
         // todo skip static methods for now - just need to make template a bit more advanced
@@ -179,27 +179,27 @@ public class SubjectMethodGenerator extends AssertionMethodStrategy {
             return;
 
         // takes priority over primitive or collection types
-        chainStrategy.addStrategyMaybe(context, method, generated);
+        chainStrategy.addStrategyMaybe(context, method, generatedSource);
 
         //
-        this.strategies.forEach(x -> x.addStrategyMaybe(context, method, generated));
+        this.strategies.forEach(x -> x.addStrategyMaybe(context, method, generatedSource));
 
         if (Boolean.class.isAssignableFrom(returnType)) {
-            booleanStrategy.addStrategyMaybe(context, method, generated);
+            booleanStrategy.addStrategyMaybe(context, method, generatedSource);
         } else {
 
             if (Collection.class.isAssignableFrom(returnType)) {
-                addHasElementStrategy(method, generated, classUnderTest);
+                addHasElementStrategy(method, generatedSource, classUnderTest);
             }
 
             if (Map.class.isAssignableFrom(returnType)) {
-                addMapStrategy(method, generated, classUnderTest);
+                addMapStrategy(method, generatedSource, classUnderTest);
             }
 
-            addEqualityStrategy(method, generated, classUnderTest);
+            addEqualityStrategy(method, generatedSource, classUnderTest);
         }
 
-        generated.addImport(Fact.class)
+        generatedSource.addImport(Fact.class)
                 .setStatic(true)
                 .setName(Fact.class.getCanonicalName() + ".*");
     }

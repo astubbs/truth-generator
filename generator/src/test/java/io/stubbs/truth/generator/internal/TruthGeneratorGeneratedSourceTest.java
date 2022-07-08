@@ -7,6 +7,7 @@ import io.stubbs.truth.generator.SourceClassSets;
 import io.stubbs.truth.generator.TestClassFactories;
 import io.stubbs.truth.generator.TruthGeneratorAPI;
 import io.stubbs.truth.generator.internal.model.Result;
+import io.stubbs.truth.generator.internal.model.TextFile;
 import io.stubbs.truth.generator.internal.model.ThreeSystem;
 import io.stubbs.truth.generator.shaded.org.jboss.forge.roaster.model.sourceChickens.JavaClassSourceSubject;
 import io.stubbs.truth.generator.subjects.MyMapSubject;
@@ -100,21 +101,25 @@ public class TruthGeneratorGeneratedSourceTest {
         assertThat(threeSystemGenerated).hasMiddle().withSamePackageAs(MyEmployee.class);
         assertThat(threeSystemGenerated).hasChild().withSamePackageAs(MyEmployee.class);
 
-        String expected = loadFileToString("expected/MyEmployeeParentSubject.java.txt");
-        assertThat(threeSystemGenerated)
-                .hasParent()
-                .hasGenerated()
-                .hasSourceText()
-                .ignoringTrailingWhiteSpace()
-                .equalTo(expected); // sanity full chain
+        var parent = TextFile.fromResourcePath("expected/MyEmployeeParentSubject.java.txt");
+//        assertThat(threeSystemGenerated)
+//                .hasParent()
+//                .hasGenerated()
+//                .hasSourceText()
+//                .ignoringTrailingWhiteSpace()
+//                .equalTo(expected); // sanity full chain
+        assertThat(threeSystemGenerated).hasParent().hasSourceText().withSourceOf(parent);
 
-        assertThat(threeSystemGenerated).hasParentSource(expected);
 
-        String expected1 = loadFileToString("expected/MyEmployeeSubject.java.txt");
-        assertThat(threeSystemGenerated).hasMiddleSource(expected1);
+//        String middleSource = loadFileToString("expected/MyEmployeeSubject.java.txt");
+        var middleSource = TextFile.fromResourcePath("expected/MyEmployeeSubject.java.txt");
+        assertThat(threeSystemGenerated).hasChild().withSourceOf(middleSource);
 
-        String expected2 = loadFileToString("expected/MyEmployeeChildSubject.java.txt");
-        assertThat(threeSystemGenerated).hasChildSource(expected2);
+        var child = TextFile.fromResourcePath("expected/MyEmployeeChildSubject.java.txt");
+        assertThat(threeSystemGenerated).hasChild().withSourceOf(child);
+
+//        String expected2 = loadFileToString("expected/MyEmployeeChildSubject.java.txt");
+//        assertThat(threeSystemGenerated).hasChildSource(expected2);
     }
 
     private String loadFileToString(String expectedFileName) throws IOException {

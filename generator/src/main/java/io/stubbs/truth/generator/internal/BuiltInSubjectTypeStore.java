@@ -4,8 +4,8 @@ import com.google.common.truth.Subject;
 import com.google.common.truth.Truth;
 import com.google.common.truth.Truth8;
 import io.stubbs.truth.generator.BaseSubjectExtension;
-import io.stubbs.truth.generator.ReflectionContext;
 import io.stubbs.truth.generator.GeneratorException;
+import io.stubbs.truth.generator.ReflectionContext;
 import lombok.AccessLevel;
 import lombok.Getter;
 import org.apache.commons.lang3.StringUtils;
@@ -189,6 +189,7 @@ public class BuiltInSubjectTypeStore {
         return getSubjectExtensions().containsValue(subjectClass);
     }
 
+    // todo needs javadoc
     public Optional<Class<? extends Subject>> getSubjectExtensions(Class<?> type) {
         var classStream = getSubjectExtensions().entrySet().stream()
                 .filter(x -> x.getKey().isAssignableFrom(type))

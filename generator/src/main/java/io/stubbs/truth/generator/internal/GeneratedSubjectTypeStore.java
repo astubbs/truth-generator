@@ -150,10 +150,9 @@ public class GeneratedSubjectTypeStore {
             Type maybeParamType;
             try {
                 maybeParamType = TypeResolver.reify(genericReturnTypeRaw, classUnderTest);
-                if (maybeParamType instanceof Class) {
-                    returnType = (Class<?>) maybeParamType;
-                } else if (maybeParamType instanceof ParameterizedType && rawReturnType.isAssignableFrom(Optional.class)) {
-                    ParameterizedType paramType = (ParameterizedType) maybeParamType;
+                if (maybeParamType instanceof Class<?> clazzType) {
+                    returnType = clazzType;
+                } else if (maybeParamType instanceof ParameterizedType paramType && rawReturnType.isAssignableFrom(Optional.class)) {
                     Type[] actualTypeArguments = paramType.getActualTypeArguments();
                     if (actualTypeArguments.length == 1 && actualTypeArguments[0] instanceof Class<?>) {
                         returnType = (Class<?>) actualTypeArguments[0];

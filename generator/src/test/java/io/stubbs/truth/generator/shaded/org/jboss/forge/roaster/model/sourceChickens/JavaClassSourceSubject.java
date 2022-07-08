@@ -1,13 +1,19 @@
 package io.stubbs.truth.generator.shaded.org.jboss.forge.roaster.model.sourceChickens;
 
+import com.google.common.io.Resources;
 import com.google.common.truth.FailureMetadata;
 import io.stubbs.truth.generator.SubjectFactoryMethod;
 import io.stubbs.truth.generator.UserManagedTruth;
+import io.stubbs.truth.generator.internal.model.TextFile;
 import io.stubbs.truth.generator.subjects.MyStringSubject;
 import io.stubbs.truth.generator.testModel.MyEmployee;
+import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
 import org.jboss.forge.roaster.model.source.JavaClassSource;
 
 import javax.annotation.processing.Generated;
+import java.net.URL;
+import java.nio.charset.Charset;
 
 // in VCS as we're still in the chicken phase of what comes first - stable maven plugin to generate this for the build before we can remove
 
@@ -20,6 +26,7 @@ import javax.annotation.processing.Generated;
  *
  * @see JavaClassSourceParentSubject
  */
+@Slf4j
 @UserManagedTruth(value = JavaClassSource.class)
 @Generated("truth-generator")
 public class JavaClassSourceSubject extends JavaClassSourceParentSubject {
@@ -44,6 +51,14 @@ public class JavaClassSourceSubject extends JavaClassSourceParentSubject {
     public void withSamePackageAs(Class<MyEmployee> expected) {
         String actualPackage = actual.getPackage();
         check("getPackage()").that(actualPackage).isEqualTo(expected.getPackage().getName());
+    }
+
+    @SneakyThrows
+    public void withSourceOf(TextFile child) {
+        URL resource = Resources.getResource(child.getResourcePath());
+        String expected = Resources.toString(resource, Charset.defaultCharset());
+        log.error("Checking {}", resource);
+        hasSourceText().ignoringTrailingWhiteSpace().equalTo(expected);
     }
 
 }

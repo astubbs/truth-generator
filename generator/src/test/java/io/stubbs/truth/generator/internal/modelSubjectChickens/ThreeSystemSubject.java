@@ -12,6 +12,8 @@ import org.jboss.forge.roaster.model.source.JavaClassSource;
 
 import javax.annotation.processing.Generated;
 
+// todo once discovery is merged, this needs proper integration (remove tracked child and parent)
+
 // in VCS as we're still in the chicken phase of what comes first - stable maven plugin to generate this for the build before we can remove
 
 /**
@@ -62,4 +64,5 @@ public class ThreeSystemSubject extends ThreeSystemParentSubject {
     public void hasChildSource(String expected) {
         hasChild().hasSourceText().ignoringTrailingWhiteSpace().equalTo(expected);
     }
+
 }

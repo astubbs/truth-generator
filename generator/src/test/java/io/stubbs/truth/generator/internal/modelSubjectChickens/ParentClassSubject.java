@@ -4,6 +4,7 @@ import com.google.common.truth.FailureMetadata;
 import io.stubbs.truth.generator.SubjectFactoryMethod;
 import io.stubbs.truth.generator.UserManagedTruth;
 import io.stubbs.truth.generator.internal.model.ParentClass;
+import io.stubbs.truth.generator.shaded.org.jboss.forge.roaster.model.sourceChickens.JavaClassSourceSubject;
 import io.stubbs.truth.generator.testModel.MyEmployee;
 
 import javax.annotation.processing.Generated;
@@ -38,5 +39,9 @@ public class ParentClassSubject extends ParentClassParentSubject {
         String actualPackage = actual.getGenerated().getPackage();
         String expected1 = expected.getPackage().getName();
         check("getPackage()").that(actualPackage).isEqualTo(expected1);
+    }
+
+    public JavaClassSourceSubject hasSourceText() {
+        return null;
     }
 }

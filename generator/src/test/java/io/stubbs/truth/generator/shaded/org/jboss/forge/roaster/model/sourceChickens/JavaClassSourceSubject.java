@@ -49,6 +49,7 @@ public class JavaClassSourceSubject extends JavaClassSourceParentSubject {
         check("getPackage()").that(actualPackage).isEqualTo(expected.getPackage().getName());
     }
 
+    // todo drop this step if possible?
     @SneakyThrows
     public MyStringSubject.IgnoringWhiteSpaceComparison withSourceOf() {
 //        URL resource = Resources.getResource(child.getResourcePath());

@@ -2,13 +2,14 @@ package io.stubbs.truth.generator.internal;
 import io.stubbs.truth.generator.internal.ManagedSubjectBuilder;
 import java.util.List;
 import io.stubbs.truth.generator.example.MakeSubject;
-import com.google.common.truth.FailureMetadata;
 import io.stubbs.truth.generator.example.Car.Make;
+import com.google.common.truth.FailureMetadata;
 import static io.stubbs.truth.generator.example.MakeSubject.*;
 import com.google.common.truth.Truth;
 import com.google.common.truth.SimpleSubjectBuilder;
 import javax.annotation.processing.Generated;
 import io.stubbs.truth.generator.testModel.IdCardSubject;
+import io.stubbs.truth.generator.testModel.IdCard;
 import static io.stubbs.truth.generator.testModel.IdCardSubject.*;
 import io.stubbs.truth.generator.testModel.SecurityTypeSubject;
 import io.stubbs.truth.generator.testModel.IdCard.SecurityType;
@@ -17,11 +18,13 @@ import io.stubbs.truth.generator.testModel.TypeSubject;
 import io.stubbs.truth.generator.testModel.IdCard.SecurityType.Type;
 import static io.stubbs.truth.generator.testModel.TypeSubject.*;
 import io.stubbs.truth.generator.testModel.MyEmployeeSubject;
+import io.stubbs.truth.generator.testModel.MyEmployee;
 import static io.stubbs.truth.generator.testModel.MyEmployeeSubject.*;
 import io.stubbs.truth.generator.testModel.StateSubject;
 import io.stubbs.truth.generator.testModel.MyEmployee.State;
 import static io.stubbs.truth.generator.testModel.StateSubject.*;
 import io.stubbs.truth.generator.testModel.PersonSubject;
+import io.stubbs.truth.generator.testModel.Person;
 import static io.stubbs.truth.generator.testModel.PersonSubject.*;
 import io.stubbs.truth.generator.internal.autoShaded.java.time.DayOfWeekSubject;
 import java.time.DayOfWeek;
@@ -111,7 +114,7 @@ public class ManagedTruth {
 	/**
 	 * Entry point for {@link Make} assertions.
 	 */
-	public static MakeSubject assertThat(io.stubbs.truth.generator.example.Car.Make actual) {
+	public static MakeSubject assertThat(Make actual) {
 		return Truth.assertAbout(io.stubbs.truth.generator.example.MakeSubject.makes()).that(actual);
 	}
 	/**
@@ -126,7 +129,7 @@ public class ManagedTruth {
 	/**
 	 * Entry point for {@link IdCard} assertions.
 	 */
-	public static IdCardSubject assertThat(io.stubbs.truth.generator.testModel.IdCard actual) {
+	public static IdCardSubject assertThat(IdCard actual) {
 		return Truth.assertAbout(io.stubbs.truth.generator.testModel.IdCardSubject.idCards()).that(actual);
 	}
 	/**
@@ -141,7 +144,7 @@ public class ManagedTruth {
 	/**
 	 * Entry point for {@link SecurityType} assertions.
 	 */
-	public static SecurityTypeSubject assertThat(io.stubbs.truth.generator.testModel.IdCard.SecurityType actual) {
+	public static SecurityTypeSubject assertThat(SecurityType actual) {
 		return Truth.assertAbout(io.stubbs.truth.generator.testModel.SecurityTypeSubject.securityTypes()).that(actual);
 	}
 	/**
@@ -156,7 +159,7 @@ public class ManagedTruth {
 	/**
 	 * Entry point for {@link Type} assertions.
 	 */
-	public static TypeSubject assertThat(io.stubbs.truth.generator.testModel.IdCard.SecurityType.Type actual) {
+	public static TypeSubject assertThat(Type actual) {
 		return Truth.assertAbout(io.stubbs.truth.generator.testModel.TypeSubject.types()).that(actual);
 	}
 	/**
@@ -171,7 +174,7 @@ public class ManagedTruth {
 	/**
 	 * Entry point for {@link MyEmployee} assertions.
 	 */
-	public static MyEmployeeSubject assertThat(io.stubbs.truth.generator.testModel.MyEmployee actual) {
+	public static MyEmployeeSubject assertThat(MyEmployee actual) {
 		return Truth.assertAbout(io.stubbs.truth.generator.testModel.MyEmployeeSubject.myEmployees()).that(actual);
 	}
 	/**
@@ -186,7 +189,7 @@ public class ManagedTruth {
 	/**
 	 * Entry point for {@link State} assertions.
 	 */
-	public static StateSubject assertThat(io.stubbs.truth.generator.testModel.MyEmployee.State actual) {
+	public static StateSubject assertThat(State actual) {
 		return Truth.assertAbout(io.stubbs.truth.generator.testModel.StateSubject.states()).that(actual);
 	}
 	/**
@@ -201,7 +204,7 @@ public class ManagedTruth {
 	/**
 	 * Entry point for {@link Person} assertions.
 	 */
-	public static PersonSubject assertThat(io.stubbs.truth.generator.testModel.Person actual) {
+	public static PersonSubject assertThat(Person actual) {
 		return Truth.assertAbout(io.stubbs.truth.generator.testModel.PersonSubject.persons()).that(actual);
 	}
 	/**
@@ -216,7 +219,7 @@ public class ManagedTruth {
 	/**
 	 * Entry point for {@link DayOfWeek} assertions.
 	 */
-	public static DayOfWeekSubject assertThat(java.time.DayOfWeek actual) {
+	public static DayOfWeekSubject assertThat(DayOfWeek actual) {
 		return Truth.assertAbout(io.stubbs.truth.generator.internal.autoShaded.java.time.DayOfWeekSubject.dayOfWeeks())
 				.that(actual);
 	}
@@ -232,7 +235,7 @@ public class ManagedTruth {
 	/**
 	 * Entry point for {@link Instant} assertions.
 	 */
-	public static InstantSubject assertThat(java.time.Instant actual) {
+	public static InstantSubject assertThat(Instant actual) {
 		return Truth.assertAbout(io.stubbs.truth.generator.internal.autoShaded.java.time.InstantSubject.instants())
 				.that(actual);
 	}
@@ -248,7 +251,7 @@ public class ManagedTruth {
 	/**
 	 * Entry point for {@link LocalDate} assertions.
 	 */
-	public static LocalDateSubject assertThat(java.time.LocalDate actual) {
+	public static LocalDateSubject assertThat(LocalDate actual) {
 		return Truth.assertAbout(io.stubbs.truth.generator.internal.autoShaded.java.time.LocalDateSubject.localDates())
 				.that(actual);
 	}
@@ -264,7 +267,7 @@ public class ManagedTruth {
 	/**
 	 * Entry point for {@link LocalDateTime} assertions.
 	 */
-	public static LocalDateTimeSubject assertThat(java.time.LocalDateTime actual) {
+	public static LocalDateTimeSubject assertThat(LocalDateTime actual) {
 		return Truth
 				.assertAbout(
 						io.stubbs.truth.generator.internal.autoShaded.java.time.LocalDateTimeSubject.localDateTimes())
@@ -282,7 +285,7 @@ public class ManagedTruth {
 	/**
 	 * Entry point for {@link LocalTime} assertions.
 	 */
-	public static LocalTimeSubject assertThat(java.time.LocalTime actual) {
+	public static LocalTimeSubject assertThat(LocalTime actual) {
 		return Truth.assertAbout(io.stubbs.truth.generator.internal.autoShaded.java.time.LocalTimeSubject.localTimes())
 				.that(actual);
 	}
@@ -298,7 +301,7 @@ public class ManagedTruth {
 	/**
 	 * Entry point for {@link Month} assertions.
 	 */
-	public static MonthSubject assertThat(java.time.Month actual) {
+	public static MonthSubject assertThat(Month actual) {
 		return Truth.assertAbout(io.stubbs.truth.generator.internal.autoShaded.java.time.MonthSubject.months())
 				.that(actual);
 	}
@@ -314,7 +317,7 @@ public class ManagedTruth {
 	/**
 	 * Entry point for {@link OffsetDateTime} assertions.
 	 */
-	public static OffsetDateTimeSubject assertThat(java.time.OffsetDateTime actual) {
+	public static OffsetDateTimeSubject assertThat(OffsetDateTime actual) {
 		return Truth
 				.assertAbout(
 						io.stubbs.truth.generator.internal.autoShaded.java.time.OffsetDateTimeSubject.offsetDateTimes())
@@ -332,7 +335,7 @@ public class ManagedTruth {
 	/**
 	 * Entry point for {@link OffsetTime} assertions.
 	 */
-	public static OffsetTimeSubject assertThat(java.time.OffsetTime actual) {
+	public static OffsetTimeSubject assertThat(OffsetTime actual) {
 		return Truth
 				.assertAbout(io.stubbs.truth.generator.internal.autoShaded.java.time.OffsetTimeSubject.offsetTimes())
 				.that(actual);
@@ -349,7 +352,7 @@ public class ManagedTruth {
 	/**
 	 * Entry point for {@link ZoneId} assertions.
 	 */
-	public static ZoneIdSubject assertThat(java.time.ZoneId actual) {
+	public static ZoneIdSubject assertThat(ZoneId actual) {
 		return Truth.assertAbout(io.stubbs.truth.generator.internal.autoShaded.java.time.ZoneIdSubject.zoneIds())
 				.that(actual);
 	}
@@ -365,7 +368,7 @@ public class ManagedTruth {
 	/**
 	 * Entry point for {@link ZoneOffset} assertions.
 	 */
-	public static ZoneOffsetSubject assertThat(java.time.ZoneOffset actual) {
+	public static ZoneOffsetSubject assertThat(ZoneOffset actual) {
 		return Truth
 				.assertAbout(io.stubbs.truth.generator.internal.autoShaded.java.time.ZoneOffsetSubject.zoneOffsets())
 				.that(actual);
@@ -382,7 +385,7 @@ public class ManagedTruth {
 	/**
 	 * Entry point for {@link ZonedDateTime} assertions.
 	 */
-	public static ZonedDateTimeSubject assertThat(java.time.ZonedDateTime actual) {
+	public static ZonedDateTimeSubject assertThat(ZonedDateTime actual) {
 		return Truth
 				.assertAbout(
 						io.stubbs.truth.generator.internal.autoShaded.java.time.ZonedDateTimeSubject.zonedDateTimes())
@@ -400,7 +403,7 @@ public class ManagedTruth {
 	/**
 	 * Entry point for {@link ChronoLocalDate} assertions.
 	 */
-	public static ChronoLocalDateSubject assertThat(java.time.chrono.ChronoLocalDate actual) {
+	public static ChronoLocalDateSubject assertThat(ChronoLocalDate actual) {
 		return Truth.assertAbout(io.stubbs.truth.generator.internal.autoShaded.java.time.chrono.ChronoLocalDateSubject
 				.chronoLocalDates()).that(actual);
 	}
@@ -416,7 +419,7 @@ public class ManagedTruth {
 	/**
 	 * Entry point for {@link ChronoLocalDateTime} assertions.
 	 */
-	public static ChronoLocalDateTimeSubject assertThat(java.time.chrono.ChronoLocalDateTime actual) {
+	public static ChronoLocalDateTimeSubject assertThat(ChronoLocalDateTime actual) {
 		return Truth
 				.assertAbout(io.stubbs.truth.generator.internal.autoShaded.java.time.chrono.ChronoLocalDateTimeSubject
 						.chronoLocalDateTimes())
@@ -434,7 +437,7 @@ public class ManagedTruth {
 	/**
 	 * Entry point for {@link Chronology} assertions.
 	 */
-	public static ChronologySubject assertThat(java.time.chrono.Chronology actual) {
+	public static ChronologySubject assertThat(Chronology actual) {
 		return Truth
 				.assertAbout(
 						io.stubbs.truth.generator.internal.autoShaded.java.time.chrono.ChronologySubject.chronologies())
@@ -452,7 +455,7 @@ public class ManagedTruth {
 	/**
 	 * Entry point for {@link Era} assertions.
 	 */
-	public static EraSubject assertThat(java.time.chrono.Era actual) {
+	public static EraSubject assertThat(Era actual) {
 		return Truth.assertAbout(io.stubbs.truth.generator.internal.autoShaded.java.time.chrono.EraSubject.eras())
 				.that(actual);
 	}
@@ -468,7 +471,7 @@ public class ManagedTruth {
 	/**
 	 * Entry point for {@link IsoChronology} assertions.
 	 */
-	public static IsoChronologySubject assertThat(java.time.chrono.IsoChronology actual) {
+	public static IsoChronologySubject assertThat(IsoChronology actual) {
 		return Truth.assertAbout(
 				io.stubbs.truth.generator.internal.autoShaded.java.time.chrono.IsoChronologySubject.isoChronologies())
 				.that(actual);
@@ -485,7 +488,7 @@ public class ManagedTruth {
 	/**
 	 * Entry point for {@link IsoEra} assertions.
 	 */
-	public static IsoEraSubject assertThat(java.time.chrono.IsoEra actual) {
+	public static IsoEraSubject assertThat(IsoEra actual) {
 		return Truth.assertAbout(io.stubbs.truth.generator.internal.autoShaded.java.time.chrono.IsoEraSubject.isoEras())
 				.that(actual);
 	}
@@ -501,7 +504,7 @@ public class ManagedTruth {
 	/**
 	 * Entry point for {@link ZoneRules} assertions.
 	 */
-	public static ZoneRulesSubject assertThat(java.time.zone.ZoneRules actual) {
+	public static ZoneRulesSubject assertThat(ZoneRules actual) {
 		return Truth
 				.assertAbout(
 						io.stubbs.truth.generator.internal.autoShaded.java.time.zone.ZoneRulesSubject.zoneRuleses())
@@ -519,7 +522,7 @@ public class ManagedTruth {
 	/**
 	 * Entry point for {@link Optional} assertions.
 	 */
-	public static OptionalSubject assertThat(java.util.Optional actual) {
+	public static OptionalSubject assertThat(Optional actual) {
 		return Truth.assertAbout(io.stubbs.truth.generator.internal.autoShaded.java.util.OptionalSubject.optionals())
 				.that(actual);
 	}
@@ -535,7 +538,7 @@ public class ManagedTruth {
 	/**
 	 * Entry point for {@link UUID} assertions.
 	 */
-	public static UUIDSubject assertThat(java.util.UUID actual) {
+	public static UUIDSubject assertThat(UUID actual) {
 		return Truth.assertAbout(io.stubbs.truth.generator.internal.autoShaded.java.util.UUIDSubject.uUIDs())
 				.that(actual);
 	}
@@ -552,7 +555,7 @@ public class ManagedTruth {
 	 * Entry point for {@link String} assertions.
 	 */
 	public static MyStringSubject assertThat(java.lang.String actual) {
-		return Truth.assertAbout(io.stubbs.truth.generator.subjects.MyStringSubject.strings()).that(actual);
+		return Truth.assertAbout(strings()).that(actual);
 	}
 	/**
 	 * Convenience entry point for {@link String} assertions when being mixed with
@@ -567,7 +570,7 @@ public class ManagedTruth {
 	 * Entry point for {@link Collection} assertions.
 	 */
 	public static MyCollectionSubject assertThat(Collection actual) {
-		return Truth.assertAbout(io.stubbs.truth.generator.subjects.MyCollectionSubject.collections()).that(actual);
+		return Truth.assertAbout(collections()).that(actual);
 	}
 	/**
 	 * Convenience entry point for {@link Collection} assertions when being mixed
@@ -582,7 +585,7 @@ public class ManagedTruth {
 	 * Entry point for {@link Map} assertions.
 	 */
 	public static MyMapSubject assertThat(Map actual) {
-		return Truth.assertAbout(io.stubbs.truth.generator.subjects.MyMapSubject.maps()).that(actual);
+		return Truth.assertAbout(maps()).that(actual);
 	}
 	/**
 	 * Convenience entry point for {@link Map} assertions when being mixed with

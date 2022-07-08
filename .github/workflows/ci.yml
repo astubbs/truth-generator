@@ -40,10 +40,10 @@ jobs:
           server-password: CI_DEPLOY_PASSWORD
       - name: 'Install'
         shell: bash
-        run: mvn -B -P!standard-with-extra-repos install -U -DskipTests=true
+        run: mvn -X -B -P!standard-with-extra-repos install -U -DskipTests=true
       - name: 'Test'
         shell: bash
-        run: mvn -B -P!standard-with-extra-repos verify -U -Dmaven.javadoc.skip=true
+        run: mvn -X -B -P!standard-with-extra-repos verify -U -Dmaven.javadoc.skip=true
 
   publish_snapshot_package_cloud:
     name: 'Publish snapshot to Package Cloud'

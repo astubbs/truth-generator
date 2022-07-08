@@ -61,6 +61,10 @@ public class OverallEntryPoint {
         createOverallAccessPoints();
     }
 
+    /**
+     * Creates our managed version of Truth's {@link StandardSubjectBuilder}, used for chaining assertions fluently of
+     * all our custom subjects.
+     */
     private void createManagedSubjectBuilder() {
         JavaClassSource managedSubjectBuilder = Roaster.create(JavaClassSource.class)
                 .setName("ManagedSubjectBuilder")
@@ -94,13 +98,11 @@ public class OverallEntryPoint {
     }
 
     /**
+     * Creates all our fluent assertion methods for our custom subject.
+     *
      * @see com.google.common.truth.StandardSubjectBuilder#that
      */
     private <T> void addThatForSubject(JavaClassSource overallAccess, ThreeSystem<T> ts) {
-        //        public MyEmployeeSubject that(MyEmployee actual) {
-        //            return standardSubjectBuilder.about(MyEmployeeChildSubject.myEmployees()).that(actual);
-        //        }
-
         MethodSource<JavaClassSource> that = overallAccess.addMethod()
                 .setName("that")
                 .setPublic();
@@ -113,9 +115,8 @@ public class OverallEntryPoint {
         that.setReturnType(subjectCanonicalName);
 
         //
-        String factoryEnclosing = ts.getMiddle().getCanonicalName();
         String factoryName = ts.getMiddle().getFactoryMethodName();
-        that.setBody("return standardSubjectBuilder.about(" + factoryEnclosing + "." + factoryName + "()).that(actual);");
+        that.setBody("return standardSubjectBuilder.about(" + factoryName + "()).that(actual);");
 
         //
         that.getJavaDoc().addTagValue("see", "{@link " + subjectCanonicalName + "}");

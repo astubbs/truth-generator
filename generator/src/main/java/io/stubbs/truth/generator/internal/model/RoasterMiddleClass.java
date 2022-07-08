@@ -44,7 +44,8 @@ public abstract class RoasterMiddleClass<T> implements MiddleClass<T> {
 
     @Override
     public String getFactoryMethodName() {
-        return this.factoryMethod.getName();
+        String canonicalOrigin = this.factoryMethod.getOrigin().getCanonicalName();
+        return canonicalOrigin + '.' + factoryMethod.getName();
     }
 
     @Override

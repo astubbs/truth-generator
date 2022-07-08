@@ -48,7 +48,8 @@ public class UserSuppliedMiddleClass<T> implements MiddleClass<T> {
     }
 
     public String getFactoryMethodName() {
-        return factoryMethod.getName();
+        String canonicalName = factoryMethod.getDeclaringClass().getCanonicalName();
+        return canonicalName + '.' + factoryMethod.getName();
     }
 
     @Override

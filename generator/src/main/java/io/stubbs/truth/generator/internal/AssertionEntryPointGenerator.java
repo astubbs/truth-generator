@@ -83,7 +83,7 @@ public class AssertionEntryPointGenerator {
                     .setStatic(true);
 
             //
-            String entryPointBody = "return Truth.assertAbout(" + factoryContainerQualifiedName + "." + factoryMethodName + "()).that(actual);";
+            String entryPointBody = "return Truth.assertAbout(" + factoryMethodName + "()).that(actual);";
             assertThat.setBody(entryPointBody);
             javaSourceClassToAddTo.addImport(Truth.class);
             assertThat.getJavaDoc().setText("Entry point for {@link " + classUnderTest.getSimpleName() + "} assertions.");

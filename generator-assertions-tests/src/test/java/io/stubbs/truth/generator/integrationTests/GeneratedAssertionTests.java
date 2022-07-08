@@ -1,5 +1,6 @@
-package io.stubbs.truth.generator;
+package io.stubbs.truth.generator.integrationTests;
 
+import io.stubbs.truth.generator.TestModelUtils;
 import io.stubbs.truth.generator.internal.TruthGeneratorGeneratedSourceTest;
 import io.stubbs.truth.generator.testModel.MyEmployee;
 import io.stubbs.truth.generator.testModel.MyEmployeeChildSubject;

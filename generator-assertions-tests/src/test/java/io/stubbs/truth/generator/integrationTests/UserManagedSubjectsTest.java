@@ -1,6 +1,7 @@
-package io.stubbs.truth.generator;
+package io.stubbs.truth.generator.integrationTests;
 
-import io.stubbs.truth.generator.capturedtemplates.MyIdCardSubject;
+
+import io.stubbs.truth.generator.integrationTests.capturedtemplates.MyIdCardSubject;
 import io.stubbs.truth.generator.testModel.IdCard;
 import io.stubbs.truth.generator.testModel.MyEmployee;
 import org.junit.Test;

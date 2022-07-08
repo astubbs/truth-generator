@@ -1,9 +1,12 @@
-package io.stubbs.truth.generator.example;
+package io.stubbs.truth.generator.integrationTests.example;
 
+import io.stubbs.truth.generator.example.Car;
+import io.stubbs.truth.generator.integrationTests.ManagedTruth;
 import org.junit.ComparisonFailure;
 import org.junit.Test;
 import uk.co.jemos.podam.api.PodamFactory;
 import uk.co.jemos.podam.api.PodamFactoryImpl;
+
 
 /**
  * @author Antony Stubbs
@@ -15,7 +18,7 @@ public class CarTest {
 
     @Test(expected = ComparisonFailure.class)
     public void test() {
-        assertThat(car).hasColourId().isEqualTo(0);
+        ManagedTruth.assertThat(car).hasColourId().isEqualTo(0);
     }
 
 }

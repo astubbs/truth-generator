@@ -1,4 +1,4 @@
-package io.stubbs.truth.generator;
+package io.stubbs.truth.generator.integrationTests;
 
 import com.google.common.truth.StringSubject;
 import com.google.common.truth.Subject;

@@ -93,7 +93,7 @@
         <version.roaster>2.24.0.Final</version.roaster>
         <version.truth>1.1.3</version.truth>
 
-        <maven.version>3.8.5</maven.version>
+        <maven.version>3.8.6</maven.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
         <flogger.version>0.7.4</flogger.version>

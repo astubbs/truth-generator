@@ -3,7 +3,7 @@ package io.stubbs.truth.generator.internal;
 import com.google.common.truth.Subject;
 import io.stubbs.truth.generator.FullContext;
 import io.stubbs.truth.generator.SubjectFactoryMethod;
-import io.stubbs.truth.generator.UserManagedTruth;
+import io.stubbs.truth.generator.UserManagedSubject;
 import io.stubbs.truth.generator.internal.model.UserSourceCodeManagedMiddleClass;
 import lombok.SneakyThrows;
 import lombok.Value;
@@ -124,7 +124,7 @@ public class SourceCodeScanner {
 
             String name = annotation.getName();
 //            Class<?> classValue = annotation.getClassValue();
-            String target = UserManagedTruth.class.getSimpleName();
+            String target = UserManagedSubject.class.getSimpleName();
             boolean match = annotation.getName().equals(target);
 
             return match;

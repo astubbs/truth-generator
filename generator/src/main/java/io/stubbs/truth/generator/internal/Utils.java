@@ -1,7 +1,7 @@
 package io.stubbs.truth.generator.internal;
 
 import io.stubbs.truth.generator.SubjectFactoryMethod;
-import io.stubbs.truth.generator.UserManagedTruth;
+import io.stubbs.truth.generator.UserManagedSubject;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.reflect.MethodUtils;
 import org.atteo.evo.inflector.English;
@@ -65,7 +65,7 @@ public class Utils {
 
         // todo use annotations not name strings
         List<String> ids = List.of("Parent", "Child");
-        boolean isGeneratorManaged = javaClass.getAnnotation(UserManagedTruth.class) == null;
+        boolean isGeneratorManaged = javaClass.getAnnotation(UserManagedSubject.class) == null;
 
         Path base = (isGeneratorManaged) ? getManagedPath() : getTemplatesPath();
 

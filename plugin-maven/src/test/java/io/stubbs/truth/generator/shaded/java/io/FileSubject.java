@@ -3,7 +3,7 @@ package io.stubbs.truth.generator.shaded.java.io;
 import com.google.common.truth.FailureMetadata;
 import io.stubbs.truth.generator.SubjectFactoryMethod;
 import io.stubbs.truth.generator.UserManagedMiddleSubject;
-import io.stubbs.truth.generator.UserManagedTruth;
+import io.stubbs.truth.generator.UserManagedSubject;
 
 import javax.annotation.processing.Generated;
 import java.io.File;
@@ -19,7 +19,7 @@ import java.io.File;
  * @see FileParentSubject
  * @see FileChildSubject
  */
-@UserManagedTruth(value = File.class)
+@UserManagedSubject(value = File.class)
 @Generated("truth-generator")
 public class FileSubject extends FileParentSubject implements UserManagedMiddleSubject<File> {
 

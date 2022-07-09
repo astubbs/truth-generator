@@ -2,7 +2,7 @@ package io.stubbs.truth.generator.shaded.org.jboss.forge.roaster.model.sourceChi
 
 import com.google.common.truth.FailureMetadata;
 import io.stubbs.truth.generator.SubjectFactoryMethod;
-import io.stubbs.truth.generator.UserManagedTruth;
+import io.stubbs.truth.generator.UserManagedSubject;
 import io.stubbs.truth.generator.subjects.MyStringSubject;
 import io.stubbs.truth.generator.testModel.MyEmployee;
 import lombok.SneakyThrows;
@@ -23,7 +23,7 @@ import javax.annotation.processing.Generated;
  * @see JavaClassSourceParentSubject
  */
 @Slf4j
-@UserManagedTruth(value = JavaClassSource.class)
+@UserManagedSubject(value = JavaClassSource.class)
 @Generated("truth-generator")
 public class JavaClassSourceSubject extends JavaClassSourceParentSubject {
 

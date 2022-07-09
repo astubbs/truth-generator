@@ -19,7 +19,7 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.TYPE})
 // todo rename UserManagedSubject?
-public @interface UserManagedTruth {
+public @interface UserManagedSubject {
     /**
      * The class that this is a {@link Subject} for.
      */

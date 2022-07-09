@@ -1,7 +1,7 @@
 package io.stubbs.truth.generator.internal.model;
 
 import com.google.common.truth.Subject;
-import io.stubbs.truth.generator.UserManagedTruth;
+import io.stubbs.truth.generator.UserManagedSubject;
 import io.stubbs.truth.generator.internal.TruthGeneratorRuntimeException;
 import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
@@ -24,7 +24,7 @@ import static io.stubbs.truth.generator.internal.Utils.msg;
  * A {@link MiddleClass} which is provided from discovered source code (not a compiled class from class path or from
  * source code we generated). I.e. the main way users will supply their own {@link Subject}s into the grpah.
  *
- * @see UserManagedTruth
+ * @see UserManagedSubject
  */
 @EqualsAndHashCode(callSuper = true)
 @FieldDefaults(makeFinal = true, level = AccessLevel.PRIVATE)
@@ -37,7 +37,7 @@ public class UserSourceCodeManagedMiddleClass<T> extends RoasterMiddleClass<T> i
 
     @Override
     public String getClassUnderTestSimpleName() {
-        AnnotationSource<JavaClassSource> userManaged = super.sourceCodeModel.getAnnotation(UserManagedTruth.class);
+        AnnotationSource<JavaClassSource> userManaged = super.sourceCodeModel.getAnnotation(UserManagedSubject.class);
         final AnnotationImpl userManaged1 = (AnnotationImpl) userManaged;
         final AnnotationSource annotationValue = userManaged1.getAnnotationValue();
         final Object internal = userManaged1.getInternal();

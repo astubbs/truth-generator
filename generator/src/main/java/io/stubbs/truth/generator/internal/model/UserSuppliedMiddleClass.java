@@ -1,7 +1,7 @@
 package io.stubbs.truth.generator.internal.model;
 
 import io.stubbs.truth.generator.UserManagedMiddleSubject;
-import io.stubbs.truth.generator.UserManagedTruth;
+import io.stubbs.truth.generator.UserManagedSubject;
 import io.stubbs.truth.generator.internal.Utils;
 import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
@@ -13,7 +13,7 @@ import org.jboss.forge.roaster.model.source.JavaClassSource;
 import java.lang.reflect.Method;
 
 /**
- * @see UserManagedTruth
+ * @see UserManagedSubject
  */
 @ToString
 @EqualsAndHashCode

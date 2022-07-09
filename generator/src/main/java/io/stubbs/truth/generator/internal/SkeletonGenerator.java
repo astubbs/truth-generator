@@ -4,7 +4,7 @@ import com.google.common.flogger.FluentLogger;
 import com.google.common.truth.FailureMetadata;
 import com.google.common.truth.Subject;
 import io.stubbs.truth.generator.UserManagedMiddleSubject;
-import io.stubbs.truth.generator.UserManagedTruth;
+import io.stubbs.truth.generator.UserManagedSubject;
 import io.stubbs.truth.generator.internal.model.*;
 import lombok.Setter;
 import org.jboss.forge.roaster.Roaster;
@@ -350,7 +350,7 @@ public class SkeletonGenerator implements SkeletonGeneratorAPI {
 
         addConstructor(classUnderTest, middle, false);
 
-        middle.addAnnotation(UserManagedTruth.class).setClassValue(classUnderTest);
+        middle.addAnnotation(UserManagedSubject.class).setClassValue(classUnderTest);
 
         MethodSource factory = aepg.addFactoryAccessor(classUnderTest, middle, classUnderTest.getSimpleName());
 

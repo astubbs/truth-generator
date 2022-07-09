@@ -4,7 +4,7 @@ import com.google.common.truth.Subject;
 import io.stubbs.truth.generator.BaseSubjectExtension;
 import io.stubbs.truth.generator.ReflectionContext;
 import io.stubbs.truth.generator.UserManagedMiddleSubject;
-import io.stubbs.truth.generator.UserManagedTruth;
+import io.stubbs.truth.generator.UserManagedSubject;
 import io.stubbs.truth.generator.internal.model.UserSuppliedMiddleClass;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
@@ -162,9 +162,9 @@ public class ReflectionUtils {
 //    }
 
     /**
-     * Look for compiled {@link UserManagedTruth}s for the provided Class on the classpath.
+     * Look for compiled {@link UserManagedSubject}s for the provided Class on the classpath.
      *
-     * @param clazzUnderTest the class to look for a {@link UserManagedTruth} for
+     * @param clazzUnderTest the class to look for a {@link UserManagedSubject} for
      */
     public <T> Optional<UserSuppliedMiddleClass<T>> tryGetUserManagedMiddle(final Class<T> clazzUnderTest) {
 //        var classStreamInt = this.reflections.getSubTypesOf(UserManagedMiddleSubject.class).stream()
@@ -177,18 +177,18 @@ public class ReflectionUtils {
 //        var classes2 = this.reflections.getTypesAnnotatedWith(annotation);
 
         var annotatedOld =
-                this.reflections.get(Scanners.TypesAnnotated.with(UserManagedTruth.class)
+                this.reflections.get(Scanners.TypesAnnotated.with(UserManagedSubject.class)
                         .asClass(reflections.getConfiguration().getClassLoaders()));
 
         // todo cache this on startup
         var annotated =
-                this.reflections.getTypesAnnotatedWith(UserManagedTruth.class);
+                this.reflections.getTypesAnnotatedWith(UserManagedSubject.class);
 
 
         var matchingClasses = annotated
                 .stream()
                 .filter(x -> {
-                    final UserManagedTruth annotation = x.getAnnotation(UserManagedTruth.class);
+                    final UserManagedSubject annotation = x.getAnnotation(UserManagedSubject.class);
                     if (annotation == null)
                         return false;
                     final Class<?> value = annotation.value();
@@ -204,7 +204,7 @@ public class ReflectionUtils {
 
         if (matchingClasses.size() > 1) {
             log.warn("Found more than one {} for {}. Taking first, ignoring the rest - found: {}",
-                    UserManagedTruth.class, clazzUnderTest, matchingClasses);
+                    UserManagedSubject.class, clazzUnderTest, matchingClasses);
         }
 
 

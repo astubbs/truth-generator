@@ -2,7 +2,7 @@ package io.stubbs.truth.generator.internal.modelSubjectChickens;
 
 import com.google.common.truth.FailureMetadata;
 import io.stubbs.truth.generator.SubjectFactoryMethod;
-import io.stubbs.truth.generator.UserManagedTruth;
+import io.stubbs.truth.generator.UserManagedSubject;
 import io.stubbs.truth.generator.internal.model.ParentClass;
 import io.stubbs.truth.generator.shaded.org.jboss.forge.roaster.model.sourceChickens.JavaClassSourceSubject;
 import io.stubbs.truth.generator.testModel.MyEmployee;
@@ -20,7 +20,7 @@ import static io.stubbs.truth.generator.shaded.org.jboss.forge.roaster.model.sou
  *
  * @see ParentClassParentSubject
  */
-@UserManagedTruth(value = ParentClass.class)
+@UserManagedSubject(value = ParentClass.class)
 @Generated("truth-generator")
 public class ParentClassSubject extends ParentClassParentSubject {
 

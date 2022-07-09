@@ -133,17 +133,6 @@
             <version>1.2.11</version>
             <scope>test</scope>
         </dependency>
-        <!--        <dependency>-->
-        <!--            <groupId>org.eclipse.jdt</groupId>-->
-        <!--            <artifactId>org.eclipse.jdt.core</artifactId>-->
-        <!--            <version>3.29.0</version>-->
-        <!--            <exclusions>-->
-        <!--                <exclusion>-->
-        <!--                    <groupId>*</groupId>-->
-        <!--                    <artifactId>*</artifactId>-->
-        <!--                </exclusion>-->
-        <!--            </exclusions>-->
-        <!--        </dependency>-->
 
         <!-- Test -->
         <dependency>
@@ -152,56 +141,8 @@
         </dependency>
     </dependencies>
 
-    <!--    <dependencyManagement>-->
-    <!--        <dependencies>-->
-    <!--            <dependency>-->
-    <!--                &lt;!&ndash;https://stackoverflow.com/questions/72625637/maven-build-failed-due-to-jdt-dependencies-no-versions-available-for-org-osgi&ndash;&gt;-->
-    <!--                <groupId>fr.jmini.ecentral</groupId>-->
-    <!--                <artifactId>eclipse-platform-dependencies</artifactId>-->
-    <!--                <version>4.14</version>-->
-    <!--                <type>pom</type>-->
-    <!--                <scope>import</scope>-->
-    <!--            </dependency>-->
-    <!--        </dependencies>-->
-    <!--    </dependencyManagement>-->
-
     <build>
         <plugins>
-            <!--            <plugin>-->
-            <!--                <groupId>org.apache.maven.plugins</groupId>-->
-            <!--                <artifactId>maven-shade-plugin</artifactId>-->
-            <!--                <version>3.3.0</version>-->
-            <!--                <configuration>-->
-            <!--                    <artifactSet>-->
-            <!--                        <includes>-->
-            <!--                            <include>org.eclipse.jdt:org.eclipse.jdt.core</include>-->
-            <!--                        </includes>-->
-            <!--                        &lt;!&ndash;                        <excludes>&ndash;&gt;-->
-            <!--                        &lt;!&ndash;                            <exclude>*:maven-core</exclude>&ndash;&gt;-->
-            <!--                        &lt;!&ndash;                        </excludes>&ndash;&gt;-->
-            <!--                    </artifactSet>-->
-            <!--                    <filters>-->
-            <!--                        <filter>-->
-            <!--                            <artifact>org.eclipse.jdt:org.eclipse.jdt.core</artifact>-->
-            <!--                            <includes>-->
-            <!--                                <include>org/eclipse/jdt/internal/compiler/util/CtSym</include>-->
-            <!--                                &lt;!&ndash;                                <include>org/eclipse/jdt/internal/compiler/util/JRTUtil</include>&ndash;&gt;-->
-            <!--                            </includes>-->
-            <!--                            <excludes>-->
-            <!--                                <exclude>**</exclude>-->
-            <!--                            </excludes>-->
-            <!--                        </filter>-->
-            <!--                    </filters>-->
-            <!--                </configuration>-->
-            <!--                <executions>-->
-            <!--                    <execution>-->
-            <!--                        <phase>package</phase>-->
-            <!--                        <goals>-->
-            <!--                            <goal>shade</goal>-->
-            <!--                        </goals>-->
-            <!--                    </execution>-->
-            <!--                </executions>-->
-            <!--            </plugin>-->
             <plugin>
                 <artifactId>maven-jar-plugin</artifactId>
                 <executions>
@@ -214,13 +155,5 @@
             </plugin>
         </plugins>
     </build>
-
-    <!--    <repositories>-->
-    <!--        <repository>-->
-    <!--            &lt;!&ndash;https://stackoverflow.com/questions/72625637/maven-build-failed-due-to-jdt-dependencies-no-versions-available-for-org-osgi&ndash;&gt;-->
-    <!--            <id>ecentral</id>-->
-    <!--            <url>https://raw.githubusercontent.com/jmini/ecentral/HEAD/repo</url>-->
-    <!--        </repository>-->
-    <!--    </repositories>-->
 
 </project>

@@ -13,7 +13,7 @@ jobs:
     name: "JDK ${{ matrix.java }}"
     strategy:
       matrix:
-        java: [ 18 ]
+        java: [ 17, 18 ]
     runs-on: ubuntu-latest
     steps:
       # Cancel any previous runs for the same branch that are still running.
@@ -61,7 +61,7 @@ jobs:
       - name: 'Set up Maven settings.xml for Package Cloud'
         uses: actions/setup-java@v2
         with:
-          java-version: 18
+          java-version: 17
           distribution: 'zulu'
           server-id: package-cloud
           server-password: PACKAGE_CLOUD_TOKEN
@@ -90,7 +90,7 @@ jobs:
       - name: 'Set up Maven settings.xml for GitHub'
         uses: actions/setup-java@v2
         with:
-          java-version: 18
+          java-version: 17
           distribution: 'zulu'
           server-id: github
           server-username: GITHUB_TOKEN

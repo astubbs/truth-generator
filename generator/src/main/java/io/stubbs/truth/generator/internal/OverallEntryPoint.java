@@ -203,6 +203,7 @@ public class OverallEntryPoint {
 
         if (method instanceof MethodImpl<?> impl) {
             String fullText = impl.getJavaDoc().getFullText();
+            // Remove after https://github.com/forge/roaster/pull/246 is released
             String replace = StringUtils.replace(fullText, "@see#", "@see #");
             copy.getJavaDoc().setText(replace);
         }

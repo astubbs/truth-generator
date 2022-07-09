@@ -40,7 +40,7 @@ jobs:
           server-password: CI_DEPLOY_PASSWORD
       - name: 'Install'
         shell: bash
-        run: mvn -B verify
+        run: mvn -B -X verify
 
   publish_snapshot_package_cloud:
     name: 'Publish snapshot to Package Cloud'

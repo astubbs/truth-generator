@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
     <groupId>io.stubbs.truth</groupId>
     <artifactId>truth-generator-parent</artifactId>
@@ -9,8 +10,7 @@
     <packaging>pom</packaging>
 
     <name>${project.name.root}</name>
-    <description>Code generator to create Subject files with both auto generated assertions methods and the ability to
-        maintain user created assertions using the Grandfather pattern.
+    <description>Code generator to create Subject files with both auto generated assertions methods and the ability to maintain user created assertions using the Grandfather pattern.
     </description>
     <url>github.com/astubbs/truth-generator</url>
     <inceptionYear>2021</inceptionYear>
@@ -41,8 +41,8 @@
         <url>https://github.com/astubbs/truth-generator.git</url>
         <connection>scm:git:git://github.com:astubbs/truth-generator.git</connection>
         <developerConnection>scm:git:git@github.com:astubbs/truth-generator.git</developerConnection>
-      <tag>HEAD</tag>
-  </scm>
+        <tag>HEAD</tag>
+    </scm>
 
     <modules>
         <module>generator-api</module>

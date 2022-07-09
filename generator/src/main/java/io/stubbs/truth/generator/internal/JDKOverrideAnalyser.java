@@ -9,8 +9,8 @@ import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
-import org.eclipse.jdt.internal.compiler.util.CtSym;
-import org.eclipse.jdt.internal.compiler.util.JRTUtil;
+import org.jboss.forge.roaster._shade.org.eclipse.jdt.internal.compiler.util.CtSym;
+import org.jboss.forge.roaster._shade.org.eclipse.jdt.internal.compiler.util.JRTUtil;
 
 import javax.annotation.Nullable;
 import java.io.ByteArrayInputStream;
@@ -22,7 +22,6 @@ import java.nio.file.Path;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.Properties;
 import java.util.stream.Stream;
 
 import static io.stubbs.truth.generator.internal.Utils.msg;

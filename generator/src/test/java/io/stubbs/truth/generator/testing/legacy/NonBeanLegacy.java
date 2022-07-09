@@ -20,4 +20,7 @@ public class NonBeanLegacy {
     public String name() {
         return name;
     }
+
+    public void aVoidReturningMethodInALegacyBean() {
+    }
 }

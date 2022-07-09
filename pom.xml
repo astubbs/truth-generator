@@ -90,10 +90,10 @@
     <properties>
         <project.name.root>Truth Subject Generator</project.name.root>
 
-        <version.roaster>2.24.0.Final</version.roaster>
+        <version.roaster>2.25.0.Final</version.roaster>
         <version.truth>1.1.3</version.truth>
 
-        <maven.version>3.8.5</maven.version>
+        <maven.version>3.8.6</maven.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
         <flogger.version>0.7.4</flogger.version>
@@ -239,12 +239,12 @@
             <dependency>
                 <groupId>org.projectlombok</groupId>
                 <artifactId>lombok</artifactId>
-                <version>1.18.22</version>
+                <version>1.18.24</version>
             </dependency>
             <dependency>
                 <groupId>uk.co.jemos.podam</groupId>
                 <artifactId>podam</artifactId>
-                <version>7.2.8.RELEASE</version>
+                <version>7.2.9.RELEASE</version>
                 <scope>compile</scope>
             </dependency>
 
@@ -354,7 +354,7 @@
                 </plugin>
                 <plugin>
                     <artifactId>maven-invoker-plugin</artifactId>
-                    <version>3.2.2</version>
+                    <version>3.3.0</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>

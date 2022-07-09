@@ -43,7 +43,7 @@ jobs:
         run: mvn -B -P!standard-with-extra-repos install -U -DskipTests
       - name: 'Test'
         shell: bash
-        run: mvn -B -P!standard-with-extra-repos verify -U -Dmaven.javadoc.skip=true
+        run: mvn -B -U verify
 
   publish_snapshot_package_cloud:
     name: 'Publish snapshot to Package Cloud'

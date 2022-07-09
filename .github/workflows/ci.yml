@@ -38,12 +38,9 @@ jobs:
           server-id: sonatype-nexus-snapshots
           server-username: CI_DEPLOY_USERNAME
           server-password: CI_DEPLOY_PASSWORD
-      - name: 'Install'
+      - name: 'Test and Install'
         shell: bash
-        run: mvn -B -P!standard-with-extra-repos install -U -DskipTests
-      - name: 'Test'
-        shell: bash
-        run: mvn -B -U verify
+        run: mvn -B -U -P!standard-with-extra-repos install
 
   publish_snapshot_package_cloud:
     name: 'Publish snapshot to Package Cloud'

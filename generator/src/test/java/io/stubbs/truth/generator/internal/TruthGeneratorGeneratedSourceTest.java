@@ -12,6 +12,7 @@ import io.stubbs.truth.generator.subjects.MyStringSubject;
 import io.stubbs.truth.generator.testModel.IdCard;
 import io.stubbs.truth.generator.testModel.MyEmployee;
 import io.stubbs.truth.generator.testModel.Project;
+import io.stubbs.truth.generator.testing.legacy.NonBeanLegacy;
 import lombok.SneakyThrows;
 import org.jboss.forge.roaster.model.source.JavaClassSource;
 import org.junit.Test;
@@ -170,6 +171,38 @@ public class TruthGeneratorGeneratedSourceTest {
                 .hasSourceText()
                 .ignoringTrailingWhiteSpace()
                 .equalTo(expected);
+    }
+
+    @SneakyThrows
+    @Test
+    public void legacySourceTest() {
+        // todo need to be able to set base package for all generated classes, kind of like shade, so you cah generate test for classes in other restricted modules
+        // todo replace with @TempDir
+        TruthGenerator truthGenerator = TruthGeneratorAPI.create(TEST_OUTPUT_DIRECTORY,
+                Options.builder()
+                        .useHasInsteadOfGet(true)
+                        .useGetterForLegacyClasses(true)
+                        .build());
+
+        GeneratedMarker.setClock(MutableClock.epochUTC());
+
+        //
+        String packageForEntryPoint = getClass().getPackage().getName();
+        SourceClassSets ss = new SourceClassSets(packageForEntryPoint);
+        ss.generateFromNonBean(NonBeanLegacy.class);
+
+        //
+        SkeletonGenerator.forceMiddleGenerate = true;
+
+        Result generate = truthGenerator.generate(ss);
+        Map<Class<?>, ThreeSystem<?>> generated = generate.getAll();
+
+        //
+        ThreeSystem<?> threeSystemGenerated = generated.get(NonBeanLegacy.class);
+
+        //
+        String expected = loadFileToString("expected/NonBeanLegacyParentSubject.java.txt");
+        assertThat(threeSystemGenerated).hasParentSource(expected);
     }
 
 }

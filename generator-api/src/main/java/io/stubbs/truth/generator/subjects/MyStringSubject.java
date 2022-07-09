@@ -81,8 +81,6 @@ public class MyStringSubject extends StringSubject {
             String expectedNormal = normalise(expected);
             String actualNormal = normalise(actual);
 
-//            hasSourceText(child).ignoringTrailingWhiteSpace().equalTo(expected);
-//            equalTo(expected);
             // todo change to fact?
             check("equalTo(file: " + parent.getResourcePath() + ")").that(actualNormal).isEqualTo(expectedNormal);
         }

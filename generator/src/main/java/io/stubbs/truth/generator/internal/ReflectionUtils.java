@@ -9,14 +9,11 @@ import io.stubbs.truth.generator.internal.model.UserSuppliedMiddleClass;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.reflections.Reflections;
-import org.reflections.Store;
 import org.reflections.scanners.Scanners;
 import org.reflections.util.ConfigurationBuilder;
 import org.reflections.util.FilterBuilder;
-import org.reflections.util.QueryFunction;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -27,24 +24,12 @@ public class ReflectionUtils {
 
     @Getter
     private final ReflectionContext context;
-
-    // todo not used?
-//    private List<ClassLoader> loaders = new ArrayList<>();
     private Reflections reflections;
 
     public ReflectionUtils(ReflectionContext context) {
-//        this.loaders = ss.getLoaders();
         this.context = context;
         setupReflections(context);
     }
-
-//    /**
-//     * Reflection utils with no special class loaders, or specific model packages to restrict scanning to. Useful for
-//     * running outside of MOJO (maven plugin) contexts, e.g. tests.
-//     */
-//    public ReflectionUtils(Context ) {
-//        setupReflections(new Context(baseModelPackagesFroScanning));
-//    }
 
     /**
      * Finds extensions to base Truth {@link Subject}s
@@ -54,17 +39,6 @@ public class ReflectionUtils {
      * @see BaseSubjectExtension
      */
     public Set<Class<?>> findBaseSubjectExtensions() {
-//    public Set<Class<?>> findNativeExtensions(String... modelPackages) {
-//        // TODO share Reflections instance?
-//        ConfigurationBuilder build = new ConfigurationBuilder()
-//                .forPackages("io.stubbs")
-//                .filterInputsBy(new FilterBuilder().includePackage("io.stubbs")) // TODO test different packages work?
-//                .setParallel(true)
-//                .setScanners(Scanners.TypesAnnotated, Scanners.SubTypes);
-//
-//        Reflections reflectionsold = new Reflections(build);
-//        Set<Class<?>> old = reflectionsold.getTypesAnnotatedWith(BaseSubjectExtension.class);
-
         Set<Class<?>> typesAnnotatedWith = reflections.getTypesAnnotatedWith(BaseSubjectExtension.class);
         return typesAnnotatedWith;
     }
@@ -87,29 +61,6 @@ public class ReflectionUtils {
     }
 
     public Set<Class<?>> findClassesInPackages(Set<String> packages) {
-        // todo remove
-        final QueryFunction<Store, Map.Entry<String, Set<String>>> storeEntryQueryFunction = ctx -> {
-            final Set<Map.Entry<String, Map<String, Set<String>>>> entries = ctx.entrySet();
-
-            final Map<String, Set<String>> stringSetMap = ctx.get(Scanners.SubTypes.index());
-            final Set<Map.Entry<String, Set<String>>> collect = stringSetMap.entrySet().stream().filter(stringSetEntry -> {
-                final String key = stringSetEntry.getKey();
-                final boolean contains = packages.contains(key);
-                return contains;
-            }).collect(Collectors.toSet());
-
-//            return entries.stream().filter(stringMapEntry -> {
-//                final Collection<Set<String>> values = stringMapEntry.getValue().values();
-//                return packages.contains("");
-//            }).collect(Collectors.toUnmodifiableSet());
-            return collect;
-        };
-        // todo remove
-        // is missing MyEmployee subclass
-        Set<Class<?>> collect = reflections.get(storeEntryQueryFunction.asClass(reflections.getConfiguration().getClassLoaders()));
-
-//        final Set<T> ts = reflections.get(Scanners.SubTypes.filterResultsBy(s -> true).);
-
         // get's all the enum types
         // todo filter by package
         // https://github.com/ronmamo/reflections/issues/126
@@ -157,33 +108,15 @@ public class ReflectionUtils {
         this.reflections = new Reflections(build);
     }
 
-//    public void addClassLoaders(List<ClassLoader> loaders) {
-//        this.loaders.addAll(loaders);
-//    }
-
     /**
      * Look for compiled {@link UserManagedSubject}s for the provided Class on the classpath.
      *
      * @param clazzUnderTest the class to look for a {@link UserManagedSubject} for
      */
     public <T> Optional<UserSuppliedMiddleClass<T>> tryGetUserManagedMiddle(final Class<T> clazzUnderTest) {
-//        var classStreamInt = this.reflections.getSubTypesOf(UserManagedMiddleSubject.class).stream()
-//                .filter(x -> x.isAnnotationPresent(UserManagedTruth.class))
-//                .filter(x -> x.getAnnotation(UserManagedTruth.class).value().equals(clazzUnderTest))
-//                .collect(Collectors.toList());
-
-//        UserManagedTruth annotation = UserManagedTruth.class.getAnnotatedSupercla   ss()isAnnotation(UserManagedTruth.class);
-
-//        var classes2 = this.reflections.getTypesAnnotatedWith(annotation);
-
-        var annotatedOld =
-                this.reflections.get(Scanners.TypesAnnotated.with(UserManagedSubject.class)
-                        .asClass(reflections.getConfiguration().getClassLoaders()));
-
         // todo cache this on startup
         var annotated =
                 this.reflections.getTypesAnnotatedWith(UserManagedSubject.class);
-
 
         var matchingClasses = annotated
                 .stream()
@@ -207,45 +140,29 @@ public class ReflectionUtils {
                     UserManagedSubject.class, clazzUnderTest, matchingClasses);
         }
 
-
-//        context.getLoaders().stream().forEach(x -> x.loadClass());
-
-//        final Optional<UserSuppliedMiddleClass<T>> tUserSuppliedMiddleClass = first.map(aClass ->
-//                {
-//                    final String canonicalName = aClass.getCanonicalName();
-//                    Class<?> aClass1 = null;
-//                    try {
-//                        aClass1 = Class.forName(canonicalName);
-//                    } catch (ClassNotFoundException e) {
-//                        e.printStackTrace();
-//                    }
-//                    return new UserSuppliedMiddleClass<T>((Class<? extends UserManagedMiddleSubject<T>>) aClass1, clazzUnderTest);
-//                }
-//        );
-
         final List<ClassLoader> loaders = context.getLoaders();
+        // todo name
         Stream<UserSuppliedMiddleClass<T>> o = matchingClasses.stream().flatMap(aClass -> {
+            // todo name
             Stream<? extends Class<?>> classStream1 = loaders.stream().flatMap(classLoader -> {
                 try {
-//                            ClassLoader classLoader1 = aClass.getClassLoader();
                     String canonicalName = aClass.getCanonicalName();
                     Class<?> t = classLoader.loadClass(canonicalName);
                     return Stream.of(t);
                 } catch (ClassNotFoundException e) {
-//                            e.printStackTrace();
+                    log.debug("Can't load class + " + aClass.getCanonicalName(), e);
                     return Stream.of();
                 }
             });
 
+            // todo name
             Stream<UserSuppliedMiddleClass<T>> userSuppliedMiddleClassStream = classStream1
-                    //.findFirst().get();
                     .map(aClass2 -> {
                         UserSuppliedMiddleClass<T> tUserSuppliedMiddleClass = new UserSuppliedMiddleClass<>((Class<? extends UserManagedMiddleSubject<T>>) aClass2, clazzUnderTest);
                         return tUserSuppliedMiddleClass;
                     });
 
             return userSuppliedMiddleClassStream;
-//                    return Stream.empty();
         });
         return o.findFirst();
 

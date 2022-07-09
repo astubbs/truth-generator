@@ -21,7 +21,6 @@ import java.util.Set;
 @Getter
 @ToString
 @EqualsAndHashCode
-//@AllArgsConstructor
 @FieldDefaults(makeFinal = true, level = AccessLevel.PRIVATE)
 public class ReflectionContext {
 

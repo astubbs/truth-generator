@@ -52,10 +52,6 @@ public class JavaClassSourceSubject extends JavaClassSourceParentSubject {
     // todo drop this step if possible?
     @SneakyThrows
     public MyStringSubject.IgnoringWhiteSpaceComparison withSourceOf() {
-//        URL resource = Resources.getResource(child.getResourcePath());
-//        String expected = Resources.toString(resource, Charset.defaultCharset());
-//        log.error("Checking {}", resource);
-//        hasSourceText(child).ignoringTrailingWhiteSpace().equalTo(expected);
         return hasSourceText().ignoringTrailingWhiteSpace();
     }
 

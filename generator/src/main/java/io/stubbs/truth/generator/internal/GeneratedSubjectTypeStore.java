@@ -12,7 +12,6 @@ import javax.annotation.Nonnull;
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
@@ -46,15 +45,7 @@ public class GeneratedSubjectTypeStore {
     }
 
     public GeneratedSubjectTypeStore(Set<? extends ThreeSystem<?>> allTypes, BuiltInSubjectTypeStore builtInSubjectTypeStore) {
-        // todo revert
-        final Set<? extends ThreeSystem<?>> consumer = allTypes.stream().filter(x -> x.getClassUnderTest().getName().equals("org.apache.kafka.clients.consumer.Consumer")).collect(Collectors.toSet());
-        final List<? extends ThreeSystem<?>> threeSystems = consumer.stream().collect(Collectors.toList());
-        if (threeSystems.size() > 1) {
-            final ThreeSystem<?> threeSystem = threeSystems.get(0);
-            final ThreeSystem<?> threeSystemTwo = threeSystems.get(1);
-            final boolean equals = threeSystem.equals(threeSystemTwo);
-            final boolean equalstwo = threeSystem.equals(threeSystemTwo);
-        }
+        super();
         this.generatedSubjects = allTypes.stream().collect(Collectors.toMap(x -> x.getClassUnderTest().getName(), x -> x));
         this.builtInSubjectTypeStore = builtInSubjectTypeStore;
     }

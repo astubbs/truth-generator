@@ -16,27 +16,6 @@ import java.util.Set;
 // TODO clean up
 public interface TruthGeneratorAPI {
 
-//    /**
-//     * Default {@link Context}.
-//     */
-//    static TruthGenerator create(Path testOutputDirectory) {
-//        return new TruthGenerator(testOutputDirectory);
-//    }
-
-//    /**
-//     * Default {@link Context}.
-//     */
-//    static TruthGenerator create(Path testOutputDirectory, Options options, Set<String> baseModelPackagesFroScanning) {
-//        return create(testOutputDirectory, options, new Context(baseModelPackagesFroScanning));
-//    }
-
-//    /**
-//     * Default {@link Context}.
-//     */
-//    static TruthGenerator createDefaultOptions(Path testOutputDirectory, Set<String> baseModelPackagesFroScanning) {
-//        return new TruthGenerator(testOutputDirectory, Options.builder().build(), new Context(baseModelPackagesFroScanning));
-//    }
-
     static TruthGenerator createDefaultOptions(FullContext context) {
         return new TruthGenerator(Options.builder().build(), context);
     }

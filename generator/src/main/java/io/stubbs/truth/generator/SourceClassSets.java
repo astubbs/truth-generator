@@ -29,9 +29,6 @@ public class SourceClassSets {
 
     private final String packageForEntryPoint;
 
-//    @Getter
-//    private final Context context;
-
     private final ReflectionUtils reflectionUtils;
 
     /**
@@ -210,11 +207,6 @@ public class SourceClassSets {
         var referencedNotSpecifiedClasses = getReferencedNotSpecifiedClasses();
         union.addAll(referencedNotSpecifiedClasses);
 
-//        ClassUtils classUtils = new ClassUtils(null, null);
-
-//        classUtils.addClassLoaders(this.loaders);
-//        union.addAll(getSimplePackageNames().stream().flatMap(
-//                x -> reflectionUtils.collectSourceClasses(x).stream()).collect(toSet()));
         var collected = reflectionUtils.collectSourceClasses()
                 .stream().filter(aClass -> getSimplePackageNames().stream()
                         .anyMatch(configuredPackage -> configuredPackage.contains(aClass.getPackage().getName())))
@@ -260,10 +252,6 @@ public class SourceClassSets {
         return getLegacyBeans().contains(theClass)
                 || getLegacyTargetPackageAndClasses().stream().anyMatch(x -> asList(x.classes).contains(theClass));
     }
-
-//    public void addClassLoader(ClassLoader projectClassLoader) {
-//        this.loaders.add(projectClassLoader);
-//    }
 
     public void generateFromNonBean(ClassLoader loader, String[] legacyClasses) {
         if (legacyClasses == null)

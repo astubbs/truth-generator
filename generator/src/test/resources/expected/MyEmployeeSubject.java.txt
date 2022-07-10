@@ -23,7 +23,7 @@ import javax.annotation.processing.Generated;
  * @see MyEmployeeParentSubject
  * @see MyEmployeeChildSubject
  */
-@UserManagedTruth(MyEmployee.class)
+@UserManagedSubject(MyEmployee.class)
 @Generated(value = "io.stubbs.truth.generator.internal.TruthGenerator", date = "1970-01-01T00:00:00Z")
 public class MyEmployeeSubject extends MyEmployeeParentSubject implements UserManagedMiddleSubject {
 	protected MyEmployeeSubject(FailureMetadata failureMetadata,

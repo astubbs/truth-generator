@@ -409,7 +409,7 @@ public class CarParentSubject extends Subject {
  * @see Car
  * @see CarParentSubject
  */
-@UserManagedTruth(Car.class)
+@UserManagedSubject(Car.class)
 @Generated("truth-generator")
 public class CarSubject extends CarParentSubject {
 
@@ -536,7 +536,7 @@ public class MakeParentSubject extends Subject {
 * @see Make
 * @see MakeParentSubject
 */
-@UserManagedTruth(Make.class)
+@UserManagedSubject(Make.class)
 @Generated("truth-generator")
 public class MakeSubject extends MakeParentSubject {
 

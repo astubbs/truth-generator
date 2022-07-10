@@ -41,7 +41,7 @@ import static io.stubbs.truth.generator.internal.modelSubjectChickens.ThreeSyste
 /**
  * @author Antony Stubbs
  */
-// todo fix method naming
+// todo fix method naming - ??
 @RunWith(JUnit4.class)
 public class TruthGeneratorGeneratedSourceTest {
 
@@ -102,24 +102,13 @@ public class TruthGeneratorGeneratedSourceTest {
         assertThat(threeSystemGenerated).hasChild().withSamePackageAs(MyEmployee.class);
 
         var parent = TextFile.fromResourcePath("expected/MyEmployeeParentSubject.java.txt");
-//        assertThat(threeSystemGenerated)
-//                .hasParent()
-//                .hasGenerated()
-//                .hasSourceText()
-//                .ignoringTrailingWhiteSpace()
-//                .equalTo(expected); // sanity full chain
         assertThat(threeSystemGenerated).hasParent().hasSourceText().withSourceOf().equalTo(parent);
 
-
-//        String middleSource = loadFileToString("expected/MyEmployeeSubject.java.txt");
         var middleSource = TextFile.fromResourcePath("expected/MyEmployeeSubject.java.txt");
         assertThat(threeSystemGenerated).hasMiddle().hasSourceText().withSourceOf().equalTo(middleSource);
 
         var child = TextFile.fromResourcePath("expected/MyEmployeeChildSubject.java.txt");
         assertThat(threeSystemGenerated).hasChild().withSourceOf().equalTo(child);
-
-//        String expected2 = loadFileToString("expected/MyEmployeeChildSubject.java.txt");
-//        assertThat(threeSystemGenerated).hasChildSource(expected2);
     }
 
     private String loadFileToString(String expectedFileName) throws IOException {

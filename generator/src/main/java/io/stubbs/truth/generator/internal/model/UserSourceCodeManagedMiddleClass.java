@@ -8,8 +8,6 @@ import lombok.EqualsAndHashCode;
 import lombok.ToString;
 import lombok.experimental.FieldDefaults;
 import org.apache.commons.lang3.StringUtils;
-import org.jboss.forge.roaster.model.ValuePair;
-import org.jboss.forge.roaster.model.impl.AnnotationImpl;
 import org.jboss.forge.roaster.model.source.AnnotationSource;
 import org.jboss.forge.roaster.model.source.Import;
 import org.jboss.forge.roaster.model.source.JavaClassSource;
@@ -38,31 +36,19 @@ public class UserSourceCodeManagedMiddleClass<T> extends RoasterMiddleClass<T> i
     @Override
     public String getClassUnderTestSimpleName() {
         AnnotationSource<JavaClassSource> userManaged = super.sourceCodeModel.getAnnotation(UserManagedSubject.class);
-        final AnnotationImpl userManaged1 = (AnnotationImpl) userManaged;
-        final AnnotationSource annotationValue = userManaged1.getAnnotationValue();
-        final Object internal = userManaged1.getInternal();
-        final String underTest = userManaged.getStringValue();
-        final Import anImport = sourceCodeModel.getImport(underTest);
+        String underTest = userManaged.getStringValue();
 
-        final List<Import> imports = sourceCodeModel.getImports();
-        final String anObject = StringUtils.removeEnd(underTest, ".class");
-        final Optional<Import> first = imports.stream().filter(x -> x.getSimpleName().equals(anObject)).findFirst();
+        List<Import> imports = sourceCodeModel.getImports();
+        String anObject = StringUtils.removeEnd(underTest, ".class");
+        Optional<Import> first = imports.stream().filter(x -> x.getSimpleName().equals(anObject)).findFirst();
 
-        final List<ValuePair> values = userManaged.getValues();
-
-        final String literalValue = userManaged.getLiteralValue();
-
-//        userManaged1.
-//        sourceCodeModel.
-        final Class<?> classValue = userManaged.getClassValue();
+        String literalValue = userManaged.getLiteralValue();
 
         if (StringUtils.countMatches(literalValue, ".") > 1)
             return anObject;
         else if (first.isEmpty())
-            throw new TruthGeneratorRuntimeException(msg("Cannot resovle type {}", literalValue));
+            throw new TruthGeneratorRuntimeException(msg("Cannot resolve type {}", literalValue));
         else
             return first.get().getQualifiedName();
-
-//        return underTest;
     }
 }

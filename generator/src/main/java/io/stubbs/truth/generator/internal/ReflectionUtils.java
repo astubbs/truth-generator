@@ -13,7 +13,6 @@ import org.reflections.scanners.Scanners;
 import org.reflections.util.ConfigurationBuilder;
 import org.reflections.util.FilterBuilder;
 
-import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -24,6 +23,7 @@ public class ReflectionUtils {
 
     @Getter
     private final ReflectionContext context;
+
     private Reflections reflections;
 
     public ReflectionUtils(ReflectionContext context) {
@@ -115,57 +115,60 @@ public class ReflectionUtils {
      */
     public <T> Optional<UserSuppliedMiddleClass<T>> tryGetUserManagedMiddle(final Class<T> clazzUnderTest) {
         // todo cache this on startup
-        var annotated =
+        var annotatedWithUserManaged =
                 this.reflections.getTypesAnnotatedWith(UserManagedSubject.class);
 
-        var matchingClasses = annotated
+        var foundUserManagedSubjectsWithMatchingTargetClass = annotatedWithUserManaged
                 .stream()
                 .filter(x -> {
                     final UserManagedSubject annotation = x.getAnnotation(UserManagedSubject.class);
-                    if (annotation == null)
+
+                    if (annotation == null) {
+                        // should never happen as we've already filtered by annotation
                         return false;
-                    final Class<?> value = annotation.value();
-                    final ClassLoader classLoader = value.getClassLoader();
-                    final String canonicalName = value.getCanonicalName();
+                    }
 
-                    final String canonicalName1 = clazzUnderTest.getCanonicalName();
-                    final ClassLoader classLoader1 = clazzUnderTest.getClassLoader();
+                    final Class<?> annotationValue = annotation.value();
+                    final String annotatedValueClassName = annotationValue.getCanonicalName();
+                    final String underTestFullName = clazzUnderTest.getCanonicalName();
 
-                    return canonicalName.equals(canonicalName1);
+                    return annotatedValueClassName.equals(underTestFullName);
                 })
                 .collect(Collectors.toList());
 
-        if (matchingClasses.size() > 1) {
+        if (foundUserManagedSubjectsWithMatchingTargetClass.size() > 1) {
             log.warn("Found more than one {} for {}. Taking first, ignoring the rest - found: {}",
-                    UserManagedSubject.class, clazzUnderTest, matchingClasses);
+                    UserManagedSubject.class, clazzUnderTest, foundUserManagedSubjectsWithMatchingTargetClass);
         }
 
-        final List<ClassLoader> loaders = context.getLoaders();
-        // todo name
-        Stream<UserSuppliedMiddleClass<T>> o = matchingClasses.stream().flatMap(aClass -> {
-            // todo name
-            Stream<? extends Class<?>> classStream1 = loaders.stream().flatMap(classLoader -> {
-                try {
-                    String canonicalName = aClass.getCanonicalName();
-                    Class<?> t = classLoader.loadClass(canonicalName);
-                    return Stream.of(t);
-                } catch (ClassNotFoundException e) {
-                    log.debug("Can't load class + " + aClass.getCanonicalName(), e);
-                    return Stream.of();
-                }
-            });
+        // this section of code, javac needs some type hints with the streams
+        Stream<UserSuppliedMiddleClass<T>> wrappedUserSubjects = foundUserManagedSubjectsWithMatchingTargetClass.stream().flatMap(matchingUserSubjectClass -> {
 
-            // todo name
-            Stream<UserSuppliedMiddleClass<T>> userSuppliedMiddleClassStream = classStream1
-                    .map(aClass2 -> {
-                        UserSuppliedMiddleClass<T> tUserSuppliedMiddleClass = new UserSuppliedMiddleClass<>((Class<? extends UserManagedMiddleSubject<T>>) aClass2, clazzUnderTest);
-                        return tUserSuppliedMiddleClass;
+            Stream<? extends Class<?>> maybeLoadedUserSubjectClass = context.getLoaders().stream()
+                    .flatMap(classLoader -> {
+                        String userSubjectFullName = matchingUserSubjectClass.getCanonicalName();
+                        try {
+                            // try to load the target class and return it
+                            Class<?> loadedUserSubjectClass = classLoader.loadClass(userSubjectFullName);
+                            return Stream.of(loadedUserSubjectClass);
+                        } catch (ClassNotFoundException e) {
+                            // fail loading the class for whatever reason and return empty
+                            log.debug("Can't load class + " + userSubjectFullName, e);
+                            return Stream.of();
+                        }
                     });
 
-            return userSuppliedMiddleClassStream;
-        });
-        return o.findFirst();
+            Stream<UserSuppliedMiddleClass<T>> maybeWrappedUserSubject = maybeLoadedUserSubjectClass
+                    .map(userSubjectClass -> {
+                        Class<? extends UserManagedMiddleSubject<T>> userSubjectClassTypeHint = (Class<? extends UserManagedMiddleSubject<T>>) userSubjectClass; // javac needs the type help
+                        return new UserSuppliedMiddleClass<>(userSubjectClassTypeHint, clazzUnderTest);
+                    });
 
+            return maybeWrappedUserSubject;
+        });
+
+        // only take the first successful result
+        return wrappedUserSubjects.findFirst();
     }
 
 }

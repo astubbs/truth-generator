@@ -6,14 +6,12 @@ import com.google.common.truth.Subject;
 import io.stubbs.truth.generator.UserManagedMiddleSubject;
 import io.stubbs.truth.generator.UserManagedSubject;
 import io.stubbs.truth.generator.internal.model.*;
-import lombok.Setter;
 import org.jboss.forge.roaster.Roaster;
 import org.jboss.forge.roaster.model.source.JavaClassSource;
 import org.jboss.forge.roaster.model.source.JavaDocSource;
 import org.jboss.forge.roaster.model.source.MethodSource;
 
 import java.util.Optional;
-import java.util.stream.Stream;
 
 import static java.util.Optional.empty;
 import static java.util.Optional.of;
@@ -26,6 +24,8 @@ import static java.util.Optional.of;
  * @see SubjectMethodGenerator
  */
 public class SkeletonGenerator implements SkeletonGeneratorAPI {
+
+    // todo middle class related functions need refactoring out
 
     private static final FluentLogger logger = FluentLogger.forEnclosingClass();
     private static final String BACKUP_PACKAGE = "io.stubbs.common.truth.extension.generator";
@@ -40,13 +40,6 @@ public class SkeletonGenerator implements SkeletonGeneratorAPI {
     private MiddleClass<?> middle;
 
     private final SourceCodeScanner sourceCodeScanner;
-
-    // todo not used?
-    private ParentClass parent;
-
-    // todo not used?
-    @Setter
-    private boolean legacyMode = false;
 
     private final ReflectionUtils reflectionUtils;
 
@@ -112,36 +105,24 @@ public class SkeletonGenerator implements SkeletonGeneratorAPI {
     }
 
     private <T> void resolveMiddle(Class<T> clazzUnderTest, ParentClass parent) {
-        boolean longPollingMockConsumer = clazzUnderTest.getName().contains("UUID");
-        boolean consumer = clazzUnderTest.getName().contains("Consumer");
-
-        var userMiddle = reflectionUtils.tryGetUserManagedMiddle(clazzUnderTest);
-
-        var disced = sourceCodeScanner.tryGetUserManagedMiddle(clazzUnderTest);
-        if (disced.isPresent()) {
-            this.middle = disced.get();
+        var foundInSourceCode = sourceCodeScanner.tryGetUserManagedMiddle(clazzUnderTest);
+        if (foundInSourceCode.isPresent()) {
+            this.middle = foundInSourceCode.get();
         } else {
-
-//        MiddleClass middle = createMiddleUserTemplateClass(parent.getGenerated(), clazzUnderTest);
-
-            if (userMiddle.isPresent()) {
-                this.middle = userMiddle.get();
+            var foundCompiled = reflectionUtils.tryGetUserManagedMiddle(clazzUnderTest);
+            if (foundCompiled.isPresent()) {
+                this.middle = foundCompiled.get();
             } else {
                 MiddleClass<T> middleUserTemplateClass = generateMiddleUserTemplateClass(parent.getGenerated(), clazzUnderTest);
                 this.middle = middleUserTemplateClass;
             }
         }
-
-//        var middleClassName = getSubjectName(clazzUnderTest.getSimpleName());
-        // todo remove? returns null?
-//        final Optional<Class<? extends Subject>> compiledMiddleIfExists = findCompiledMiddleIfExists(parent.getGenerated(), middleClassName, clazzUnderTest);
-
-//        UserSuppliedMiddleClass<T> newMiddle = userMiddle
-//                .orElseGet(() -> );
-//
     }
 
-    //    todo @Deprecated ?
+    /**
+     * @deprecated use {@link #threeLayerSystem}
+     */
+    @Deprecated
     @Override
     public <T> String combinedSystem(Class<T> clazzUnderTest) {
         JavaClassSource javaClass = Roaster.create(JavaClassSource.class);
@@ -177,35 +158,6 @@ public class SkeletonGenerator implements SkeletonGeneratorAPI {
         String classSource = Utils.writeToDisk(javaClass, targetPackageName);
 
         return classSource;
-    }
-
-    @Deprecated
-    private <T> Optional<Class<? extends Subject>> findCompiledMiddleIfExists(JavaClassSource parent, String middleClassName, Class<T> classUnderTest) {
-        if (forceMiddleGenerate)
-            return empty();
-
-        try {
-            // todo load from annotated classes instead using Reflections? see UserSuppliedMiddleClass
-            String fullName = parent.getPackage() + "." + middleClassName;
-            final Optional<? extends Class<?>> any = reflectionUtils.getContext().getLoaders().stream().flatMap(classLoader -> {
-                try {
-                    return Stream.of(classLoader.loadClass(fullName));
-                } catch (ClassNotFoundException e) {
-                    e.printStackTrace();
-                    return Stream.of();
-                }
-            }).findAny();
-            Class<?> rawClass = Class.forName(fullName);
-            if (Subject.class.isAssignableFrom(rawClass)) {
-                //noinspection unchecked - checked in if condition
-                Class<? extends Subject> aClass = (Class<? extends Subject>) rawClass;
-                return of(aClass);
-            } else {
-                throw new TruthGeneratorRuntimeException("User detected middle class doesn't extend Subject");
-            }
-        } catch (ClassNotFoundException e) {
-            return empty();
-        }
     }
 
     private JavaClassSource createChild(ParentClass parent,
@@ -323,13 +275,6 @@ public class SkeletonGenerator implements SkeletonGeneratorAPI {
 
     private <T> MiddleClass<T> generateMiddleUserTemplateClass(JavaClassSource parent, Class<T> classUnderTest) {
         String middleClassName = getSubjectName(classUnderTest.getSimpleName());
-
-//        // todo remove this stage is redundant from annotation search
-//        Optional<Class<? extends Subject>> compiledMiddleClass = findCompiledMiddleIfExists(parent, middleClassName, classUnderTest);
-//        if (compiledMiddleClass.isPresent()) {
-//            logger.atInfo().log("Skipping middle class Template creation as class already exists: %s", middleClassName);
-//            return new UserSuppliedMiddleClass(compiledMiddleClass.get(), classUnderTest);
-//        }
 
         JavaClassSource middle = Roaster.create(JavaClassSource.class);
         middle.setName(middleClassName);

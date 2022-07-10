@@ -59,20 +59,6 @@ public class TruthGenerator implements TruthGeneratorAPI {
         this.sourceCodeScanner = new SourceCodeScanner(context, sourcePackagesToScanForSubjects);
     }
 
-//    /**
-//     * Default options and no restricted context or special class loaders.
-//     */
-//    public TruthGenerator(Path testOutputDirectory, Set<String> baseModelPackagesFroScanning) {
-//        this(Options.builder().build(), new Context(testOutputDirectory, baseModelPackagesFroScanning));
-//    }
-//
-//    /**
-//     * No restricted context or special class loaders.
-//     */
-//    public TruthGenerator(Path testOutputDirectory, Options options) {
-//        this(testOutputDirectory, options, new Context());
-//    }
-
     /**
      * todo change this to do this by finding the highest common package of all outputs
      */
@@ -111,7 +97,6 @@ public class TruthGenerator implements TruthGeneratorAPI {
     }
 
     private Set<ThreeSystem<?>> generateSkeletonsFromPackages(OverallEntryPoint overallEntryPoint, SourceClassSets ss) {
-        //Set<Class<?>> distinctTypesFoundInPackages = reflectionUtils.collectSourceClasses();
         Set<Class<?>> distinctTypesFoundInPackages = reflectionUtils.findClassesInPackages(ss.getSimplePackageNames());
 
         // filter out already added
@@ -183,12 +168,6 @@ public class TruthGenerator implements TruthGeneratorAPI {
 
         OverallEntryPoint packageForEntryPoint = new OverallEntryPoint(ss.getPackageForEntryPoint(), builtInStore);
 
-        // from packages
-//        Set<String> packages = ss.getSimplePackageNames();
-        // skeletons generation is independent and should be able to be done in parallel
-//        Set<ThreeSystem<?>> fromPackage = packages.parallelStream().flatMap(
-//                aPackage -> generateSkeletonsFromPackages(packageForEntryPoint, ss).stream()
-//        ).collect(toSet());
         Set<ThreeSystem<?>> fromPackage = generateSkeletonsFromPackages(packageForEntryPoint, ss);
 
         // custom package destination

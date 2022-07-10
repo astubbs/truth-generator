@@ -11,11 +11,9 @@ import org.jboss.forge.roaster.model.source.JavaClassSource;
  */
 @Getter
 @ToString
-//@EqualsAndHashCode(of = {"classUnderTest"})
 @EqualsAndHashCode(onlyExplicitlyIncluded = true, callSuper = false)
 public class ThreeSystem<T> {
 
-    //    @EqualsAndHashCode.Include
     protected Class<T> classUnderTest;
     protected ParentClass parent;
     protected MiddleClass middle;

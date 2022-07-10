@@ -8,12 +8,18 @@ import java.util.List;
 import java.util.Set;
 
 /**
+ * The context the system is running in.
+ *
  * @author Antony Stubbs
+ * @see ReflectionContext
  */
 @Value
 @EqualsAndHashCode(callSuper = true)
 public class FullContext extends ReflectionContext {
 
+    /**
+     * Source directory roots to work in
+     */
     List<Path> sourceRoots;
 
     /**
@@ -23,15 +29,16 @@ public class FullContext extends ReflectionContext {
      */
     Path testOutputDirectory;
 
-    public FullContext(Path testOutputDirectory, List<Path> sourcePaths, ReflectionContext newReflectionContext) {
-        this(testOutputDirectory, sourcePaths, newReflectionContext.getLoaders(), newReflectionContext.getBaseModelPackagesForReflectionScanning());
+    public FullContext(Path newTestOutputDirectory, List<Path> sourcePaths, ReflectionContext newReflectionContext) {
+        this(newTestOutputDirectory, sourcePaths, newReflectionContext.getLoaders(), newReflectionContext.getBaseModelPackagesForReflectionScanning());
     }
-    public FullContext(Path testOutputDirectory,
+
+    public FullContext(Path newTestOutputDirectory,
                        List<Path> sourcePaths,
                        List<ClassLoader> loaders,
                        Set<String> baseModelPackagesForReflectionScanning) {
         super(loaders, baseModelPackagesForReflectionScanning);
-        this.testOutputDirectory = testOutputDirectory;
+        this.testOutputDirectory = newTestOutputDirectory;
         this.sourceRoots = sourcePaths;
     }
 }

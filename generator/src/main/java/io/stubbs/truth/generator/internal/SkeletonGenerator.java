@@ -78,7 +78,7 @@ public class SkeletonGenerator implements SkeletonGeneratorAPI {
         // make child - client code entry point
         JavaClassSource child = createChild(parent, usersMiddleClass.getName(), classUnderTest, factoryMethodName);
 
-        var middleClass = new UserSuppliedMiddleClass(usersMiddleClass, classUnderTest);
+        var middleClass = new UserSuppliedCompiledMiddleClass(usersMiddleClass, classUnderTest);
 
         return of(new ThreeSystem<>(classUnderTest, parent, middleClass, child));
     }

@@ -18,7 +18,7 @@ import java.lang.reflect.Method;
 @ToString
 @EqualsAndHashCode
 @FieldDefaults(makeFinal = true, level = AccessLevel.PRIVATE)
-public class UserSuppliedMiddleClass<T> implements MiddleClass<T> {
+public class UserSuppliedCompiledMiddleClass<T> implements MiddleClass<T> {
 
     Method factoryMethod;
 
@@ -28,7 +28,7 @@ public class UserSuppliedMiddleClass<T> implements MiddleClass<T> {
     @Getter
     Class<T> classUnderTest;
 
-    public UserSuppliedMiddleClass(final Class<? extends UserManagedMiddleSubject<T>> usersMiddleClass, final Class<T> underTest) {
+    public UserSuppliedCompiledMiddleClass(final Class<? extends UserManagedMiddleSubject<T>> usersMiddleClass, final Class<T> underTest) {
         super();
         this.usersMiddleClass = usersMiddleClass;
         this.factoryMethod = Utils.findFactoryMethod(usersMiddleClass);

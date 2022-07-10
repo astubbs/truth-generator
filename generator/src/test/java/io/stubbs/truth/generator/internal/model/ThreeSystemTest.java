@@ -23,12 +23,6 @@ public class ThreeSystemTest {
             var two = TestModelUtils.createThreeSystem();
             Truth.assertThat(one).isEqualTo(two);
         }
-
-//        {
-//            var one = new ThreeSystem<>(AnInterface.class, null, , mock(JavaClassSource.class));
-//            var two = new ThreeSystem<>(AnInterface.class, null, mock(MiddleClass.class), mock(JavaClassSource.class));
-//            Truth.assertThat(one).isEqualTo(two);
-//        }
     }
 
 }

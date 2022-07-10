@@ -5,7 +5,7 @@ import io.stubbs.truth.generator.BaseSubjectExtension;
 import io.stubbs.truth.generator.ReflectionContext;
 import io.stubbs.truth.generator.UserManagedMiddleSubject;
 import io.stubbs.truth.generator.UserManagedSubject;
-import io.stubbs.truth.generator.internal.model.UserSuppliedMiddleClass;
+import io.stubbs.truth.generator.internal.model.UserSuppliedCompiledMiddleClass;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.reflections.Reflections;
@@ -113,7 +113,7 @@ public class ReflectionUtils {
      *
      * @param clazzUnderTest the class to look for a {@link UserManagedSubject} for
      */
-    public <T> Optional<UserSuppliedMiddleClass<T>> tryGetUserManagedMiddle(final Class<T> clazzUnderTest) {
+    public <T> Optional<UserSuppliedCompiledMiddleClass<T>> tryGetUserManagedMiddle(final Class<T> clazzUnderTest) {
         // todo cache this on startup
         var annotatedWithUserManaged =
                 this.reflections.getTypesAnnotatedWith(UserManagedSubject.class);
@@ -142,7 +142,7 @@ public class ReflectionUtils {
         }
 
         // this section of code, javac needs some type hints with the streams
-        Stream<UserSuppliedMiddleClass<T>> wrappedUserSubjects = foundUserManagedSubjectsWithMatchingTargetClass.stream().flatMap(matchingUserSubjectClass -> {
+        Stream<UserSuppliedCompiledMiddleClass<T>> wrappedUserSubjects = foundUserManagedSubjectsWithMatchingTargetClass.stream().flatMap(matchingUserSubjectClass -> {
 
             Stream<? extends Class<?>> maybeLoadedUserSubjectClass = context.getLoaders().stream()
                     .flatMap(classLoader -> {
@@ -158,10 +158,10 @@ public class ReflectionUtils {
                         }
                     });
 
-            Stream<UserSuppliedMiddleClass<T>> maybeWrappedUserSubject = maybeLoadedUserSubjectClass
+            Stream<UserSuppliedCompiledMiddleClass<T>> maybeWrappedUserSubject = maybeLoadedUserSubjectClass
                     .map(userSubjectClass -> {
                         Class<? extends UserManagedMiddleSubject<T>> userSubjectClassTypeHint = (Class<? extends UserManagedMiddleSubject<T>>) userSubjectClass; // javac needs the type help
-                        return new UserSuppliedMiddleClass<>(userSubjectClassTypeHint, clazzUnderTest);
+                        return new UserSuppliedCompiledMiddleClass<>(userSubjectClassTypeHint, clazzUnderTest);
                     });
 
             return maybeWrappedUserSubject;

@@ -29,14 +29,8 @@ public abstract class StrategyTest {
     MyEmployee myEmployee = TestModelUtils.createEmployee();
     Class<? extends MyEmployee> employeeClass = myEmployee.getClass();
     BuiltInSubjectTypeStore builtInSubjectTypeStore = TestClassFactories.newBuiltInSubjectTypeStore();
-//
-//    {
-//        ReflectionContext context = new ReflectionContext(Set.of(getDefaultPackage()));
-//        builtInSubjectTypeStore = TestClassFactories.
-//    }
 
     protected <T> ThreeSystem<T> createThreeSystem(Class<T> clazzUnderTest) {
-//        BuiltInSubjectTypeStore subjectTypeStore =
         final OverallEntryPoint overallEntryPoint = new OverallEntryPoint(getDefaultPackage(), builtInSubjectTypeStore);
         SkeletonGenerator skeletonGenerator = new SkeletonGenerator(Optional.empty(),
                 overallEntryPoint,

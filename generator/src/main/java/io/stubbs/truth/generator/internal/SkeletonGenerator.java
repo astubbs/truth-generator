@@ -94,7 +94,6 @@ public class SkeletonGenerator implements SkeletonGeneratorAPI {
         }
 
         ParentClass parent = createParent(clazzUnderTest);
-        this.parent = parent;
 
         resolveMiddle(clazzUnderTest, parent);
 

@@ -57,5 +57,4 @@ jobs:
           GITHUB_ACTOR: ${{ github.actor }}
           GITHUB_TOKEN: ${{ github.token }}
           ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
-        with:
-          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+

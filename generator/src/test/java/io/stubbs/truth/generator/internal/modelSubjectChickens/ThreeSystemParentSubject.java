@@ -23,31 +23,31 @@ import javax.annotation.processing.Generated;
 @Generated("truth-generator")
 public class ThreeSystemParentSubject extends Subject {
 
-  protected final ThreeSystem actual;
+    protected final ThreeSystem actual;
 
-  protected ThreeSystemParentSubject(FailureMetadata failureMetadata,
-                                     ThreeSystem actual) {
-    super(failureMetadata, actual);
-    this.actual = actual;
-  }
+    protected ThreeSystemParentSubject(FailureMetadata failureMetadata,
+                                       ThreeSystem actual) {
+        super(failureMetadata, actual);
+        this.actual = actual;
+    }
 
-  public JavaClassSourceSubject hasChild() {
-    isNotNull();
-    return check("getChild").about(JavaClassSourceSubject.javaClassSources()).that(actual.getChild());
-  }
+    public JavaClassSourceSubject hasChild() {
+        isNotNull();
+        return check("getChild").about(JavaClassSourceSubject.javaClassSources()).that(actual.getChild());
+    }
 
-  public ParentClassSubject hasParent() {
-    isNotNull();
-    return check("getParent").about(ParentClassSubject.parentClasses()).that(actual.getParent());
-  }
+    public ParentClassSubject hasParent() {
+        isNotNull();
+        return check("getParent").about(ParentClassSubject.parentClasses()).that(actual.getParent());
+    }
 
-  public MiddleClassSubject hasMiddle() {
-    isNotNull();
-    return check("getMiddle").about(MiddleClassSubject.middleClasses()).that(actual.getMiddle());
-  }
+    public MiddleClassSubject hasMiddle() {
+        isNotNull();
+        return check("getMiddle").about(MiddleClassSubject.middleClasses()).that(actual.getMiddle());
+    }
 
-  public ClassSubject hasClassUnderTest() {
-    isNotNull();
-    return check("getClassUnderTest").that(actual.getClassUnderTest());
-  }
+    public ClassSubject hasClassUnderTest() {
+        isNotNull();
+        return check("getClassUnderTest").that(actual.getClassUnderTest());
+    }
 }

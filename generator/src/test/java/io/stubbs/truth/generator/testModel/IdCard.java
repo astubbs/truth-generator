@@ -6,6 +6,9 @@ import lombok.Value;
 import java.util.List;
 import java.util.UUID;
 
+/**
+ * @author Antony Stubbs
+ */
 @Builder(toBuilder = true)
 @Value
 public class IdCard {
@@ -19,11 +22,11 @@ public class IdCard {
     @Value
     public static class SecurityType {
 
+        Type type;
+
         public Type getType() {
             return this.type;
         }
-
-        Type type;
 
         public enum Type {
             FOB, MAGNETIC

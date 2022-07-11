@@ -1,0 +1,599 @@
+package io.stubbs.truth.generator.internal;
+import io.stubbs.truth.generator.internal.ManagedSubjectBuilder;
+import java.util.List;
+import io.stubbs.truth.generator.example.MakeSubject;
+import io.stubbs.truth.generator.example.Car.Make;
+import com.google.common.truth.FailureMetadata;
+import static io.stubbs.truth.generator.example.MakeSubject.*;
+import com.google.common.truth.Truth;
+import com.google.common.truth.SimpleSubjectBuilder;
+import javax.annotation.processing.Generated;
+import io.stubbs.truth.generator.testModel.IdCardSubject;
+import io.stubbs.truth.generator.testModel.IdCard;
+import static io.stubbs.truth.generator.testModel.IdCardSubject.*;
+import io.stubbs.truth.generator.testModel.SecurityTypeSubject;
+import io.stubbs.truth.generator.testModel.IdCard.SecurityType;
+import static io.stubbs.truth.generator.testModel.SecurityTypeSubject.*;
+import io.stubbs.truth.generator.testModel.TypeSubject;
+import io.stubbs.truth.generator.testModel.IdCard.SecurityType.Type;
+import static io.stubbs.truth.generator.testModel.TypeSubject.*;
+import io.stubbs.truth.generator.testModel.MyEmployeeSubject;
+import io.stubbs.truth.generator.testModel.MyEmployee;
+import static io.stubbs.truth.generator.testModel.MyEmployeeSubject.*;
+import io.stubbs.truth.generator.testModel.StateSubject;
+import io.stubbs.truth.generator.testModel.MyEmployee.State;
+import static io.stubbs.truth.generator.testModel.StateSubject.*;
+import io.stubbs.truth.generator.testModel.PersonSubject;
+import io.stubbs.truth.generator.testModel.Person;
+import static io.stubbs.truth.generator.testModel.PersonSubject.*;
+import io.stubbs.truth.generator.internal.autoShaded.java.time.DayOfWeekSubject;
+import java.time.DayOfWeek;
+import static io.stubbs.truth.generator.internal.autoShaded.java.time.DayOfWeekSubject.*;
+import io.stubbs.truth.generator.internal.autoShaded.java.time.InstantSubject;
+import java.time.Instant;
+import static io.stubbs.truth.generator.internal.autoShaded.java.time.InstantSubject.*;
+import io.stubbs.truth.generator.internal.autoShaded.java.time.LocalDateSubject;
+import java.time.LocalDate;
+import static io.stubbs.truth.generator.internal.autoShaded.java.time.LocalDateSubject.*;
+import io.stubbs.truth.generator.internal.autoShaded.java.time.LocalDateTimeSubject;
+import java.time.LocalDateTime;
+import static io.stubbs.truth.generator.internal.autoShaded.java.time.LocalDateTimeSubject.*;
+import io.stubbs.truth.generator.internal.autoShaded.java.time.LocalTimeSubject;
+import java.time.LocalTime;
+import static io.stubbs.truth.generator.internal.autoShaded.java.time.LocalTimeSubject.*;
+import io.stubbs.truth.generator.internal.autoShaded.java.time.MonthSubject;
+import java.time.Month;
+import static io.stubbs.truth.generator.internal.autoShaded.java.time.MonthSubject.*;
+import io.stubbs.truth.generator.internal.autoShaded.java.time.OffsetDateTimeSubject;
+import java.time.OffsetDateTime;
+import static io.stubbs.truth.generator.internal.autoShaded.java.time.OffsetDateTimeSubject.*;
+import io.stubbs.truth.generator.internal.autoShaded.java.time.OffsetTimeSubject;
+import java.time.OffsetTime;
+import static io.stubbs.truth.generator.internal.autoShaded.java.time.OffsetTimeSubject.*;
+import io.stubbs.truth.generator.internal.autoShaded.java.time.ZoneIdSubject;
+import java.time.ZoneId;
+import static io.stubbs.truth.generator.internal.autoShaded.java.time.ZoneIdSubject.*;
+import io.stubbs.truth.generator.internal.autoShaded.java.time.ZoneOffsetSubject;
+import java.time.ZoneOffset;
+import static io.stubbs.truth.generator.internal.autoShaded.java.time.ZoneOffsetSubject.*;
+import io.stubbs.truth.generator.internal.autoShaded.java.time.ZonedDateTimeSubject;
+import java.time.ZonedDateTime;
+import static io.stubbs.truth.generator.internal.autoShaded.java.time.ZonedDateTimeSubject.*;
+import io.stubbs.truth.generator.internal.autoShaded.java.time.chrono.ChronoLocalDateSubject;
+import java.time.chrono.ChronoLocalDate;
+import static io.stubbs.truth.generator.internal.autoShaded.java.time.chrono.ChronoLocalDateSubject.*;
+import io.stubbs.truth.generator.internal.autoShaded.java.time.chrono.ChronoLocalDateTimeSubject;
+import java.time.chrono.ChronoLocalDateTime;
+import static io.stubbs.truth.generator.internal.autoShaded.java.time.chrono.ChronoLocalDateTimeSubject.*;
+import io.stubbs.truth.generator.internal.autoShaded.java.time.chrono.ChronologySubject;
+import java.time.chrono.Chronology;
+import static io.stubbs.truth.generator.internal.autoShaded.java.time.chrono.ChronologySubject.*;
+import io.stubbs.truth.generator.internal.autoShaded.java.time.chrono.EraSubject;
+import java.time.chrono.Era;
+import static io.stubbs.truth.generator.internal.autoShaded.java.time.chrono.EraSubject.*;
+import io.stubbs.truth.generator.internal.autoShaded.java.time.chrono.IsoChronologySubject;
+import java.time.chrono.IsoChronology;
+import static io.stubbs.truth.generator.internal.autoShaded.java.time.chrono.IsoChronologySubject.*;
+import io.stubbs.truth.generator.internal.autoShaded.java.time.chrono.IsoEraSubject;
+import java.time.chrono.IsoEra;
+import static io.stubbs.truth.generator.internal.autoShaded.java.time.chrono.IsoEraSubject.*;
+import io.stubbs.truth.generator.internal.autoShaded.java.time.zone.ZoneRulesSubject;
+import java.time.zone.ZoneRules;
+import static io.stubbs.truth.generator.internal.autoShaded.java.time.zone.ZoneRulesSubject.*;
+import io.stubbs.truth.generator.internal.autoShaded.java.util.OptionalSubject;
+import java.util.Optional;
+import static io.stubbs.truth.generator.internal.autoShaded.java.util.OptionalSubject.*;
+import io.stubbs.truth.generator.internal.autoShaded.java.util.UUIDSubject;
+import java.util.UUID;
+import static io.stubbs.truth.generator.internal.autoShaded.java.util.UUIDSubject.*;
+import io.stubbs.truth.generator.subjects.MyStringSubject;
+import static io.stubbs.truth.generator.subjects.MyStringSubject.*;
+import io.stubbs.truth.generator.subjects.MyCollectionSubject;
+import java.util.Collection;
+import static io.stubbs.truth.generator.subjects.MyCollectionSubject.*;
+import io.stubbs.truth.generator.subjects.MyMapSubject;
+import java.util.Map;
+import static io.stubbs.truth.generator.subjects.MyMapSubject.*;
+/**
+ * Single point of access for all managed Subjects.
+ */
+@Generated(value = "io.stubbs.truth.generator.internal.TruthGenerator", date = "1970-01-01T00:00:00Z")
+public class ManagedTruth {
+	/**
+	 * see {@link Truth#assertWithMessage}
+	 */
+	static public ManagedSubjectBuilder assertWithMessage(java.lang.String messageToPrepend) {
+		return new ManagedSubjectBuilder(Truth.assertWithMessage(messageToPrepend));
+	}
+	/**
+	 * see {@link Truth#assertWithMessage}
+	 */
+	static public ManagedSubjectBuilder assertWithMessage(java.lang.String format, List args) {
+		return new ManagedSubjectBuilder(Truth.assertWithMessage(format, args.toArray()));
+	}
+	/**
+	 * Entry point for {@link Make} assertions.
+	 */
+	public static MakeSubject assertThat(Make actual) {
+		return Truth.assertAbout(io.stubbs.truth.generator.example.MakeSubject.makes()).that(actual);
+	}
+	/**
+	 * Convenience entry point for {@link Make} assertions when being mixed with
+	 * other "assertThat" assertion libraries.
+	 *
+	 * @see #assertThat
+	 */
+	public static MakeSubject assertTruth(io.stubbs.truth.generator.example.Car.Make actual) {
+		return assertThat(actual);
+	}
+	/**
+	 * Entry point for {@link IdCard} assertions.
+	 */
+	public static IdCardSubject assertThat(IdCard actual) {
+		return Truth.assertAbout(io.stubbs.truth.generator.testModel.IdCardSubject.idCards()).that(actual);
+	}
+	/**
+	 * Convenience entry point for {@link IdCard} assertions when being mixed with
+	 * other "assertThat" assertion libraries.
+	 *
+	 * @see #assertThat
+	 */
+	public static IdCardSubject assertTruth(io.stubbs.truth.generator.testModel.IdCard actual) {
+		return assertThat(actual);
+	}
+	/**
+	 * Entry point for {@link SecurityType} assertions.
+	 */
+	public static SecurityTypeSubject assertThat(SecurityType actual) {
+		return Truth.assertAbout(io.stubbs.truth.generator.testModel.SecurityTypeSubject.securityTypes()).that(actual);
+	}
+	/**
+	 * Convenience entry point for {@link SecurityType} assertions when being mixed
+	 * with other "assertThat" assertion libraries.
+	 *
+	 * @see #assertThat
+	 */
+	public static SecurityTypeSubject assertTruth(io.stubbs.truth.generator.testModel.IdCard.SecurityType actual) {
+		return assertThat(actual);
+	}
+	/**
+	 * Entry point for {@link Type} assertions.
+	 */
+	public static TypeSubject assertThat(Type actual) {
+		return Truth.assertAbout(io.stubbs.truth.generator.testModel.TypeSubject.types()).that(actual);
+	}
+	/**
+	 * Convenience entry point for {@link Type} assertions when being mixed with
+	 * other "assertThat" assertion libraries.
+	 *
+	 * @see #assertThat
+	 */
+	public static TypeSubject assertTruth(io.stubbs.truth.generator.testModel.IdCard.SecurityType.Type actual) {
+		return assertThat(actual);
+	}
+	/**
+	 * Entry point for {@link MyEmployee} assertions.
+	 */
+	public static MyEmployeeSubject assertThat(MyEmployee actual) {
+		return Truth.assertAbout(io.stubbs.truth.generator.testModel.MyEmployeeSubject.myEmployees()).that(actual);
+	}
+	/**
+	 * Convenience entry point for {@link MyEmployee} assertions when being mixed
+	 * with other "assertThat" assertion libraries.
+	 *
+	 * @see #assertThat
+	 */
+	public static MyEmployeeSubject assertTruth(io.stubbs.truth.generator.testModel.MyEmployee actual) {
+		return assertThat(actual);
+	}
+	/**
+	 * Entry point for {@link State} assertions.
+	 */
+	public static StateSubject assertThat(State actual) {
+		return Truth.assertAbout(io.stubbs.truth.generator.testModel.StateSubject.states()).that(actual);
+	}
+	/**
+	 * Convenience entry point for {@link State} assertions when being mixed with
+	 * other "assertThat" assertion libraries.
+	 *
+	 * @see #assertThat
+	 */
+	public static StateSubject assertTruth(io.stubbs.truth.generator.testModel.MyEmployee.State actual) {
+		return assertThat(actual);
+	}
+	/**
+	 * Entry point for {@link Person} assertions.
+	 */
+	public static PersonSubject assertThat(Person actual) {
+		return Truth.assertAbout(io.stubbs.truth.generator.testModel.PersonSubject.persons()).that(actual);
+	}
+	/**
+	 * Convenience entry point for {@link Person} assertions when being mixed with
+	 * other "assertThat" assertion libraries.
+	 *
+	 * @see #assertThat
+	 */
+	public static PersonSubject assertTruth(io.stubbs.truth.generator.testModel.Person actual) {
+		return assertThat(actual);
+	}
+	/**
+	 * Entry point for {@link DayOfWeek} assertions.
+	 */
+	public static DayOfWeekSubject assertThat(DayOfWeek actual) {
+		return Truth.assertAbout(io.stubbs.truth.generator.internal.autoShaded.java.time.DayOfWeekSubject.dayOfWeeks())
+				.that(actual);
+	}
+	/**
+	 * Convenience entry point for {@link DayOfWeek} assertions when being mixed
+	 * with other "assertThat" assertion libraries.
+	 *
+	 * @see #assertThat
+	 */
+	public static DayOfWeekSubject assertTruth(java.time.DayOfWeek actual) {
+		return assertThat(actual);
+	}
+	/**
+	 * Entry point for {@link Instant} assertions.
+	 */
+	public static InstantSubject assertThat(Instant actual) {
+		return Truth.assertAbout(io.stubbs.truth.generator.internal.autoShaded.java.time.InstantSubject.instants())
+				.that(actual);
+	}
+	/**
+	 * Convenience entry point for {@link Instant} assertions when being mixed with
+	 * other "assertThat" assertion libraries.
+	 *
+	 * @see #assertThat
+	 */
+	public static InstantSubject assertTruth(java.time.Instant actual) {
+		return assertThat(actual);
+	}
+	/**
+	 * Entry point for {@link LocalDate} assertions.
+	 */
+	public static LocalDateSubject assertThat(LocalDate actual) {
+		return Truth.assertAbout(io.stubbs.truth.generator.internal.autoShaded.java.time.LocalDateSubject.localDates())
+				.that(actual);
+	}
+	/**
+	 * Convenience entry point for {@link LocalDate} assertions when being mixed
+	 * with other "assertThat" assertion libraries.
+	 *
+	 * @see #assertThat
+	 */
+	public static LocalDateSubject assertTruth(java.time.LocalDate actual) {
+		return assertThat(actual);
+	}
+	/**
+	 * Entry point for {@link LocalDateTime} assertions.
+	 */
+	public static LocalDateTimeSubject assertThat(LocalDateTime actual) {
+		return Truth
+				.assertAbout(
+						io.stubbs.truth.generator.internal.autoShaded.java.time.LocalDateTimeSubject.localDateTimes())
+				.that(actual);
+	}
+	/**
+	 * Convenience entry point for {@link LocalDateTime} assertions when being mixed
+	 * with other "assertThat" assertion libraries.
+	 *
+	 * @see #assertThat
+	 */
+	public static LocalDateTimeSubject assertTruth(java.time.LocalDateTime actual) {
+		return assertThat(actual);
+	}
+	/**
+	 * Entry point for {@link LocalTime} assertions.
+	 */
+	public static LocalTimeSubject assertThat(LocalTime actual) {
+		return Truth.assertAbout(io.stubbs.truth.generator.internal.autoShaded.java.time.LocalTimeSubject.localTimes())
+				.that(actual);
+	}
+	/**
+	 * Convenience entry point for {@link LocalTime} assertions when being mixed
+	 * with other "assertThat" assertion libraries.
+	 *
+	 * @see #assertThat
+	 */
+	public static LocalTimeSubject assertTruth(java.time.LocalTime actual) {
+		return assertThat(actual);
+	}
+	/**
+	 * Entry point for {@link Month} assertions.
+	 */
+	public static MonthSubject assertThat(Month actual) {
+		return Truth.assertAbout(io.stubbs.truth.generator.internal.autoShaded.java.time.MonthSubject.months())
+				.that(actual);
+	}
+	/**
+	 * Convenience entry point for {@link Month} assertions when being mixed with
+	 * other "assertThat" assertion libraries.
+	 *
+	 * @see #assertThat
+	 */
+	public static MonthSubject assertTruth(java.time.Month actual) {
+		return assertThat(actual);
+	}
+	/**
+	 * Entry point for {@link OffsetDateTime} assertions.
+	 */
+	public static OffsetDateTimeSubject assertThat(OffsetDateTime actual) {
+		return Truth
+				.assertAbout(
+						io.stubbs.truth.generator.internal.autoShaded.java.time.OffsetDateTimeSubject.offsetDateTimes())
+				.that(actual);
+	}
+	/**
+	 * Convenience entry point for {@link OffsetDateTime} assertions when being
+	 * mixed with other "assertThat" assertion libraries.
+	 *
+	 * @see #assertThat
+	 */
+	public static OffsetDateTimeSubject assertTruth(java.time.OffsetDateTime actual) {
+		return assertThat(actual);
+	}
+	/**
+	 * Entry point for {@link OffsetTime} assertions.
+	 */
+	public static OffsetTimeSubject assertThat(OffsetTime actual) {
+		return Truth
+				.assertAbout(io.stubbs.truth.generator.internal.autoShaded.java.time.OffsetTimeSubject.offsetTimes())
+				.that(actual);
+	}
+	/**
+	 * Convenience entry point for {@link OffsetTime} assertions when being mixed
+	 * with other "assertThat" assertion libraries.
+	 *
+	 * @see #assertThat
+	 */
+	public static OffsetTimeSubject assertTruth(java.time.OffsetTime actual) {
+		return assertThat(actual);
+	}
+	/**
+	 * Entry point for {@link ZoneId} assertions.
+	 */
+	public static ZoneIdSubject assertThat(ZoneId actual) {
+		return Truth.assertAbout(io.stubbs.truth.generator.internal.autoShaded.java.time.ZoneIdSubject.zoneIds())
+				.that(actual);
+	}
+	/**
+	 * Convenience entry point for {@link ZoneId} assertions when being mixed with
+	 * other "assertThat" assertion libraries.
+	 *
+	 * @see #assertThat
+	 */
+	public static ZoneIdSubject assertTruth(java.time.ZoneId actual) {
+		return assertThat(actual);
+	}
+	/**
+	 * Entry point for {@link ZoneOffset} assertions.
+	 */
+	public static ZoneOffsetSubject assertThat(ZoneOffset actual) {
+		return Truth
+				.assertAbout(io.stubbs.truth.generator.internal.autoShaded.java.time.ZoneOffsetSubject.zoneOffsets())
+				.that(actual);
+	}
+	/**
+	 * Convenience entry point for {@link ZoneOffset} assertions when being mixed
+	 * with other "assertThat" assertion libraries.
+	 *
+	 * @see #assertThat
+	 */
+	public static ZoneOffsetSubject assertTruth(java.time.ZoneOffset actual) {
+		return assertThat(actual);
+	}
+	/**
+	 * Entry point for {@link ZonedDateTime} assertions.
+	 */
+	public static ZonedDateTimeSubject assertThat(ZonedDateTime actual) {
+		return Truth
+				.assertAbout(
+						io.stubbs.truth.generator.internal.autoShaded.java.time.ZonedDateTimeSubject.zonedDateTimes())
+				.that(actual);
+	}
+	/**
+	 * Convenience entry point for {@link ZonedDateTime} assertions when being mixed
+	 * with other "assertThat" assertion libraries.
+	 *
+	 * @see #assertThat
+	 */
+	public static ZonedDateTimeSubject assertTruth(java.time.ZonedDateTime actual) {
+		return assertThat(actual);
+	}
+	/**
+	 * Entry point for {@link ChronoLocalDate} assertions.
+	 */
+	public static ChronoLocalDateSubject assertThat(ChronoLocalDate actual) {
+		return Truth.assertAbout(io.stubbs.truth.generator.internal.autoShaded.java.time.chrono.ChronoLocalDateSubject
+				.chronoLocalDates()).that(actual);
+	}
+	/**
+	 * Convenience entry point for {@link ChronoLocalDate} assertions when being
+	 * mixed with other "assertThat" assertion libraries.
+	 *
+	 * @see #assertThat
+	 */
+	public static ChronoLocalDateSubject assertTruth(java.time.chrono.ChronoLocalDate actual) {
+		return assertThat(actual);
+	}
+	/**
+	 * Entry point for {@link ChronoLocalDateTime} assertions.
+	 */
+	public static ChronoLocalDateTimeSubject assertThat(ChronoLocalDateTime actual) {
+		return Truth
+				.assertAbout(io.stubbs.truth.generator.internal.autoShaded.java.time.chrono.ChronoLocalDateTimeSubject
+						.chronoLocalDateTimes())
+				.that(actual);
+	}
+	/**
+	 * Convenience entry point for {@link ChronoLocalDateTime} assertions when being
+	 * mixed with other "assertThat" assertion libraries.
+	 *
+	 * @see #assertThat
+	 */
+	public static ChronoLocalDateTimeSubject assertTruth(java.time.chrono.ChronoLocalDateTime actual) {
+		return assertThat(actual);
+	}
+	/**
+	 * Entry point for {@link Chronology} assertions.
+	 */
+	public static ChronologySubject assertThat(Chronology actual) {
+		return Truth
+				.assertAbout(
+						io.stubbs.truth.generator.internal.autoShaded.java.time.chrono.ChronologySubject.chronologies())
+				.that(actual);
+	}
+	/**
+	 * Convenience entry point for {@link Chronology} assertions when being mixed
+	 * with other "assertThat" assertion libraries.
+	 *
+	 * @see #assertThat
+	 */
+	public static ChronologySubject assertTruth(java.time.chrono.Chronology actual) {
+		return assertThat(actual);
+	}
+	/**
+	 * Entry point for {@link Era} assertions.
+	 */
+	public static EraSubject assertThat(Era actual) {
+		return Truth.assertAbout(io.stubbs.truth.generator.internal.autoShaded.java.time.chrono.EraSubject.eras())
+				.that(actual);
+	}
+	/**
+	 * Convenience entry point for {@link Era} assertions when being mixed with
+	 * other "assertThat" assertion libraries.
+	 *
+	 * @see #assertThat
+	 */
+	public static EraSubject assertTruth(java.time.chrono.Era actual) {
+		return assertThat(actual);
+	}
+	/**
+	 * Entry point for {@link IsoChronology} assertions.
+	 */
+	public static IsoChronologySubject assertThat(IsoChronology actual) {
+		return Truth.assertAbout(
+				io.stubbs.truth.generator.internal.autoShaded.java.time.chrono.IsoChronologySubject.isoChronologies())
+				.that(actual);
+	}
+	/**
+	 * Convenience entry point for {@link IsoChronology} assertions when being mixed
+	 * with other "assertThat" assertion libraries.
+	 *
+	 * @see #assertThat
+	 */
+	public static IsoChronologySubject assertTruth(java.time.chrono.IsoChronology actual) {
+		return assertThat(actual);
+	}
+	/**
+	 * Entry point for {@link IsoEra} assertions.
+	 */
+	public static IsoEraSubject assertThat(IsoEra actual) {
+		return Truth.assertAbout(io.stubbs.truth.generator.internal.autoShaded.java.time.chrono.IsoEraSubject.isoEras())
+				.that(actual);
+	}
+	/**
+	 * Convenience entry point for {@link IsoEra} assertions when being mixed with
+	 * other "assertThat" assertion libraries.
+	 *
+	 * @see #assertThat
+	 */
+	public static IsoEraSubject assertTruth(java.time.chrono.IsoEra actual) {
+		return assertThat(actual);
+	}
+	/**
+	 * Entry point for {@link ZoneRules} assertions.
+	 */
+	public static ZoneRulesSubject assertThat(ZoneRules actual) {
+		return Truth
+				.assertAbout(
+						io.stubbs.truth.generator.internal.autoShaded.java.time.zone.ZoneRulesSubject.zoneRuleses())
+				.that(actual);
+	}
+	/**
+	 * Convenience entry point for {@link ZoneRules} assertions when being mixed
+	 * with other "assertThat" assertion libraries.
+	 *
+	 * @see #assertThat
+	 */
+	public static ZoneRulesSubject assertTruth(java.time.zone.ZoneRules actual) {
+		return assertThat(actual);
+	}
+	/**
+	 * Entry point for {@link Optional} assertions.
+	 */
+	public static OptionalSubject assertThat(Optional actual) {
+		return Truth.assertAbout(io.stubbs.truth.generator.internal.autoShaded.java.util.OptionalSubject.optionals())
+				.that(actual);
+	}
+	/**
+	 * Convenience entry point for {@link Optional} assertions when being mixed with
+	 * other "assertThat" assertion libraries.
+	 *
+	 * @see #assertThat
+	 */
+	public static OptionalSubject assertTruth(java.util.Optional actual) {
+		return assertThat(actual);
+	}
+	/**
+	 * Entry point for {@link UUID} assertions.
+	 */
+	public static UUIDSubject assertThat(UUID actual) {
+		return Truth.assertAbout(io.stubbs.truth.generator.internal.autoShaded.java.util.UUIDSubject.uUIDs())
+				.that(actual);
+	}
+	/**
+	 * Convenience entry point for {@link UUID} assertions when being mixed with
+	 * other "assertThat" assertion libraries.
+	 *
+	 * @see #assertThat
+	 */
+	public static UUIDSubject assertTruth(java.util.UUID actual) {
+		return assertThat(actual);
+	}
+	/**
+	 * Entry point for {@link String} assertions.
+	 */
+	public static MyStringSubject assertThat(java.lang.String actual) {
+		return Truth.assertAbout(strings()).that(actual);
+	}
+	/**
+	 * Convenience entry point for {@link String} assertions when being mixed with
+	 * other "assertThat" assertion libraries.
+	 *
+	 * @see #assertThat
+	 */
+	public static MyStringSubject assertTruth(java.lang.String actual) {
+		return assertThat(actual);
+	}
+	/**
+	 * Entry point for {@link Collection} assertions.
+	 */
+	public static MyCollectionSubject assertThat(Collection actual) {
+		return Truth.assertAbout(collections()).that(actual);
+	}
+	/**
+	 * Convenience entry point for {@link Collection} assertions when being mixed
+	 * with other "assertThat" assertion libraries.
+	 *
+	 * @see #assertThat
+	 */
+	public static MyCollectionSubject assertTruth(java.util.Collection actual) {
+		return assertThat(actual);
+	}
+	/**
+	 * Entry point for {@link Map} assertions.
+	 */
+	public static MyMapSubject assertThat(Map actual) {
+		return Truth.assertAbout(maps()).that(actual);
+	}
+	/**
+	 * Convenience entry point for {@link Map} assertions when being mixed with
+	 * other "assertThat" assertion libraries.
+	 *
+	 * @see #assertThat
+	 */
+	public static MyMapSubject assertTruth(java.util.Map actual) {
+		return assertThat(actual);
+	}
+}

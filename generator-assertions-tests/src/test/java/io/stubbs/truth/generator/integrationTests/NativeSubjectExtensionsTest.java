@@ -1,11 +1,10 @@
-package io.stubbs.truth.generator;
+package io.stubbs.truth.generator.integrationTests;
 
 import com.google.common.truth.StringSubject;
 import com.google.common.truth.Subject;
-import io.stubbs.truth.generator.internal.MyStringSubject;
+import io.stubbs.truth.generator.subjects.MyStringSubject;
 import io.stubbs.truth.generator.testModel.MyEmployee;
 import io.stubbs.truth.generator.testModel.MyEmployeeSubject;
-import io.stubbs.truth.tests.ManagedTruth;
 import org.junit.Test;
 
 import java.util.ArrayList;
@@ -22,19 +21,19 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 // TODO rename away from "native" subject - it's not very clear what that means
 public class NativeSubjectExtensionsTest {
 
-  @Test
-  public void my_string() {
-    String nameWithSpace = "tony  ";
-    MyEmployee emp = InstanceUtils.createInstance(MyEmployee.class).toBuilder().workNickName(nameWithSpace).build();
-    MyEmployeeSubject es = ManagedTruth.assertThat(emp);
+    @Test
+    public void my_string() {
+        String nameWithSpace = "tony  ";
+        MyEmployee emp = InstanceUtils.createInstance(MyEmployee.class).toBuilder().workNickName(nameWithSpace).build();
+        MyEmployeeSubject es = ManagedTruth.assertThat(emp);
 
-    // needs my strings
-    es.hasWorkNickName().ignoringTrailingWhiteSpace().equalTo("tony");
+        // needs my strings
+        es.hasWorkNickName().ignoringTrailingWhiteSpace().equalTo("tony");
 
-    // needs my maps
-    assertThatThrownBy(() -> es.hasProjectMap().containsKeys("key1", "key2")).isInstanceOf(AssertionError.class);
-    List<String> keys = new ArrayList<>(emp.getProjectMap().keySet());
-    es.hasProjectMap().containsKeys(keys.get(0), keys.get(1));
-  }
+        // needs my maps
+        assertThatThrownBy(() -> es.hasProjectMap().containsKeys("key1", "key2")).isInstanceOf(AssertionError.class);
+        List<String> keys = new ArrayList<>(emp.getProjectMap().keySet());
+        es.hasProjectMap().containsKeys(keys.get(0), keys.get(1));
+    }
 
 }

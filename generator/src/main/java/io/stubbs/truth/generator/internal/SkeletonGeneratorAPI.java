@@ -1,17 +1,21 @@
 package io.stubbs.truth.generator.internal;
 
-import io.stubbs.truth.generator.internal.model.ThreeSystem;
+import com.google.common.truth.Subject;
 import io.stubbs.truth.generator.TruthGeneratorAPI;
+import io.stubbs.truth.generator.internal.model.ThreeSystem;
 
 import java.io.FileNotFoundException;
 import java.util.Optional;
 
+/**
+ * @author Antony Stubbs
+ */
 public interface SkeletonGeneratorAPI {
 
     /**
      * @see TruthGeneratorAPI#maintain(Class, Class)
      */
-    String maintain(Class source, Class userAndGeneratedMix);
+    String maintain(Class<?> source, Class<?> userAndGeneratedMix);
 
     /**
      * Uses an optional three layer system to manage the Subjects.
@@ -29,17 +33,18 @@ public interface SkeletonGeneratorAPI {
      * This way there's no complexity with mixing generated and user written code, but at the cost of 2 extra classes
      * per source. While still allowing the user to leverage the full code generation system but maintaining their own extensions
      * with clear separation from the code generation.
+     *
      * @return
      */
-    Optional<Object> threeLayerSystem(Class<?> source, Class<?> usersMiddleClass) throws FileNotFoundException;
+    <T> Optional<ThreeSystem<T>> threeLayerSystem(Class<T> source, Class<? extends Subject> usersMiddleClass) throws FileNotFoundException;
 
     /**
-     * Create the place holder middle class, for optional copying into source code
+     * Create the placeholder middle class, for optional copying into source code
      *
      * @return null if for some reason the class isn't supported
      * @see #threeLayerSystem(Class, Class)
      */
-    Optional<ThreeSystem> threeLayerSystem(Class<?> source);
+    <T> Optional<ThreeSystem<T>> threeLayerSystem(Class<T> source);
 
     /**
      * @see TruthGeneratorAPI#combinedSystem(Class)

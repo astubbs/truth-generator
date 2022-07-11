@@ -1,9 +1,12 @@
 package io.stubbs.truth.generator.shaded.org.jboss.forge.roaster.model.sourceChickens;
 
 import com.google.common.truth.FailureMetadata;
-import io.stubbs.truth.generator.UserManagedTruth;
-import io.stubbs.truth.generator.internal.MyStringSubject;
+import io.stubbs.truth.generator.SubjectFactoryMethod;
+import io.stubbs.truth.generator.UserManagedSubject;
+import io.stubbs.truth.generator.subjects.MyStringSubject;
 import io.stubbs.truth.generator.testModel.MyEmployee;
+import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
 import org.jboss.forge.roaster.model.source.JavaClassSource;
 
 import javax.annotation.processing.Generated;
@@ -19,29 +22,37 @@ import javax.annotation.processing.Generated;
  *
  * @see JavaClassSourceParentSubject
  */
-@UserManagedTruth(value = JavaClassSource.class)
+@Slf4j
+@UserManagedSubject(value = JavaClassSource.class)
 @Generated("truth-generator")
 public class JavaClassSourceSubject extends JavaClassSourceParentSubject {
 
-  protected JavaClassSourceSubject(FailureMetadata failureMetadata, JavaClassSource actual) {
-    super(failureMetadata, actual);
-  }
+    /**
+     * Returns an assertion builder for a {@link JavaClassSource} class.
+     */
+    @SubjectFactoryMethod
+    public static Factory<JavaClassSourceSubject, JavaClassSource> javaClassSources() {
+        return JavaClassSourceSubject::new;
+    }
 
-  /**
-   * Returns an assertion builder for a {@link JavaClassSource} class.
-   */
-  public static Factory<JavaClassSourceSubject, JavaClassSource> javaClassSources() {
-    return JavaClassSourceSubject::new;
-  }
+    protected JavaClassSourceSubject(FailureMetadata failureMetadata, JavaClassSource actual) {
+        super(failureMetadata, actual);
+    }
 
-  public MyStringSubject hasSourceText() {
-    isNotNull();
-    return check("toString").about(MyStringSubject.strings()).that(actual.toString());
-  }
+    public MyStringSubject hasSourceText() {
+        isNotNull();
+        return check("toString()").about(MyStringSubject.strings()).that(actual.toString());
+    }
 
-  public void withSamePackageAs(Class<MyEmployee> expected) {
-    String actualPackage = actual.getPackage();
-    check("getPackage()").that(actualPackage).isEqualTo(expected.getPackage().getName());
-  }
+    public void withSamePackageAs(Class<MyEmployee> expected) {
+        String actualPackage = actual.getPackage();
+        check("getPackage()").that(actualPackage).isEqualTo(expected.getPackage().getName());
+    }
+
+    // todo drop this step if possible?
+    @SneakyThrows
+    public MyStringSubject.IgnoringWhiteSpaceComparison withSourceOf() {
+        return hasSourceText().ignoringTrailingWhiteSpace();
+    }
 
 }

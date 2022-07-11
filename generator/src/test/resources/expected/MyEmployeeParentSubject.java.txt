@@ -10,8 +10,10 @@ import com.google.common.truth.IntegerSubject;
 import io.stubbs.truth.generator.internal.autoShaded.java.time.ZonedDateTimeSubject;
 import static io.stubbs.truth.generator.testModel.MyEmployeeSubject.myEmployees;
 import io.stubbs.truth.generator.testModel.MyEmployeeSubject;
+import io.stubbs.truth.generator.testModel.MyEmployee;
 import static io.stubbs.truth.generator.testModel.IdCardSubject.idCards;
 import io.stubbs.truth.generator.testModel.IdCardSubject;
+import io.stubbs.truth.generator.testModel.IdCard;
 import static io.stubbs.truth.generator.testModel.StateSubject.states;
 import io.stubbs.truth.generator.testModel.StateSubject;
 import io.stubbs.truth.generator.testModel.MyEmployee.State;
@@ -19,22 +21,31 @@ import static io.stubbs.truth.generator.internal.autoShaded.java.util.UUIDSubjec
 import io.stubbs.truth.generator.internal.autoShaded.java.util.UUIDSubject;
 import java.util.UUID;
 import com.google.common.truth.PrimitiveIntArraySubject;
-import static io.stubbs.truth.generator.internal.MyStringSubject.strings;
-import static io.stubbs.truth.generator.internal.MyStringSubject.strings;
-import com.google.common.truth.IterableSubject;
-import java.util.List;
-import static io.stubbs.truth.generator.internal.MyMapSubject.maps;
-import io.stubbs.truth.generator.internal.MyMapSubject;
-import java.util.Map;
-import static io.stubbs.truth.generator.internal.MyStringSubject.strings;
-import com.google.common.truth.LongSubject;
 import static io.stubbs.truth.generator.internal.autoShaded.java.util.OptionalSubject.optionals;
-import io.stubbs.truth.generator.internal.autoShaded.java.util.OptionalSubject;
+import static io.stubbs.truth.generator.internal.autoShaded.java.util.OptionalSubject.optionals;
 import java.util.Optional;
-import io.stubbs.truth.generator.internal.MyStringSubject;
+import io.stubbs.truth.generator.internal.autoShaded.java.util.OptionalSubject;
+import static io.stubbs.truth.generator.subjects.MyStringSubject.strings;
+import static io.stubbs.truth.generator.subjects.MyStringSubject.strings;
+import static io.stubbs.truth.generator.subjects.MyCollectionSubject.collections;
+import io.stubbs.truth.generator.subjects.MyCollectionSubject;
+import java.util.List;
+import static io.stubbs.truth.generator.subjects.MyMapSubject.maps;
+import io.stubbs.truth.generator.subjects.MyMapSubject;
+import java.util.Map;
+import static io.stubbs.truth.generator.subjects.MyStringSubject.strings;
+import com.google.common.truth.LongSubject;
+import static io.stubbs.truth.generator.internal.autoShaded.java.time.InstantSubject.instants;
+import io.stubbs.truth.generator.internal.autoShaded.java.time.InstantSubject;
+import java.time.Instant;
+import static io.stubbs.truth.generator.subjects.MyStringSubject.strings;
+import static io.stubbs.truth.generator.subjects.MyStringSubject.strings;
+import com.google.common.truth.DoubleSubject;
+import io.stubbs.truth.generator.subjects.MyStringSubject;
 import com.google.common.truth.ObjectArraySubject;
 import static io.stubbs.truth.generator.testModel.PersonSubject.persons;
 import io.stubbs.truth.generator.testModel.PersonSubject;
+import io.stubbs.truth.generator.testModel.Person;
 /**
  * Truth Subject for the {@link MyEmployee}.
  *
@@ -45,7 +56,7 @@ import io.stubbs.truth.generator.testModel.PersonSubject;
  * @see MyEmployeeSubject
  * @see MyEmployeeChildSubject
  */
-@Generated("truth-generator")
+@Generated(value = "io.stubbs.truth.generator.internal.TruthGenerator", date = "1970-01-01T00:00:00Z")
 public class MyEmployeeParentSubject extends Subject {
 	protected final MyEmployee actual;
 	protected MyEmployeeParentSubject(FailureMetadata failureMetadata,
@@ -64,8 +75,8 @@ public class MyEmployeeParentSubject extends Subject {
 	/**
 	 * Simple check for equality for all fields.
 	 */
-	public void hasAnniversaryNotEqualTo(ZonedDateTime expected) {
-		if (!(actual.getAnniversary().equals(expected))) {
+	public void hasAnniversaryNotEqualTo(java.time.ZonedDateTime expected) {
+		if ((actual.getAnniversary().equals(expected))) {
 			failWithActual(fact("expected Anniversary NOT to be equal to", expected));
 		}
 	}
@@ -73,7 +84,7 @@ public class MyEmployeeParentSubject extends Subject {
 	 * Simple check for equality for all fields.
 	 */
 	public void hasAnniversaryEqualTo(java.time.ZonedDateTime expected) {
-		if ((actual.getAnniversary().equals(expected))) {
+		if (!(actual.getAnniversary().equals(expected))) {
 			failWithActual(fact("expected Anniversary to be equal to", expected));
 		}
 	}
@@ -89,7 +100,7 @@ public class MyEmployeeParentSubject extends Subject {
 	 * Simple check for equality for all fields.
 	 */
 	public void hasBirthYearNotEqualTo(int expected) {
-		if (!(actual.getBirthYear() == expected)) {
+		if ((actual.getBirthYear() == expected)) {
 			failWithActual(fact("expected BirthYear NOT to be equal to", expected));
 		}
 	}
@@ -97,7 +108,7 @@ public class MyEmployeeParentSubject extends Subject {
 	 * Simple check for equality for all fields.
 	 */
 	public void hasBirthYearEqualTo(int expected) {
-		if ((actual.getBirthYear() == expected)) {
+		if (!(actual.getBirthYear() == expected)) {
 			failWithActual(fact("expected BirthYear to be equal to", expected));
 		}
 	}
@@ -113,7 +124,7 @@ public class MyEmployeeParentSubject extends Subject {
 	 * Simple check for equality for all fields.
 	 */
 	public void hasBirthdayNotEqualTo(java.time.ZonedDateTime expected) {
-		if (!(actual.getBirthday().equals(expected))) {
+		if ((actual.getBirthday().equals(expected))) {
 			failWithActual(fact("expected Birthday NOT to be equal to", expected));
 		}
 	}
@@ -121,7 +132,7 @@ public class MyEmployeeParentSubject extends Subject {
 	 * Simple check for equality for all fields.
 	 */
 	public void hasBirthdayEqualTo(java.time.ZonedDateTime expected) {
-		if ((actual.getBirthday().equals(expected))) {
+		if (!(actual.getBirthday().equals(expected))) {
 			failWithActual(fact("expected Birthday to be equal to", expected));
 		}
 	}
@@ -137,7 +148,7 @@ public class MyEmployeeParentSubject extends Subject {
 	 * Simple check for equality for all fields.
 	 */
 	public void hasBossNotEqualTo(io.stubbs.truth.generator.testModel.MyEmployee expected) {
-		if (!(actual.getBoss().equals(expected))) {
+		if ((actual.getBoss().equals(expected))) {
 			failWithActual(fact("expected Boss NOT to be equal to", expected));
 		}
 	}
@@ -145,7 +156,7 @@ public class MyEmployeeParentSubject extends Subject {
 	 * Simple check for equality for all fields.
 	 */
 	public void hasBossEqualTo(io.stubbs.truth.generator.testModel.MyEmployee expected) {
-		if ((actual.getBoss().equals(expected))) {
+		if (!(actual.getBoss().equals(expected))) {
 			failWithActual(fact("expected Boss to be equal to", expected));
 		}
 	}
@@ -161,7 +172,7 @@ public class MyEmployeeParentSubject extends Subject {
 	 * Simple check for equality for all fields.
 	 */
 	public void hasCardNotEqualTo(io.stubbs.truth.generator.testModel.IdCard expected) {
-		if (!(actual.getCard().equals(expected))) {
+		if ((actual.getCard().equals(expected))) {
 			failWithActual(fact("expected Card NOT to be equal to", expected));
 		}
 	}
@@ -169,7 +180,7 @@ public class MyEmployeeParentSubject extends Subject {
 	 * Simple check for equality for all fields.
 	 */
 	public void hasCardEqualTo(io.stubbs.truth.generator.testModel.IdCard expected) {
-		if ((actual.getCard().equals(expected))) {
+		if (!(actual.getCard().equals(expected))) {
 			failWithActual(fact("expected Card to be equal to", expected));
 		}
 	}
@@ -184,8 +195,8 @@ public class MyEmployeeParentSubject extends Subject {
 	/**
 	 * Simple check for equality for all fields.
 	 */
-	public void hasEmploymentStateNotEqualTo(State expected) {
-		if (!(actual.getEmploymentState().equals(expected))) {
+	public void hasEmploymentStateNotEqualTo(io.stubbs.truth.generator.testModel.MyEmployee.State expected) {
+		if ((actual.getEmploymentState().equals(expected))) {
 			failWithActual(fact("expected EmploymentState NOT to be equal to", expected));
 		}
 	}
@@ -193,7 +204,7 @@ public class MyEmployeeParentSubject extends Subject {
 	 * Simple check for equality for all fields.
 	 */
 	public void hasEmploymentStateEqualTo(io.stubbs.truth.generator.testModel.MyEmployee.State expected) {
-		if ((actual.getEmploymentState().equals(expected))) {
+		if (!(actual.getEmploymentState().equals(expected))) {
 			failWithActual(fact("expected EmploymentState to be equal to", expected));
 		}
 	}
@@ -208,8 +219,8 @@ public class MyEmployeeParentSubject extends Subject {
 	/**
 	 * Simple check for equality for all fields.
 	 */
-	public void hasIdNotEqualTo(UUID expected) {
-		if (!(actual.getId().equals(expected))) {
+	public void hasIdNotEqualTo(java.util.UUID expected) {
+		if ((actual.getId().equals(expected))) {
 			failWithActual(fact("expected Id NOT to be equal to", expected));
 		}
 	}
@@ -217,7 +228,7 @@ public class MyEmployeeParentSubject extends Subject {
 	 * Simple check for equality for all fields.
 	 */
 	public void hasIdEqualTo(java.util.UUID expected) {
-		if ((actual.getId().equals(expected))) {
+		if (!(actual.getId().equals(expected))) {
 			failWithActual(fact("expected Id to be equal to", expected));
 		}
 	}
@@ -233,7 +244,7 @@ public class MyEmployeeParentSubject extends Subject {
 	 * Simple check for equality for all fields.
 	 */
 	public void hasIntArrayNotEqualTo(int[] expected) {
-		if (!(actual.getIntArray().equals(expected))) {
+		if ((actual.getIntArray().equals(expected))) {
 			failWithActual(fact("expected IntArray NOT to be equal to", expected));
 		}
 	}
@@ -241,8 +252,132 @@ public class MyEmployeeParentSubject extends Subject {
 	 * Simple check for equality for all fields.
 	 */
 	public void hasIntArrayEqualTo(int[] expected) {
-		if ((actual.getIntArray().equals(expected))) {
+		if (!(actual.getIntArray().equals(expected))) {
 			failWithActual(fact("expected IntArray to be equal to", expected));
+		}
+	}
+	/**
+	 * Returns the Subject for the given field type, so you can chain on other
+	 * assertions.
+	 */
+	public OptionalSubject hasMyWildcardTypeWithLowerAndUpperBoundsGeneric() {
+		isNotNull();
+		return check("getMyWildcardTypeWithLowerAndUpperBoundsGeneric()").about(optionals())
+				.that(actual.getMyWildcardTypeWithLowerAndUpperBoundsGeneric());
+	}
+	/**
+	 * Checks Optional fields for presence.
+	 */
+	public void hasMyWildcardTypeWithLowerAndUpperBoundsGenericNotPresent() {
+		if (actual.getMyWildcardTypeWithLowerAndUpperBoundsGeneric().isPresent()) {
+			failWithActual(simpleFact("expected MyWildcardTypeWithLowerAndUpperBoundsGeneric NOT to be present"));
+		}
+	}
+	/**
+	 * Checks Optional fields for presence.
+	 */
+	public void hasMyWildcardTypeWithLowerAndUpperBoundsGenericPresent() {
+		if (!actual.getMyWildcardTypeWithLowerAndUpperBoundsGeneric().isPresent()) {
+			failWithActual(simpleFact("expected MyWildcardTypeWithLowerAndUpperBoundsGeneric to be present"));
+		}
+	}
+	/**
+	 * Simple check for equality for all fields.
+	 */
+	public void hasMyWildcardTypeWithLowerAndUpperBoundsGenericNotEqualTo(java.util.Optional expected) {
+		if ((actual.getMyWildcardTypeWithLowerAndUpperBoundsGeneric().equals(expected))) {
+			failWithActual(fact("expected MyWildcardTypeWithLowerAndUpperBoundsGeneric NOT to be equal to", expected));
+		}
+	}
+	/**
+	 * Simple check for equality for all fields.
+	 */
+	public void hasMyWildcardTypeWithLowerAndUpperBoundsGenericEqualTo(java.util.Optional expected) {
+		if (!(actual.getMyWildcardTypeWithLowerAndUpperBoundsGeneric().equals(expected))) {
+			failWithActual(fact("expected MyWildcardTypeWithLowerAndUpperBoundsGeneric to be equal to", expected));
+		}
+	}
+	/**
+	 * Returns the Subject for the given field type, so you can chain on other
+	 * assertions.
+	 */
+	public OptionalSubject hasMyWildcardTypeWithLowerAndUpperBoundsIdCard() {
+		isNotNull();
+		return check("getMyWildcardTypeWithLowerAndUpperBoundsIdCard()").about(optionals())
+				.that(actual.getMyWildcardTypeWithLowerAndUpperBoundsIdCard());
+	}
+	/**
+	 * Checks Optional fields for presence.
+	 */
+	public void hasMyWildcardTypeWithLowerAndUpperBoundsIdCardNotPresent() {
+		if (actual.getMyWildcardTypeWithLowerAndUpperBoundsIdCard().isPresent()) {
+			failWithActual(simpleFact("expected MyWildcardTypeWithLowerAndUpperBoundsIdCard NOT to be present"));
+		}
+	}
+	/**
+	 * Checks Optional fields for presence.
+	 */
+	public void hasMyWildcardTypeWithLowerAndUpperBoundsIdCardPresent() {
+		if (!actual.getMyWildcardTypeWithLowerAndUpperBoundsIdCard().isPresent()) {
+			failWithActual(simpleFact("expected MyWildcardTypeWithLowerAndUpperBoundsIdCard to be present"));
+		}
+	}
+	/**
+	 * Simple check for equality for all fields.
+	 */
+	public void hasMyWildcardTypeWithLowerAndUpperBoundsIdCardNotEqualTo(java.util.Optional expected) {
+		if ((actual.getMyWildcardTypeWithLowerAndUpperBoundsIdCard().equals(expected))) {
+			failWithActual(fact("expected MyWildcardTypeWithLowerAndUpperBoundsIdCard NOT to be equal to", expected));
+		}
+	}
+	/**
+	 * Simple check for equality for all fields.
+	 */
+	public void hasMyWildcardTypeWithLowerAndUpperBoundsIdCardEqualTo(java.util.Optional expected) {
+		if (!(actual.getMyWildcardTypeWithLowerAndUpperBoundsIdCard().equals(expected))) {
+			failWithActual(fact("expected MyWildcardTypeWithLowerAndUpperBoundsIdCard to be equal to", expected));
+		}
+	}
+	/**
+	 * Returns the Subject for the given field type, so you can chain on other
+	 * assertions.
+	 */
+	public IntegerSubject hasMyWildcardTypeWithUpperBoundsIdCard() {
+		isNotNull();
+		hasMyWildcardTypeWithUpperBoundsIdCardPresent();
+		return check("getMyWildcardTypeWithUpperBoundsIdCard().get()")
+				.that((Integer) actual.getMyWildcardTypeWithUpperBoundsIdCard().get());
+	}
+	/**
+	 * Checks Optional fields for presence.
+	 */
+	public void hasMyWildcardTypeWithUpperBoundsIdCardNotPresent() {
+		if (actual.getMyWildcardTypeWithUpperBoundsIdCard().isPresent()) {
+			failWithActual(simpleFact("expected MyWildcardTypeWithUpperBoundsIdCard NOT to be present"));
+		}
+	}
+	/**
+	 * Checks Optional fields for presence.
+	 */
+	public void hasMyWildcardTypeWithUpperBoundsIdCardPresent() {
+		if (!actual.getMyWildcardTypeWithUpperBoundsIdCard().isPresent()) {
+			failWithActual(simpleFact("expected MyWildcardTypeWithUpperBoundsIdCard to be present"));
+		}
+	}
+	/**
+	 * Simple check for equality for all fields.
+	 */
+	public void hasMyWildcardTypeWithUpperBoundsIdCardNotEqualTo(java.util.Optional expected) {
+		if ((actual.getMyWildcardTypeWithUpperBoundsIdCard().equals(expected))) {
+			failWithActual(fact("expected MyWildcardTypeWithUpperBoundsIdCard NOT to be equal to", expected));
+		}
+	}
+	/**
+	 * Simple check for equality for all fields.
+	 */
+	public void hasMyWildcardTypeWithUpperBoundsIdCardEqualTo(java.util.Optional expected) {
+		if (!(actual.getMyWildcardTypeWithUpperBoundsIdCard().equals(expected))) {
+			failWithActual(fact("expected MyWildcardTypeWithUpperBoundsIdCard to be equal to", expected));
 		}
 	}
 	/**
@@ -257,7 +392,7 @@ public class MyEmployeeParentSubject extends Subject {
 	 * Simple check for equality for all fields.
 	 */
 	public void hasNameNotEqualTo(java.lang.String expected) {
-		if (!(actual.getName().equals(expected))) {
+		if ((actual.getName().equals(expected))) {
 			failWithActual(fact("expected Name NOT to be equal to", expected));
 		}
 	}
@@ -265,7 +400,7 @@ public class MyEmployeeParentSubject extends Subject {
 	 * Simple check for equality for all fields.
 	 */
 	public void hasNameEqualTo(java.lang.String expected) {
-		if ((actual.getName().equals(expected))) {
+		if (!(actual.getName().equals(expected))) {
 			failWithActual(fact("expected Name to be equal to", expected));
 		}
 	}
@@ -273,9 +408,9 @@ public class MyEmployeeParentSubject extends Subject {
 	 * Returns the Subject for the given field type, so you can chain on other
 	 * assertions.
 	 */
-	public IterableSubject hasProjectList() {
+	public MyCollectionSubject hasProjectList() {
 		isNotNull();
-		return check("getProjectList()").that(actual.getProjectList());
+		return check("getProjectList()").about(collections()).that(actual.getProjectList());
 	}
 	/**
 	 * Checks if a {@link Project} element is, or is not contained in the
@@ -298,8 +433,8 @@ public class MyEmployeeParentSubject extends Subject {
 	/**
 	 * Simple check for equality for all fields.
 	 */
-	public void hasProjectListNotEqualTo(List expected) {
-		if (!(actual.getProjectList().equals(expected))) {
+	public void hasProjectListNotEqualTo(java.util.List expected) {
+		if ((actual.getProjectList().equals(expected))) {
 			failWithActual(fact("expected ProjectList NOT to be equal to", expected));
 		}
 	}
@@ -307,7 +442,7 @@ public class MyEmployeeParentSubject extends Subject {
 	 * Simple check for equality for all fields.
 	 */
 	public void hasProjectListEqualTo(java.util.List expected) {
-		if ((actual.getProjectList().equals(expected))) {
+		if (!(actual.getProjectList().equals(expected))) {
 			failWithActual(fact("expected ProjectList to be equal to", expected));
 		}
 	}
@@ -338,8 +473,8 @@ public class MyEmployeeParentSubject extends Subject {
 	/**
 	 * Simple check for equality for all fields.
 	 */
-	public void hasProjectMapNotEqualTo(Map expected) {
-		if (!(actual.getProjectMap().equals(expected))) {
+	public void hasProjectMapNotEqualTo(java.util.Map expected) {
+		if ((actual.getProjectMap().equals(expected))) {
 			failWithActual(fact("expected ProjectMap NOT to be equal to", expected));
 		}
 	}
@@ -347,7 +482,7 @@ public class MyEmployeeParentSubject extends Subject {
 	 * Simple check for equality for all fields.
 	 */
 	public void hasProjectMapEqualTo(java.util.Map expected) {
-		if ((actual.getProjectMap().equals(expected))) {
+		if (!(actual.getProjectMap().equals(expected))) {
 			failWithActual(fact("expected ProjectMap to be equal to", expected));
 		}
 	}
@@ -355,24 +490,24 @@ public class MyEmployeeParentSubject extends Subject {
 	 * Returns the Subject for the given field type, so you can chain on other
 	 * assertions.
 	 */
-	public MyStringSubject hasSantity() {
+	public MyStringSubject hasSanity() {
 		isNotNull();
-		return check("getSantity()").about(strings()).that(actual.getSantity());
+		return check("getSanity()").about(strings()).that(actual.getSanity());
 	}
 	/**
 	 * Simple check for equality for all fields.
 	 */
-	public void hasSantityNotEqualTo(java.lang.String expected) {
-		if (!(actual.getSantity().equals(expected))) {
-			failWithActual(fact("expected Santity NOT to be equal to", expected));
+	public void hasSanityNotEqualTo(java.lang.String expected) {
+		if ((actual.getSanity().equals(expected))) {
+			failWithActual(fact("expected Sanity NOT to be equal to", expected));
 		}
 	}
 	/**
 	 * Simple check for equality for all fields.
 	 */
-	public void hasSantityEqualTo(java.lang.String expected) {
-		if ((actual.getSantity().equals(expected))) {
-			failWithActual(fact("expected Santity to be equal to", expected));
+	public void hasSanityEqualTo(java.lang.String expected) {
+		if (!(actual.getSanity().equals(expected))) {
+			failWithActual(fact("expected Sanity to be equal to", expected));
 		}
 	}
 	/**
@@ -387,7 +522,7 @@ public class MyEmployeeParentSubject extends Subject {
 	 * Simple check for equality for all fields.
 	 */
 	public void hasSomeLongAspectNotEqualTo(long expected) {
-		if (!(actual.getSomeLongAspect() == expected)) {
+		if ((actual.getSomeLongAspect() == expected)) {
 			failWithActual(fact("expected SomeLongAspect NOT to be equal to", expected));
 		}
 	}
@@ -395,7 +530,7 @@ public class MyEmployeeParentSubject extends Subject {
 	 * Simple check for equality for all fields.
 	 */
 	public void hasSomeLongAspectEqualTo(long expected) {
-		if ((actual.getSomeLongAspect() == expected)) {
+		if (!(actual.getSomeLongAspect() == expected)) {
 			failWithActual(fact("expected SomeLongAspect to be equal to", expected));
 		}
 	}
@@ -403,15 +538,123 @@ public class MyEmployeeParentSubject extends Subject {
 	 * Returns the Subject for the given field type, so you can chain on other
 	 * assertions.
 	 */
-	public OptionalSubject hasWeighting() {
+	public InstantSubject hasStartedAt() {
 		isNotNull();
-		return check("getWeighting()").about(optionals()).that(actual.getWeighting());
+		hasStartedAtPresent();
+		return check("getStartedAt().get()").about(instants()).that((Instant) actual.getStartedAt().get());
+	}
+	/**
+	 * Checks Optional fields for presence.
+	 */
+	public void hasStartedAtNotPresent() {
+		if (actual.getStartedAt().isPresent()) {
+			failWithActual(simpleFact("expected StartedAt NOT to be present"));
+		}
+	}
+	/**
+	 * Checks Optional fields for presence.
+	 */
+	public void hasStartedAtPresent() {
+		if (!actual.getStartedAt().isPresent()) {
+			failWithActual(simpleFact("expected StartedAt to be present"));
+		}
+	}
+	/**
+	 * Simple check for equality for all fields.
+	 */
+	public void hasStartedAtNotEqualTo(java.util.Optional expected) {
+		if ((actual.getStartedAt().equals(expected))) {
+			failWithActual(fact("expected StartedAt NOT to be equal to", expected));
+		}
+	}
+	/**
+	 * Simple check for equality for all fields.
+	 */
+	public void hasStartedAtEqualTo(java.util.Optional expected) {
+		if (!(actual.getStartedAt().equals(expected))) {
+			failWithActual(fact("expected StartedAt to be equal to", expected));
+		}
+	}
+	/**
+	 * Returns the Subject for the given field type, so you can chain on other
+	 * assertions.
+	 */
+	public MyStringSubject hasTypeParamTest() {
+		isNotNull();
+		return check("getTypeParamTest()").about(strings()).that(actual.getTypeParamTest());
+	}
+	/**
+	 * Simple check for equality for all fields.
+	 */
+	public void hasTypeParamTestNotEqualTo(java.lang.Object expected) {
+		if ((actual.getTypeParamTest().equals(expected))) {
+			failWithActual(fact("expected TypeParamTest NOT to be equal to", expected));
+		}
+	}
+	/**
+	 * Simple check for equality for all fields.
+	 */
+	public void hasTypeParamTestEqualTo(java.lang.Object expected) {
+		if (!(actual.getTypeParamTest().equals(expected))) {
+			failWithActual(fact("expected TypeParamTest to be equal to", expected));
+		}
+	}
+	/**
+	 * Returns the Subject for the given field type, so you can chain on other
+	 * assertions.
+	 */
+	public MyStringSubject hasTypeParamTestOptional() {
+		isNotNull();
+		hasTypeParamTestOptionalPresent();
+		return check("getTypeParamTestOptional().get()").about(strings())
+				.that((String) actual.getTypeParamTestOptional().get());
+	}
+	/**
+	 * Checks Optional fields for presence.
+	 */
+	public void hasTypeParamTestOptionalNotPresent() {
+		if (actual.getTypeParamTestOptional().isPresent()) {
+			failWithActual(simpleFact("expected TypeParamTestOptional NOT to be present"));
+		}
+	}
+	/**
+	 * Checks Optional fields for presence.
+	 */
+	public void hasTypeParamTestOptionalPresent() {
+		if (!actual.getTypeParamTestOptional().isPresent()) {
+			failWithActual(simpleFact("expected TypeParamTestOptional to be present"));
+		}
+	}
+	/**
+	 * Simple check for equality for all fields.
+	 */
+	public void hasTypeParamTestOptionalNotEqualTo(java.util.Optional expected) {
+		if ((actual.getTypeParamTestOptional().equals(expected))) {
+			failWithActual(fact("expected TypeParamTestOptional NOT to be equal to", expected));
+		}
+	}
+	/**
+	 * Simple check for equality for all fields.
+	 */
+	public void hasTypeParamTestOptionalEqualTo(java.util.Optional expected) {
+		if (!(actual.getTypeParamTestOptional().equals(expected))) {
+			failWithActual(fact("expected TypeParamTestOptional to be equal to", expected));
+		}
+	}
+	/**
+	 * Returns the Subject for the given field type, so you can chain on other
+	 * assertions.
+	 */
+	public DoubleSubject hasWeighting() {
+		isNotNull();
+		hasWeightingPresent();
+		return check("getWeighting().get()").that((Double) actual.getWeighting().get());
 	}
 	/**
 	 * Checks Optional fields for presence.
 	 */
 	public void hasWeightingNotPresent() {
-		if (!actual.getWeighting().isPresent()) {
+		if (actual.getWeighting().isPresent()) {
 			failWithActual(simpleFact("expected Weighting NOT to be present"));
 		}
 	}
@@ -419,15 +662,15 @@ public class MyEmployeeParentSubject extends Subject {
 	 * Checks Optional fields for presence.
 	 */
 	public void hasWeightingPresent() {
-		if (actual.getWeighting().isPresent()) {
+		if (!actual.getWeighting().isPresent()) {
 			failWithActual(simpleFact("expected Weighting to be present"));
 		}
 	}
 	/**
 	 * Simple check for equality for all fields.
 	 */
-	public void hasWeightingNotEqualTo(Optional expected) {
-		if (!(actual.getWeighting().equals(expected))) {
+	public void hasWeightingNotEqualTo(java.util.Optional expected) {
+		if ((actual.getWeighting().equals(expected))) {
 			failWithActual(fact("expected Weighting NOT to be equal to", expected));
 		}
 	}
@@ -435,7 +678,7 @@ public class MyEmployeeParentSubject extends Subject {
 	 * Simple check for equality for all fields.
 	 */
 	public void hasWeightingEqualTo(java.util.Optional expected) {
-		if ((actual.getWeighting().equals(expected))) {
+		if (!(actual.getWeighting().equals(expected))) {
 			failWithActual(fact("expected Weighting to be equal to", expected));
 		}
 	}
@@ -451,7 +694,7 @@ public class MyEmployeeParentSubject extends Subject {
 	 * Simple check for equality for all fields.
 	 */
 	public void hasWorkNickNameNotEqualTo(java.lang.String expected) {
-		if (!(actual.getWorkNickName().equals(expected))) {
+		if ((actual.getWorkNickName().equals(expected))) {
 			failWithActual(fact("expected WorkNickName NOT to be equal to", expected));
 		}
 	}
@@ -459,7 +702,7 @@ public class MyEmployeeParentSubject extends Subject {
 	 * Simple check for equality for all fields.
 	 */
 	public void hasWorkNickNameEqualTo(java.lang.String expected) {
-		if ((actual.getWorkNickName().equals(expected))) {
+		if (!(actual.getWorkNickName().equals(expected))) {
 			failWithActual(fact("expected WorkNickName to be equal to", expected));
 		}
 	}
@@ -468,7 +711,7 @@ public class MyEmployeeParentSubject extends Subject {
 	 */
 	public void isBoss() {
 		if (!actual.isBoss()) {
-			failWithActual(simpleFact("expected to be Boss"));
+			failWithActual(simpleFact("expected to be 'boss' (`isBoss`)"));
 		}
 	}
 	/**
@@ -476,7 +719,25 @@ public class MyEmployeeParentSubject extends Subject {
 	 */
 	public void isNotBoss() {
 		if (actual.isBoss()) {
-			failWithActual(simpleFact("expected NOT to be Boss"));
+			failWithActual(simpleFact("expected NOT to be 'boss' (`isBoss`)"));
+		}
+	}
+	/**
+	 * Simple is or is not expectation for boolean fields.
+	 */
+	public void isDueToBeGivenAPromotionNextCycle() {
+		if (!actual.isDueToBeGivenAPromotionNextCycle()) {
+			failWithActual(simpleFact(
+					"expected to be 'due to be given a promotion next cycle' (`isDueToBeGivenAPromotionNextCycle`)"));
+		}
+	}
+	/**
+	 * Simple is or is not expectation for boolean fields.
+	 */
+	public void isNotDueToBeGivenAPromotionNextCycle() {
+		if (actual.isDueToBeGivenAPromotionNextCycle()) {
+			failWithActual(simpleFact(
+					"expected NOT to be 'due to be given a promotion next cycle' (`isDueToBeGivenAPromotionNextCycle`)"));
 		}
 	}
 	/**
@@ -484,7 +745,7 @@ public class MyEmployeeParentSubject extends Subject {
 	 */
 	public void isEmployed() {
 		if (!actual.isEmployed()) {
-			failWithActual(simpleFact("expected to be Employed"));
+			failWithActual(simpleFact("expected to be 'employed' (`isEmployed`)"));
 		}
 	}
 	/**
@@ -492,7 +753,7 @@ public class MyEmployeeParentSubject extends Subject {
 	 */
 	public void isNotEmployed() {
 		if (actual.isEmployed()) {
-			failWithActual(simpleFact("expected NOT to be Employed"));
+			failWithActual(simpleFact("expected NOT to be 'employed' (`isEmployed`)"));
 		}
 	}
 	/**
@@ -500,7 +761,7 @@ public class MyEmployeeParentSubject extends Subject {
 	 */
 	public void isEmployedWrapped() {
 		if (!actual.isEmployedWrapped()) {
-			failWithActual(simpleFact("expected to be EmployedWrapped"));
+			failWithActual(simpleFact("expected to be 'employed wrapped' (`isEmployedWrapped`)"));
 		}
 	}
 	/**
@@ -508,7 +769,7 @@ public class MyEmployeeParentSubject extends Subject {
 	 */
 	public void isNotEmployedWrapped() {
 		if (actual.isEmployedWrapped()) {
-			failWithActual(simpleFact("expected NOT to be EmployedWrapped"));
+			failWithActual(simpleFact("expected NOT to be 'employed wrapped' (`isEmployedWrapped`)"));
 		}
 	}
 	/**
@@ -516,7 +777,7 @@ public class MyEmployeeParentSubject extends Subject {
 	 */
 	public void isTestBooleanIsFalse() {
 		if (!actual.isTestBooleanIsFalse()) {
-			failWithActual(simpleFact("expected to be TestBooleanIsFalse"));
+			failWithActual(simpleFact("expected to be 'test boolean is false' (`isTestBooleanIsFalse`)"));
 		}
 	}
 	/**
@@ -524,7 +785,7 @@ public class MyEmployeeParentSubject extends Subject {
 	 */
 	public void isNotTestBooleanIsFalse() {
 		if (actual.isTestBooleanIsFalse()) {
-			failWithActual(simpleFact("expected NOT to be TestBooleanIsFalse"));
+			failWithActual(simpleFact("expected NOT to be 'test boolean is false' (`isTestBooleanIsFalse`)"));
 		}
 	}
 	/**

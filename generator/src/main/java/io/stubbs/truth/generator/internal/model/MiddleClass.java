@@ -1,42 +1,24 @@
 package io.stubbs.truth.generator.internal.model;
 
-import lombok.EqualsAndHashCode;
-import lombok.Value;
-import lombok.experimental.SuperBuilder;
+import com.google.common.truth.Subject;
 import org.jboss.forge.roaster.model.source.JavaClassSource;
-import org.jboss.forge.roaster.model.source.MethodSource;
 
-@EqualsAndHashCode(callSuper = true)
-@Value
-@SuperBuilder
-public class MiddleClass extends AClass {
-  MethodSource<JavaClassSource> factoryMethod;
-  Class<?> usersMiddleClass;
+/**
+ * A {@link Subject} implementation.
+ * <p>
+ * TODO rename to "ManagedSubjectClass"?
+ */
+public interface MiddleClass<T> {
 
-  public static MiddleClass of(Class<?> aClass) {
-    return MiddleClass.builder().usersMiddleClass(aClass).build();
-  }
+    public abstract String getSimpleName();
 
-  public static MiddleClass of(JavaClassSource middle, MethodSource factory) {
-    return MiddleClass.builder().generated(middle).factoryMethod(factory).build();
-  }
+    public abstract void makeChildExtend(JavaClassSource child);
 
-  public String getSimpleName() {
-    return (usersMiddleClass == null)
-            ? super.generated.getName()
-            : usersMiddleClass.getName();
-  }
+    public abstract String getCanonicalName();
 
-  public void makeChildExtend(JavaClassSource child) {
-    if (usersMiddleClass == null)
-      child.extendSuperType(generated);
-    else
-      child.extendSuperType(usersMiddleClass);
-  }
+    public abstract String getFactoryMethodName();
 
-  public String getCanonicalName() {
-    return (usersMiddleClass == null)
-            ? super.generated.getCanonicalName()
-            : usersMiddleClass.getCanonicalName();
-  }
+    public abstract String getPackage();
+
+    public abstract String getClassUnderTestSimpleName();
 }

@@ -12,6 +12,8 @@ import java.lang.annotation.Target;
  * <p>
  * Useful so that we don't need to rely completely on String patterns, and so that Subject extension points can have non
  * colliding names - as the method must be static.
+ *
+ * @author Antony Stubbs
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.METHOD})

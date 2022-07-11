@@ -640,3 +640,11 @@ public class ManagedTruth {
 
 }
 ----
+
+== Development
+
+=== Releasing
+
+When master branch is read to release:
+
+Run `mvn release:prepare` then push the branch, then go to GitHub, Actions, Truth Generator Release, run workflow, enter which tag to run the release job on.

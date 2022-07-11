@@ -135,16 +135,11 @@ public class TruthGeneratorGeneratedSourceTest {
         assertThat(actual).contains("strings()).that");
 
         TextFile managed = TextFile.fromResourcePath("expected/ManagedTruth.java.txt");
-//        ManagedTruth.assertThat(generated).
 
-//        String expected = loadFileToString();
         Truth.assertAbout(JavaClassSourceSubject.javaClassSources())
                 .that(generated)
                 .withSourceOf()
                 .equalTo(managed);
-//                .hasSourceText()
-//                .ignoringTrailingWhiteSpace()
-//                .equalTo(expected);
     }
 
     @SneakyThrows

@@ -45,7 +45,7 @@ jobs:
           git config user.name "GitHub Actions"
 
       - name: ssh test
-        run: ssh -T git@github.com
+        run: ssh -vT git@github.com
         env:
           ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
 
@@ -57,4 +57,3 @@ jobs:
           GITHUB_ACTOR: ${{ github.actor }}
           GITHUB_TOKEN: ${{ github.token }}
           ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
-

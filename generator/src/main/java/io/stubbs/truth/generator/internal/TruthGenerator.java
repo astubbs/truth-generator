@@ -2,8 +2,11 @@ package io.stubbs.truth.generator.internal;
 
 import com.google.common.flogger.FluentLogger;
 import com.google.common.truth.Subject;
+import io.stubbs.truth.generator.FullContext;
+import io.stubbs.truth.generator.ReflectionContext;
 import io.stubbs.truth.generator.SourceClassSets;
 import io.stubbs.truth.generator.TruthGeneratorAPI;
+import io.stubbs.truth.generator.internal.SourceCodeScanner.CPPackage;
 import io.stubbs.truth.generator.internal.model.Result;
 import io.stubbs.truth.generator.internal.model.ThreeSystem;
 import lombok.Getter;
@@ -17,10 +20,11 @@ import java.util.logging.Level;
 import java.util.stream.Collectors;
 
 import static java.util.Arrays.stream;
-import static java.util.Set.of;
 import static java.util.stream.Collectors.toSet;
 
 /**
+ * Main engine for Truth Generator
+ *
  * @author Antony Stubbs
  */
 @Slf4j
@@ -29,18 +33,30 @@ public class TruthGenerator implements TruthGeneratorAPI {
     private static final FluentLogger logger = FluentLogger.forEnclosingClass();
     private final Path testOutputDir;
     private final Options options;
-    private final ClassUtils classUtils = new ClassUtils();
+    private final ReflectionUtils reflectionUtils;
     private final BuiltInSubjectTypeStore builtInStore;
+    private final SourceCodeScanner sourceCodeScanner;
+
     @Setter
     @Getter
     private Optional<String> entryPoint = Optional.empty();
 
-    public TruthGenerator(Path testOutputDirectory, Options options) {
+    public TruthGenerator(Options options, FullContext context) {
         Options.setInstance(options);
         this.options = options;
-        this.testOutputDir = testOutputDirectory;
+        this.testOutputDir = context.getTestOutputDirectory();
         Utils.setOutputBase(this.testOutputDir);
-        this.builtInStore = new BuiltInSubjectTypeStore();
+        this.reflectionUtils = new ReflectionUtils(context);
+        this.builtInStore = new BuiltInSubjectTypeStore(this.reflectionUtils);
+
+        Set<CPPackage> cpPackages = Set.of(new CPPackage("io.stubbs"),
+                new CPPackage("io.confluent.parallelconsumer.truth"));
+
+        Set<CPPackage> sourcePackagesToScanForSubjects = context.getBaseModelPackagesForReflectionScanning().stream()
+                .distinct()
+                .map(CPPackage::new)
+                .collect(toSet());
+        this.sourceCodeScanner = new SourceCodeScanner(context, sourcePackagesToScanForSubjects);
     }
 
     /**
@@ -72,16 +88,16 @@ public class TruthGenerator implements TruthGeneratorAPI {
         // just take the first for now
         // todo createEntryPointForPackages(modelPackages)
         String[] packageNameForOverall = modelPackages;
-        OverallEntryPoint overallEntryPoint = new OverallEntryPoint(packageNameForOverall[0]);
-        Set<ThreeSystem<?>> subjectsSystems = generateSkeletonsFromPackages(stream(modelPackages).collect(toSet()), overallEntryPoint, null);
+        OverallEntryPoint overallEntryPoint = new OverallEntryPoint(packageNameForOverall[0], builtInStore);
+        Set<ThreeSystem<?>> subjectsSystems = generateSkeletonsFromPackages(overallEntryPoint, null);
 
         //
         addTests(subjectsSystems);
         overallEntryPoint.create();
     }
 
-    private Set<ThreeSystem<?>> generateSkeletonsFromPackages(Set<String> packagesToScan, OverallEntryPoint overallEntryPoint, SourceClassSets ss) {
-        Set<Class<?>> distinctTypesFoundInPackages = classUtils.collectSourceClasses(ss, packagesToScan.toArray(new String[0]));
+    private Set<ThreeSystem<?>> generateSkeletonsFromPackages(OverallEntryPoint overallEntryPoint, SourceClassSets ss) {
+        Set<Class<?>> distinctTypesFoundInPackages = reflectionUtils.findClassesInPackages(ss.getSimplePackageNames());
 
         // filter out already added
         if (ss != null) {
@@ -104,7 +120,11 @@ public class TruthGenerator implements TruthGeneratorAPI {
 
         Set<ThreeSystem<?>> subjectsSystems = new HashSet<>();
         for (Class<?> clazz : classes) {
-            SkeletonGenerator skeletonGenerator = new SkeletonGenerator(targetPackageName, overallEntryPoint, builtInStore);
+            SkeletonGenerator skeletonGenerator = new SkeletonGenerator(targetPackageName,
+                    overallEntryPoint,
+                    this.builtInStore,
+                    this.reflectionUtils,
+                    this.sourceCodeScanner);
             var threeSystem = skeletonGenerator.threeLayerSystem(clazz);
             if (threeSystem.isPresent()) {
                 ThreeSystem<?> ts = threeSystem.get();
@@ -123,20 +143,6 @@ public class TruthGenerator implements TruthGeneratorAPI {
     }
 
     @Override
-    public void generateFromPackagesOf(Class<?>... classes) {
-        Optional<Class<?>> first = stream(classes).findFirst();
-        if (first.isEmpty()) throw new IllegalArgumentException("Must provide at least one Class");
-        SourceClassSets ss = new SourceClassSets(first.get().getPackage().getName());
-        ss.generateAllFoundInPackagesOf(classes);
-        generate(ss);
-    }
-
-    @Override
-    public void combinedSystem(final SourceClassSets ss) {
-        throw new IllegalStateException(); // todo - remove?
-    }
-
-    @Override
     public Result generate(SourceClassSets ss) {
         RecursiveClassDiscovery rc = new RecursiveClassDiscovery();
         Result.ResultBuilder results = Result.builder();
@@ -146,7 +152,7 @@ public class TruthGenerator implements TruthGeneratorAPI {
             var reduce = StreamEx.of(referencedBuilt)
                     .sorted(Comparator.comparing(Class::toString))
                     .joining("\n", "\n", "");
-            log.info("Added classes not explicitly configured: {}", !referencedBuilt.isEmpty() ? reduce : "none");
+            log.info("Added classes not explicitly configured: {}", referencedBuilt.isEmpty() ? "none" : reduce);
             results.referencedBuilt(referencedBuilt);
         } else {
             Set<Class<?>> missing = rc.findReferencedNotIncluded(ss);
@@ -160,14 +166,9 @@ public class TruthGenerator implements TruthGeneratorAPI {
             }
         }
 
-        OverallEntryPoint packageForEntryPoint = new OverallEntryPoint(ss.getPackageForEntryPoint());
+        OverallEntryPoint packageForEntryPoint = new OverallEntryPoint(ss.getPackageForEntryPoint(), builtInStore);
 
-        // from packages
-        Set<String> packages = ss.getSimplePackageNames();
-        // skeletons generation is independent and should be able to be done in parallel
-        Set<ThreeSystem<?>> fromPackage = packages.parallelStream().flatMap(
-                aPackage -> generateSkeletonsFromPackages(of(aPackage), packageForEntryPoint, ss).stream()
-        ).collect(toSet());
+        Set<ThreeSystem<?>> fromPackage = generateSkeletonsFromPackages(packageForEntryPoint, ss);
 
         // custom package destination
         Set<SourceClassSets.TargetPackageAndClasses> targetPackageAndClasses = ss.getTargetPackageAndClasses();
@@ -226,17 +227,24 @@ public class TruthGenerator implements TruthGeneratorAPI {
         return results.build();
     }
 
+
+    /**
+     * Convenience method for testing that doesn't uses a default Context - see {@link ReflectionContext#Context()}.
+     */
     @Override
     public Result generate(Set<Class<?>> classes) {
         Utils.requireNotEmpty(classes);
         String entrypointPackage = (this.entryPoint.isPresent())
                 ? entryPoint.get()
                 : createEntrypointPackage(classes);
-        SourceClassSets ss = new SourceClassSets(entrypointPackage);
+        SourceClassSets ss = new SourceClassSets(entrypointPackage, reflectionUtils);
         ss.generateFrom(classes);
         return generate(ss);
     }
 
+    /**
+     * Convenience method for testing that doesn't uses a default Context - see {@link ReflectionContext#Context()}.
+     */
     @Override
     public Result generate(Class<?>... classes) {
         return generate(stream(classes).collect(toSet()));

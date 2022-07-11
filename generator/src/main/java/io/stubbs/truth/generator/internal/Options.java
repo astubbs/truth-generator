@@ -15,16 +15,22 @@ import java.util.Optional;
 @Builder(toBuilder = true)
 @ToString
 public class Options {
+
     @Setter
     private static Options instance;
+
     @Builder.Default
     boolean useHasInsteadOfGet = false;
+
     @Builder.Default
     boolean useGetterForLegacyClasses = false;
+
     @Builder.Default
     boolean compilationTargetLowerThanNine = false;
+
     @Builder.Default
     Optional<Integer> releaseTarget = Optional.empty();
+
     /**
      * Marks whether to try to find all referenced types from the source types, to generate Subjects for all of them,
      * and use them all in the Subject tree.

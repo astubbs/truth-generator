@@ -2,13 +2,16 @@ package io.stubbs.truth.generator;
 
 import com.google.common.collect.ImmutableListMultimap;
 import com.google.common.collect.Multimaps;
-import io.stubbs.truth.generator.internal.ClassUtils;
 import io.stubbs.truth.generator.internal.RecursiveClassDiscovery;
+import io.stubbs.truth.generator.internal.ReflectionUtils;
 import lombok.Getter;
 import lombok.Value;
 import lombok.extern.slf4j.Slf4j;
 
-import java.util.*;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import static java.util.Arrays.asList;
@@ -26,11 +29,10 @@ public class SourceClassSets {
 
     private final String packageForEntryPoint;
 
-    @Getter
-    private final List<ClassLoader> loaders = new ArrayList<>();
+    private final ReflectionUtils reflectionUtils;
 
     /**
-     * todo docs
+     * Source packages from which to scan for classes to generate Subjects for.
      */
     //todo rename
     private final Set<String> simplePackageNames = new HashSet<>();
@@ -68,24 +70,41 @@ public class SourceClassSets {
     private final Set<Class<?>> referencedNotSpecifiedClasses = new HashSet<>();
 
     /**
-     * Use the package of the parameter as the base package;
+     * @param packageForEntryPoint the package to put the overall access points
      */
-    public SourceClassSets(Object packageFromObject) {
-        this(packageFromObject.getClass().getPackage().getName());
+    public SourceClassSets(String packageForEntryPoint, ReflectionUtils reflectionUtils) {
+        this.packageForEntryPoint = packageForEntryPoint;
+        this.reflectionUtils = reflectionUtils;
     }
 
     /**
-     * @param packageForEntryPoint the package to put the overall access points
+     * Use the package of the parameter as the base package;
      */
-    public SourceClassSets(String packageForEntryPoint) {
-        this.packageForEntryPoint = packageForEntryPoint;
+    public SourceClassSets(String packageForEntryPoint, ReflectionContext context) {
+        this(packageForEntryPoint, new ReflectionUtils(context));
+    }
+
+    /**
+     * Use the package of the parameter as the base package;
+     */
+    public SourceClassSets(Object packageFromObject, ReflectionUtils reflectionUtils) {
+        this(packageFromObject.getClass().getPackage().getName(), reflectionUtils);
     }
 
     /**
      * Use the package of this class base package;
      */
-    public SourceClassSets(Class<?> packageFromClass) {
-        this(packageFromClass.getPackage().getName());
+    public SourceClassSets(Class<?> packageFromClass, ReflectionUtils reflectionUtils) {
+        this(packageFromClass.getPackage().getName(), reflectionUtils);
+    }
+
+    /**
+     * Use the package of this class base package;
+     * <p>
+     * Uses a default {@link ReflectionContext}.
+     */
+    public SourceClassSets(Class<?> packageFromClass, ReflectionContext reflectionUtils) {
+        this(packageFromClass.getPackage().getName(), new ReflectionUtils(reflectionUtils));
     }
 
     public void generateAllFoundInPackagesOf(Class<?>... classes) {
@@ -171,7 +190,7 @@ public class SourceClassSets {
     // todo docs
     // todo shouldn't be public?
     public Set<Class<?>> addIfMissing(final Set<? extends Class<?>> clazzes) {
-        getAllClasses(); // update class set cache
+        getAllEffectivelyConfiguredClasses(); // todo smelly, update class set cache
         var missing = clazzes.stream()
                 .filter(x -> !classSetCache.contains(x)).collect(toSet());
         missing.forEach(this::generateFromReferencedNotSpecified);
@@ -182,15 +201,18 @@ public class SourceClassSets {
      * Includes classes found in specified packages
      */
     // todo shouldn't be public?
-    public Set<Class<?>> getAllClasses() {
+    public Set<Class<?>> getAllEffectivelyConfiguredClasses() {
         Set<Class<?>> union = getAllSpecifiedClasses();
 
-        union.addAll(getReferencedNotSpecifiedClasses());
+        var referencedNotSpecifiedClasses = getReferencedNotSpecifiedClasses();
+        union.addAll(referencedNotSpecifiedClasses);
 
-        ClassUtils classUtils = new ClassUtils();
-        classUtils.addClassLoaders(this.loaders);
-        union.addAll(getSimplePackageNames().stream().flatMap(
-                x -> classUtils.collectSourceClasses(null, x).stream()).collect(toSet()));
+        var collected = reflectionUtils.collectSourceClasses()
+                .stream().filter(aClass -> getSimplePackageNames().stream()
+                        .anyMatch(configuredPackage -> configuredPackage.contains(aClass.getPackage().getName())))
+                .collect(Collectors.toUnmodifiableSet());
+
+        union.addAll(collected);
 
         // todo need more elegant solution than this
         this.classSetCache = union;
@@ -229,10 +251,6 @@ public class SourceClassSets {
     public boolean isLegacyClass(final Class<?> theClass) {
         return getLegacyBeans().contains(theClass)
                 || getLegacyTargetPackageAndClasses().stream().anyMatch(x -> asList(x.classes).contains(theClass));
-    }
-
-    public void addClassLoader(ClassLoader projectClassLoader) {
-        this.loaders.add(projectClassLoader);
     }
 
     public void generateFromNonBean(ClassLoader loader, String[] legacyClasses) {

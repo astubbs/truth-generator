@@ -48,13 +48,15 @@ public class MyEmployeeChildSubject extends MyEmployeeSubject {
 	 */
 	static public SimpleSubjectBuilder<MyEmployeeSubject, MyEmployee> assertWithMessage(
 			java.lang.String messageToPrepend) {
-		return Truth.assertWithMessage(messageToPrepend).about(myEmployees());
+		return Truth.assertWithMessage(messageToPrepend)
+				.about(io.stubbs.truth.generator.testModel.MyEmployeeSubject.myEmployees());
 	}
 	/**
 	 * see {@link Truth#assertWithMessage}
 	 */
 	static public SimpleSubjectBuilder<MyEmployeeSubject, MyEmployee> assertWithMessage(java.lang.String format,
 			List args) {
-		return Truth.assertWithMessage(format, args.toArray()).about(myEmployees());
+		return Truth.assertWithMessage(format, args.toArray())
+				.about(io.stubbs.truth.generator.testModel.MyEmployeeSubject.myEmployees());
 	}
 }

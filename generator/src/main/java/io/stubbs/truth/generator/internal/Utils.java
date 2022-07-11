@@ -1,7 +1,8 @@
 package io.stubbs.truth.generator.internal;
 
 import io.stubbs.truth.generator.SubjectFactoryMethod;
-import io.stubbs.truth.generator.UserManagedTruth;
+import io.stubbs.truth.generator.UserManagedSubject;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.reflect.MethodUtils;
 import org.atteo.evo.inflector.English;
 import org.jboss.forge.roaster.model.source.JavaClassSource;
@@ -21,13 +22,14 @@ import static java.lang.String.format;
 /**
  * @author Antony Stubbs
  */
+@Slf4j
 public class Utils {
 
     public static final String DIR_TRUTH_ASSERTIONS_MANAGED = "truth-assertions-managed";
     public static final String DIR_TRUTH_ASSERTIONS_TEMPLATES = "truth-assertions-templates";
 
     // todo remove static
-    private static java.nio.file.Path testOutputDir;
+    private static Path testOutputDir;
 
     public static String writeToDisk(JavaClassSource javaClass) {
         return writeToDisk(javaClass, Optional.empty());
@@ -36,6 +38,7 @@ public class Utils {
     public static String writeToDisk(JavaClassSource javaClass, Optional<String> targetPackageName) {
         String classSource = javaClass.toString();
         Path fileName = getFileName(javaClass, targetPackageName);
+        log.debug("Writing {} to {} in {}", javaClass.getCanonicalName(), targetPackageName, fileName);
         try (PrintWriter out = new PrintWriter(fileName.toFile())) {
             out.println(classSource);
         } catch (FileNotFoundException e) {
@@ -62,7 +65,7 @@ public class Utils {
 
         // todo use annotations not name strings
         List<String> ids = List.of("Parent", "Child");
-        boolean isGeneratorManaged = javaClass.getAnnotation(UserManagedTruth.class) == null;
+        boolean isGeneratorManaged = javaClass.getAnnotation(UserManagedSubject.class) == null;
 
         Path base = (isGeneratorManaged) ? getManagedPath() : getTemplatesPath();
 
@@ -108,7 +111,7 @@ public class Utils {
         }
     }
 
-    public static void setOutputBase(java.nio.file.Path testOutputDir) {
+    public static void setOutputBase(Path testOutputDir) {
         Utils.testOutputDir = testOutputDir;
     }
 
@@ -116,8 +119,12 @@ public class Utils {
         return MessageFormatter.arrayFormat(s, args).getMessage();
     }
 
+    // todo move to class utils
     public static Method findFactoryMethod(Class<?> subjectClass) {
+
+
         List<Method> factoryMethods = MethodUtils.getMethodsListWithAnnotation(subjectClass, SubjectFactoryMethod.class);
+
         if (factoryMethods.size() > 1) {
             throw new TruthGeneratorRuntimeException(msg("Subject class {} has too many ({}) methods annotated with {} - there can be only one.",
                     subjectClass, factoryMethods.size(), SubjectFactoryMethod.class));
@@ -131,4 +138,5 @@ public class Utils {
         }
         return first.get();
     }
+
 }

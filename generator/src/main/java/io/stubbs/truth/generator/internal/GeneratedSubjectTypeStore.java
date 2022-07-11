@@ -1,6 +1,5 @@
 package io.stubbs.truth.generator.internal;
 
-import com.google.common.flogger.FluentLogger;
 import com.google.common.truth.ObjectArraySubject;
 import com.google.common.truth.Subject;
 import io.stubbs.truth.generator.internal.model.ThreeSystem;
@@ -33,8 +32,6 @@ import static org.apache.commons.lang3.StringUtils.capitalize;
 @Slf4j
 public class GeneratedSubjectTypeStore {
 
-    private static final FluentLogger logger = FluentLogger.forEnclosingClass();
-
     private final Map<String, ThreeSystem<?>> generatedSubjects;
 
     @Delegate
@@ -43,11 +40,12 @@ public class GeneratedSubjectTypeStore {
     /**
      * Useful for testing - a store with no generated skeleton types
      */
-    protected GeneratedSubjectTypeStore() {
-        this(Set.of(), new BuiltInSubjectTypeStore());
+    protected GeneratedSubjectTypeStore(BuiltInSubjectTypeStore builtInSubjectTypeStore) {
+        this(Set.of(), builtInSubjectTypeStore);
     }
 
     public GeneratedSubjectTypeStore(Set<? extends ThreeSystem<?>> allTypes, BuiltInSubjectTypeStore builtInSubjectTypeStore) {
+        super();
         this.generatedSubjects = allTypes.stream().collect(Collectors.toMap(x -> x.getClassUnderTest().getName(), x -> x));
         this.builtInSubjectTypeStore = builtInSubjectTypeStore;
     }
@@ -143,10 +141,9 @@ public class GeneratedSubjectTypeStore {
             Type maybeParamType;
             try {
                 maybeParamType = TypeResolver.reify(genericReturnTypeRaw, classUnderTest);
-                if (maybeParamType instanceof Class) {
-                    returnType = (Class<?>) maybeParamType;
-                } else if (maybeParamType instanceof ParameterizedType && rawReturnType.isAssignableFrom(Optional.class)) {
-                    ParameterizedType paramType = (ParameterizedType) maybeParamType;
+                if (maybeParamType instanceof Class<?> clazzType) {
+                    returnType = clazzType;
+                } else if (maybeParamType instanceof ParameterizedType paramType && rawReturnType.isAssignableFrom(Optional.class)) {
                     Type[] actualTypeArguments = paramType.getActualTypeArguments();
                     if (actualTypeArguments.length == 1 && actualTypeArguments[0] instanceof Class<?>) {
                         returnType = (Class<?>) actualTypeArguments[0];

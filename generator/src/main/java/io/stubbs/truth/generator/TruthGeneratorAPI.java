@@ -5,23 +5,23 @@ import io.stubbs.truth.generator.internal.Options;
 import io.stubbs.truth.generator.internal.TruthGenerator;
 import io.stubbs.truth.generator.internal.model.Result;
 
-import java.nio.file.Path;
 import java.util.Set;
 
 /**
- * TODO docs
+ * Some convenience shorthand methods, useful for use outside of Mojo and for testing.
  *
  * @author Antony Stubbs
+ * @see TruthGenerator
  */
 // TODO clean up
 public interface TruthGeneratorAPI {
 
-    static TruthGenerator createDefaultOptions(Path testOutputDirectory) {
-        return new TruthGenerator(testOutputDirectory, Options.builder().build());
+    static TruthGenerator createDefaultOptions(FullContext context) {
+        return new TruthGenerator(Options.builder().build(), context);
     }
 
-    static TruthGenerator create(Path testOutputDirectory, Options options) {
-        return new TruthGenerator(testOutputDirectory, options);
+    static TruthGenerator create(Options options, FullContext context) {
+        return new TruthGenerator(options, context);
     }
 
     /**
@@ -46,16 +46,6 @@ public interface TruthGeneratorAPI {
      * @param modelPackages
      */
     void generate(String... modelPackages);
-
-    /**
-     * @param classes
-     */
-    void generateFromPackagesOf(Class<?>... classes);
-
-    /**
-     * @param ss
-     */
-    void combinedSystem(SourceClassSets ss);
 
     /**
      * Use this entry point to generate for a large and differing set of source classes - which will also generate a

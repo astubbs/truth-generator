@@ -1,7 +1,5 @@
 package io.stubbs.truth.generator;
 
-import com.google.common.truth.Truth;
-import io.stubbs.truth.generator.internal.model.Result;
 import io.stubbs.truth.generator.plugin.GeneratorMojo;
 import org.junit.Test;
 
@@ -16,12 +14,13 @@ import static com.google.common.truth.Truth.assertThat;
  */
 public class SubjectTests {
 
+    // todo not used? is this the actual one?
     public static final Path testOutputDirectory = Paths.get("").resolve("target").resolve("generated-test-sources").toAbsolutePath();
 
     @Test
     public void makeSubjects() {
-        TruthGeneratorAPI tg = TruthGeneratorAPI.createDefaultOptions(testOutputDirectory);
-        SourceClassSets ss = new SourceClassSets(getClass());
+        TruthGeneratorAPI tg = TestClassFactories.newTruthGenerator();
+        SourceClassSets ss = TestClassFactories.newSourceClassSets();
         ss.generateFromShaded(File.class);
         ss.generateFrom(GeneratorMojo.class);
         var generate = tg.generate(ss);

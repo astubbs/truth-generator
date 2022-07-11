@@ -1,14 +1,13 @@
 package io.stubbs.truth.generator.internal;
 
 import io.stubbs.truth.generator.SourceClassSets;
-import io.stubbs.truth.generator.TruthGeneratorAPI;
+import io.stubbs.truth.generator.TestClassFactories;
 import io.stubbs.truth.generator.internal.model.ThreeSystem;
 import io.stubbs.truth.generator.testModel.MyEmployee;
 import org.junit.Test;
 
 import java.time.Instant;
 
-import static io.stubbs.truth.generator.internal.TruthGeneratorGeneratedSourceTest.TEST_OUTPUT_DIRECTORY;
 import static io.stubbs.truth.generator.internal.modelSubjectChickens.ThreeSystemChildSubject.assertThat;
 
 /**
@@ -19,8 +18,8 @@ public class SkeletonGeneratorTest {
 
     @Test
     public void dynamicExtensionsDirect() {
-        TruthGenerator tg = TruthGeneratorAPI.createDefaultOptions(TEST_OUTPUT_DIRECTORY);
-        SourceClassSets ss = new SourceClassSets(getClass().getPackage().getName());
+        TruthGenerator tg = TestClassFactories.newTruthGenerator();
+        SourceClassSets ss = TestClassFactories.newSourceClassSets();
         ss.generateFrom(Instant.class);
         var generate = tg.generate(ss).getAll();
         ThreeSystem<?> threeSystem = generate.get(Instant.class);
@@ -29,8 +28,8 @@ public class SkeletonGeneratorTest {
 
     @Test
     public void dynamicExtensionIndirect() {
-        TruthGenerator tg = TruthGeneratorAPI.createDefaultOptions(TEST_OUTPUT_DIRECTORY);
-        SourceClassSets ss = new SourceClassSets(getClass().getPackage().getName());
+        TruthGenerator tg = TestClassFactories.newTruthGenerator();
+        SourceClassSets ss = TestClassFactories.newSourceClassSets();
         ss.generateFrom(MyEmployee.class);
         var generate = tg.generate(ss).getAll();
 

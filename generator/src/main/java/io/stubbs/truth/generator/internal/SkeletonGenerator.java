@@ -3,9 +3,9 @@ package io.stubbs.truth.generator.internal;
 import com.google.common.flogger.FluentLogger;
 import com.google.common.truth.FailureMetadata;
 import com.google.common.truth.Subject;
-import io.stubbs.truth.generator.UserManagedTruth;
+import io.stubbs.truth.generator.UserManagedMiddleSubject;
+import io.stubbs.truth.generator.UserManagedSubject;
 import io.stubbs.truth.generator.internal.model.*;
-import lombok.Setter;
 import org.jboss.forge.roaster.Roaster;
 import org.jboss.forge.roaster.model.source.JavaClassSource;
 import org.jboss.forge.roaster.model.source.JavaDocSource;
@@ -25,6 +25,8 @@ import static java.util.Optional.of;
  */
 public class SkeletonGenerator implements SkeletonGeneratorAPI {
 
+    // todo middle class related functions need refactoring out
+
     private static final FluentLogger logger = FluentLogger.forEnclosingClass();
     private static final String BACKUP_PACKAGE = "io.stubbs.common.truth.extension.generator";
 
@@ -35,17 +37,24 @@ public class SkeletonGenerator implements SkeletonGeneratorAPI {
     private final OverallEntryPoint overallEntryPoint;
     private final BuiltInSubjectTypeStore subjectTypeStore;
     private Optional<String> targetPackageName;
-    private MiddleClass middle;
-    private ParentClass parent;
-    @Setter
-    private boolean legacyMode = false;
+    private MiddleClass<?> middle;
+
+    private final SourceCodeScanner sourceCodeScanner;
+
+    private final ReflectionUtils reflectionUtils;
 
     private final AssertionEntryPointGenerator aepg = new AssertionEntryPointGenerator();
 
-    public SkeletonGenerator(Optional<String> targetPackageName, OverallEntryPoint overallEntryPoint, BuiltInSubjectTypeStore subjectTypeStore) {
+    public SkeletonGenerator(Optional<String> targetPackageName,
+                             OverallEntryPoint overallEntryPoint,
+                             BuiltInSubjectTypeStore subjectTypeStore,
+                             ReflectionUtils reflectionUtils,
+                             SourceCodeScanner sourceCodeScanner) {
         this.targetPackageName = targetPackageName;
         this.overallEntryPoint = overallEntryPoint;
         this.subjectTypeStore = subjectTypeStore;
+        this.reflectionUtils = reflectionUtils;
+        this.sourceCodeScanner = sourceCodeScanner;
     }
 
     @Override
@@ -69,7 +78,7 @@ public class SkeletonGenerator implements SkeletonGeneratorAPI {
         // make child - client code entry point
         JavaClassSource child = createChild(parent, usersMiddleClass.getName(), classUnderTest, factoryMethodName);
 
-        var middleClass = new UserSuppliedMiddleClass(usersMiddleClass, classUnderTest);
+        var middleClass = new UserSuppliedCompiledMiddleClass(usersMiddleClass, classUnderTest);
 
         return of(new ThreeSystem<>(classUnderTest, parent, middleClass, child));
     }
@@ -85,10 +94,8 @@ public class SkeletonGenerator implements SkeletonGeneratorAPI {
         }
 
         ParentClass parent = createParent(clazzUnderTest);
-        this.parent = parent;
 
-        MiddleClass middle = createMiddleUserTemplateClass(parent.getGenerated(), clazzUnderTest);
-        this.middle = middle;
+        resolveMiddle(clazzUnderTest, parent);
 
         String factoryName = Utils.createFactoryName(clazzUnderTest);
         JavaClassSource child = createChild(parent, middle.getSimpleName(), clazzUnderTest, factoryName);
@@ -96,7 +103,25 @@ public class SkeletonGenerator implements SkeletonGeneratorAPI {
         return of(new ThreeSystem<>(clazzUnderTest, parent, middle, child));
     }
 
-    //    todo @Deprecated ?
+    private <T> void resolveMiddle(Class<T> clazzUnderTest, ParentClass parent) {
+        var foundInSourceCode = sourceCodeScanner.tryGetUserManagedMiddle(clazzUnderTest);
+        if (foundInSourceCode.isPresent()) {
+            this.middle = foundInSourceCode.get();
+        } else {
+            var foundCompiled = reflectionUtils.tryGetUserManagedMiddle(clazzUnderTest);
+            if (foundCompiled.isPresent()) {
+                this.middle = foundCompiled.get();
+            } else {
+                MiddleClass<T> middleUserTemplateClass = generateMiddleUserTemplateClass(parent.getGenerated(), clazzUnderTest);
+                this.middle = middleUserTemplateClass;
+            }
+        }
+    }
+
+    /**
+     * @deprecated use {@link #threeLayerSystem}
+     */
+    @Deprecated
     @Override
     public <T> String combinedSystem(Class<T> clazzUnderTest) {
         JavaClassSource javaClass = Roaster.create(JavaClassSource.class);
@@ -132,26 +157,6 @@ public class SkeletonGenerator implements SkeletonGeneratorAPI {
         String classSource = Utils.writeToDisk(javaClass, targetPackageName);
 
         return classSource;
-    }
-
-    private <T> Optional<Class<? extends Subject>> findCompiledMiddleIfExists(JavaClassSource parent, String middleClassName, Class<T> classUnderTest) {
-        if (forceMiddleGenerate)
-            return empty();
-
-        try {
-            // todo load from annotated classes instead using Reflections? see UserSuppliedMiddleClass
-            String fullName = parent.getPackage() + "." + middleClassName;
-            Class<?> rawClass = Class.forName(fullName);
-            if (Subject.class.isAssignableFrom(rawClass)) {
-                //noinspection unchecked - checked in if condition
-                Class<? extends Subject> aClass = (Class<? extends Subject>) rawClass;
-                return of(aClass);
-            } else {
-                throw new TruthGeneratorRuntimeException("User detected middle class doesn't extend Subject");
-            }
-        } catch (ClassNotFoundException e) {
-            return empty();
-        }
     }
 
     private JavaClassSource createChild(ParentClass parent,
@@ -206,14 +211,14 @@ public class SkeletonGenerator implements SkeletonGeneratorAPI {
         return new ParentClass(parent);
     }
 
-    private void addAccessPoints(JavaClassSource javaClass, Class<?> classUnderTest) {
+    private void addAccessPoints(JavaClassSource generatedJavaSourceCode, Class<?> classUnderTest) {
         String factoryContainerQualifiedName = middle.getCanonicalName();
         MethodSource<JavaClassSource> assertThat = aepg.addAssertThat(classUnderTest,
-                javaClass,
+                generatedJavaSourceCode,
                 middle.getFactoryMethodName(),
                 factoryContainerQualifiedName);
 
-        aepg.addAssertTruth(classUnderTest, javaClass, assertThat);
+        aepg.addAssertTruth(classUnderTest, generatedJavaSourceCode, assertThat);
     }
 
     private String getSubjectName(final String sourceName) {
@@ -267,29 +272,29 @@ public class SkeletonGenerator implements SkeletonGeneratorAPI {
         return null;
     }
 
-    private <T> MiddleClass createMiddleUserTemplateClass(JavaClassSource parent, Class<T> classUnderTest) {
+    private <T> MiddleClass<T> generateMiddleUserTemplateClass(JavaClassSource parent, Class<T> classUnderTest) {
         String middleClassName = getSubjectName(classUnderTest.getSimpleName());
-
-        Optional<Class<? extends Subject>> compiledMiddleClass = findCompiledMiddleIfExists(parent, middleClassName, classUnderTest);
-        if (compiledMiddleClass.isPresent()) {
-            logger.atInfo().log("Skipping middle class Template creation as class already exists: %s", middleClassName);
-            return new UserSuppliedMiddleClass(compiledMiddleClass.get(), classUnderTest);
-        }
 
         JavaClassSource middle = Roaster.create(JavaClassSource.class);
         middle.setName(middleClassName);
         middle.setPackage(parent.getPackage());
         middle.extendSuperType(parent);
+
+        // todo should add generic parameter here
+        middle.implementInterface(UserManagedMiddleSubject.class);
+
         JavaDocSource<JavaClassSource> jd = middle.getJavaDoc();
-        jd.setText("Optionally move this class into source control, and add your custom assertions here.\n\n" +
+        jd.setText("Main Subject for the class under test. If you want, this is where would add your custom assertion methods.\n\n" +
+                "<p>Optionally move this class into source control, and add your custom assertions here.\n\n" +
                 "<p>If the system detects this class already exists, it won't attempt to generate a new one. Note that " +
                 "if the base skeleton of this class ever changes, you won't automatically get it updated.");
         jd.addTagValue("@see", classUnderTest.getSimpleName());
         jd.addTagValue("@see", parent.getName());
+        jd.addTagValue("@see", classUnderTest.getSimpleName() + "ChildSubject");
 
         addConstructor(classUnderTest, middle, false);
 
-        middle.addAnnotation(UserManagedTruth.class).setClassValue(classUnderTest);
+        middle.addAnnotation(UserManagedSubject.class).setClassValue(classUnderTest);
 
         MethodSource factory = aepg.addFactoryAccessor(classUnderTest, middle, classUnderTest.getSimpleName());
 

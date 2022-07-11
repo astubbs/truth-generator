@@ -2,6 +2,7 @@ package io.stubbs.truth.generator.internal;
 
 import com.google.common.truth.StandardSubjectBuilder;
 import com.google.common.truth.Subject;
+import com.google.common.truth.Truth;
 import io.stubbs.truth.generator.GeneratorException;
 import io.stubbs.truth.generator.internal.model.ThreeSystem;
 import lombok.Getter;
@@ -9,6 +10,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.jboss.forge.roaster.Roaster;
 import org.jboss.forge.roaster.model.Method;
+import org.jboss.forge.roaster.model.Type;
+import org.jboss.forge.roaster.model.impl.MethodImpl;
 import org.jboss.forge.roaster.model.source.Import;
 import org.jboss.forge.roaster.model.source.JavaClassSource;
 import org.jboss.forge.roaster.model.source.MethodSource;
@@ -22,7 +25,8 @@ import java.util.stream.Collectors;
 import static io.stubbs.truth.generator.internal.AssertionEntryPointGenerator.ASSERT_WITH_MESSAGE;
 
 /**
- * Creates a single convenience `ManagedTruth` class, which contains all the `assertThat` entrypoint methods.
+ * Creator of the Convenience API (named `ManagedTruth`), which contains all the `assertThat` entrypoint methods for all
+ * the managed Subjects. Same as Truth's {@link Truth} class.
  *
  * @author Antony Stubbs
  */
@@ -37,18 +41,19 @@ public class OverallEntryPoint {
     @Getter
     private final String packageName;
     private final AssertionEntryPointGenerator aepg = new AssertionEntryPointGenerator();
-    private final BuiltInSubjectTypeStore builtInSubjectTypeStore = new BuiltInSubjectTypeStore();
+    private final BuiltInSubjectTypeStore builtInSubjectTypeStore;
     @Getter
     private JavaClassSource overallEntryPointGenerated;
     @Getter
     private JavaClassSource managedSubjectBuilderGenerated;
 
-    public OverallEntryPoint(String packageForOverall) {
-        if (StringUtils.isBlank(packageForOverall))
+    public OverallEntryPoint(String targetPackage, BuiltInSubjectTypeStore builtInSubjectTypeStore) {
+        if (StringUtils.isBlank(targetPackage))
             throw new GeneratorException("Package for managed entrypoint cannot be blank");
 
-        this.packageName = packageForOverall;
+        this.packageName = targetPackage;
         this.threeSystemChildSubjects = new TreeSet<>(Comparator.comparing(javaClassSource -> javaClassSource.getClassUnderTest().getCanonicalName()));
+        this.builtInSubjectTypeStore = builtInSubjectTypeStore;
     }
 
     public void create() {
@@ -56,6 +61,10 @@ public class OverallEntryPoint {
         createOverallAccessPoints();
     }
 
+    /**
+     * Creates our managed version of Truth's {@link StandardSubjectBuilder}, used for chaining assertions fluently of
+     * all our custom subjects.
+     */
     private void createManagedSubjectBuilder() {
         JavaClassSource managedSubjectBuilder = Roaster.create(JavaClassSource.class)
                 .setName("ManagedSubjectBuilder")
@@ -89,13 +98,11 @@ public class OverallEntryPoint {
     }
 
     /**
+     * Creates all our fluent assertion methods for our custom subject.
+     *
      * @see com.google.common.truth.StandardSubjectBuilder#that
      */
     private <T> void addThatForSubject(JavaClassSource overallAccess, ThreeSystem<T> ts) {
-        //        public MyEmployeeSubject that(MyEmployee actual) {
-        //            return standardSubjectBuilder.about(MyEmployeeChildSubject.myEmployees()).that(actual);
-        //        }
-
         MethodSource<JavaClassSource> that = overallAccess.addMethod()
                 .setName("that")
                 .setPublic();
@@ -108,9 +115,8 @@ public class OverallEntryPoint {
         that.setReturnType(subjectCanonicalName);
 
         //
-        String factoryEnclosing = ts.getMiddle().getCanonicalName();
         String factoryName = ts.getMiddle().getFactoryMethodName();
-        that.setBody("return standardSubjectBuilder.about(" + factoryEnclosing + "." + factoryName + "()).that(actual);");
+        that.setBody("return standardSubjectBuilder.about(" + factoryName + "()).that(actual);");
 
         //
         that.getJavaDoc().addTagValue("see", "{@link " + subjectCanonicalName + "}");
@@ -148,11 +154,15 @@ public class OverallEntryPoint {
         for (var ts : threeSystemChildSubjects) {
             var child = ts.getChild();
 
+            // copy the methods
             List<MethodSource<JavaClassSource>> methods = child.getMethods();
             for (Method<?, ?> m : methods) {
-                if (!m.isConstructor() && !m.getName().equals(ASSERT_WITH_MESSAGE))
-                    overallAccess.addMethod(m);
+                if (!m.isConstructor() && !m.getName().equals(ASSERT_WITH_MESSAGE)) {
+                    copyMethodInto(m, overallAccess);
+                }
             }
+
+            // copy the imports
             // this seems like overkill, but at least in the child style case, there's very few imports - even
             // none extra at all (aside from wild card vs specific methods).
             List<Import> imports = child.getImports();
@@ -167,6 +177,35 @@ public class OverallEntryPoint {
                     overallAccess.addImport(anImport);
                 }
             }
+        }
+    }
+
+    /**
+     * Need to copy the methd one part at a time, as adding the method directly skips some steps necessary to not break
+     * things (like import collision and duplicate type name resolution).
+     */
+    private void copyMethodInto(Method<?, ?> method, JavaClassSource overallAccess) {
+        MethodSource<JavaClassSource> copy = overallAccess.addMethod();
+        copy.setName(method.getName());
+        copy.setReturnType(method.getReturnType());
+        if (method.isPublic()) {
+            copy.setPublic();
+        }
+        copy.setStatic(method.isStatic());
+        method.getParameters().forEach(parameter -> {
+            Type<?> paramType = parameter.getType();
+            String qualifiedName = paramType.getQualifiedName();
+            String name = parameter.getName();
+            copy.addParameter(qualifiedName, name);
+        });
+
+        copy.setBody(method.getBody());
+
+        if (method instanceof MethodImpl<?> impl) {
+            String fullText = impl.getJavaDoc().getFullText();
+            // Remove after https://github.com/forge/roaster/pull/246 is released
+            String replace = StringUtils.replace(fullText, "@see#", "@see #");
+            copy.getJavaDoc().setText(replace);
         }
     }
 
@@ -186,7 +225,7 @@ public class OverallEntryPoint {
      * <p>
      * TODO https://github.com/astubbs/truth-generator/issues/74
      *
-     * @see com.google.common.truth.Truth#assertThat
+     * @see Truth#assertThat
      * @see com.google.common.truth.Truth8#assertThat
      */
     private void copyStaticEntryPointsFromGTruthEntryPoint() {

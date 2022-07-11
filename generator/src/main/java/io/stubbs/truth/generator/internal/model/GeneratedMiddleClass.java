@@ -3,6 +3,7 @@ package io.stubbs.truth.generator.internal.model;
 
 import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
+import lombok.Getter;
 import lombok.ToString;
 import lombok.experimental.FieldDefaults;
 import org.jboss.forge.roaster.model.source.JavaClassSource;
@@ -14,46 +15,23 @@ import org.jboss.forge.roaster.model.source.MethodSource;
 @EqualsAndHashCode(callSuper = true)
 @FieldDefaults(makeFinal = true, level = AccessLevel.PRIVATE)
 @ToString
-public class GeneratedMiddleClass<T> extends MiddleClass<T> implements AGeneratedClass {
+public class GeneratedMiddleClass<T> extends RoasterMiddleClass<T> implements AGeneratedClass {
 
-    JavaClassSource generated;
+    @Getter
+    Class<T> classUnderTest;
 
-    MethodSource<JavaClassSource> factoryMethod;
-
-    public GeneratedMiddleClass(final JavaClassSource generated, final MethodSource factory, final Class<T> classUnderTest) {
-        super(classUnderTest);
-        this.generated = generated;
-        this.factoryMethod = factory;
-    }
-
-    @Override
-    public String getSimpleName() {
-        return generated.getName();
-    }
-
-    @Override
-    public void makeChildExtend(JavaClassSource child) {
-        child.extendSuperType(generated);
-    }
-
-    @Override
-    public String getCanonicalName() {
-        return generated.getCanonicalName();
-    }
-
-    @Override
-    public String getFactoryMethodName() {
-        return this.factoryMethod.getName();
-    }
-
-    @Override
-    public String getPackage() {
-        return generated.getPackage();
+    public GeneratedMiddleClass(JavaClassSource generated, MethodSource factory, Class<T> classUnderTest) {
+        super(generated, factory);
+        this.classUnderTest = classUnderTest;
     }
 
     @Override
     public JavaClassSource getGenerated() {
-        return generated;
+        return super.sourceCodeModel;
     }
 
+    @Override
+    public String getClassUnderTestSimpleName() {
+        return getClassUnderTest().getSimpleName();
+    }
 }

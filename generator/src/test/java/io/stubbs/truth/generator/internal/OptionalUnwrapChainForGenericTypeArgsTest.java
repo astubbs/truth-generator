@@ -4,6 +4,7 @@ import com.google.common.truth.IntegerSubject;
 import com.google.common.truth.OptionalSubject;
 import com.google.common.truth.Subject;
 import com.google.common.truth.Truth8;
+import io.stubbs.truth.generator.TestClassFactories;
 import io.stubbs.truth.generator.TestModelUtils;
 import io.stubbs.truth.generator.internal.model.ThreeSystem;
 import io.stubbs.truth.generator.subjects.MyMapSubject;
@@ -16,17 +17,18 @@ import org.junit.Test;
 import java.lang.reflect.Method;
 import java.util.Map;
 import java.util.Optional;
-import java.util.Set;
 
 import static com.google.common.truth.Truth.assertThat;
 
 /**
- * Not possible to unwrap an Optional<TYPE> return type for a class with type parameters. Can only do so with a subtype
- * where the type parameter has been set.
+ * Not possible to unwrap a <TYPE> return type for a class with type parameters. Can only do so with a subtype where the
+ * type parameter has been set.
+ *
+ * @see io.stubbs.truth.generator.testModel.ThingWithTypeParam
  */
 public class OptionalUnwrapChainForGenericTypeArgsTest {
 
-    GeneratedSubjectTypeStore subjects = new GeneratedSubjectTypeStore(Set.of(), new BuiltInSubjectTypeStore());
+    GeneratedSubjectTypeStore subjects = TestClassFactories.newGeneratedSubjectTypeStore();
 
     /**
      * @see MyEmployee#getTypeParamTest()

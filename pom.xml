@@ -114,7 +114,6 @@
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
-            <scope>provided</scope>
         </dependency>
 
         <!-- Test-->
@@ -280,7 +279,7 @@
                 <executions>
                     <execution>
                         <goals>
-                            <goal>test-jar</goal>
+                            <goal>jar</goal>
                         </goals>
                     </execution>
                 </executions>
@@ -294,11 +293,13 @@
                 <artifactId>maven-source-plugin</artifactId>
             </plugin>
         </plugins>
+
         <pluginManagement>
             <plugins>
                 <plugin>
                     <groupId>io.stubbs.truth</groupId>
                     <artifactId>truth-generator-maven-plugin</artifactId>
+                    <!-- User previous version property or? -->
                     <version>${project.version}</version>
                 </plugin>
                 <plugin>
@@ -365,6 +366,16 @@
                         <pushChanges>false</pushChanges>
                         <tagNameFormat>@{project.version}</tagNameFormat>
                     </configuration>
+                </plugin>
+                <plugin>
+                    <artifactId>maven-jar-plugin</artifactId>
+                    <executions>
+                        <execution>
+                            <goals>
+                                <goal>test-jar</goal>
+                            </goals>
+                        </execution>
+                    </executions>
                 </plugin>
             </plugins>
         </pluginManagement>

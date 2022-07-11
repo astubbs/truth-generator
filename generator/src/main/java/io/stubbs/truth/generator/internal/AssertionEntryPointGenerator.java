@@ -20,6 +20,9 @@ public class AssertionEntryPointGenerator {
 
     public static final String ASSERT_WITH_MESSAGE = "assertWithMessage";
 
+    /**
+     * todo docs, rename
+     */
     protected <T> MethodSource<JavaClassSource> addFactoryAccessor(Class<T> source, JavaClassSource javaClass, String sourceName) {
         String factoryName = Utils.createFactoryName(source);
         if (containsMethod(javaClass, factoryName, source)) {
@@ -59,31 +62,31 @@ public class AssertionEntryPointGenerator {
         return factoryClass.getSimpleName() + generics;
     }
 
-    protected <T> MethodSource<JavaClassSource> addAssertThat(Class<T> source,
-                                                              JavaClassSource javaClass,
+    protected <T> MethodSource<JavaClassSource> addAssertThat(Class<T> classUnderTest,
+                                                              JavaClassSource javaSourceClassToAddTo,
                                                               String factoryMethodName,
                                                               String factoryContainerQualifiedName) {
         String methodName = "assertThat";
-        if (containsMethod(javaClass, methodName, source)) {
-            return getMethodCalled(javaClass, methodName);
+        if (containsMethod(javaSourceClassToAddTo, methodName, classUnderTest)) {
+            return getMethodCalled(javaSourceClassToAddTo, methodName);
         } else {
             // entry point
-            MethodSource<JavaClassSource> assertThat = javaClass.addMethod()
+            MethodSource<JavaClassSource> assertThat = javaSourceClassToAddTo.addMethod()
                     .setName(methodName)
                     .setPublic()
                     .setStatic(true)
                     .setReturnType(factoryContainerQualifiedName);
-            assertThat.addParameter(source, "actual");
+            assertThat.addParameter(classUnderTest, "actual");
 
             //
-            javaClass.addImport(factoryContainerQualifiedName + ".*")
+            javaSourceClassToAddTo.addImport(factoryContainerQualifiedName + ".*")
                     .setStatic(true);
 
             //
-            String entryPointBody = "return Truth.assertAbout(" + factoryContainerQualifiedName + "." + factoryMethodName + "()).that(actual);";
+            String entryPointBody = "return Truth.assertAbout(" + factoryMethodName + "()).that(actual);";
             assertThat.setBody(entryPointBody);
-            javaClass.addImport(Truth.class);
-            assertThat.getJavaDoc().setText("Entry point for {@link " + source.getSimpleName() + "} assertions.");
+            javaSourceClassToAddTo.addImport(Truth.class);
+            assertThat.getJavaDoc().setText("Entry point for {@link " + classUnderTest.getSimpleName() + "} assertions.");
             return assertThat;
         }
     }
@@ -109,19 +112,27 @@ public class AssertionEntryPointGenerator {
         addWithMessage(packageName, Optional.empty(), overallAccess);
     }
 
-    public void addWithMessage(String overallPointPackageName, Optional<MiddleClass> middleClass, JavaClassSource generating) {
-        addWithMessage(overallPointPackageName, middleClass, generating, false);
-        addWithMessage(overallPointPackageName, middleClass, generating, true);
+    public void addWithMessage(String overallPointPackageName, Optional<MiddleClass> middleClass, JavaClassSource overallAccess) {
+        addWithMessage(overallPointPackageName, middleClass, overallAccess, false);
+        addWithMessage(overallPointPackageName, middleClass, overallAccess, true);
     }
 
-    private void addWithMessage(String overallPointPackageName, Optional<MiddleClass> middle, JavaClassSource generating, boolean withArgs) {
-        MethodSource<JavaClassSource> with = generating.addMethod()
+    private void addWithMessage(String overallPointPackageName, Optional<MiddleClass> middle, JavaClassSource managedTruthFileSource, boolean withArgs) {
+        if (middle.isPresent()) {
+            String canonicalName = middle.get().getCanonicalName();
+            // todo delete
+            boolean idCard = canonicalName.contains("IdCard");
+            boolean idCardtw = canonicalName.contains("IdCard");
+        }
+
+
+        MethodSource<JavaClassSource> with = managedTruthFileSource.addMethod()
                 .setName(ASSERT_WITH_MESSAGE)
                 .setStatic(true)
                 .setPublic();
 
-        generating.addImport(overallPointPackageName + ".ManagedSubjectBuilder");
-        generating.addImport(overallPointPackageName + ".ManagedTruth");
+        managedTruthFileSource.addImport(overallPointPackageName + ".ManagedSubjectBuilder");
+        managedTruthFileSource.addImport(overallPointPackageName + ".ManagedTruth");
 
         //
         if (withArgs) {
@@ -151,9 +162,9 @@ public class AssertionEntryPointGenerator {
 
             //
             var subject = threeSystem.getSimpleName();
-            var classUnderTest = threeSystem.getClassUnderTest().getSimpleName();
+            var classUnderTest = threeSystem.getClassUnderTestSimpleName();
             with.setReturnType("SimpleSubjectBuilder<" + subject + ", " + classUnderTest + ">");
-            generating.addImport(SimpleSubjectBuilder.class);
+            managedTruthFileSource.addImport(SimpleSubjectBuilder.class);
         } else {
 
             //

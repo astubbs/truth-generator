@@ -54,6 +54,11 @@ image:{shieldio-base}/badge/stackoverflow-google‐truth-5555ff.png?style={badge
 = Truth Generator
 Subject generator library for {GoogleTruth}.
 
+.Example
+----
+assertThat(person).hasAddress().hasStreet().ignoringCase().endsWith('Rd')
+----
+
 Inspired by the https://github.com/assertj/assertj-assertions-generator-maven-plugin[code generator] for https://github.com/assertj/assertj-core[AssertJ].
 
 :github_name: parallel-consumer
@@ -70,9 +75,6 @@ ifdef::env-github[]
 :caution-caption: :fire:
 :warning-caption: :warning:
 endif::[]
-
-.Reid Hoffman on https://twitter.com/reidhoffman/status/847142924240379904?s=20[Twitter]
-> If you are not embarrassed by the first version of your product, you’ve launched too late.
 
 toc::[]
 
@@ -407,7 +409,7 @@ public class CarParentSubject extends Subject {
  * @see Car
  * @see CarParentSubject
  */
-@UserManagedTruth(Car.class)
+@UserManagedSubject(Car.class)
 @Generated("truth-generator")
 public class CarSubject extends CarParentSubject {
 
@@ -534,7 +536,7 @@ public class MakeParentSubject extends Subject {
 * @see Make
 * @see MakeParentSubject
 */
-@UserManagedTruth(Make.class)
+@UserManagedSubject(Make.class)
 @Generated("truth-generator")
 public class MakeSubject extends MakeParentSubject {
 

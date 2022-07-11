@@ -5,6 +5,7 @@ import com.google.common.truth.Truth;
 import com.google.common.truth.Truth8;
 import io.stubbs.truth.generator.BaseSubjectExtension;
 import io.stubbs.truth.generator.GeneratorException;
+import io.stubbs.truth.generator.ReflectionContext;
 import lombok.AccessLevel;
 import lombok.Getter;
 import org.apache.commons.lang3.StringUtils;
@@ -84,14 +85,20 @@ public class BuiltInSubjectTypeStore {
     @Getter(AccessLevel.PRIVATE)
     private final SortedMap<Class<?>, Class<? extends Subject>> subjectExtensions = new TreeMap<>(Comparator.comparing(Class::getCanonicalName));
 
-    private final ClassUtils classUtils = new ClassUtils();
+    private final ReflectionUtils reflectionUtils;
 
-    public BuiltInSubjectTypeStore() {
+    public BuiltInSubjectTypeStore(ReflectionUtils reflectionUtils) {
+        this.reflectionUtils = reflectionUtils;
+        autoRegisterStandardSubjectExtension();
+    }
+
+    public BuiltInSubjectTypeStore(ReflectionContext context) {
+        this.reflectionUtils = new ReflectionUtils(context);
         autoRegisterStandardSubjectExtension();
     }
 
     protected void autoRegisterStandardSubjectExtension() {
-        Set<Class<?>> nativeExtensions = classUtils.findNativeExtensions("io.stubbs");
+        Set<Class<?>> nativeExtensions = reflectionUtils.findBaseSubjectExtensions();
         for (Class<?> nativeExtension : nativeExtensions) {
 
             if (!Subject.class.isAssignableFrom(nativeExtension)) {
@@ -182,6 +189,7 @@ public class BuiltInSubjectTypeStore {
         return getSubjectExtensions().containsValue(subjectClass);
     }
 
+    // todo needs javadoc
     public Optional<Class<? extends Subject>> getSubjectExtensions(Class<?> type) {
         var classStream = getSubjectExtensions().entrySet().stream()
                 .filter(x -> x.getKey().isAssignableFrom(type))

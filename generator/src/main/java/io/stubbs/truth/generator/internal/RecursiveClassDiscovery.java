@@ -35,14 +35,14 @@ public class RecursiveClassDiscovery {
     }
 
     public Set<Class<?>> findReferencedNotIncluded(SourceClassSets ss) {
-        Set<Class<?>> explicitlyConfigured = ss.getAllClasses();
+        Set<Class<?>> explicitlyConfigured = ss.getAllEffectivelyConfiguredClasses();
 
         final Set<Class<?>> visited = new HashSet<>();
 
         // for all the classes
-        explicitlyConfigured.forEach(x ->
+        explicitlyConfigured.forEach(explicitClass ->
                 // for all the methods
-                recursive(x, ss, visited)
+                recursive(explicitClass, ss, visited)
         );
 
         return seen;

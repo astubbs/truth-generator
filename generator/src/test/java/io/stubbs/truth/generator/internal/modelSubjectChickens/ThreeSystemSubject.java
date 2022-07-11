@@ -1,16 +1,18 @@
 package io.stubbs.truth.generator.internal.modelSubjectChickens;
 
 import com.google.common.truth.FailureMetadata;
-import io.stubbs.truth.generator.UserManagedTruth;
+import io.stubbs.truth.generator.SubjectFactoryMethod;
+import io.stubbs.truth.generator.UserManagedSubject;
 import io.stubbs.truth.generator.internal.TruthGeneratorRuntimeException;
 import io.stubbs.truth.generator.internal.model.GeneratedMiddleClass;
 import io.stubbs.truth.generator.internal.model.MiddleClass;
 import io.stubbs.truth.generator.internal.model.ThreeSystem;
-import io.stubbs.truth.generator.internal.model.UserSuppliedMiddleClass;
 import io.stubbs.truth.generator.shaded.org.jboss.forge.roaster.model.sourceChickens.JavaClassSourceSubject;
 import org.jboss.forge.roaster.model.source.JavaClassSource;
 
 import javax.annotation.processing.Generated;
+
+// todo once discovery is merged, this needs proper integration (remove tracked child and parent)
 
 // in VCS as we're still in the chicken phase of what comes first - stable maven plugin to generate this for the build before we can remove
 
@@ -23,13 +25,14 @@ import javax.annotation.processing.Generated;
  *
  * @see ThreeSystemParentSubject
  */
-@UserManagedTruth(value = ThreeSystem.class)
+@UserManagedSubject(value = ThreeSystem.class)
 @Generated("truth-generator")
 public class ThreeSystemSubject extends ThreeSystemParentSubject {
 
     /**
      * Returns an assertion builder for a {@link ThreeSystem} class.
      */
+    @SubjectFactoryMethod
     public static Factory<ThreeSystemSubject, ThreeSystem> threeSystems() {
         return ThreeSystemSubject::new;
     }
@@ -61,4 +64,5 @@ public class ThreeSystemSubject extends ThreeSystemParentSubject {
     public void hasChildSource(String expected) {
         hasChild().hasSourceText().ignoringTrailingWhiteSpace().equalTo(expected);
     }
+
 }

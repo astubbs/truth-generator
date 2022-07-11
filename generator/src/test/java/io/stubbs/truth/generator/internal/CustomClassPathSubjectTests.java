@@ -2,6 +2,7 @@ package io.stubbs.truth.generator.internal;
 
 import com.google.common.truth.Subject;
 import com.google.common.truth.Truth8;
+import io.stubbs.truth.generator.TestClassFactories;
 import io.stubbs.truth.generator.TestModelUtils;
 import io.stubbs.truth.generator.subjects.MyCollectionSubject;
 import io.stubbs.truth.generator.subjects.MyMapSubject;
@@ -13,14 +14,13 @@ import org.junit.Test;
 import java.lang.reflect.Method;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import static com.google.common.truth.Truth.assertThat;
 
 @Slf4j
 public class CustomClassPathSubjectTests {
 
-    GeneratedSubjectTypeStore subjects = new GeneratedSubjectTypeStore(Set.of(), new BuiltInSubjectTypeStore());
+    GeneratedSubjectTypeStore subjects = TestClassFactories.newGeneratedSubjectTypeStore();
 
     /**
      * Checks that {@link Subject} subtypes are found and added to the Subject graph for inclusion into the assertion
@@ -34,6 +34,7 @@ public class CustomClassPathSubjectTests {
         // for reference
         MyEmployee employee = TestModelUtils.createEmployee();
         Map<String, Project> projectMap = employee.getProjectMap();
+        //
 
         {
             Method getProjectMap = TestModelUtils.findMethodWithNoParamsJReflect(MyEmployee.class, "getProjectMap");

@@ -8,6 +8,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.maven.model.Plugin;
 import org.apache.maven.plugin.testing.MojoRule;
 import org.apache.maven.project.MavenProject;
+import org.assertj.core.api.Assertions;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -89,7 +90,7 @@ public class GeneratorMojoTest {
     @Test
     public void nullEntryPointClass() {
         generatorMojo.entryPointClassPackage = null;
-
+        Assertions.setMaxStackTraceElementsDisplayed(50);
         assertThatThrownBy(generatorMojo::execute)
                 .isExactlyInstanceOf(GeneratorException.class)
                 .hasMessageContainingAll("managed", "entrypoint", "blank");

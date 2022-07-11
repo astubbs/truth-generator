@@ -1,8 +1,11 @@
 package io.stubbs.truth.generator.plugin;
 
+import com.google.common.truth.Subject;
+import io.stubbs.truth.generator.FullContext;
 import io.stubbs.truth.generator.SourceClassSets;
-import io.stubbs.truth.generator.TruthGeneratorAPI;
+import io.stubbs.truth.generator.UserManagedSubject;
 import io.stubbs.truth.generator.internal.Options;
+import io.stubbs.truth.generator.internal.ReflectionUtils;
 import io.stubbs.truth.generator.internal.TruthGenerator;
 import io.stubbs.truth.generator.internal.Utils;
 import io.stubbs.truth.generator.internal.model.Result;
@@ -11,6 +14,7 @@ import lombok.Getter;
 import lombok.SneakyThrows;
 import org.apache.commons.io.FileUtils;
 import org.apache.maven.artifact.DependencyResolutionRequiredException;
+import org.apache.maven.model.Build;
 import org.apache.maven.model.Plugin;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
@@ -24,10 +28,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Stream;
 
 import static java.lang.String.format;
@@ -53,48 +54,63 @@ public class GeneratorMojo extends AbstractMojo {
      */
     @Parameter(property = "project", required = true, readonly = true)
     public MavenProject project;
+
     /**
-     * Package where generated assertion classes will reside.
+     * Package where generated {@link Subject} classes will reside.
      * <p/>
-     * If not set (or set to empty), each assertion class is generated in the package of the corresponding class to
+     * If not set (or set to empty), each Subject class is generated in the package of the corresponding class to
      * assert. For example the generated assertion class for com.nba.Player will be com.nba.PlayerAssert (in the same
-     * package as Player). Defaults to ''.<br>
+     * package as Player). Defaults to ''.
      * <p/>
-     * Note that the Assertions entry point classes package is controlled by the entryPointClassPackage property.
+     * Note that the Subject entry point classes package is controlled by the {@link #entryPointClassPackage} property.
      */
     @Parameter(defaultValue = "", property = "truth.generateAssertionsInPackage")
     public String generateAssertionsInPackage;
+
+    /**
+     * List of packages to look for user manages Subjects in. If blank, everything will be checked, which will be a lot
+     * slower.
+     */
+    @Parameter(property = "truth.subjectPackages")
+    public String[] subjectPackages;
+
     /**
      * Flag specifying whether to clean the directory where assertions are generated. The default is false.
      */
     @Parameter(defaultValue = "false", property = "truth.cleanTargetDir")
     public boolean cleanTargetDir;
+
     /**
      * Use 'has' in generated assertion chain methods instead of 'get'.
      */
     @Parameter(defaultValue = "false", property = "truth.useHas")
     public boolean useHas;
+
     /**
-     * List of packages to generate assertions for.
+     * List of packages to look for classes in, to generate {@link Subject}s for.
      */
     @Parameter(property = "truth.packages")
     public String[] packages;
+
     /**
      * List of classes to generate assertions for.
      */
     @Parameter(property = "truth.classes")
     public String[] classes;
+
     /**
      * List of legacy style classes to generate assertions for.
      */
     @Parameter(property = "truth.classes")
     public String[] legacyClasses;
+
     /**
      * When generating for legacy classes (classes that don't use Get prefixes), use a getter for the generated Subject
      * methods.
      */
     @Parameter(property = "truth.classes", defaultValue = "true")
     public boolean useGetterForLegacyClasses;
+
     /**
      * An optional package name for the Assertions' entry point class. If omitted, the package will be determined
      * heuristically from the generated assertions.
@@ -137,11 +153,13 @@ public class GeneratorMojo extends AbstractMojo {
      */
     @Parameter(property = "truth.releaseTarget")
     public Integer releaseTarget;
+
     /**
      * Location of the file.
      */
     @Parameter(defaultValue = "${project.build.directory}", property = "outputDir", required = true)
     private File outputDirectory;
+
     /**
      * for testing
      */
@@ -191,26 +209,51 @@ public class GeneratorMojo extends AbstractMojo {
 
     @SneakyThrows
     private Map<Class<?>, ThreeSystem<?>> runGenerator() {
-        Options options = buildOptions();
-        TruthGenerator tg = TruthGeneratorAPI.create(getOutputPath(), options);
 
         Optional<String> entryPointClassPackage = ofNullable(this.entryPointClassPackage);
-        tg.setEntryPoint(entryPointClassPackage);
 
-        SourceClassSets ss = new SourceClassSets(getEntryPointClassPackage());
+        final Build build = getProject().getBuild();
+        final List<Path> testSourcePaths = List.of(Path.of(build.getTestSourceDirectory()));
 
-        ClassLoader projectClassLoader = getProjectClassLoader();
-        ss.addClassLoader(projectClassLoader);
+        FullContext context = new FullContext(getOutputPath(),
+                testSourcePaths,
+                List.of(getProjectClassLoader()),
+                getBaseModelPackagesForReflectionScanning());
 
-        ss.generateFrom(projectClassLoader, getClasses());
+        ReflectionUtils reflectionUtils = new ReflectionUtils(context);
+
+        SourceClassSets ss = new SourceClassSets(getEntryPointClassPackage(), reflectionUtils);
+
+        ss.generateFrom(getProjectClassLoader(), getClasses());
         String[] legacyClasses = getLegacyClasses();
-        ss.generateFromNonBean(projectClassLoader, legacyClasses);
+        ss.generateFromNonBean(getProjectClassLoader(), legacyClasses);
         ss.generateAllFoundInPackages(getPackages());
 
+        Options options = buildOptions();
+        TruthGenerator tg = new TruthGenerator(options, context);
+        tg.setEntryPoint(entryPointClassPackage);
         Result generate = tg.generate(ss);
         Map<Class<?>, ThreeSystem<?>> generated = generate.getAll();
 
         return generated;
+    }
+
+    /**
+     * Combines the packages for looking for Subject targets, as well as packages for {@link UserManagedSubject} Subject
+     * sources.
+     */
+    private Set<String> getBaseModelPackagesForReflectionScanning() {
+        var subjectPackages = Arrays.asList(getSubjectPackages());
+
+        var classSourcePackages = Arrays.asList(getPackages());
+
+        HashSet<String> union = new HashSet<>(subjectPackages);
+        union.addAll(classSourcePackages);
+        if (getEntryPointClassPackage() != null)
+            union.addAll(Set.of(getEntryPointClassPackage()));
+        union.addAll(classSourcePackages);
+
+        return union;
     }
 
     private void addOutputPathsToBuild() {

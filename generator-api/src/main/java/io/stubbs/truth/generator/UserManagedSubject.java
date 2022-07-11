@@ -18,9 +18,11 @@ import java.lang.annotation.Target;
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.TYPE})
-public @interface UserManagedTruth {
+public @interface UserManagedSubject {
+
     /**
      * The class that this is a {@link Subject} for.
      */
     Class<?> value();
+
 }

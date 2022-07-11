@@ -48,7 +48,7 @@ public class ChainStrategyTest extends StrategyTest {
     }
 
     private ChainStrategy createNewChainStrategy() {
-        return new ChainStrategy(new GeneratedSubjectTypeStore());
+        return new ChainStrategy(new GeneratedSubjectTypeStore(builtInSubjectTypeStore));
     }
 
     private Method getMethod(Class<?> employeeClass, String contains) {
@@ -172,9 +172,11 @@ public class ChainStrategyTest extends StrategyTest {
         assertThat(source.toString()).contains("that((Instant)actual.getStartedAt().get()");
     }
 
+    /**
+     * A test input class which declares a field of generic type, but is missing its generics parameters
+     */
     @Data
-    static
-    class BadGenerics {
+    public static class BadGenerics {
         @SuppressWarnings("rawtypes")
         Optional genericsMissing;
     }

@@ -44,6 +44,11 @@ jobs:
           git config user.email "actions@github.com"
           git config user.name "GitHub Actions"
 
+      - name: ssh test
+        run: ssh -T git@github.com
+        env:
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+
       - name: Cut Release
         run: mvn -e release:prepare release:perform -B -DreleaseVersion=${{ github.event.inputs.releaseVersion }} -DdevelopmentVersion=${{ github.event.inputs.developmentVersion }}
         env:

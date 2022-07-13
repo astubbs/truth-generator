@@ -3,7 +3,7 @@
 
     <groupId>io.stubbs.truth</groupId>
     <artifactId>truth-generator-parent</artifactId>
-    <version>0.1.2-SNAPSHOT</version>
+    <version>0.1.2</version>
 
     <modelVersion>4.0.0</modelVersion>
     <packaging>pom</packaging>
@@ -54,7 +54,7 @@
         <connection>scm:git:${project.scm.url}</connection>
         <developerConnection>scm:git:${project.scm.url}</developerConnection>
         <url>https://github.com/astubbs/truth-generator.git</url>
-        <tag>HEAD</tag>
+        <tag>0.1.2</tag>
     </scm>
 
     <modules>
@@ -75,7 +75,7 @@
                         <configuration>
                             <pushChanges>true</pushChanges>
                             <!--                            disable-->
-                            <goals></goals>
+                            <goals />
                         </configuration>
                     </plugin>
                 </plugins>

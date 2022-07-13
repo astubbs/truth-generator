@@ -55,8 +55,8 @@ jobs:
           maven-args: "-Dmaven.javadoc.skip=true -DskipTests -DskipITs -Pci-release"
 
           # leading zero until 1.0 is released, to use the auto versioning
-          maven-release-version-number: 0.${parsedVersion.majorVersion}.\${parsedVersion.minorVersion}.\${parsedVersion.incrementalVersion}
-          maven-development-version-number: 0.${parsedVersion.majorVersion}.\${parsedVersion.nextMinorVersion}.\${parsedVersion.incrementalVersion}-SNAPSHOT
+#           maven-release-version-number: ${parsedVersion.majorVersion}.\${parsedVersion.minorVersion}.\${parsedVersion.incrementalVersion}
+#           maven-development-version-number: ${parsedVersion.majorVersion}.\${parsedVersion.nextMinorVersion}.\${parsedVersion.incrementalVersion}-SNAPSHOT
 
 #           maven-release-version-number: ${{ github.event.inputs.releaseVersion }}
 #           maven-development-version-number: ${{ github.event.inputs.developmentVersion }}-SNAPSHOT

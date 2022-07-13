@@ -44,10 +44,21 @@ jobs:
           git config user.email "actions@github.com"
           git config user.name "GitHub Actions"
 
-      - name: Publish JAR
-        run: mvn -B release:prepare release:perform
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Make a release
+        uses: qcastel/github-actions-maven-release@master
+        with:
+          release-branch-name: "release"
+#           git-release-bot-name: "release-bot"
+#           git-release-bot-email: "release-bot@example.com"
+          access-token: ${{ secrets.GITHUB_TOKEN }} # https
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }} # ssh
+
+#           maven-args: "-Dmaven.javadoc.skip=true -DskipTests -DskipITs -Ddockerfile.skip -DdockerCompose.skip"
+
+#       - name: Publish JAR
+#         run: mvn -B release:prepare release:perform
+#         env:
+#           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 #
 #       - name: ssh test
 #         run: ssh -vT git@github.com

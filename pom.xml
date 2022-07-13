@@ -392,7 +392,7 @@
                     <version>3.0.0-M6</version>
                     <configuration>
                         <autoVersionSubmodules>true</autoVersionSubmodules>
-                        <pushChanges>false</pushChanges>
+<!--                        <pushChanges>false</pushChanges>-->
                         <tagNameFormat>@{project.version}</tagNameFormat>
                     </configuration>
                 </plugin>

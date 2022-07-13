@@ -645,6 +645,7 @@ public class ManagedTruth {
 
 === Releasing
 
-When master branch is read to release:
+When master branch is read to release: run the release workflow from GitHub actions.
+It will by default start the next dev version as an incremented patch version.
 
-Run `mvn release:prepare` then push the branch, then go to GitHub, Actions, Truth Generator Release, run workflow, enter which tag to run the release job on.
+When ready to start a new major or minor version, use versions:set command.

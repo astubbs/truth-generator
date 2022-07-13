@@ -60,8 +60,6 @@
                         <artifactId>maven-release-plugin</artifactId>
                         <configuration>
                             <pushChanges>true</pushChanges>
-                            <!--                            disable-->
-                            <goals>none</goals>
                         </configuration>
                     </plugin>
                 </plugins>

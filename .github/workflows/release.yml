@@ -50,7 +50,7 @@ jobs:
           JAVA_HOME: /usr/lib/jvm/java-17-openjdk/
         with:
           release-branch-name: "release"
-          maven-args: "-Dmaven.javadoc.skip=true -DskipTests -DskipITs"
+          maven-args: "-Dmaven.javadoc.skip=true -DskipTests -DskipITs -Pci-release"
 #           git-release-bot-name: "release-bot"
 #           git-release-bot-email: "release-bot@example.com"
           access-token: ${{ secrets.GITHUB_TOKEN }} # https

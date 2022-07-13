@@ -66,6 +66,22 @@
 
     <profiles>
         <profile>
+            <id>ci-release</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-release-plugin</artifactId>
+                        <configuration>
+                            <pushChanges>true</pushChanges>
+                            <!--                            disable-->
+                            <goals></goals>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
             <id>github-deploy</id>
             <distributionManagement>
                 <repository>

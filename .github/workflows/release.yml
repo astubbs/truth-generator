@@ -45,20 +45,20 @@ jobs:
           git config user.name "GitHub Actions"
 
       - name: Publish JAR
-        run: mvn -B release:prepare
+        run: mvn -B release:prepare release:perform
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: ssh test
-        run: ssh -vT git@github.com
-        env:
-          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
-
-      - name: Cut Release
-        run: mvn -e release:prepare release:perform -B -DreleaseVersion=${{ github.event.inputs.releaseVersion }} -DdevelopmentVersion=${{ github.event.inputs.developmentVersion }}
-        env:
-          CI_DEPLOY_USERNAME: ${{ secrets.CI_DEPLOY_USERNAME }}
-          CI_DEPLOY_PASSWORD: ${{ secrets.CI_DEPLOY_PASSWORD }}
-          GITHUB_ACTOR: ${{ github.actor }}
-          GITHUB_TOKEN: ${{ github.token }}
-          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+#
+#       - name: ssh test
+#         run: ssh -vT git@github.com
+#         env:
+#           ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+#
+#       - name: Cut Release
+#         run: mvn -e release:prepare release:perform -B -DreleaseVersion=${{ github.event.inputs.releaseVersion }} -DdevelopmentVersion=${{ github.event.inputs.developmentVersion }}
+#         env:
+#           CI_DEPLOY_USERNAME: ${{ secrets.CI_DEPLOY_USERNAME }}
+#           CI_DEPLOY_PASSWORD: ${{ secrets.CI_DEPLOY_PASSWORD }}
+#           GITHUB_ACTOR: ${{ github.actor }}
+#           GITHUB_TOKEN: ${{ github.token }}
+#           ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}

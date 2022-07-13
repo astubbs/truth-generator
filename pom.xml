@@ -89,7 +89,7 @@
     <properties>
         <project.name.root>Truth Subject Generator</project.name.root>
 
-        <version.roaster>2.25.0.Final</version.roaster>
+        <version.roaster>2.26.0.Final</version.roaster>
         <version.truth>1.1.3</version.truth>
 
         <maven.version>3.8.6</maven.version>

@@ -71,10 +71,13 @@ jobs:
     if: github.event_name == 'push' && github.repository == 'astubbs/truth-generator'
     runs-on: ubuntu-latest
     steps:
+      - run: |
+          releaseVersion=grep scm.tag= | cut  -d= -f2
+          echo $releaseVersion
       - name: 'Check out repository'
         uses: actions/checkout@v3
           with:
-            ref: ${parsedVersion}
+            ref: ${{ releaseVersion }}
       - name: Publish package
         run: mvn --batch-mode deploy -DskipTests=true -Pgithub-deploy -P!package-cloud-deploy
         env:

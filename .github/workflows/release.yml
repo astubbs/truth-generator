@@ -2,10 +2,10 @@ name: Truth Generator Release
 on:
   workflow_dispatch:
     inputs:
-      branch:
-        description: "The branch to checkout when cutting the release."
-        required: true
-        default: "master"
+#       branch:
+#         description: "The branch to checkout when cutting the release."
+#         required: true
+#         default: "master"
       releaseVersion:
         description: "Default version to use when preparing a release."
         required: true
@@ -50,29 +50,9 @@ jobs:
           JAVA_HOME: /usr/lib/jvm/java-17-openjdk/
         with:
           release-branch-name: "release"
-          maven-args: "-Dmaven.javadoc.skip=true -DskipTests -DskipITs -Pci-release -X"
-#           git-release-bot-name: "release-bot"
-#           git-release-bot-email: "release-bot@example.com"
+          # to enable releasing, add the profile for deployment e.g. -Ppackage-cloud-deploy
+          maven-args: "-Dmaven.javadoc.skip=true -DskipTests -DskipITs -Pci-release"
+          maven-development-version-number: ${{ github.event.inputs.developmentVersion }}
+          maven-release-version-number: ${{ github.event.inputs.releaseVersion }}
           access-token: ${{ secrets.GITHUB_TOKEN }} # https
-#           ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }} # ssh
-
-#           maven-args: "-Dmaven.javadoc.skip=true -DskipTests -DskipITs -Ddockerfile.skip -DdockerCompose.skip"
-
-#       - name: Publish JAR
-#         run: mvn -B release:prepare release:perform
-#         env:
-#           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-#
-#       - name: ssh test
-#         run: ssh -vT git@github.com
-#         env:
-#           ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
-#
-#       - name: Cut Release
-#         run: mvn -e release:prepare release:perform -B -DreleaseVersion=${{ github.event.inputs.releaseVersion }} -DdevelopmentVersion=${{ github.event.inputs.developmentVersion }}
-#         env:
-#           CI_DEPLOY_USERNAME: ${{ secrets.CI_DEPLOY_USERNAME }}
-#           CI_DEPLOY_PASSWORD: ${{ secrets.CI_DEPLOY_PASSWORD }}
-#           GITHUB_ACTOR: ${{ github.actor }}
-#           GITHUB_TOKEN: ${{ github.token }}
-#           ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+          # ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }} # ssh - not used

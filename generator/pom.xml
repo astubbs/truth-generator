@@ -10,10 +10,6 @@
     <name>${project.name.root} Core</name>
     <artifactId>truth-generator</artifactId>
 
-    <properties>
-        <version.roaster>2.25.0.Final</version.roaster>
-    </properties>
-
     <dependencies>
         <!-- Internal -->
         <dependency>

@@ -640,3 +640,12 @@ public class ManagedTruth {
 
 }
 ----
+
+== Development
+
+=== Releasing
+
+When master branch is read to release: run the release workflow from GitHub actions.
+It will by default start the next dev version as an incremented patch version.
+
+When ready to start a new major or minor version, use versions:set command.

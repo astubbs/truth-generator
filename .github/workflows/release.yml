@@ -52,7 +52,7 @@ jobs:
           release-branch-name: "release"
 
           # to enable releasing, add the profile for deployment e.g. -Ppackage-cloud-deploy
-          maven-args: "-Dmaven.javadoc.skip=true -DskipTests -DskipITs -Pci-release"
+          maven-args: "-Dmaven.javadoc.skip=true -DskipTests -DskipITs -Pci-release -Ppackage-cloud-deploy"
 
           # leading zero until 1.0 is released, to use the auto versioning
 #           maven-release-version-number: ${parsedVersion.majorVersion}.\${parsedVersion.minorVersion}.\${parsedVersion.incrementalVersion}

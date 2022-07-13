@@ -1,0 +1,38 @@
+name: QCastel Release
+on:
+  workflow_dispatch:
+    inputs:
+      branch:
+        description: "The branch to checkout when cutting the release."
+        required: true
+        default: "master"
+      releaseVersion:
+        description: "Default version to use when preparing a release."
+        required: true
+        default: "X.Y.Z"
+      developmentVersion:
+        description: "Default version to use for new local working copy."
+        required: true
+        default: "X.Y.Z-SNAPSHOT"
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+
+    steps:
+    
+      - name: Java Maven release
+        # You may pin to the exact commit or the version.
+        # uses: qcastel/github-actions-maven-release@88522b1841bc65c43d7040c15b0ac0867c2fa7ea
+        uses: qcastel/github-actions-maven-release@v1.12.31
+        with:
+          # The SSH private key used during the maven release git commit
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+          # The maven server repositories, in a JSON format. Example: [{"id": "serverId1", "username": "username", "password": "password1", "privateKey": "privatekey1", "passphrase": "passphrase1"}, {"id": "serverId2", "username": "username2", "password": "password2"}]
+          # maven-servers: # optional, default is []
+          # The maven arguments for the release
+          # maven-args: # optional, default is 
+          # The maven options for the release
+          # maven-options: # optional, default is 
+          # Github access token. https://help.github.com/en/github/authenticating-to-github/creating-a-personal-access-token-for-the-command-line
+          # access-token: # optional

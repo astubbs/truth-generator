@@ -60,9 +60,15 @@ public class SourceCodeScanner {
     private Map<String, UserSourceCodeManagedMiddleClass<?>> buildCache() {
         Stream<UserSourceCodeManagedMiddleClass<?>> wrapStream = this.reflectionContext.getSourceRoots().stream()
                 .flatMap(this::buildCacheForEachRoot);
-        return StreamEx.of(wrapStream)
-                .toMap(UserSourceCodeManagedMiddleClass::getClassUnderTestSimpleName,
-                        wrap -> wrap);
+        final Map<String, UserSourceCodeManagedMiddleClass<?>> stringUserSourceCodeManagedMiddleClassMap;
+        try {
+            stringUserSourceCodeManagedMiddleClassMap = StreamEx.of(wrapStream)
+                    .toMap(UserSourceCodeManagedMiddleClass::getClassUnderTestSimpleName,
+                            wrap -> wrap);
+        } catch (IllegalStateException e) {
+            throw new IllegalStateException("Duplicate class names found in source code. This is not supported.", e);
+        }
+        return stringUserSourceCodeManagedMiddleClassMap;
     }
 
     public <T> Optional<UserSourceCodeManagedMiddleClass<T>> getUserSubjectWrapFor(Class<?> clazzUnderTest) {

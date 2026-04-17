@@ -8,3 +8,5 @@ updates:
     directory: "/"
     schedule:
       interval: "daily"
+    # Actions are pinned to SHAs for supply chain security; Dependabot
+    # updates the SHA and the trailing version comment together.

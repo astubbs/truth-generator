@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>io.stubbs.truth</groupId>
+        <artifactId>truth-generator-relocation-parent</artifactId>
+        <version>0.1.2</version>
+        <relativePath>../pom.xml</relativePath>
+    </parent>
+
+    <artifactId>truth-generator-maven-plugin</artifactId>
+    <packaging>pom</packaging>
+
+    <name>truth-generator-maven-plugin (relocated)</name>
+    <description>Relocated to bz.stub.truth:truth-generator-maven-plugin.</description>
+
+    <distributionManagement>
+        <relocation>
+            <groupId>bz.stub.truth</groupId>
+            <artifactId>truth-generator-maven-plugin</artifactId>
+            <message>The group id moved from io.stubbs.truth to bz.stub.truth as of 0.1.2 (published to Maven Central).</message>
+        </relocation>
+    </distributionManagement>
+</project>

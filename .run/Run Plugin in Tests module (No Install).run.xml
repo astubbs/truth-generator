@@ -13,7 +13,7 @@
                     </option>
                     <option name="goals">
                         <list>
-                            <option value="io.stubbs.truth:truth-generator-maven-plugin:generate"/>
+                            <option value="bz.stub.truth:truth-generator-maven-plugin:generate"/>
                             <option value="-e"/>
                         </list>
                     </option>

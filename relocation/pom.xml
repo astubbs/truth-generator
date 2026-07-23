@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <!-- Relocation-only stubs. These publish under the RETIRED io.stubbs.truth
+         coordinates and redirect consumers to the bz.stub.truth artifacts on
+         Maven Central (see each module's <distributionManagement><relocation>).
+
+         This project is deliberately NOT a module of the main reactor - the main
+         build (and CI/publish) never touch it. It is published separately and only
+         when needed. Publishing it requires the io.stubbs namespace to be verified
+         on the Sonatype Central Portal (domain verification of stubbs.io). See
+         RELEASING.md -> "Publishing the relocation stubs". -->
+
+    <groupId>io.stubbs.truth</groupId>
+    <artifactId>truth-generator-relocation-parent</artifactId>
+    <version>0.1.2</version>
+    <packaging>pom</packaging>
+
+    <name>Truth Generator relocation stubs</name>
+    <description>Relocation POMs redirecting the retired io.stubbs.truth coordinates to bz.stub.truth on Maven Central.</description>
+    <url>https://github.com/astubbs/truth-generator</url>
+    <inceptionYear>2021</inceptionYear>
+
+    <organization>
+        <name>Stubbs.io</name>
+        <url>https://stub.bz</url>
+    </organization>
+
+    <licenses>
+        <license>
+            <name>Apache License, Version 2.0</name>
+            <url>https://www.apache.org/licenses/LICENSE-2.0.txt</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+
+    <developers>
+        <developer>
+            <id>antony.stubbs</id>
+            <name>Antony Stubbs</name>
+            <email>antony.stubbs@gmail.com</email>
+            <url>https://github.com/astubbs</url>
+        </developer>
+    </developers>
+
+    <scm>
+        <connection>scm:git:https://github.com/astubbs/truth-generator.git</connection>
+        <developerConnection>scm:git:https://github.com/astubbs/truth-generator.git</developerConnection>
+        <url>https://github.com/astubbs/truth-generator.git</url>
+    </scm>
+
+    <modules>
+        <module>truth-generator-api</module>
+        <module>truth-generator</module>
+        <module>truth-generator-maven-plugin</module>
+    </modules>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-gpg-plugin</artifactId>
+                <version>3.1.0</version>
+                <executions>
+                    <execution>
+                        <id>sign-artifacts</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>sign</goal>
+                        </goals>
+                        <configuration>
+                            <gpgArguments>
+                                <arg>--pinentry-mode</arg>
+                                <arg>loopback</arg>
+                            </gpgArguments>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.sonatype.central</groupId>
+                <artifactId>central-publishing-maven-plugin</artifactId>
+                <version>0.10.0</version>
+                <extensions>true</extensions>
+                <configuration>
+                    <publishingServerId>central</publishingServerId>
+                    <autoPublish>true</autoPublish>
+                    <waitUntil>published</waitUntil>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+</project>

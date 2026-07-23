@@ -1,6 +1,9 @@
 name-template: 'v$RESOLVED_VERSION 🌈'
 tag-template: 'v$RESOLVED_VERSION'
 categories:
+  - title: '⚠️ Breaking Changes'
+    labels:
+      - 'breaking'
   - title: '🚀 Features'
     labels:
       - 'feature'
@@ -26,6 +29,8 @@ version-resolver:
   minor:
     labels:
       - 'minor'
+      # Pre-1.0: a breaking change bumps the minor, not the major.
+      - 'breaking'
   patch:
     labels:
       - 'patch'

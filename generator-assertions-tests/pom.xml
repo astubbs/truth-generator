@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <groupId>io.stubbs.truth</groupId>
+        <groupId>bz.stub.truth</groupId>
         <artifactId>truth-generator-parent</artifactId>
         <version>0.1.2-SNAPSHOT</version>
     </parent>
@@ -16,8 +16,8 @@
     <build>
         <plugins>
             <plugin>
-                <!-- mvn  io.stubbs.truth:truth-generator-maven-plugin:generate -->
-                <groupId>io.stubbs.truth</groupId>
+                <!-- mvn  bz.stub.truth:truth-generator-maven-plugin:generate -->
+                <groupId>bz.stub.truth</groupId>
                 <artifactId>truth-generator-maven-plugin</artifactId>
                 <version>${project.version}</version>
                 <executions>
@@ -68,19 +68,19 @@
     <dependencies>
         <!-- Internal -->
         <dependency>
-            <groupId>io.stubbs.truth</groupId>
+            <groupId>bz.stub.truth</groupId>
             <artifactId>truth-generator-api</artifactId>
             <type>jar</type>
             <scope>test</scope>
         </dependency>
         <dependency>
             <!-- Transitive dependency of truth-generator:test-jar -->
-            <groupId>io.stubbs.truth</groupId>
+            <groupId>bz.stub.truth</groupId>
             <artifactId>truth-generator</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>io.stubbs.truth</groupId>
+            <groupId>bz.stub.truth</groupId>
             <artifactId>truth-generator</artifactId>
             <type>test-jar</type>
             <scope>test</scope>

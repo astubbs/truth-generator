@@ -18,8 +18,8 @@
 :gh-shield-base: {shieldio-base}/github
 
 :Google Truth: https://truth.dev/[Google Truth]
-:maven-shield: {shieldio-base}/maven-central/v/io.stubbs/truth-generator.png?style={badge-style}
-:maven-link: https://search.maven.org/artifact/io.stubbs/truth-generator
+:maven-shield: {shieldio-base}/maven-central/v/bz.stub.truth/truth-generator.png?style={badge-style}
+:maven-link: https://central.sonatype.com/artifact/bz.stub.truth/truth-generator
 :stackoverflow-shield:
 :stackoverflow-link: https://stackoverflow.com/questions/tagged/google-truth
 
@@ -43,7 +43,7 @@
 //image:{shieldio-base}//librariesio/dependent-repos/:platform/:packageName?style={badge-style}[]
 //image:{shieldio-base}//librariesio/dependents/:platform/:packageName?style={badge-style}[]
 // repo1 release
-//image:{maven-shield}[link={maven-link},title=Maven Release]
+image:{maven-shield}[link={maven-link},title=Maven Central]
 
 image:{gh-shield-base}/workflow/status/astubbs/truth-generator/CI?style={badge-style}[GitHub Workflow Status]
 image:{gh-shield-base}/commit-activity/m/{user-github}/{repo-github}?style={badge-style}[]
@@ -144,82 +144,35 @@ To see how this is being used in a real world problem, take a look https://githu
 
 === Distribution
 
-We're not yet publishing to repo1, but we are publishing to both GitHub Packages and Package Cloud.
-This is because although GitHub is a giant and trustworthy, it does not https://stackoverflow.com/questions/58438367/how-to-access-maven-dependecy-from-github-package-registry-beta#comment111143283_58453517[allow anonymous access to it's package system].
-Once must have set up an authentication token to use, so it's a pain.
+Released to https://central.sonatype.com/artifact/bz.stub.truth/truth-generator[Maven Central] under the group id `bz.stub.truth`.
+Nothing extra is needed - Central is the default repository, so just declare the dependency (see the <<Setup>> section below). No custom `<repositories>` / `<pluginRepositories>` blocks and no auth tokens.
 
-https://packagecloud.io[Package Cloud] on the other hand works great, but some may not want to use it, in favour of GitHub.
-So for now, we publish to both.
+`-SNAPSHOT` builds are published to the https://central.sonatype.com/repository/maven-snapshots/[Central Portal snapshot repository]. To consume snapshots, enable that repository in your build:
 
-Once repo1 publishing is set up, this won't be necessary.
-
-==== Package Cloud
-
-You can see what's https://packagecloud.io/astubbs/truth-generator[inside the repo], and what https://packagecloud.io/app/astubbs/truth-generator/search?q=io.stubbs.truth%3A[package we're publishing].
-
-. Simply add this repository to your build:
-
-.Package Cloud repository
+.Central snapshots (only needed for -SNAPSHOT versions)
 [source,xml]
 ----
-<project>
-
-...
-
     <repositories>
         <repository>
-            <id>astubbs-truth-generator</id>
-            <url>https://packagecloud.io/astubbs/truth-generator/maven2</url>
-            <snapshots>
-                <enabled>true</enabled>
-            </snapshots>
+            <id>central-snapshots</id>
+            <url>https://central.sonatype.com/repository/maven-snapshots/</url>
+            <releases><enabled>false</enabled></releases>
+            <snapshots><enabled>true</enabled></snapshots>
         </repository>
     </repositories>
-    <pluginRepositories>
-        <pluginRepository>
-            <id>astubbs-truth-generator</id>
-            <url>https://packagecloud.io/astubbs/truth-generator/maven2</url>
-            <snapshots>
-                <enabled>true</enabled>
-            </snapshots>
-        </pluginRepository>
-    </pluginRepositories>
-</project>
 ----
 
-==== GitHub Packages
+[NOTE]
+====
+*Migrating from the old PackageCloud / GitHub Packages coordinates.*
+Earlier snapshots were published to PackageCloud and GitHub Packages under group id `io.stubbs.truth`.
+Both are retired in favour of Maven Central. Update your build:
 
-. Setup your access token, with https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-apache-maven-registry[these instructions].
-. Then add the following repository:
+* group id `io.stubbs.truth` -> `bz.stub.truth`
+* remove the `packagecloud.io` / `maven.pkg.github.com` `<repositories>` and `<pluginRepositories>` entries (and their auth tokens) - they are no longer required.
+====
 
-.GitHub repository
-[source,xml]
-----
-<project>
-
-...
-
-    <repositories>
-        <repository>
-            <id>astubbs-truth-generator</id>
-            <url>https://maven.pkg.github.com/astubbs/truth-generator</url>
-            <snapshots>
-                <enabled>true</enabled>
-            </snapshots>
-        </repository>
-    </repositories>
-    <pluginRepositories>
-        <pluginRepository>
-            <id>astubbs-truth-generator</id>
-            <url>https://maven.pkg.github.com/astubbs/truth-generator</url>
-            <snapshots>
-                <enabled>true</enabled>
-            </snapshots>
-        </pluginRepository>
-    </pluginRepositories>
-</project>
-----
-
+[[Setup]]
 === Setup
 
 .Maven plugin inclusion
@@ -228,7 +181,7 @@ You can see what's https://packagecloud.io/astubbs/truth-generator[inside the re
 
     <dependencies>
         <dependency>
-            <groupId>io.stubbs.truth</groupId>
+            <groupId>bz.stub.truth</groupId>
             <artifactId>truth-generator-api</artifactId>
             <scope>test</scope>
         </dependency>
@@ -241,8 +194,8 @@ You can see what's https://packagecloud.io/astubbs/truth-generator[inside the re
     <build>
         <plugins>
             <plugin>
-                <!-- mvn  io.stubbs.truth:truth-generator-maven-plugin:generate -->
-                <groupId>io.stubbs.truth</groupId>
+                <!-- mvn  bz.stub.truth:truth-generator-maven-plugin:generate -->
+                <groupId>bz.stub.truth</groupId>
                 <artifactId>truth-generator-maven-plugin</artifactId>
                 <configuration>
                     <classes>
